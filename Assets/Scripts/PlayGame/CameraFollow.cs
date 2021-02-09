@@ -14,23 +14,14 @@ public class CameraFollow : MonoBehaviour
     public bool followBehind = true;
     public float rotationDamping = 10.0f;
 
-    void LateUpdate()
+    private void LateUpdate()
     {
-        Vector3 wantedPosition;
-        if (followBehind)
-        {
-            wantedPosition = target.TransformPoint(0, height, -distance);
-        }
-        else
-        {
-            wantedPosition = target.TransformPoint(0, height, distance);
-        }
-
+        var  wantedPosition = target.TransformPoint(0, height, followBehind ? -distance : distance);
         transform.position = Vector3.Lerp(transform.position, wantedPosition, Time.deltaTime * damping);
 
         if (smoothRotation)
         {
-            Quaternion wantedRotation = Quaternion.LookRotation(target.position - transform.position, target.up);
+            var wantedRotation = Quaternion.LookRotation(target.position - transform.position, target.up);
             transform.rotation = Quaternion.Slerp(transform.rotation, wantedRotation, Time.deltaTime * rotationDamping);
         }
         else transform.LookAt(target, target.up);

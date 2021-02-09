@@ -4,13 +4,19 @@ using UnityEngine.UI;
 public class DisplayCoordinates : MonoBehaviour
 {
     public Transform target;
+    private Text _text;
 
-    void Update()
+    private void Start()
+    {
+        _text = GetComponent<Text>();
+    }
+
+    private void Update()
     {
         // Get the coordinates of the target
-        Vector3 coordinates = target.position;
+        var coordinates = target.position;
 
         // Display the coordinates of the target rounded to 2 d.p.
-        GetComponent<Text>().text = $"({coordinates.x:0.##}, {coordinates.y:0.##}, {coordinates.z:0.##})";
+        _text.text = $"({coordinates.x:0.##}, {coordinates.y:0.##}, {coordinates.z:0.##})";
     }
 }

@@ -7,16 +7,16 @@ public class SpeechRecognition : MonoBehaviour
 {
 
     public Text text;
-    private string myResponse = "...";
+    private string _myResponse = "...";
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        text.text = myResponse;
+        text.text = _myResponse;
     }
 
     public void GetResponse(string result) {
-        myResponse = result;
+        _myResponse = result;
     }
 
     public void StartSpeechRecognitionInTheBrowser() {

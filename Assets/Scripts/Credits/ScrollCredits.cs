@@ -8,12 +8,12 @@ public class ScrollCredits : MonoBehaviour
     public GameObject creditsRun;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         StartCoroutine(RollCredits());
     }
 
-    void Update()
+    private void Update()
     {
         if (Input.GetButtonDown("Cancel"))
         {
@@ -21,7 +21,7 @@ public class ScrollCredits : MonoBehaviour
         }
     }
 
-    IEnumerator RollCredits()
+    private IEnumerator RollCredits()
     {
         creditsRun.SetActive(true);
 
