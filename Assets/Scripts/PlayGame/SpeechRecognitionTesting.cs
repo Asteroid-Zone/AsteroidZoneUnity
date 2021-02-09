@@ -24,7 +24,11 @@ public class SpeechRecognitionTesting : MonoBehaviour
         }
 
         if (Input.GetKey(KeyCode.Q)) {
-            speechRecognition.GetResponse("move north west");
+            speechRecognition.GetResponse("stop");
+        }
+
+        if (Input.GetKey(KeyCode.E)) {
+            speechRecognition.GetResponse("faster");
         }
     }
 }

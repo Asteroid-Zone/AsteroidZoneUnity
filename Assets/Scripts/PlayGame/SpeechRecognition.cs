@@ -24,19 +24,27 @@ public class SpeechRecognition : MonoBehaviour
 
     private void performAction(string phrase) {
         if (phrase.Contains("north")) {
-            player.transform.Translate(Vector3.forward * (Time.deltaTime), Space.World);
+            player.GetComponent<MoveObject>().setDirection(Vector3.forward);
         }
 
         if (phrase.Contains("south")) {
-            player.transform.Translate(Vector3.back * (Time.deltaTime), Space.World);
+            player.GetComponent<MoveObject>().setDirection(Vector3.back);
         }
 
         if (phrase.Contains("west")) {
-            player.transform.Translate(Vector3.left * (Time.deltaTime), Space.World);
+            player.GetComponent<MoveObject>().setDirection(Vector3.left);
         }
 
         if (phrase.Contains("east")) {
-            player.transform.Translate(Vector3.right * (Time.deltaTime), Space.World);
+            player.GetComponent<MoveObject>().setDirection(Vector3.right);
+        }
+
+        if (phrase.Contains("stop")) {
+            player.GetComponent<MoveObject>().setSpeed(0);
+        }
+
+        if (phrase.Contains("faster")) {
+            player.GetComponent<MoveObject>().setSpeed(1);
         }
     }
 
