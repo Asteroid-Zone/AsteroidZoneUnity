@@ -1,21 +1,29 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class TacticalCameraController : MonoBehaviour
 {
     public float sensitivity = 0.25f;
     
     private Vector3 _prevMousePos = new Vector3(255f, 255f, 255f);
+    private GameObject _focusPoint;
+
+    private void Start()
+    {
+        _focusPoint = GameObject.Find("FocusPoint");
+        transform.LookAt(_focusPoint.transform.position);
+    }
 
     private void Update()
     {
         var mouseDifference = Input.mousePosition - _prevMousePos;
         var camTransform = transform;
-        
+
         if (Input.GetMouseButton(1))
         {
             // Updates camera angle if RMB is held (based on mouse movement)
-            transform.eulerAngles += new Vector3(-mouseDifference.y * sensitivity, mouseDifference.x * sensitivity, 0);
+            transform.RotateAround(_focusPoint.transform.position, Vector3.up, mouseDifference.x * sensitivity);
+            // var position = _focusPoint.transform.position;
+            // transform.RotateAround(position, Vector3.up, 100f * Time.deltaTime * -1f);
         } 
         else if (Input.GetMouseButton(2))
         {
