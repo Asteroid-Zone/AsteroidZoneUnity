@@ -43,7 +43,7 @@ public class TacticalCameraController : MonoBehaviour
         {
             // Updates camera angle if RMB is held (based on mouse movement)
             transform.RotateAround(_focusPoint.transform.position, Vector3.up, mouseDifference.x * sensitivity);
-        } 
+        }
         else if (Input.GetMouseButton(2))
         {
             // Change camera position if MMB is held (based on mouse movement)
@@ -54,8 +54,12 @@ public class TacticalCameraController : MonoBehaviour
         else if (Input.mouseScrollDelta.y != 0)
         {
             // Zoom the camera in
-            // TODO: Keep the camera between minCamDistance and maxCamDistance
-            camTransform.position += camTransform.forward * Input.mouseScrollDelta.y;
+            var newPosition = camTransform.position + (camTransform.forward * Input.mouseScrollDelta.y);
+            var newCameraDistance = Mathf.Abs((newPosition - _focusPoint.transform.position).magnitude);
+            if (minCamDistance <= newCameraDistance && newCameraDistance <= maxCamDistance)
+            {
+                camTransform.position = newPosition;
+            }
         }
         _prevMousePos = Input.mousePosition;
     }
