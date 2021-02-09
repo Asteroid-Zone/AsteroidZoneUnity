@@ -9,6 +9,8 @@ public class SpeechRecognition : MonoBehaviour
     public Text text;
     private string _myResponse = "...";
 
+    public GameObject player;
+
     // Update is called once per frame
     private void Update()
     {
@@ -16,7 +18,26 @@ public class SpeechRecognition : MonoBehaviour
     }
 
     public void GetResponse(string result) {
-        _myResponse = result;
+        _myResponse = result.ToLower();
+        performAction(_myResponse);
+    }
+
+    private void performAction(string phrase) {
+        if (phrase.Contains("north")) {
+            player.transform.Translate(Vector3.forward * (Time.deltaTime), Space.World);
+        }
+
+        if (phrase.Contains("south")) {
+            player.transform.Translate(Vector3.back * (Time.deltaTime), Space.World);
+        }
+
+        if (phrase.Contains("west")) {
+            player.transform.Translate(Vector3.left * (Time.deltaTime), Space.World);
+        }
+
+        if (phrase.Contains("east")) {
+            player.transform.Translate(Vector3.right * (Time.deltaTime), Space.World);
+        }
     }
 
     public void StartSpeechRecognitionInTheBrowser() {
