@@ -19,31 +19,33 @@ public class SpeechRecognition : MonoBehaviour
 
     public void GetResponse(string result) {
         _myResponse = result.ToLower();
-        performAction(_myResponse);
+        performActions(_myResponse);
     }
 
-    private void performAction(string phrase) {
-        if (phrase.Contains("north")) {
-            player.GetComponent<MoveObject>().setDirection(Vector3.forward);
-        }
+    private void performActions(string phrase) {
+        if (phrase.Contains("move") || phrase.Contains("face") || phrase.Contains("go")) {
+            if (phrase.Contains("north")) {
+                player.GetComponent<MoveObject>().setDirection(Vector3.forward);
+            }
 
-        if (phrase.Contains("south")) {
-            player.GetComponent<MoveObject>().setDirection(Vector3.back);
-        }
+            if (phrase.Contains("south")) {
+                player.GetComponent<MoveObject>().setDirection(Vector3.back);
+            }
 
-        if (phrase.Contains("west")) {
-            player.GetComponent<MoveObject>().setDirection(Vector3.left);
-        }
+            if (phrase.Contains("west")) {
+                player.GetComponent<MoveObject>().setDirection(Vector3.left);
+            }
 
-        if (phrase.Contains("east")) {
-            player.GetComponent<MoveObject>().setDirection(Vector3.right);
+            if (phrase.Contains("east")) {
+                player.GetComponent<MoveObject>().setDirection(Vector3.right);
+            }
         }
 
         if (phrase.Contains("stop")) {
             player.GetComponent<MoveObject>().setSpeed(0);
         }
 
-        if (phrase.Contains("faster")) {
+        if (phrase.Contains("go") || phrase.Contains("move")) {
             player.GetComponent<MoveObject>().setSpeed(1);
         }
     }

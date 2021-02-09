@@ -10,25 +10,25 @@ public class SpeechRecognitionTesting : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey(KeyCode.W)) {
+        if (Input.GetKey(KeyCode.W)) { // Face north and start moving
             speechRecognition.GetResponse("move north");
         }
-        if (Input.GetKey(KeyCode.S)) {
+        if (Input.GetKey(KeyCode.S)) { // Face south and start moving
             speechRecognition.GetResponse("go south");
         }
-        if (Input.GetKey(KeyCode.A)) {
-            speechRecognition.GetResponse("west");
+        if (Input.GetKey(KeyCode.A)) { // Face west but dont change speed
+            speechRecognition.GetResponse("face west");
         }
-        if (Input.GetKey(KeyCode.D)) {
-            speechRecognition.GetResponse("east");
+        if (Input.GetKey(KeyCode.D)) { // Face east and start moving
+            speechRecognition.GetResponse("move east");
         }
 
-        if (Input.GetKey(KeyCode.Q)) {
+        if (Input.GetKey(KeyCode.Q)) { // Stop Moving
             speechRecognition.GetResponse("stop");
         }
 
-        if (Input.GetKey(KeyCode.E)) {
-            speechRecognition.GetResponse("faster");
+        if (Input.GetKey(KeyCode.E)) { // Start Moving
+            speechRecognition.GetResponse("go");
         }
     }
 }
