@@ -3,6 +3,8 @@
 public class TacticalCameraController : MonoBehaviour
 {
     public float sensitivity = 0.25f;
+    public float minCamDistance = 10f;
+    public float maxCamDistance = 100f;
     
     private Vector3 _prevMousePos = new Vector3(255f, 255f, 255f);
     private GameObject _focusPoint;
@@ -28,12 +30,13 @@ public class TacticalCameraController : MonoBehaviour
             if (Physics.Raycast(ray, out var hit, 1000f))
             {
                 // TODO: See if this can be done nicer
-                var position = _focusPoint.transform.position;
-                var positionDifference = hit.transform.position - position;
-                position += positionDifference;
-                _focusPoint.transform.position = position;
-                transform.position += positionDifference;
-                transform.LookAt(position);
+                var focusPosition = _focusPoint.transform.position;
+                var positionDifference = hit.transform.position - focusPosition;
+                focusPosition += positionDifference;
+                _focusPoint.transform.position = focusPosition;
+                
+                // Position camera close to the target
+                camTransform.position = (camTransform.position - focusPosition + positionDifference).normalized * minCamDistance + focusPosition;
             }
         }
         else if (Input.GetMouseButton(1))
@@ -50,7 +53,8 @@ public class TacticalCameraController : MonoBehaviour
         }
         else if (Input.mouseScrollDelta.y != 0)
         {
-            // Zooms camera, a transform variable is used here to avoid repeated component property access (inefficient)
+            // Zoom the camera in
+            // TODO: Keep the camera between minCamDistance and maxCamDistance
             camTransform.position += camTransform.forward * Input.mouseScrollDelta.y;
         }
         _prevMousePos = Input.mousePosition;
