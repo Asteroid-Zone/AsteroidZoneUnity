@@ -28,7 +28,9 @@ public class TacticalCameraController : MonoBehaviour
         else if (Input.GetMouseButton(2))
         {
             // Change camera position if MMB is held (based on mouse movement)
-            camTransform.position += mouseDifference.x * sensitivity * camTransform.right;
+            var positionChange = mouseDifference.x * sensitivity * camTransform.right;
+            camTransform.position += positionChange;
+            _focusPoint.transform.position += positionChange;
         }
         else if (Input.mouseScrollDelta.y != 0)
         {
