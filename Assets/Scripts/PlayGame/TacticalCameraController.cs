@@ -25,9 +25,15 @@ public class TacticalCameraController : MonoBehaviour
             // Focus on an object if you clicked on it
             var ray = _camera.ScreenPointToRay( Input.mousePosition );
 
-            if (Physics.Raycast(ray, out var hit, 100f))
+            if (Physics.Raycast(ray, out var hit, 1000f))
             {
-                Debug.Log(hit.transform.gameObject.name);
+                // TODO: See if this can be done nicer
+                var position = _focusPoint.transform.position;
+                var positionDifference = hit.transform.position - position;
+                position += positionDifference;
+                _focusPoint.transform.position = position;
+                transform.position += positionDifference;
+                transform.LookAt(position);
             }
         }
         else if (Input.GetMouseButton(1))
