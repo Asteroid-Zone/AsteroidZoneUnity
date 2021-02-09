@@ -6,10 +6,12 @@ public class TacticalCameraController : MonoBehaviour
     
     private Vector3 _prevMousePos = new Vector3(255f, 255f, 255f);
     private GameObject _focusPoint;
+    private Camera _camera;
 
     private void Start()
     {
         _focusPoint = GameObject.Find("FocusPoint");
+        _camera = GetComponent<Camera>();
         transform.LookAt(_focusPoint.transform.position);
     }
 
@@ -18,12 +20,20 @@ public class TacticalCameraController : MonoBehaviour
         var mouseDifference = Input.mousePosition - _prevMousePos;
         var camTransform = transform;
 
-        if (Input.GetMouseButton(1))
+        if (Input.GetMouseButtonDown(0))
+        {
+            // Focus on an object if you clicked on it
+            var ray = _camera.ScreenPointToRay( Input.mousePosition );
+
+            if (Physics.Raycast(ray, out var hit, 100f))
+            {
+                Debug.Log(hit.transform.gameObject.name);
+            }
+        }
+        else if (Input.GetMouseButton(1))
         {
             // Updates camera angle if RMB is held (based on mouse movement)
             transform.RotateAround(_focusPoint.transform.position, Vector3.up, mouseDifference.x * sensitivity);
-            // var position = _focusPoint.transform.position;
-            // transform.RotateAround(position, Vector3.up, 100f * Time.deltaTime * -1f);
         } 
         else if (Input.GetMouseButton(2))
         {
