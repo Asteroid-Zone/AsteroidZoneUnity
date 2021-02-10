@@ -11,7 +11,6 @@ public class SpeechRecognition : MonoBehaviour
 
     public GameObject player;
 
-    // Update is called once per frame
     private void Update()
     {
         text.text = _myResponse;
@@ -22,25 +21,42 @@ public class SpeechRecognition : MonoBehaviour
         performActions(_myResponse);
     }
 
-    private void performActions(string phrase) {
+    private bool isMovementCommand(string phrase) {
         if (phrase.Contains("move") || phrase.Contains("face") || phrase.Contains("go")) {
-            if (phrase.Contains("north")) {
-                player.GetComponent<MoveObject>().setDirection(Vector3.forward);
-            }
-
-            if (phrase.Contains("south")) {
-                player.GetComponent<MoveObject>().setDirection(Vector3.back);
-            }
-
-            if (phrase.Contains("west")) {
-                player.GetComponent<MoveObject>().setDirection(Vector3.left);
-            }
-
-            if (phrase.Contains("east")) {
-                player.GetComponent<MoveObject>().setDirection(Vector3.right);
-            }
+            return true;
         }
 
+        return false;
+    }
+
+    private Vector3? getDirection(string phrase) {
+        if (phrase.Contains("north")) {
+            return Vector3.forward;
+        }
+
+        if (phrase.Contains("south")) {
+            return Vector3.back;
+        }
+
+        if (phrase.Contains("west")) {
+            return Vector3.left;
+        }
+
+        if (phrase.Contains("east")) {
+            return Vector3.right;
+        }
+
+        return null;
+    }
+
+    private void performActions(string phrase) {
+        if (isMovementCommand(phrase)) {
+            Vector3? direction = getDirection(phrase);
+            if (direction != null) {
+                player.GetComponent<MoveObject>().setDirection((Vector3) direction);
+            }
+        }
+       
         if (phrase.Contains("stop")) {
             player.GetComponent<MoveObject>().setSpeed(0);
         }
