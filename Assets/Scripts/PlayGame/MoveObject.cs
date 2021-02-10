@@ -17,9 +17,13 @@ public class MoveObject : MonoBehaviour {
         transform.Translate(direction * (Time.deltaTime) * speed, Space.World);
         transform.localRotation = Quaternion.LookRotation(direction);
     }
-
+    
     public void setDirection(Vector3 direction) {
         this.direction = direction;
+    }
+
+    public void setDirection(GridCoord position) {
+        this.direction = Vector3.Normalize(position.getVector() - transform.position);
     }
 
     public void setSpeed(float speed) {

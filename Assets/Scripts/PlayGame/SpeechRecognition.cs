@@ -67,8 +67,6 @@ public class SpeechRecognition : MonoBehaviour
     }
 
     private void performActions(string phrase) {
-        bool isGoToGridCommand = false;
-
         if (isMovementCommand(phrase)) {
             Vector3? direction = getDirection(phrase);
             if (direction != null) {
@@ -76,20 +74,17 @@ public class SpeechRecognition : MonoBehaviour
             } else {
                 GridCoord? position = getGridPosition(phrase);
                 if (position != null) {
-                    isGoToGridCommand = true;
-                    player.GetComponent<MoveObject>().setPosition((GridCoord) position);
+                    player.GetComponent<MoveObject>().setDirection((GridCoord) position);
                 }
             }
         }
 
-        if (!isGoToGridCommand) {
-            if (phrase.Contains("stop")) {
-                player.GetComponent<MoveObject>().setSpeed(0);
-            }
+        if (phrase.Contains("stop")) {
+            player.GetComponent<MoveObject>().setSpeed(0);
+        }
 
-            if (phrase.Contains("go") || phrase.Contains("move")) {
-                player.GetComponent<MoveObject>().setSpeed(1);
-            }
+        if (phrase.Contains("go") || phrase.Contains("move")) {
+            player.GetComponent<MoveObject>().setSpeed(1);
         }
     }
 
