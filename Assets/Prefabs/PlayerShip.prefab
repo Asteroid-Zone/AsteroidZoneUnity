@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4346222156894073425}
   - component: {fileID: 4346222156894073436}
   - component: {fileID: 4346222156894073437}
+  - component: {fileID: 919132149324569520}
   m_Layer: 0
   m_Name: PlayerShip
   m_TagString: Untagged
@@ -28,7 +29,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3499732145043073733}
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -93,7 +94,7 @@ MeshCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 4
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 1865056248366311061, guid: 4980bf21972c4b14e976da1f2f663784, type: 3}
 --- !u!114 &4346222156894073436
@@ -108,7 +109,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f1b36d5e9d9c65418516032f08294c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 1
+  movementSpeed: 2.5
 --- !u!114 &4346222156894073437
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -121,3 +122,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c2d3ee8c7f561b48921db07ee1b90dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!54 &919132149324569520
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3499732145043073733}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 5
+  m_AngularDrag: 5
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 116
+  m_CollisionDetection: 1
