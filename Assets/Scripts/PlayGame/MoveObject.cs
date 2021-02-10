@@ -1,6 +1,4 @@
 ﻿using Assets.Scripts.PlayGame;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MoveObject : MonoBehaviour {
@@ -11,12 +9,11 @@ public class MoveObject : MonoBehaviour {
     private Vector3 destination = Vector3.positiveInfinity;
 
     private void Start() {
-        this.direction = transform.rotation.eulerAngles;
+        direction = transform.rotation.eulerAngles;
         updateRotation();
     }
 
-    // Update is called once per frame
-    void Update() {
+    private void Update() {
         if (!hasReachedDestination()) {
             transform.Translate(direction * (Time.deltaTime) * speed, Space.World);
         }

@@ -4,10 +4,8 @@ using UnityEngine.SceneManagement;
 
 public class ScrollCredits : MonoBehaviour
 {
-
     public GameObject creditsRun;
-
-    // Start is called before the first frame update
+    
     private void Start()
     {
         StartCoroutine(RollCredits());
