@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Assets.Scripts.PlayGame;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -54,6 +55,8 @@ public class SpeechRecognition : MonoBehaviour
             Vector3? direction = getDirection(phrase);
             if (direction != null) {
                 player.GetComponent<MoveObject>().setDirection((Vector3) direction);
+            } else {
+
             }
         }
        

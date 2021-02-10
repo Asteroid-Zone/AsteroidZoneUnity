@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Assets.Scripts.PlayGame;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,5 +24,10 @@ public class MoveObject : MonoBehaviour {
 
     public void setSpeed(float speed) {
         this.speed = speed;
+    }
+
+    public void setPosition(GridCoord coord) {
+        transform.position = coord.getVector();
+
     }
 }
