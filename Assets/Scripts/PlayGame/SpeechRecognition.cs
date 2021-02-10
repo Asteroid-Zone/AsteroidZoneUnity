@@ -50,17 +50,14 @@ public class SpeechRecognition : MonoBehaviour
     }
 
     private GridCoord? getGridPosition(string phrase) {
-        string pattern = @"(\d+)( )?[a-z]( )?(\d+)"; // Number Letter Number with optional spaces
+        string pattern = @"[a-z]( )?(\d+)"; // Letter Number with optional space
         Match coordMatch = Regex.Match(phrase, pattern);
         if (coordMatch.Success) {
-            Match numbers = Regex.Match(coordMatch.Value, @"(\d+)");
-            Match letter = Regex.Match(coordMatch.Value, @"[a-z]");
-            int x = int.Parse(numbers.Value);
-            char y = letter.Value[0];
-            numbers = numbers.NextMatch();
-            int z = int.Parse(numbers.Value);
+            char x = coordMatch.Value[0];
+            Match number = Regex.Match(coordMatch.Value, @"(\d+)");
+            int y = int.Parse(number.Value);
 
-            return new GridCoord(x, y, z);
+            return new GridCoord(x, y);
         }
 
         return null;

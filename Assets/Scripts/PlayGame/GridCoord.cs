@@ -5,30 +5,26 @@ namespace Assets.Scripts.PlayGame {
 
         private const int gridSize = 10;
 
-        private int x { get; }
-        private char y { get; }
-        private int z { get; }
+        private char x { get; }
+        private int y { get; }
 
-        public GridCoord(int x, char y, int z) {
+        public GridCoord(char x, int y) {
             this.x = x;
             this.y = y;
-            this.z = z;
         }
 
         public int getWorldX() {
-            return x * gridSize;
+            return (x - 97) * gridSize;
         }
 
         public int getWorldY() {
-            return (y - 97) * gridSize;
+            return y * gridSize;
         }
 
-        public int getWorldZ() {
-            return z * gridSize;
-        }
-
+        // Returns the grid coordinate with a z value of 0
+        // TODO change to Vector2?
         public Vector3 getVector() {
-            return new Vector3(getWorldX(), getWorldY(), getWorldZ());
+            return new Vector3(getWorldX(), getWorldY());
         }
 
     }

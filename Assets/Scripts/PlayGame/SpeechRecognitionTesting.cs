@@ -29,8 +29,8 @@ public class SpeechRecognitionTesting : MonoBehaviour
             speechRecognition.GetResponse("go");
         }
 
-        if (Input.GetKey(KeyCode.R)) { // Move towards Grid(3, C, 6)
-            speechRecognition.GetResponse("go to 3C6");
+        if (Input.GetKey(KeyCode.R)) { // Move towards Grid(C, 6)
+            speechRecognition.GetResponse("go to C6");
         }
     }
 }

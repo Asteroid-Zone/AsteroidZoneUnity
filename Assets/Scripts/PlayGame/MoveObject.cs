@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class MoveObject : MonoBehaviour {
 
+    // TODO change to Vector2?
     private Vector3 direction;
     private float speed = 0;
 
