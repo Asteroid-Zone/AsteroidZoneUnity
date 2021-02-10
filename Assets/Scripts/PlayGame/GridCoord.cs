@@ -10,22 +10,22 @@ namespace Assets.Scripts.PlayGame {
 
         private const int gridSize = 10;
 
-        private char x { get; }
-        private int y { get; }
+        private int x { get; }
+        private char y { get; }
         private int z { get; }
 
-        public GridCoord(char x, int y, int z) {
+        public GridCoord(int x, char y, int z) {
             this.x = x;
             this.y = y;
             this.z = z;
         }
 
         public int getWorldX() {
-            return (x - 97) * gridSize;
+            return x * gridSize;
         }
 
         public int getWorldY() {
-            return y * gridSize;
+            return (y - 97) * gridSize;
         }
 
         public int getWorldZ() {

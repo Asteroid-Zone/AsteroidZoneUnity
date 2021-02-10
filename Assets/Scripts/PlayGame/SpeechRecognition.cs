@@ -1,6 +1,7 @@
 ﻿using Assets.Scripts.PlayGame;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -50,22 +51,45 @@ public class SpeechRecognition : MonoBehaviour
         return null;
     }
 
+    private GridCoord? getGridPosition(string phrase) {
+        Match coordMatch = Regex.Match(phrase, @"(\d+)[a-z](\d+)"); // Look for number letter number
+        if (coordMatch.Success) {
+            Match numbers = Regex.Match(coordMatch.Value, @"(\d+)");
+            int x = int.Parse(numbers.Value);
+            char y = coordMatch.Value[numbers.Length];
+            numbers = numbers.NextMatch();
+            int z = int.Parse(numbers.Value);
+
+            return new GridCoord(x, y, z);
+        }
+
+        return null;
+    }
+
     private void performActions(string phrase) {
+        bool isGoToGridCommand = false;
+
         if (isMovementCommand(phrase)) {
             Vector3? direction = getDirection(phrase);
             if (direction != null) {
                 player.GetComponent<MoveObject>().setDirection((Vector3) direction);
             } else {
-
+                GridCoord? position = getGridPosition(phrase);
+                if (position != null) {
+                    isGoToGridCommand = true;
+                    player.GetComponent<MoveObject>().setPosition((GridCoord) position);
+                }
             }
         }
-       
-        if (phrase.Contains("stop")) {
-            player.GetComponent<MoveObject>().setSpeed(0);
-        }
 
-        if (phrase.Contains("go") || phrase.Contains("move")) {
-            player.GetComponent<MoveObject>().setSpeed(1);
+        if (!isGoToGridCommand) {
+            if (phrase.Contains("stop")) {
+                player.GetComponent<MoveObject>().setSpeed(0);
+            }
+
+            if (phrase.Contains("go") || phrase.Contains("move")) {
+                player.GetComponent<MoveObject>().setSpeed(1);
+            }
         }
     }
 
