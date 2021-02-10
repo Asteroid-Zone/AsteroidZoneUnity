@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class DisplayCoordinates : MonoBehaviour
+public class DisplayUnityCoordinates : MonoBehaviour
 {
     public Transform target;
     private Text _text;
