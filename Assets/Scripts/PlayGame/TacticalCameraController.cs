@@ -29,13 +29,14 @@ public class TacticalCameraController : MonoBehaviour
 
             if (Physics.Raycast(ray, out var hit, 1000f))
             {
+                // Move the Focus Point game object to be centered on the target
                 // TODO: See if this can be done nicer
                 var focusPosition = _focusPoint.transform.position;
                 var positionDifference = hit.transform.position - focusPosition;
                 focusPosition += positionDifference;
                 _focusPoint.transform.position = focusPosition;
                 
-                // Position camera close to the target
+                // Reposition the camera so that it's at the minimum distance from the new focus point position
                 camTransform.position = (camTransform.position - focusPosition + positionDifference).normalized * minCamDistance + focusPosition;
             }
         }
@@ -53,7 +54,7 @@ public class TacticalCameraController : MonoBehaviour
         }
         else if (Input.mouseScrollDelta.y != 0)
         {
-            // Zoom the camera in
+            // Zoom the camera in/out making sure it's within a certain distance from the focus point (min/maxCameraDistance)
             var newPosition = camTransform.position + (camTransform.forward * Input.mouseScrollDelta.y);
             var newCameraDistance = Mathf.Abs((newPosition - _focusPoint.transform.position).magnitude);
             if (minCamDistance <= newCameraDistance && newCameraDistance <= maxCamDistance)
