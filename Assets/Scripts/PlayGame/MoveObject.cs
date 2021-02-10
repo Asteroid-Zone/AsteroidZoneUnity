@@ -8,30 +8,46 @@ public class MoveObject : MonoBehaviour {
     private Vector3 direction;
     private float speed = 0;
 
+    private Vector3 destination = Vector3.positiveInfinity;
+
     private void Start() {
         this.direction = transform.rotation.eulerAngles;
+        updateRotation();
     }
 
     // Update is called once per frame
     void Update() {
-        transform.Translate(direction * (Time.deltaTime) * speed, Space.World);
+        if (!hasReachedDestination()) {
+            transform.Translate(direction * (Time.deltaTime) * speed, Space.World);
+        }
+    }
+
+    private bool hasReachedDestination() {
+        if (Vector3.Distance(transform.position, destination) < 0.2) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private void updateRotation() {
         transform.localRotation = Quaternion.LookRotation(direction);
     }
     
     public void setDirection(Vector3 direction) {
         this.direction = direction;
+        destination = Vector3.positiveInfinity;
+        updateRotation();
     }
 
     public void setDirection(GridCoord position) {
         this.direction = Vector3.Normalize(position.getVector() - transform.position);
+        destination = position.getVector();
+        updateRotation();
     }
 
     public void setSpeed(float speed) {
         this.speed = speed;
     }
 
-    public void setPosition(GridCoord coord) {
-        transform.position = coord.getVector();
-
-    }
 }

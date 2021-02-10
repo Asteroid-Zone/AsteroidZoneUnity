@@ -52,11 +52,13 @@ public class SpeechRecognition : MonoBehaviour
     }
 
     private GridCoord? getGridPosition(string phrase) {
-        Match coordMatch = Regex.Match(phrase, @"(\d+)[a-z](\d+)"); // Look for number letter number
+        string pattern = @"(\d+)( )?[a-z]( )?(\d+)"; // Number Letter Number with optional spaces
+        Match coordMatch = Regex.Match(phrase, pattern);
         if (coordMatch.Success) {
             Match numbers = Regex.Match(coordMatch.Value, @"(\d+)");
+            Match letter = Regex.Match(coordMatch.Value, @"[a-z]");
             int x = int.Parse(numbers.Value);
-            char y = coordMatch.Value[numbers.Length];
+            char y = letter.Value[0];
             numbers = numbers.NextMatch();
             int z = int.Parse(numbers.Value);
 
