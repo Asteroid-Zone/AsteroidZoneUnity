@@ -81,7 +81,7 @@ public class SpeechRecognition : MonoBehaviour
         }
 
         if (phrase.Contains("go") || phrase.Contains("move")) {
-            player.GetComponent<MoveObject>().setSpeed(1);
+            player.GetComponent<MoveObject>().setSpeed(2.5f);
         }
     }
 
