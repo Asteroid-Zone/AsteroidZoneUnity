@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class SpeechRecognition : MonoBehaviour
 {
-
     public Text text;
     private string _myResponse = "...";
 

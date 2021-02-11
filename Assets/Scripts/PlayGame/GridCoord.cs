@@ -14,7 +14,7 @@ namespace Assets.Scripts.PlayGame {
         }
 
         public int getWorldX() {
-            return (x - 97) * gridSize;
+            return x * gridSize;
         }
 
         public int getWorldY() {
@@ -24,7 +24,7 @@ namespace Assets.Scripts.PlayGame {
         // Returns the grid coordinate with a z value of 0
         // TODO change to Vector2?
         public Vector3 getVector() {
-            return new Vector3(getWorldX(), getWorldY());
+            return new Vector3(getWorldX(), 0, getWorldY());
         }
 
     }
