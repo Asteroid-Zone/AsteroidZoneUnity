@@ -35,5 +35,9 @@ public class SpeechRecognitionTesting : MonoBehaviour
         if (Input.GetKey(KeyCode.F)) { // Move towards ping
             speechRecognition.GetResponse("go to ping");
         }
+        
+        if (Input.GetKey(KeyCode.T)) { // Create ping at Grid(C, 4)
+            speechRecognition.GetResponse("ping asteroid at C4");
+        }
     }
 }

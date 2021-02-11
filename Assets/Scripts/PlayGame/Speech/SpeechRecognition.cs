@@ -2,6 +2,7 @@
 using Assets.Scripts.PlayGame;
 using UnityEngine;
 using UnityEngine.UI;
+using Ping = Assets.Scripts.PlayGame.Ping;
 
 public class SpeechRecognition : MonoBehaviour
 {
@@ -34,7 +35,7 @@ public class SpeechRecognition : MonoBehaviour
     }
 
     // Returns the direction vector or null
-    private Vector3? getDirection(string phrase) {
+    private Vector3? GetDirection(string phrase) {
         if (phrase.Contains("north")) {
             return Vector3.forward;
         }
@@ -55,7 +56,7 @@ public class SpeechRecognition : MonoBehaviour
     }
 
     // Gets a grid coordinate from the input phrase, if no grid coordinate is found it returns null
-    private GridCoord? getGridPosition(string phrase) {
+    private GridCoord? GetGridPosition(string phrase) {
         Match coordMatch = Regex.Match(phrase, @"[a-z]( )?(\d+)"); // Letter Number with optional space
         
         if (!coordMatch.Success) return null;
@@ -67,16 +68,34 @@ public class SpeechRecognition : MonoBehaviour
         return new GridCoord(x, z);
     }
 
+    private PingType? GetPingType(string phrase) {
+        if (phrase.Contains("none")) return PingType.None;
+        if (phrase.Contains("asteroid")) return PingType.Asteroid;
+        if (phrase.Contains("pirate")) return PingType.Pirate;
+
+        return null;
+    }
+
+    private Ping? GetPing(string phrase) {
+        PingType? type = GetPingType(phrase);
+        if (type == null) return null;
+
+        GridCoord? gridCoord = GetGridPosition(phrase);
+        if (gridCoord == null) return null;
+
+        return new Ping((GridCoord) gridCoord, (PingType) type);
+    }
+    
     private void PerformMovement(string phrase) {
         // Check if phrase contains a direction
-        Vector3? direction = getDirection(phrase);
+        Vector3? direction = GetDirection(phrase);
         if (direction != null) {
             _moveObject.SetDirection((Vector3) direction);
             return;
         }
         
         // Check if phrase contains a grid coordinate
-        GridCoord? position = getGridPosition(phrase);
+        GridCoord? position = GetGridPosition(phrase);
         if (position != null)
         {
             GridCoord coord = (GridCoord) position;
@@ -95,6 +114,9 @@ public class SpeechRecognition : MonoBehaviour
     private void PerformActions(string phrase) {
         if (IsMovementCommand(phrase)) {
             PerformMovement(phrase);
+        } else if (phrase.Contains("ping")) { // Check for create ping command
+            Ping? newPing = GetPing(phrase);
+            if (newPing != null) _pingManager.SetPing((Ping) newPing);
         }
 
         if (phrase.Contains("stop")) {

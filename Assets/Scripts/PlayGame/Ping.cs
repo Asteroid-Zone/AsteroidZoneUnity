@@ -9,20 +9,24 @@ namespace Assets.Scripts.PlayGame {
     }
     
     public struct Ping {
-        
-        private int x { get; }
-        private int z { get; }
+
+        private GridCoord _gridCoord;
 
         private PingType _type;
         
-        public Ping(int x, int z, PingType type) {
-            this.x = x;
-            this.z = z;
-            this._type = type;
+        public Ping(char x, int z, PingType type) {
+            _gridCoord = new GridCoord(x, z);
+            _type = type;
+        }
+
+        public Ping(GridCoord gridCoord, PingType type)
+        {
+            _gridCoord = gridCoord;
+            _type = type;
         }
 
         public Vector3 GetPositionVector() {
-            return new Vector3(x, 0, z);
+            return _gridCoord.GetWorldVector();
         }
 
         public PingType GetPingType() {
