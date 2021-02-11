@@ -114,9 +114,13 @@ public class SpeechRecognition : MonoBehaviour
     private void PerformActions(string phrase) {
         if (IsMovementCommand(phrase)) {
             PerformMovement(phrase);
-        } else if (phrase.Contains("ping")) { // Check for create ping command
-            Ping? newPing = GetPing(phrase);
-            if (newPing != null) _pingManager.SetPing((Ping) newPing);
+        } else if (phrase.Contains("ping")) { // Check for create/delete ping commands
+            if (phrase.Contains("remove") || phrase.Contains("delete")) {
+                _pingManager.SetPing('A', 0, PingType.None);
+            } else {
+                Ping? newPing = GetPing(phrase);
+                if (newPing != null) _pingManager.SetPing((Ping) newPing);
+            }
         }
 
         if (phrase.Contains("stop")) {
