@@ -64,26 +64,33 @@ public class SpeechRecognition : MonoBehaviour
         return new GridCoord(x, z);
     }
 
+    private void PerformMovement(string phrase) {
+        // Check if phrase contains a direction
+        Vector3? direction = getDirection(phrase);
+        if (direction != null) {
+            _moveObject.SetDirection((Vector3) direction);
+            return;
+        }
+            
+        // Check if phrase contains a grid coordinate
+        GridCoord? position = getGridPosition(phrase);
+        if (position != null)
+        {
+            GridCoord coord = (GridCoord) position;
+            _moveObject.SetDestination(coord.GetWorldVector());
+            return;
+        }
+            
+        // Check if phrase contains ping
+        if (phrase.Contains("ping")) {
+            _moveObject.SetDestination(pingManager.GetComponent<PingManager>().GetPing().GetPositionVector());
+            return;
+        }
+    }
+    
     private void PerformActions(string phrase) {
         if (IsMovementCommand(phrase)) {
-            // Check if phrase contains a direction
-            Vector3? direction = getDirection(phrase);
-            if (direction != null) {
-                _moveObject.SetDirection((Vector3) direction);
-            }
-            
-            // Check if phrase contains a grid coordinate
-            GridCoord? position = getGridPosition(phrase);
-            if (position != null)
-            {
-                GridCoord coord = (GridCoord) position;
-                _moveObject.SetDestination(coord.GetWorldVector());
-            }
-            
-            // Check if phrase contains ping
-            if (phrase.Contains("ping")) {
-                _moveObject.SetDestination(pingManager.GetComponent<PingManager>().GetPing().GetPositionVector());
-            }
+            PerformMovement(phrase);
         }
 
         if (phrase.Contains("stop")) {
