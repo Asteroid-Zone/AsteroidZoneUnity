@@ -1,15 +1,15 @@
 ﻿using UnityEngine;
 
 namespace Assets.Scripts.PlayGame {
-    public struct GridCoord {
+    public readonly struct GridCoord {
 
         private const int gridSize = 10;
 
-        private char x { get; }
+        private int x { get; }
         private int y { get; }
 
         public GridCoord(char x, int y) {
-            this.x = x;
+            this.x = x - 97;
             this.y = y;
         }
 
@@ -21,7 +21,7 @@ namespace Assets.Scripts.PlayGame {
             return y * gridSize;
         }
 
-        // Returns the grid coordinate with a z value of 0
+        // Returns the grid coordinate with a y value of 0
         // TODO change to Vector2?
         public Vector3 getVector() {
             return new Vector3(getWorldX(), 0, getWorldY());

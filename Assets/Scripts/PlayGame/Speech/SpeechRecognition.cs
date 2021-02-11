@@ -9,6 +9,12 @@ public class SpeechRecognition : MonoBehaviour
     private string _myResponse = "...";
 
     public GameObject player;
+    private MoveObject _moveObject;
+
+    private void Start()
+    {
+        _moveObject = player.GetComponent<MoveObject>();
+    }
 
     private void Update()
     {
@@ -17,15 +23,12 @@ public class SpeechRecognition : MonoBehaviour
 
     public void GetResponse(string result) {
         _myResponse = result.ToLower();
-        performActions(_myResponse);
+        PerformActions(_myResponse);
     }
 
-    private bool isMovementCommand(string phrase) {
-        if (phrase.Contains("move") || phrase.Contains("face") || phrase.Contains("go")) {
-            return true;
-        }
-
-        return false;
+    private bool IsMovementCommand(string phrase)
+    {
+        return phrase.Contains("move") || phrase.Contains("face") || phrase.Contains("go");
     }
 
     private Vector3? getDirection(string phrase) {
@@ -49,38 +52,36 @@ public class SpeechRecognition : MonoBehaviour
     }
 
     private GridCoord? getGridPosition(string phrase) {
-        string pattern = @"[a-z]( )?(\d+)"; // Letter Number with optional space
-        Match coordMatch = Regex.Match(phrase, pattern);
-        if (coordMatch.Success) {
-            char x = coordMatch.Value[0];
-            Match number = Regex.Match(coordMatch.Value, @"(\d+)");
-            int y = int.Parse(number.Value);
+        Match coordMatch = Regex.Match(phrase, @"[a-z]( )?(\d+)"); // Letter Number with optional space
+        
+        if (!coordMatch.Success) return null;
+        
+        Match number = Regex.Match(coordMatch.Value, @"(\d+)");
+        char x = coordMatch.Value[0];
+        int y = int.Parse(number.Value);
 
-            return new GridCoord(x, y);
-        }
-
-        return null;
+        return new GridCoord(x, y);
     }
 
-    private void performActions(string phrase) {
-        if (isMovementCommand(phrase)) {
+    private void PerformActions(string phrase) {
+        if (IsMovementCommand(phrase)) {
             Vector3? direction = getDirection(phrase);
             if (direction != null) {
-                player.GetComponent<MoveObject>().setDirection((Vector3) direction);
+                _moveObject.SetDirection((Vector3) direction);
             } else {
                 GridCoord? position = getGridPosition(phrase);
                 if (position != null) {
-                    player.GetComponent<MoveObject>().setDirection((GridCoord) position);
+                    _moveObject.SetDirection((GridCoord) position);
                 }
             }
         }
 
         if (phrase.Contains("stop")) {
-            player.GetComponent<MoveObject>().setSpeed(0);
+            _moveObject.SetSpeed(0);
         }
 
         if (phrase.Contains("go") || phrase.Contains("move")) {
-            player.GetComponent<MoveObject>().setSpeed(2.5f);
+            _moveObject.SetSpeed(2.5f);
         }
     }
 

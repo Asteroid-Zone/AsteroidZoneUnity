@@ -4,48 +4,44 @@ using UnityEngine;
 public class MoveObject : MonoBehaviour {
 
     // TODO change to Vector2?
-    private Vector3 direction;
-    private float speed = 0;
+    private Vector3 _direction;
+    private float _speed;
 
-    private Vector3 destination = Vector3.positiveInfinity;
+    private Vector3 _destination = Vector3.positiveInfinity;
 
     private void Start() {
-        direction = transform.rotation.eulerAngles;
-        updateRotation();
+        _direction = transform.rotation.eulerAngles;
+        UpdateRotation();
     }
 
     private void Update() {
-        if (!hasReachedDestination()) {
-            transform.Translate(direction * (Time.deltaTime) * speed, Space.World);
+        if (!HasReachedDestination()) {
+            transform.Translate((Time.deltaTime * _speed) * _direction, Space.World);
         }
     }
 
-    private bool hasReachedDestination() {
-        if (Vector3.Distance(transform.position, destination) < 0.2) {
-            return true;
-        }
-
-        return false;
+    private bool HasReachedDestination()
+    {
+        return Vector3.Distance(transform.position, _destination) < 0.2;
     }
 
-    private void updateRotation() {
-        transform.localRotation = Quaternion.LookRotation(direction);
+    private void UpdateRotation() {
+        transform.localRotation = Quaternion.LookRotation(_direction);
     }
     
-    public void setDirection(Vector3 direction) {
-        this.direction = direction;
-        destination = Vector3.positiveInfinity;
-        updateRotation();
+    public void SetDirection(Vector3 newDirection) {
+        _direction = newDirection;
+        _destination = Vector3.positiveInfinity;
+        UpdateRotation();
     }
 
-    public void setDirection(GridCoord position) {
-        this.direction = Vector3.Normalize(position.getVector() - transform.position);
-        destination = position.getVector();
-        updateRotation();
+    public void SetDirection(GridCoord position) {
+        _direction = Vector3.Normalize(position.getVector() - transform.position);
+        _destination = position.getVector();
+        UpdateRotation();
     }
 
-    public void setSpeed(float speed) {
-        this.speed = speed;
+    public void SetSpeed(float newSpeed) {
+        _speed = newSpeed;
     }
-
 }
