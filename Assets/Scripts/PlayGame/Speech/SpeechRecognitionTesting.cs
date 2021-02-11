@@ -5,7 +5,6 @@ public class SpeechRecognitionTesting : MonoBehaviour
 
     public SpeechRecognition speechRecognition;
 
-    // Update is called once per frame
     void Update()
     {
         if (Input.GetKey(KeyCode.W)) { // Face north and start moving

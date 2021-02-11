@@ -20,8 +20,7 @@ public class MoveObject : MonoBehaviour {
         }
     }
 
-    private bool HasReachedDestination()
-    {
+    private bool HasReachedDestination() {
         return Vector3.Distance(transform.position, _destination) < 0.2;
     }
 
