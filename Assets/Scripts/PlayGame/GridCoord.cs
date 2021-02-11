@@ -9,7 +9,7 @@ namespace Assets.Scripts.PlayGame {
         private int y { get; }
 
         public GridCoord(char x, int y) {
-            this.x = x - 97;
+            this.x = x - 97; // -97 to convert A to 0, B to 1, etc.
             this.y = y;
         }
 
@@ -23,7 +23,7 @@ namespace Assets.Scripts.PlayGame {
 
         // Returns the grid coordinate with a y value of 0
         // TODO change to Vector2?
-        public Vector3 getVector() {
+        public Vector3 GetWorldVector() {
             return new Vector3(getWorldX(), 0, getWorldY());
         }
 
