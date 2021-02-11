@@ -1,5 +1,5 @@
-﻿using Assets.Scripts.PlayGame;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
+using Assets.Scripts.PlayGame;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,6 +10,7 @@ public class SpeechRecognition : MonoBehaviour
 
     public GameObject player;
     private MoveObject _moveObject;
+    public GameObject pingManager;
 
     private void Start() {
         _moveObject = player.GetComponent<MoveObject>();
@@ -65,14 +66,23 @@ public class SpeechRecognition : MonoBehaviour
 
     private void PerformActions(string phrase) {
         if (IsMovementCommand(phrase)) {
+            // Check if phrase contains a direction
             Vector3? direction = getDirection(phrase);
-            if (direction != null) { // If phrase contains a direction
+            if (direction != null) {
                 _moveObject.SetDirection((Vector3) direction);
-            } else {
-                GridCoord? position = getGridPosition(phrase);
-                if (position != null) { // If phrase contains a grid coordinate
-                    _moveObject.SetDirection((GridCoord) position);
-                }
+            }
+            
+            // Check if phrase contains a grid coordinate
+            GridCoord? position = getGridPosition(phrase);
+            if (position != null)
+            {
+                GridCoord coord = (GridCoord) position;
+                _moveObject.SetDestination(coord.GetWorldVector());
+            }
+            
+            // Check if phrase contains ping
+            if (phrase.Contains("ping")) {
+                _moveObject.SetDestination(pingManager.GetComponent<PingManager>().GetPing().GetPositionVector());
             }
         }
 

@@ -31,5 +31,9 @@ public class SpeechRecognitionTesting : MonoBehaviour
         if (Input.GetKey(KeyCode.R)) { // Move towards Grid(C, 6)
             speechRecognition.GetResponse("go to C6");
         }
+        
+        if (Input.GetKey(KeyCode.F)) { // Move towards ping
+            speechRecognition.GetResponse("go to ping");
+        }
     }
 }

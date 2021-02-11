@@ -34,9 +34,9 @@ public class MoveObject : MonoBehaviour {
         UpdateRotation();
     }
 
-    public void SetDirection(GridCoord position) {
-        _direction = Vector3.Normalize(position.GetWorldVector() - transform.position);
-        _destination = position.GetWorldVector();
+    public void SetDestination(Vector3 destination) {
+        _direction = Vector3.Normalize(destination - transform.position);
+        _destination = destination;
         UpdateRotation();
     }
 
