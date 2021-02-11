@@ -16,6 +16,10 @@ namespace Assets.Scripts.PlayGame {
 
         public void SetPing(int x, int z, PingType type) {
             _ping = new Ping(x, z, type);
+            transform.position = _ping.GetPositionVector();
+
+            // Hide ping if type is None
+            transform.gameObject.SetActive(_ping.GetPingType() != PingType.None);
         }
 
     }

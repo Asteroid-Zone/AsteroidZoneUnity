@@ -10,10 +10,13 @@ public class SpeechRecognition : MonoBehaviour
 
     public GameObject player;
     private MoveObject _moveObject;
-    public GameObject pingManager;
-
+    
+    public GameObject ping;
+    private PingManager _pingManager;
+    
     private void Start() {
         _moveObject = player.GetComponent<MoveObject>();
+        _pingManager = ping.GetComponent<PingManager>();
     }
 
     private void Update() {
@@ -71,7 +74,7 @@ public class SpeechRecognition : MonoBehaviour
             _moveObject.SetDirection((Vector3) direction);
             return;
         }
-            
+        
         // Check if phrase contains a grid coordinate
         GridCoord? position = getGridPosition(phrase);
         if (position != null)
@@ -80,11 +83,12 @@ public class SpeechRecognition : MonoBehaviour
             _moveObject.SetDestination(coord.GetWorldVector());
             return;
         }
-            
+        
         // Check if phrase contains ping
         if (phrase.Contains("ping")) {
-            _moveObject.SetDestination(pingManager.GetComponent<PingManager>().GetPing().GetPositionVector());
-            return;
+            if (_pingManager.GetPing().GetPingType() != PingType.None) { // Only move to ping if theres an active ping
+                _moveObject.SetDestination(_pingManager.GetPing().GetPositionVector());
+            }
         }
     }
     
