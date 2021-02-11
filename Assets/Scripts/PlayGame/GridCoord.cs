@@ -14,11 +14,11 @@ namespace Assets.Scripts.PlayGame {
         }
 
         public int getWorldX() {
-            return x * gridSize;
+            return (x * gridSize) + (gridSize / 2);
         }
 
         public int getWorldY() {
-            return y * gridSize;
+            return (y * gridSize) + (gridSize / 2);
         }
 
         // Returns the grid coordinate with a y value of 0
