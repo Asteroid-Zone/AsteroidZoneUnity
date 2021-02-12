@@ -5,21 +5,20 @@ namespace PlayGame.Movement {
 
         // TODO change to Vector2?
         private Vector3 _direction;
-        private float _speed;
 
-        private float _maxSpeed;
+        private PlayerData _playerData;
 
         private Vector3 _destination = Vector3.positiveInfinity;
 
         private void Start() {
             _direction = transform.rotation.eulerAngles;
-            _maxSpeed = GetComponent<PlayerData>().GetSpeed();
+            _playerData = GetComponent<PlayerData>();
             UpdateRotation();
         }
 
         private void Update() {
             if (!HasReachedDestination()) {
-                transform.Translate((Time.deltaTime * _speed) * _direction, Space.World);
+                transform.Translate((Time.deltaTime * _playerData.GetSpeed()) * _direction, Space.World);
             }
         }
 
@@ -44,8 +43,8 @@ namespace PlayGame.Movement {
         }
 
         // Sets the current speed to a percentage of the players maximum speed
-        public void SetSpeed(float maxSpeedPercentage) {
-            _speed = _maxSpeed * maxSpeedPercentage;
+        public void SetSpeed(float fraction) {
+            _playerData.SetSpeed(fraction);
         }
     }
 }

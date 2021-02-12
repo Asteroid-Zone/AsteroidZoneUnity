@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class DisplayPlayerHealth : MonoBehaviour {
+public class DisplayPlayerSpeed : MonoBehaviour {
     
     public GameObject player;
 
@@ -14,6 +14,6 @@ public class DisplayPlayerHealth : MonoBehaviour {
     }
 
     private void Update() {
-        _text.text = "Health: " + _playerData.GetHealth() + "/" + _playerData.GetMaxHealth();
+        _text.text = "Speed: " + _playerData.GetSpeed() + "/" + _playerData.GetMaxSpeed();
     }
 }
