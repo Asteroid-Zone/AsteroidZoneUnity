@@ -30,5 +30,16 @@ namespace PlayGame
                 }
             }
         }
+        
+        // Helper function that, given coordinates on the grid, returns the centre of it in normal 3D space
+        // e.g: (0,0) is (5, 0, 5)
+        public Vector3 GridToGlobalCoord(Vector2 gridCoord)
+        {
+            Vector3 globalCoord;
+            globalCoord.y = 0;
+            globalCoord.x = (CellSize / 2) + (gridCoord.x * CellSize);
+            globalCoord.z = (CellSize / 2) + (gridCoord.y * CellSize);
+            return globalCoord;
+        }
     }
 }
