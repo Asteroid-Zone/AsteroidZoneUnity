@@ -25,4 +25,7 @@ public class PlayerData : MonoBehaviour {
         return _speed;
     }
 
+    public Role GetRole() {
+        return _role;
+    }
 }
