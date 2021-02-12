@@ -11,6 +11,7 @@ namespace PlayGame.Camera
         private Vector3 _prevMousePos = new Vector3(255f, 255f, 255f);
         private GameObject _focusPoint;
         private UnityEngine.Camera _camera;
+        private GameObject _trackingObject;
 
         private void Start()
         {
@@ -31,15 +32,9 @@ namespace PlayGame.Camera
 
                 if (Physics.Raycast(ray, out var hit, 1000f))
                 {
-                    // Move the Focus Point game object to be centered on the target
-                    // TODO: See if this can be done nicer
-                    var focusPosition = _focusPoint.transform.position;
-                    var positionDifference = hit.transform.position - focusPosition;
-                    focusPosition += positionDifference;
-                    _focusPoint.transform.position = focusPosition;
-                
-                    // Reposition the camera so that it's at the minimum distance from the new focus point position
-                    camTransform.position = (camTransform.position - focusPosition + positionDifference).normalized * minCamDistance + focusPosition;
+                    // Start tracking the target
+                    _trackingObject = hit.transform.gameObject;
+                    FocusTrackedObject();
                 }
             }
             else if (Input.GetMouseButton(1))
@@ -49,6 +44,9 @@ namespace PlayGame.Camera
             }
             else if (Input.GetMouseButton(2))
             {
+                // Stop tracking
+                _trackingObject = null;
+                
                 // Change camera position if MMB is held (based on mouse movement)
                 var positionChange = -mouseDifference.x * sensitivity * camTransform.right;
                 camTransform.position += positionChange;
@@ -64,7 +62,26 @@ namespace PlayGame.Camera
                     camTransform.position = newPosition;
                 }
             }
+            
+            FocusTrackedObject();
             _prevMousePos = Input.mousePosition;
+        }
+
+        private void FocusTrackedObject()
+        {
+            if (_trackingObject is null) return;
+
+            var camTransform = transform;
+            
+            // Move the Focus Point game object to be centered on the target
+            // TODO: See if this can be done nicer
+            var focusPosition = _focusPoint.transform.position;
+            var positionDifference = _trackingObject.transform.position - focusPosition;
+            focusPosition += positionDifference;
+            _focusPoint.transform.position = focusPosition;
+                
+            // Reposition the camera so that it's at the minimum distance from the new focus point position
+            camTransform.position = (camTransform.position - focusPosition + positionDifference).normalized * minCamDistance + focusPosition;
         }
     }
 }
