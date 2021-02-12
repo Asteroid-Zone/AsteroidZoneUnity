@@ -1,23 +1,26 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class DisplayGridCoordinates : MonoBehaviour
+namespace PlayGame.UI
 {
-    public Transform target;
-    private Text _text;
-    public int cellSize = 10;
-
-    private void Start()
+    public class DisplayGridCoordinates : MonoBehaviour
     {
-        _text = GetComponent<Text>();
-    }
+        public Transform target;
+        private Text _text;
+        public int cellSize = 10;
 
-    private void Update()
-    {
-        // Get the coordinates of the target
-        var coordinates = target.position;
+        private void Start()
+        {
+            _text = GetComponent<Text>();
+        }
 
-        // Display the coordinates of the target rounded to 2 d.p.
-        _text.text = $"({(int)coordinates.x/cellSize % cellSize}, {(int)coordinates.z/cellSize % cellSize})";
+        private void Update()
+        {
+            // Get the coordinates of the target
+            var coordinates = target.position;
+
+            // Display the coordinates of the target rounded to 2 d.p.
+            _text.text = $"({(int)coordinates.x/cellSize % cellSize}, {(int)coordinates.z/cellSize % cellSize})";
+        }
     }
 }

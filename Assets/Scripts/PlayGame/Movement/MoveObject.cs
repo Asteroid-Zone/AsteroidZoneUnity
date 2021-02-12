@@ -26,18 +26,19 @@ namespace PlayGame.Movement {
             return Vector3.Distance(transform.position, _destination) < 0.2;
         }
 
+        // Turn to face the direction the player is moving
         private void UpdateRotation() {
             transform.localRotation = Quaternion.LookRotation(_direction);
         }
     
         public void SetDirection(Vector3 newDirection) {
             _direction = newDirection;
-            _destination = Vector3.positiveInfinity;
+            _destination = Vector3.positiveInfinity; // Player keeps moving infinitely
             UpdateRotation();
         }
 
         public void SetDestination(Vector3 destination) {
-            _direction = Vector3.Normalize(destination - transform.position);
+            _direction = Vector3.Normalize(destination - transform.position); // Get the direction vector to the destination
             _destination = destination;
             UpdateRotation();
         }

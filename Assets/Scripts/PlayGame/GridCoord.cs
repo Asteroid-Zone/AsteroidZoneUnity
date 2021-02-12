@@ -1,24 +1,24 @@
 ﻿using UnityEngine;
 
-namespace Assets.Scripts.PlayGame {
+namespace PlayGame {
     public readonly struct GridCoord {
 
-        private const int gridSize = 10;
+        private const int GridSize = 10;
 
-        private int x { get; }
-        private int z { get; }
+        private readonly int _x;
+        private readonly int _z;
 
         public GridCoord(char x, int z) {
-            this.x = x - 97; // -97 to convert A to 0, B to 1, etc.
-            this.z = z;
+            _x = x - 97; // -97 to convert A to 0, B to 1, etc.
+            _z = z;
         }
 
-        public int getWorldX() {
-            return (x * gridSize) + (gridSize / 2);
+        private int getWorldX() {
+            return (_x * GridSize) + (GridSize / 2);
         }
 
-        public int getWorldZ() {
-            return (z * gridSize) + (gridSize / 2);
+        private int getWorldZ() {
+            return (_z * GridSize) + (GridSize / 2);
         }
 
         // Returns the grid coordinate with a y value of 0

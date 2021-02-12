@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Assets.Scripts.PlayGame {
+namespace PlayGame {
     
     public class PingManager : MonoBehaviour{
 

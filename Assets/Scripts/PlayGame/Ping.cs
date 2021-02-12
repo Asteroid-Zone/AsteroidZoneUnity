@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Assets.Scripts.PlayGame {
+namespace PlayGame {
 
     public enum PingType {
         None,
@@ -8,11 +8,11 @@ namespace Assets.Scripts.PlayGame {
         Pirate
     }
     
-    public struct Ping {
+    public readonly struct Ping {
 
-        private GridCoord _gridCoord;
+        private readonly GridCoord _gridCoord;
 
-        private PingType _type;
+        private readonly PingType _type;
         
         public Ping(char x, int z, PingType type) {
             _gridCoord = new GridCoord(x, z);

@@ -1,9 +1,7 @@
 ﻿using System.Text.RegularExpressions;
-using Assets.Scripts.PlayGame;
 using PlayGame.Movement;
 using UnityEngine;
 using UnityEngine.UI;
-using Ping = Assets.Scripts.PlayGame.Ping;
 
 namespace PlayGame.Speech
 {
@@ -40,28 +38,17 @@ namespace PlayGame.Speech
 
         // Returns the direction vector or null
         private static Vector3? GetDirection(string phrase) {
-            if (phrase.Contains("north")) {
-                return Vector3.forward;
-            }
-
-            if (phrase.Contains("south")) {
-                return Vector3.back;
-            }
-
-            if (phrase.Contains("west")) {
-                return Vector3.left;
-            }
-
-            if (phrase.Contains("east")) {
-                return Vector3.right;
-            }
+            if (phrase.Contains("north")) return Vector3.forward;
+            if (phrase.Contains("south")) return Vector3.back;
+            if (phrase.Contains("west")) return Vector3.left;
+            if (phrase.Contains("east")) return Vector3.right;
 
             return null;
         }
 
         // Gets a grid coordinate from the input phrase, if no grid coordinate is found it returns null
         private static GridCoord? GetGridPosition(string phrase) {
-            Match coordMatch = Regex.Match(phrase, @"[a-z]( )?(\d+)"); // Letter Number with optional space
+            Match coordMatch = Regex.Match(phrase, @"[a-z]( )?(\d+)"); // Letter followed by one or more numbers with an optional space
         
             if (!coordMatch.Success) return null;
         
@@ -72,6 +59,7 @@ namespace PlayGame.Speech
             return new GridCoord(x, z);
         }
 
+        // Gets the ping type from the input phrase
         private static PingType? GetPingType(string phrase) {
             if (phrase.Contains("none")) return PingType.None;
             if (phrase.Contains("asteroid")) return PingType.Asteroid;
@@ -80,6 +68,7 @@ namespace PlayGame.Speech
             return null;
         }
 
+        // Gets a Ping from the input phrase
         private static Ping? GetPing(string phrase) {
             PingType? type = GetPingType(phrase);
             if (type == null) return null;
@@ -120,7 +109,7 @@ namespace PlayGame.Speech
                 PerformMovement(phrase);
             } else if (phrase.Contains("ping")) { // Check for create/delete ping commands
                 if (phrase.Contains("remove") || phrase.Contains("delete")) {
-                    _pingManager.SetPing('A', 0, PingType.None);
+                    _pingManager.SetPing('A', 0, PingType.None); // Set the ping to be inactive (PingType = None)
                 } else {
                     if (_playerData.GetRole() == Role.StationCommander) { // Only let the station commander create pings
                         Ping? newPing = GetPing(phrase);
