@@ -1,24 +1,27 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MainMenuFunction : MonoBehaviour
+namespace MainMenu
 {
-    public AudioSource buttonPress;
-
-    public void PlayGame()
+    public class MainMenuFunction : MonoBehaviour
     {
-        buttonPress.Play();
-        SceneManager.LoadScene("PlayGame");
-    }
+        public AudioSource buttonPress;
 
-    public void QuitGame()
-    {
-        Application.Quit();
-    }
+        public void PlayGame()
+        {
+            buttonPress.Play();
+            SceneManager.LoadScene("PlayGame");
+        }
 
-    public void ViewCredits()
-    {
-        buttonPress.Play();
-        SceneManager.LoadScene("Credits");
+        public void QuitGame()
+        {
+            Application.Quit();
+        }
+
+        public void ViewCredits()
+        {
+            buttonPress.Play();
+            SceneManager.LoadScene("Credits");
+        }
     }
 }

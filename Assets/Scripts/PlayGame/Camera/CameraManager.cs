@@ -1,19 +1,22 @@
 ﻿using UnityEngine;
 
-public class CameraManager : MonoBehaviour
+namespace PlayGame.Camera
 {
-    public Camera followCamera, tacticalCamera;
-
-    private void Start()
+    public class CameraManager : MonoBehaviour
     {
-        followCamera.enabled = true;
-        tacticalCamera.enabled = false;
-    }
+        public UnityEngine.Camera followCamera, tacticalCamera;
 
-    private void Update()
-    {
-        if (!Input.GetKeyDown(KeyCode.P)) return;
-        followCamera.enabled = !followCamera.enabled;
-        tacticalCamera.enabled = !tacticalCamera.enabled;
+        private void Start()
+        {
+            followCamera.enabled = true;
+            tacticalCamera.enabled = false;
+        }
+
+        private void Update()
+        {
+            if (!Input.GetKeyDown(KeyCode.P)) return;
+            followCamera.enabled = !followCamera.enabled;
+            tacticalCamera.enabled = !tacticalCamera.enabled;
+        }
     }
 }

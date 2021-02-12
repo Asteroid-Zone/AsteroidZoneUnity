@@ -1,22 +1,25 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class DisplayUnityCoordinates : MonoBehaviour
+namespace PlayGame.UI
 {
-    public Transform target;
-    private Text _text;
-
-    private void Start()
+    public class DisplayUnityCoordinates : MonoBehaviour
     {
-        _text = GetComponent<Text>();
-    }
+        public Transform target;
+        private Text _text;
 
-    private void Update()
-    {
-        // Get the coordinates of the target
-        var coordinates = target.position;
+        private void Start()
+        {
+            _text = GetComponent<Text>();
+        }
 
-        // Display the coordinates of the target rounded to 2 d.p.
-        _text.text = $"({coordinates.x:0.##}, {coordinates.y:0.##}, {coordinates.z:0.##})";
+        private void Update()
+        {
+            // Get the coordinates of the target
+            var coordinates = target.position;
+
+            // Display the coordinates of the target rounded to 2 d.p.
+            _text.text = $"({coordinates.x:0.##}, {coordinates.y:0.##}, {coordinates.z:0.##})";
+        }
     }
 }
