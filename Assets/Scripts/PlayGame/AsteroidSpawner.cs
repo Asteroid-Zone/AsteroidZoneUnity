@@ -42,6 +42,7 @@ public class AsteroidSpawner : MonoBehaviour
         randomGridCoord.y = Random.Range(0, height);
         var randomGlobalCoord = gridManager.GridToGlobalCoord(randomGridCoord);
         print("Spawning asteroid at X=" + randomGridCoord.x + ", Y=" + randomGridCoord.y);
-        Instantiate(Asteroid, randomGlobalCoord, Quaternion.identity);
+        var newAsteroid = Instantiate(Asteroid, randomGlobalCoord, Quaternion.identity);
+        newAsteroid.transform.parent = gameObject.transform;
     }
 }
