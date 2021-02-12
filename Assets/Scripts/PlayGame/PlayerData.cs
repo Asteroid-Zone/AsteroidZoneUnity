@@ -21,4 +21,8 @@ public class PlayerData : MonoBehaviour {
         _speed = 2.5f;
     }
 
+    public float GetSpeed() {
+        return _speed;
+    }
+
 }

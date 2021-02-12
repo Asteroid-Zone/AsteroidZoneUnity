@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using Assets.Scripts.PlayGame;
+using PlayGame.Movement;
 using UnityEngine;
 using UnityEngine.UI;
 using Ping = Assets.Scripts.PlayGame.Ping;
@@ -128,7 +129,7 @@ public class SpeechRecognition : MonoBehaviour
         }
 
         if (phrase.Contains("go") || phrase.Contains("move")) {
-            _moveObject.SetSpeed(2.5f);
+            _moveObject.SetSpeed(1);
         }
     }
 
