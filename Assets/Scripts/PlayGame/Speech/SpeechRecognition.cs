@@ -1,7 +1,9 @@
 ﻿using System.Text.RegularExpressions;
 using PlayGame.Movement;
+using PlayGame.PingFunctionality;
 using UnityEngine;
 using UnityEngine.UI;
+using Ping = PlayGame.PingFunctionality.Ping;
 
 namespace PlayGame.Speech
 {

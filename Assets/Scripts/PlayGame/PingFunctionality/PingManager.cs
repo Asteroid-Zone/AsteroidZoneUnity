@@ -1,10 +1,9 @@
 ﻿using System.Collections;
-using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
-namespace PlayGame {
-    
+namespace PlayGame.PingFunctionality {
 
     public class PingManager : MonoBehaviour{
         private const int PingTimeInSeconds = 10;
@@ -71,6 +70,7 @@ namespace PlayGame {
                 pingObject.transform.localScale = new Vector3(4,4,4);
                 pingObject.layer = LayerMask.NameToLayer("Minimap");
                 pingObject.AddComponent<Blink>();
+                pingObject.GetComponent<BoxCollider>().enabled = false;
             }
             
             return pingObject;

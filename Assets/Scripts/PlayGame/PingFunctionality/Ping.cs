@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace PlayGame {
+namespace PlayGame.PingFunctionality {
 
     public enum PingType {
         None,
