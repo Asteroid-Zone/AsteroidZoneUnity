@@ -11,7 +11,7 @@ namespace PlayGame.PingFunctionality {
         private Dictionary<Ping, GameObject> _pings;
 
         private void Start() {
-            //SetPing('A', 0, PingType.None);
+            // Initialise dictionary of pings
             _pings = new Dictionary<Ping, GameObject>();
         }
 
@@ -24,17 +24,22 @@ namespace PlayGame.PingFunctionality {
                 RemovePing(sameLocPing.Key);
             }
 
+            // Create a new object for the new ping at the specific position on the map
             GameObject pingObject = CreateObjectForPing(ping);
             _pings[ping] = pingObject;
-            
-            pingObject.transform.position = ping.GetPositionVector();
-            
+
             // Remove the new ping after a specific amount of time
             StartCoroutine(RemovePingAfterTime(ping));
         }
 
+        public Dictionary<Ping, GameObject> GetPings()
+        {
+            return _pings;
+        }
+
         private IEnumerator RemovePingAfterTime(Ping ping)
         {
+            // Wait for a specific amount of time and remove the ping (including the game object)
             yield return new WaitForSeconds(PingTimeInSeconds);
             RemovePing(ping);
         }
@@ -43,6 +48,7 @@ namespace PlayGame.PingFunctionality {
         {
             if (_pings.ContainsKey(ping))
             {
+                // Remove ping game object
                 DestroyImmediate(_pings[ping]);
             }
             
@@ -52,6 +58,8 @@ namespace PlayGame.PingFunctionality {
         private GameObject CreateObjectForPing(Ping ping)
         {
             GameObject pingObject;
+            
+            // Create a game object according to the ping type
             switch (ping.GetPingType())
             {
                 case PingType.Asteroid:
@@ -67,14 +75,15 @@ namespace PlayGame.PingFunctionality {
 
             if (null != pingObject)
             {
+                // Set the properties of the ping game object
                 pingObject.transform.localScale = new Vector3(4,4,4);
                 pingObject.layer = LayerMask.NameToLayer("Minimap");
                 pingObject.AddComponent<Blink>();
-                pingObject.GetComponent<BoxCollider>().enabled = false;
+                pingObject.GetComponent<Collider>().enabled = false;
+                pingObject.transform.position = ping.GetPositionVector();
             }
             
             return pingObject;
         }
-
     }
 }

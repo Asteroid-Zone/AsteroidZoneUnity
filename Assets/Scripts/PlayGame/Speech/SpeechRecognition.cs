@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Linq;
+using System.Text.RegularExpressions;
 using PlayGame.Movement;
 using PlayGame.PingFunctionality;
 using UnityEngine;
@@ -99,18 +100,25 @@ namespace PlayGame.Speech
             }
         
             // Check if phrase contains ping
-            if (phrase.Contains("ping")) {
-                /*TODO: fix
-                 if (_pingManager.GetPing().GetPingType() != PingType.None) { // Only move to ping if theres an active ping
-                    _moveObject.SetDestination(_pingManager.GetPing().GetPositionVector());
-                }*/
+            if (phrase.Contains("ping"))
+            {
+                // Check whether there is only one ping and if so go to the ping
+                var pings = _pingManager.GetPings();
+                if (pings.Count == 1)
+                {
+                    var onlyPing = pings.Keys.ToList()[0];
+                    if(onlyPing.GetPingType() != PingType.None) { // Only move to ping if theres an active ping
+                        _moveObject.SetDestination(onlyPing.GetPositionVector());
+                    }
+                }
+                     
             }
         }
     
         private void PerformActions(string phrase) {
             if (IsMovementCommand(phrase)) {
                 PerformMovement(phrase);
-            } else if (phrase.Contains("ping") && _playerData.GetRole() == Role.StationCommander) { // Check for create/delete ping commands
+            } else if (phrase.Contains("ping") && _playerData.GetRole() == Role.StationCommander) { // Check for create ping commands
                 // Only let the station commander create pings
                 Ping newPing = GetPing(phrase);
                 if (newPing != null) _pingManager.AddPing(newPing);
