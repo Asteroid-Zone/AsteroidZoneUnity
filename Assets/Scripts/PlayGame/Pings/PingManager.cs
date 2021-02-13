@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace PlayGame.PingFunctionality {
+namespace PlayGame.Pings {
 
     public class PingManager : MonoBehaviour{
         private const int PingTimeInSeconds = 10;
@@ -27,6 +27,8 @@ namespace PlayGame.PingFunctionality {
             // Create a new object for the new ping at the specific position on the map
             GameObject pingObject = CreateObjectForPing(ping);
             _pings[ping] = pingObject;
+            
+            EventsManager.AddMessageToQueue($"Added ping at {ping.GetGridCoord().ToString()} of type {ping.GetPingType().ToString()}");
 
             // Remove the new ping after a specific amount of time
             StartCoroutine(RemovePingAfterTime(ping));
@@ -80,7 +82,7 @@ namespace PlayGame.PingFunctionality {
                 pingObject.layer = LayerMask.NameToLayer("Minimap");
                 pingObject.AddComponent<Blink>();
                 pingObject.GetComponent<Collider>().enabled = false;
-                pingObject.transform.position = ping.GetPositionVector();
+                pingObject.transform.position = ping.GetPositionVector() + new Vector3(0, 5, 0);
             }
             
             return pingObject;

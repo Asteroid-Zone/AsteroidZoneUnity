@@ -33,5 +33,15 @@ namespace PlayGame {
         {
             return _x == other._x && _z == other._z;
         }
+
+        private string GetXInChar()
+        {
+            return ((char) (_x + 97)).ToString().ToUpper();
+        }
+
+        public override string ToString()
+        {
+            return $"({GetXInChar()},{_z})";
+        }
     }
 }

@@ -1,10 +1,10 @@
 ﻿using System.Linq;
 using System.Text.RegularExpressions;
 using PlayGame.Movement;
-using PlayGame.PingFunctionality;
+using PlayGame.Pings;
 using UnityEngine;
 using UnityEngine.UI;
-using Ping = PlayGame.PingFunctionality.Ping;
+using Ping = PlayGame.Pings.Ping;
 
 namespace PlayGame.Speech
 {
@@ -103,6 +103,7 @@ namespace PlayGame.Speech
             if (phrase.Contains("ping"))
             {
                 // Check whether there is only one ping and if so go to the ping
+                // TODO: somehow number pings so that the player can go to a specific one
                 var pings = _pingManager.GetPings();
                 if (pings.Count == 1)
                 {
