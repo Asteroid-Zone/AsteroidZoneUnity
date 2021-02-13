@@ -69,7 +69,7 @@ namespace PlayGame.Camera
 
         private void FocusTrackedObject()
         {
-            if (_trackingObject is null) return;
+            if (_trackingObject == null) return;
 
             var camTransform = transform;
             

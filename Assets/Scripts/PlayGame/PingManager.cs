@@ -1,8 +1,7 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace PlayGame {
     
@@ -32,8 +31,13 @@ namespace PlayGame {
             pingObject.transform.position = ping.GetPositionVector();
             
             // Remove the new ping after a specific amount of time
-            Task.Factory.StartNew(() => Thread.Sleep(PingTimeInSeconds * 1000))
-                .ContinueWith(t => RemovePing(ping));
+            StartCoroutine(RemovePingAfterTime(ping));
+        }
+
+        private IEnumerator RemovePingAfterTime(Ping ping)
+        {
+            yield return new WaitForSeconds(PingTimeInSeconds);
+            RemovePing(ping);
         }
 
         private void RemovePing(Ping ping)
@@ -46,7 +50,7 @@ namespace PlayGame {
             _pings.Remove(ping);
         }
 
-        private static GameObject CreateObjectForPing(Ping ping)
+        private GameObject CreateObjectForPing(Ping ping)
         {
             GameObject pingObject;
             switch (ping.GetPingType())
@@ -62,10 +66,11 @@ namespace PlayGame {
                     break;
             }
 
-            if (pingObject)
+            if (null != pingObject)
             {
                 pingObject.transform.localScale = new Vector3(4,4,4);
                 pingObject.layer = LayerMask.NameToLayer("Minimap");
+                pingObject.AddComponent<Blink>();
             }
             
             return pingObject;
