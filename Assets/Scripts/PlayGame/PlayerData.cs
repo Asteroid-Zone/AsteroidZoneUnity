@@ -12,6 +12,8 @@ namespace PlayGame
     public class PlayerData : MonoBehaviour {
 
         private Role _role;
+        
+        public int AutoProp { get; set; }
     
         private int _maxHealth;
         private int _health;

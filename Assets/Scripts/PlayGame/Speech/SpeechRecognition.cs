@@ -69,7 +69,7 @@ namespace PlayGame.Speech
         }
 
         // Gets a Ping from the input phrase
-        private static Ping? GetPing(string phrase) {
+        private static Ping GetPing(string phrase) {
             PingType? type = GetPingType(phrase);
             if (type == null) return null;
 
@@ -98,24 +98,20 @@ namespace PlayGame.Speech
         
             // Check if phrase contains ping
             if (phrase.Contains("ping")) {
-                if (_pingManager.GetPing().GetPingType() != PingType.None) { // Only move to ping if theres an active ping
+                /*TODO: fix
+                 if (_pingManager.GetPing().GetPingType() != PingType.None) { // Only move to ping if theres an active ping
                     _moveObject.SetDestination(_pingManager.GetPing().GetPositionVector());
-                }
+                }*/
             }
         }
     
         private void PerformActions(string phrase) {
             if (IsMovementCommand(phrase)) {
                 PerformMovement(phrase);
-            } else if (phrase.Contains("ping")) { // Check for create/delete ping commands
-                if (phrase.Contains("remove") || phrase.Contains("delete")) {
-                    _pingManager.SetPing('A', 0, PingType.None); // Set the ping to be inactive (PingType = None)
-                } else {
-                    if (_playerData.GetRole() == Role.StationCommander) { // Only let the station commander create pings
-                        Ping? newPing = GetPing(phrase);
-                        if (newPing != null) _pingManager.SetPing((Ping) newPing);
-                    }
-                }
+            } else if (phrase.Contains("ping") && _playerData.GetRole() == Role.StationCommander) { // Check for create/delete ping commands
+                // Only let the station commander create pings
+                Ping newPing = GetPing(phrase);
+                if (newPing != null) _pingManager.AddPing(newPing);
             }
 
             if (phrase.Contains("stop")) {

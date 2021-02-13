@@ -8,7 +8,7 @@ namespace PlayGame {
         Pirate
     }
     
-    public readonly struct Ping {
+    public class Ping {
 
         private readonly GridCoord _gridCoord;
 
@@ -31,6 +31,11 @@ namespace PlayGame {
 
         public PingType GetPingType() {
             return _type;
+        }
+
+        public GridCoord GetGridCoord()
+        {
+            return _gridCoord;
         }
 
     }

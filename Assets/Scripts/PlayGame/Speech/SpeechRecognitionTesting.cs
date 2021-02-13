@@ -41,6 +41,10 @@ namespace PlayGame.Speech
             if (Input.GetKey(KeyCode.T)) { // Create ping at Grid(C, 4)
                 speechRecognition.GetResponse("ping asteroid at C4");
             }
+            
+            if (Input.GetKey(KeyCode.Y)) { // Create ping at Grid(C, 4)
+                speechRecognition.GetResponse("ping pirate at C4");
+            }
         }
     }
 }

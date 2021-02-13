@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 
 namespace PlayGame {
-    public readonly struct GridCoord {
+    using System;
+
+    public readonly struct GridCoord : IEquatable<GridCoord> {
 
         private const int GridSize = 10;
 
@@ -27,5 +29,9 @@ namespace PlayGame {
             return new Vector3(getWorldX(), 0, getWorldZ());
         }
 
+        public bool Equals(GridCoord other)
+        {
+            return _x == other._x && _z == other._z;
+        }
     }
 }
