@@ -119,7 +119,8 @@ namespace PlayGame.Speech
         private void PerformActions(string phrase) {
             if (IsMovementCommand(phrase)) {
                 PerformMovement(phrase);
-            } else if (phrase.Contains("ping") && _playerData.GetRole() == Role.StationCommander) { // Check for create ping commands
+            } else if (phrase.Contains("pin") && _playerData.GetRole() == Role.StationCommander) { // Check for create ping commands
+                // Note pin only is used because listener often hears pink or pin instead of ping
                 // Only let the station commander create pings
                 Ping newPing = GetPing(phrase);
                 if (newPing != null) _pingManager.AddPing(newPing);
