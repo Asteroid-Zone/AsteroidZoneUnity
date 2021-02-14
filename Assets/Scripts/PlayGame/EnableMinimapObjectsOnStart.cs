@@ -12,7 +12,15 @@ namespace PlayGame
                     as GameObject[] ?? Array.Empty<GameObject>())
                 .Where(o => o.layer == LayerMask.NameToLayer("Minimap"))
                 .ToList()
-                .ForEach(o => o.GetComponent<MeshRenderer>().enabled = true);
+                .ForEach(o =>
+                {
+                    o.GetComponent<MeshRenderer>().enabled = true;
+                    Collider minimapObjCollider = o.GetComponent<BoxCollider>();
+                    if (minimapObjCollider != null)
+                    {
+                        minimapObjCollider.enabled = false;
+                    }
+                });
         }
     }
 }

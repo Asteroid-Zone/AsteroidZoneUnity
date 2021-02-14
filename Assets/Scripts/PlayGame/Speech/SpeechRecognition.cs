@@ -19,7 +19,9 @@ namespace PlayGame.Speech
         public GameObject ping;
         private PingManager _pingManager;
     
-        private void Start() {
+        private void Start()
+        {
+            StartSpeechRecognitionInTheBrowser();
             _moveObject = player.GetComponent<MoveObject>();
             _playerData = player.GetComponent<PlayerData>();
             _pingManager = ping.GetComponent<PingManager>();
@@ -27,6 +29,11 @@ namespace PlayGame.Speech
 
         private void Update() {
             text.text = _myResponse;
+        }
+
+        private void OnDestroy()
+        {
+            StopSpeechRecognitionInTheBrowser();
         }
 
         // Called by javascript when speech is detected
@@ -135,8 +142,12 @@ namespace PlayGame.Speech
             }
         }
 
-        public void StartSpeechRecognitionInTheBrowser() {
-            Application.ExternalCall("startButtonFromUnity3D");
+        private static void StartSpeechRecognitionInTheBrowser() {
+            Application.ExternalCall("startVoiceRecognition");
+        }
+        
+        private static void StopSpeechRecognitionInTheBrowser() {
+            Application.ExternalCall("stopVoiceRecognition");
         }
 
     }
