@@ -8,6 +8,7 @@ namespace PlayGame
         public GameObject gridSquarePrefab;
         public int width;
         public int height;
+        public int totalCells;
 
         private const int CellSize = 10;
 
@@ -52,6 +53,12 @@ namespace PlayGame
             float x = (width / 2f) * CellSize;
             float z = (height / 2f) * CellSize;
             return new Vector3(x, 0, z);
+        }
+
+        // Gets the total number of cells in the grid
+        public int GetTotalCells()
+        {
+            return height * width;
         }
     }
 }
