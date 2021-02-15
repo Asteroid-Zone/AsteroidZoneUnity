@@ -13,6 +13,8 @@ namespace PlayGame.Speech
         private string _myResponse = "...";
 
         public GameObject player;
+        public GameObject spaceStation;
+        private Collider _spaceStationCollider;
         private MoveObject _moveObject;
         private PlayerData _playerData;
     
@@ -25,6 +27,7 @@ namespace PlayGame.Speech
             _moveObject = player.GetComponent<MoveObject>();
             _playerData = player.GetComponent<PlayerData>();
             _pingManager = ping.GetComponent<PingManager>();
+            _spaceStationCollider = spaceStation.GetComponent<Collider>();
         }
 
         private void Update() {
@@ -107,8 +110,7 @@ namespace PlayGame.Speech
             }
         
             // Check if phrase contains ping
-            if (phrase.Contains("ping"))
-            {
+            if (phrase.Contains("ping")) {
                 // Check whether there is only one ping and if so go to the ping
                 // TODO: somehow number pings so that the player can go to a specific one
                 var pings = _pingManager.GetPings();
@@ -119,13 +121,18 @@ namespace PlayGame.Speech
                         _moveObject.SetDestination(onlyPing.GetPositionVector());
                     }
                 }
-                     
+            }
+            
+            // Check if phrase contains station
+            if (phrase.Contains("station")) {
+                _moveObject.SetDestination(spaceStation, _spaceStationCollider);
             }
         }
     
         private void PerformActions(string phrase) {
             if (IsMovementCommand(phrase)) {
                 PerformMovement(phrase);
+                // TODO change back to ping when speech recognition is improved (currently ping isn't detected properly)
             } else if (phrase.Contains("pin") && _playerData.GetRole() == Role.StationCommander) { // Check for create ping commands
                 // Note pin only is used because listener often hears pink or pin instead of ping
                 // Only let the station commander create pings

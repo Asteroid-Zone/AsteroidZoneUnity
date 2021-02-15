@@ -45,6 +45,10 @@ namespace PlayGame.Speech
             if (Input.GetKey(KeyCode.Y)) { // Create ping at Grid(C, 4)
                 speechRecognition.GetResponse("ping pirate at C4");
             }
+            
+            if (Input.GetKey(KeyCode.G)) { // Move towards the space station
+                speechRecognition.GetResponse("go to the space station");
+            }
         }
     }
 }
