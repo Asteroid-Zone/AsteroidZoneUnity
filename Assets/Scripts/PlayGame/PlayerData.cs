@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 namespace PlayGame
 {
@@ -9,7 +10,10 @@ namespace PlayGame
         Researcher
     }
 
-    public class PlayerData : MonoBehaviour {
+    public class PlayerData : MonoBehaviour
+    {
+        private const string PlayerTag = "Player";
+        public static readonly List<GameObject> Players = new List<GameObject>();
 
         private Role _role;
         
@@ -22,6 +26,7 @@ namespace PlayGame
         private float _speed;
 
         private void Start() {
+            Players.AddRange(GameObject.FindGameObjectsWithTag(PlayerTag));
             _role = Role.StationCommander; // TODO assign roles in the menu
         
             _maxHealth = 100; // TODO different stats for different roles
