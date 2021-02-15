@@ -1,13 +1,17 @@
-﻿using PlayGame;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class SpaceStation : MonoBehaviour
+namespace PlayGame
 {
+    public class SpaceStation : MonoBehaviour {
 
-    public GridManager gridManager;
+        public GridManager gridManager;
+
+        private int _stationHealth = 100;
+        private int _stationShields = 100;
     
-    void Start() {
-        transform.position = gridManager.GetGridCentre();
-    }
+        void Start() {
+            transform.position = gridManager.GetGridCentre();
+        }
 
+    }
 }
