@@ -2,7 +2,7 @@
 using System.Linq;
 using UnityEngine;
 
-namespace PlayGame
+namespace PlayGame.UI
 {
     public class EnableMinimapObjectsOnStart : MonoBehaviour
     {

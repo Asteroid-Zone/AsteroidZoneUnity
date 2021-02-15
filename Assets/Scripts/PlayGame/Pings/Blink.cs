@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace PlayGame
+namespace PlayGame.Pings
 {
     public class Blink : MonoBehaviour
     {
