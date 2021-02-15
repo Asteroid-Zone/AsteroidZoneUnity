@@ -75,7 +75,7 @@ namespace PlayGame.Pings {
                     break;
             }
 
-            if (null != pingObject)
+            if (pingObject != null)
             {
                 // Set the properties of the ping game object
                 pingObject.transform.localScale = new Vector3(4,4,4);

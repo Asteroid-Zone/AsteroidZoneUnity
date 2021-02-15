@@ -6,12 +6,14 @@ namespace PlayGame.UI
     public class DisplayGridCoordinates : MonoBehaviour
     {
         public Transform target;
+        public GridManager gridManager;
         private Text _text;
-        public int cellSize = 10;
-
+        private int _cellSize;
+        
         private void Start()
         {
             _text = GetComponent<Text>();
+            _cellSize = gridManager.GetCellSize();
         }
 
         private void Update()
@@ -20,7 +22,7 @@ namespace PlayGame.UI
             var coordinates = target.position;
 
             // Display the coordinates of the target rounded to 2 d.p.
-            _text.text = $"({(int)coordinates.x/cellSize % cellSize}, {(int)coordinates.z/cellSize % cellSize})";
+            _text.text = $"({(int)coordinates.x/_cellSize % _cellSize}, {(int)coordinates.z/_cellSize % _cellSize})";
         }
     }
 }
