@@ -151,9 +151,9 @@ namespace PlayGame.Speech
             }
 
             if (phrase.Contains("deactivate mining laser")) {
-                _miningLaser.EnableMiningLaser();
-            } else if (phrase.Contains("activate mining laser")) {
                 _miningLaser.DisableMiningLaser();
+            } else if (phrase.Contains("activate mining laser")) {
+                _miningLaser.EnableMiningLaser();
             }
         }
 
