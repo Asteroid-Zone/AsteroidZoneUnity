@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 namespace PlayGame {
     public class Asteroid : MonoBehaviour {
@@ -17,13 +18,28 @@ namespace PlayGame {
             _totalResources = Random.Range(25, 100);
         }
 
+        private IEnumerator FadeOutAsteroid() {
+            const float fadeSpeed = 1f;
+            Material material = GetComponent<Renderer>().material;
+            
+            while (material.color.a > 0) {
+                Color c = material.color;
+                float fadeAmount = c.a - (fadeSpeed * Time.deltaTime);
+
+                c = new Color(c.r, c.g, c.b, fadeAmount);
+                material.color = c;
+                yield return null;
+            }
+            Destroy(gameObject);
+        }
+
         public void MineAsteroid() {
             _asteroidHealth -= (int) (MaxHealth * MiningRate);
             float scale = ((MaxScale - MinScale) * ((float) _asteroidHealth / MaxHealth)) + MinScale;
             transform.localScale = new Vector3(scale, scale, scale);
 
             if (_asteroidHealth <= 0) {
-                Destroy(gameObject);
+                StartCoroutine(FadeOutAsteroid());
             }
         }
 
