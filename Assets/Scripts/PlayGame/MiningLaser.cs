@@ -15,12 +15,19 @@ namespace PlayGame {
         private void Update() {
             RaycastHit hit;
             Physics.Raycast(transform.position, transform.forward, out hit);
-
+            
             if (hit.collider) {
                 UpdateLaser((int) hit.distance);
+                if (hit.collider.gameObject.CompareTag("Asteroid")) {
+                    MineAsteroid(hit.collider.gameObject);
+                }
             } else {
                 UpdateLaser(MAXLength);
             }
+        }
+
+        private void MineAsteroid(GameObject asteroid) {
+            Destroy(asteroid);
         }
         
         private void UpdateLaser(int distance) {
