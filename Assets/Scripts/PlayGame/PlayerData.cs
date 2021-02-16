@@ -25,6 +25,8 @@ namespace PlayGame
         private float _maxSpeed;
         private float _speed;
 
+        private int _resources;
+
         private void Start() {
             Players.AddRange(GameObject.FindGameObjectsWithTag(PlayerTag));
             _role = Role.StationCommander; // TODO assign roles in the menu
@@ -34,6 +36,16 @@ namespace PlayGame
         
             _health = _maxHealth;
             _speed = _maxSpeed;
+
+            _resources = 0;
+        }
+
+        public int GetResources() {
+            return _resources;
+        }
+
+        public void AddResources(int resources) {
+            _resources += resources;
         }
 
         public Role GetRole() {

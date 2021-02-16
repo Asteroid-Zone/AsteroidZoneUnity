@@ -3,21 +3,24 @@
 namespace PlayGame {
     public class MiningLaser : MonoBehaviour {
 
+        private PlayerData _playerData;
+        
         public LineRenderer laser;
 
         private const int MiningRange = 50;
-        private const int MiningSpeed = 20; // fastest speed = 0
+        private const int MiningDelay = 20; // Number of frames to wait between mining
 
         private int _lastFrameMined = 0;
 
         private void Start() {
+            _playerData = GetComponent<PlayerData>();
             laser.positionCount = 2;
             laser.enabled = false;
         }
         
         private void Update() {
             RaycastHit hit;
-            Physics.Raycast(transform.position, transform.forward, out hit);
+            Physics.Raycast(transform.position, transform.forward, out hit); // Get the game object collided with
             
             if (hit.collider) {
                 UpdateLaser((int) hit.distance);
@@ -30,8 +33,10 @@ namespace PlayGame {
         }
 
         private void MineAsteroid(GameObject asteroid) {
-            if (Time.frameCount - _lastFrameMined > MiningSpeed) {
-                asteroid.GetComponent<Asteroid>().MineAsteroid();
+            if (Time.frameCount - _lastFrameMined > MiningDelay) {
+                Asteroid asteroidScript = asteroid.GetComponent<Asteroid>();
+                asteroidScript.MineAsteroid();
+                _playerData.AddResources(asteroidScript.GetResources());
                 _lastFrameMined = Time.frameCount;
             }
         }
