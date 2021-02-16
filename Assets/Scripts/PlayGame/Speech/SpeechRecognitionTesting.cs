@@ -49,6 +49,14 @@ namespace PlayGame.Speech
             if (Input.GetKey(KeyCode.G)) { // Move towards the space station
                 speechRecognition.GetResponse("go to the space station");
             }
+
+            if (Input.GetKey(KeyCode.H)) {
+                speechRecognition.GetResponse("activate mining laser");
+            }
+            
+            if (Input.GetKey(KeyCode.J)) {
+                speechRecognition.GetResponse("deactivate mining laser");
+            }
         }
     }
 }
