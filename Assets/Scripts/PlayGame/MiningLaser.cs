@@ -5,7 +5,10 @@ namespace PlayGame {
 
         public LineRenderer laser;
 
-        private const int MAXLength = 50;
+        private const int MiningRange = 50;
+        private const int MiningSpeed = 20; // fastest speed = 0
+
+        private int _lastFrameMined = 0;
 
         private void Start() {
             laser.positionCount = 2;
@@ -22,12 +25,15 @@ namespace PlayGame {
                     MineAsteroid(hit.collider.gameObject);
                 }
             } else {
-                UpdateLaser(MAXLength);
+                UpdateLaser(MiningRange);
             }
         }
 
         private void MineAsteroid(GameObject asteroid) {
-            Destroy(asteroid);
+            if (Time.frameCount - _lastFrameMined > MiningSpeed) {
+                asteroid.GetComponent<Asteroid>().MineAsteroid();
+                _lastFrameMined = Time.frameCount;
+            }
         }
         
         private void UpdateLaser(int distance) {
