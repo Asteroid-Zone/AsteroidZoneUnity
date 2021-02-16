@@ -10,13 +10,11 @@ namespace PlayGame.Pirates
         //public Transform target;
         private NavMeshAgent _agent;
     
-        // Start is called before the first frame update
         private void Start()
         {
             _agent = GetComponent<NavMeshAgent>();
         }
 
-        // Update is called once per frame
         void Update()
         {
             GameObject closestPlayer = null;

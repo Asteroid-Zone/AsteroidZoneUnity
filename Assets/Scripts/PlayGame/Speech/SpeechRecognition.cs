@@ -16,6 +16,7 @@ namespace PlayGame.Speech
         public GameObject spaceStation;
         private Collider _spaceStationCollider;
         private MoveObject _moveObject;
+        private MiningLaser _miningLaser;
         private PlayerData _playerData;
     
         public GameObject ping;
@@ -25,6 +26,7 @@ namespace PlayGame.Speech
         {
             StartSpeechRecognitionInTheBrowser();
             _moveObject = player.GetComponent<MoveObject>();
+            _miningLaser = player.GetComponent<MiningLaser>();
             _playerData = player.GetComponent<PlayerData>();
             _pingManager = ping.GetComponent<PingManager>();
             _spaceStationCollider = spaceStation.GetComponent<Collider>();
@@ -146,6 +148,12 @@ namespace PlayGame.Speech
 
             if (phrase.Contains("go") || phrase.Contains("move")) {
                 _moveObject.SetSpeed(1);
+            }
+
+            if (phrase.Contains("deactivate mining laser")) {
+                _miningLaser.EnableMiningLaser();
+            } else if (phrase.Contains("activate mining laser")) {
+                _miningLaser.DisableMiningLaser();
             }
         }
 
