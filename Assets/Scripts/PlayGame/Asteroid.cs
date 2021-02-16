@@ -8,6 +8,8 @@ namespace PlayGame {
 
         private const float MiningRate = 0.05f;
         private const int MaxHealth = 100;
+        private const float MaxScale = 9f;
+        private const float MinScale = 3f;
 
         private void Start()
         {
@@ -17,6 +19,8 @@ namespace PlayGame {
 
         public void MineAsteroid() {
             _asteroidHealth -= (int) (MaxHealth * MiningRate);
+            float scale = ((MaxScale - MinScale) * ((float) _asteroidHealth / MaxHealth)) + MinScale;
+            transform.localScale = new Vector3(scale, scale, scale);
 
             if (_asteroidHealth <= 0) {
                 Destroy(gameObject);

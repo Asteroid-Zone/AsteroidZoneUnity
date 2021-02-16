@@ -19,16 +19,18 @@ namespace PlayGame {
         }
         
         private void Update() {
-            RaycastHit hit;
-            Physics.Raycast(transform.position, transform.forward, out hit); // Get the game object collided with
-            
-            if (hit.collider) {
-                UpdateLaser((int) hit.distance);
-                if (hit.collider.gameObject.CompareTag("Asteroid")) {
-                    MineAsteroid(hit.collider.gameObject);
+            if (laser.enabled) {
+                RaycastHit hit;
+                Physics.Raycast(transform.position, transform.forward, out hit); // Get the game object collided with
+
+                if (hit.collider) {
+                    UpdateLaser((int) hit.distance);
+                    if (hit.collider.gameObject.CompareTag("Asteroid")) {
+                        MineAsteroid(hit.collider.gameObject);
+                    }
+                } else {
+                    UpdateLaser(MiningRange);
                 }
-            } else {
-                UpdateLaser(MiningRange);
             }
         }
 
