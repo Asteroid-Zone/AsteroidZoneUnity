@@ -9,15 +9,15 @@ namespace PlayGame {
 
         private const float MiningRate = 0.05f;
         private const int MaxHealth = 100;
+        
         private const float MaxScale = 9f;
         private const float MinScale = 3f;
 
-        private void Start()
-        {
+        private void Start() {
             _asteroidHealth = MaxHealth;
-            _totalResources = Random.Range(25, 100);
+            _totalResources = Random.Range(25, 100); // Sets the asteroids resources to a random number between 25 and 100
         }
-
+        
         private IEnumerator FadeOutAsteroid() {
             const float fadeSpeed = 1f;
             Material material = GetComponent<Renderer>().material;
@@ -30,12 +30,13 @@ namespace PlayGame {
                 material.color = c;
                 yield return null;
             }
-            Destroy(gameObject);
+            
+            Destroy(gameObject); // Delete the game object when its faded
         }
 
         public void MineAsteroid() {
             _asteroidHealth -= (int) (MaxHealth * MiningRate);
-            float scale = ((MaxScale - MinScale) * ((float) _asteroidHealth / MaxHealth)) + MinScale;
+            float scale = ((MaxScale - MinScale) * ((float) _asteroidHealth / MaxHealth)) + MinScale; // Calculate the asteroids size based on the amount the asteroid has been mined
             transform.localScale = new Vector3(scale, scale, scale);
 
             if (_asteroidHealth <= 0) {

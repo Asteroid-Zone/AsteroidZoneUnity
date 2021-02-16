@@ -21,9 +21,9 @@ namespace PlayGame {
         private void Update() {
             if (laser.enabled) {
                 RaycastHit hit;
-                Physics.Raycast(transform.position, transform.forward, out hit); // Get the game object collided with
+                Physics.Raycast(transform.position, transform.forward, out hit); // Get the game object that the laser is hitting
 
-                if (hit.collider) {
+                if (hit.collider) { // If the laser is hitting a game object
                     UpdateLaser((int) hit.distance);
                     if (hit.collider.gameObject.CompareTag("Asteroid")) {
                         MineAsteroid(hit.collider.gameObject);
@@ -35,7 +35,7 @@ namespace PlayGame {
         }
 
         private void MineAsteroid(GameObject asteroid) {
-            if (Time.frameCount - _lastFrameMined > MiningDelay) {
+            if (Time.frameCount - _lastFrameMined > MiningDelay) { // Only mine the asteroid every x frames
                 Asteroid asteroidScript = asteroid.GetComponent<Asteroid>();
                 asteroidScript.MineAsteroid();
                 _playerData.AddResources(asteroidScript.GetResources());
