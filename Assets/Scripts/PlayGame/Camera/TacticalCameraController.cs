@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Numerics;
+using UnityEngine;
+using Vector3 = UnityEngine.Vector3;
 
 namespace PlayGame.Camera
 {
@@ -13,6 +15,9 @@ namespace PlayGame.Camera
         private UnityEngine.Camera _camera;
         private float _cameraDistance = 50f;
         private GameObject _trackingObject;
+        
+        // TODO: Base this on the grid manager settings
+        private Bounds _focusPointBounds = new Bounds(new Vector3(50f, 0f, 50f), new Vector3(100f, 1f, 100f));
 
         private void Start()
         {
@@ -52,8 +57,12 @@ namespace PlayGame.Camera
                 
                 // Change camera position if MMB is held (based on mouse movement)
                 var positionChange = -mouseDifference.x * sensitivity * camTransform.right;
-                camTransform.position += positionChange;
-                _focusPoint.transform.position += positionChange;
+                var newFocusPosition = _focusPoint.transform.position + positionChange;
+                if (_focusPointBounds.Contains(newFocusPosition))
+                {
+                    camTransform.position += positionChange;
+                    _focusPoint.transform.position = newFocusPosition;
+                }
             }
             else if (Input.mouseScrollDelta.y != 0)
             {
