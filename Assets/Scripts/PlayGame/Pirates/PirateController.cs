@@ -15,7 +15,7 @@ namespace PlayGame.Pirates
             _agent = GetComponent<NavMeshAgent>();
         }
 
-        void Update()
+        private void Update()
         {
             GameObject closestPlayer = null;
             float closestPlayerDist = float.MaxValue;
