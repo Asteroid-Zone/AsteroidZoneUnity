@@ -48,11 +48,7 @@ namespace PlayGame.Camera
                 _trackingObject = null;
                 
                 // Change camera position if MMB is held (based on mouse movement)
-                var camForward = camTransform.forward;
-                var camForwardXZ = new Vector3(camForward.x, 0, camForward.z);
-                var positionChangeX = -mouseDifference.x * sensitivity * camTransform.right;
-                var positionChangeY = -mouseDifference.y * sensitivity * camForwardXZ;
-                var positionChange = positionChangeX + positionChangeY;
+                var positionChange = -mouseDifference.x * sensitivity * camTransform.right;
                 camTransform.position += positionChange;
                 _focusPoint.transform.position += positionChange;
             }
