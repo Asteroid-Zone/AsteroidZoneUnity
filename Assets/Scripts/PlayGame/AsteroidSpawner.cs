@@ -24,7 +24,7 @@ namespace PlayGame
         private void Start()
         {
             _gridManager = gridManager.GetComponent<GridManager>();
-            InvokeRepeating(nameof(AsteroidRNG), 0, 0.001f);
+            InvokeRepeating(nameof(AsteroidRNG), 0, everyXSeconds);
             
             // Checked space is the half size in OverlapBoxNonAlloc
             _spawnRangeCheck = _gridManager.GetCellSize() / 2f;

@@ -127,7 +127,7 @@ namespace PlayGame.Speech
             
             // Check if phrase contains station
             if (phrase.Contains("station")) {
-                _moveObject.SetDestination(spaceStation, _spaceStationCollider);
+                _moveObject.SetDestination(spaceStation.transform.position, _spaceStationCollider);
             }
         }
     
