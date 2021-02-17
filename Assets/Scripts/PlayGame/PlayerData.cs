@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.AI;
 
 namespace PlayGame
 {
@@ -33,6 +34,7 @@ namespace PlayGame
         
             _maxHealth = 100; // TODO different stats for different roles
             _maxSpeed = 2.5f;
+            GetComponent<NavMeshAgent>().speed = _maxSpeed;
         
             _health = _maxHealth;
             _speed = _maxSpeed;
