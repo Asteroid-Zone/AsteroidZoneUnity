@@ -17,27 +17,29 @@ namespace PlayGame
         public static readonly List<GameObject> Players = new List<GameObject>();
 
         private Role _role;
-        
-        public int AutoProp { get; set; }
-    
+
         private int _maxHealth;
         private int _health;
     
         private float _maxSpeed;
-        private float _speed;
 
         private int _resources;
 
+        private NavMeshAgent _playerAgent;
+
         private void Start() {
+            _playerAgent = GetComponent<NavMeshAgent>();
+            
             Players.AddRange(GameObject.FindGameObjectsWithTag(PlayerTag));
             _role = Role.StationCommander; // TODO assign roles in the menu
         
             _maxHealth = 100; // TODO different stats for different roles
             _maxSpeed = 2.5f;
-            GetComponent<NavMeshAgent>().speed = _maxSpeed;
-        
+            
             _health = _maxHealth;
-            _speed = _maxSpeed;
+            
+            // The current speed of the player is will be stored in the speed of its NavMeshAgent
+            _playerAgent.speed = 0;
 
             _resources = 0;
         }
@@ -59,11 +61,16 @@ namespace PlayGame
         }
 
         public float GetSpeed() {
-            return _speed;
+            return _playerAgent.speed;
         }
 
         public void SetSpeed(float fraction) {
-            _speed = fraction * _maxSpeed;
+            _playerAgent.speed = fraction * _maxSpeed;
+            
+            if (fraction == 0)
+            {
+                _playerAgent.enabled = false;
+            }
         }
 
         public int GetMaxHealth() {

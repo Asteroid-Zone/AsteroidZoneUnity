@@ -5,7 +5,6 @@ namespace PlayGame.Movement
 {
     public class MoveObject : MonoBehaviour 
     {
-
         // TODO change to Vector2?
         private Vector3 _direction;
         private Vector3 _destination = Vector3.positiveInfinity;
@@ -16,10 +15,11 @@ namespace PlayGame.Movement
         private Collider _playerCollider;
         private Collider _targetCollider;
 
-        private bool _hasTarget = false;
+        private bool _hasTarget;
 
         private void Start() 
         {
+            // Get the initial components
             _direction = transform.rotation.eulerAngles;
             _playerData = GetComponent<PlayerData>();
             _playerCollider = GetComponent<Collider>();
@@ -32,7 +32,6 @@ namespace PlayGame.Movement
             var speed = _playerData.GetSpeed();
             if (!HasReachedDestination()) 
             {
-                //transform.Translate((Time.deltaTime * _playerData.GetSpeed()) * _direction, Space.World);
                 _playerAgent.SetDestination(_destination);
             }
             else if (speed > 0)
@@ -86,32 +85,24 @@ namespace PlayGame.Movement
 
         public void SetDestination(Vector3 destination) 
         {
-            _direction = Vector3.Normalize(destination - transform.position); // Get the direction vector to the destination
             _destination = destination;
             _hasTarget = false;
             _playerAgent.enabled = true;
-            //UpdateRotation();
         }
 
         public void SetDestination(GameObject target, Collider targetCollider) 
         {
             Vector3 position = target.transform.position;
-            _direction = Vector3.Normalize(position - transform.position); // Get the direction vector to the destination
             _destination = position;
             _targetCollider = targetCollider;
             _hasTarget = true;
             _playerAgent.enabled = true;
-            //UpdateRotation();
         }
 
         // Sets the current speed to a percentage of the players maximum speed
         public void SetSpeed(float fraction) 
         {
             _playerData.SetSpeed(fraction);
-            if (fraction == 0)
-            {
-                _playerAgent.enabled = false;
-            }
         }
     }
 }
