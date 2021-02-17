@@ -84,8 +84,6 @@ namespace PlayGame.Camera
             camTransform.position += positionDifference;
             
             CorrectCameraDistance();
-            Debug.Log(
-                $"Intended: {_cameraDistance} Actual: {Mathf.Abs((camTransform.position - _trackingObject.transform.position).magnitude)}");
         }
 
         private void CorrectCameraDistance()
