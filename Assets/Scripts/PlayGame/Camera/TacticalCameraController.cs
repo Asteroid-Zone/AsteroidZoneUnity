@@ -34,7 +34,7 @@ namespace PlayGame.Camera
                 {
                     // Start tracking the target
                     _trackingObject = hit.transform.gameObject;
-                    FocusTrackedObject();
+                    FocusTrackedObject(minCamDistance);
                 }
             }
             else if (Input.GetMouseButton(1))
@@ -63,14 +63,12 @@ namespace PlayGame.Camera
                 }
             }
             
-            FocusTrackedObject();
+            if (_trackingObject) FocusTrackedObject(Mathf.Abs((camTransform.position - _trackingObject.transform.position).magnitude));
             _prevMousePos = Input.mousePosition;
         }
 
-        private void FocusTrackedObject()
+        private void FocusTrackedObject(float focusDistance)
         {
-            if (_trackingObject == null) return;
-
             var camTransform = transform;
             
             // Move the Focus Point game object to be centered on the target
@@ -81,7 +79,7 @@ namespace PlayGame.Camera
             _focusPoint.transform.position = focusPosition;
                 
             // Reposition the camera so that it's at the minimum distance from the new focus point position
-            camTransform.position = (camTransform.position - focusPosition + positionDifference).normalized * minCamDistance + focusPosition;
+            camTransform.position = (camTransform.position - focusPosition + positionDifference).normalized * focusDistance + focusPosition;
         }
     }
 }
