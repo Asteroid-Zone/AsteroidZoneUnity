@@ -57,6 +57,10 @@ namespace PlayGame.Speech
             if (Input.GetKey(KeyCode.J)) {
                 speechRecognition.GetResponse("deactivate mining laser");
             }
+            
+            if (Input.GetKey(KeyCode.Z)) {
+                speechRecognition.GetResponse("transfer resources");
+            }
         }
     }
 }

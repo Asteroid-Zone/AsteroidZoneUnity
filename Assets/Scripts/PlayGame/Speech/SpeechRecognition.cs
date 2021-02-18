@@ -18,6 +18,7 @@ namespace PlayGame.Speech
         private MoveObject _moveObject;
         private MiningLaser _miningLaser;
         private PlayerData _playerData;
+        private SpaceStation _spaceStation;
     
         public GameObject ping;
         private PingManager _pingManager;
@@ -30,6 +31,7 @@ namespace PlayGame.Speech
             _playerData = player.GetComponent<PlayerData>();
             _pingManager = ping.GetComponent<PingManager>();
             _spaceStationCollider = spaceStation.GetComponent<Collider>();
+            _spaceStation = spaceStation.GetComponent<SpaceStation>();
         }
 
         private void Update() {
@@ -154,6 +156,14 @@ namespace PlayGame.Speech
                 _miningLaser.DisableMiningLaser();
             } else if (phrase.Contains("activate mining laser")) {
                 _miningLaser.EnableMiningLaser();
+            }
+
+            if (phrase.Contains("transfer resources")) {
+                // Check player is in the same grid square as the station
+                if (GridCoord.GetCoordFromVector(player.transform.position).Equals(GridCoord.GetCoordFromVector(spaceStation.transform.position))) {
+                    _spaceStation.AddResources(_playerData.GetResources()); // Add the resources into the space station
+                    _playerData.RemoveResources(); // Remove them from the player
+                }
             }
         }
 

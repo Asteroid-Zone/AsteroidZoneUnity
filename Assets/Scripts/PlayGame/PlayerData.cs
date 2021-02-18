@@ -52,6 +52,11 @@ namespace PlayGame
             _resources += resources;
         }
 
+        public void RemoveResources()
+        {
+            _resources = 0;
+        }
+
         public Role GetRole() {
             return _role;
         }

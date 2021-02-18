@@ -15,6 +15,19 @@ namespace PlayGame {
             _z = z;
         }
 
+        private GridCoord(int x, int z) {
+            _x = x;
+            _z = z;
+        }
+
+        // Get the grid coordinate of a given world position
+        public static GridCoord GetCoordFromVector(Vector3 position) {
+            int x = (int) Math.Floor(position.x / GridSize);
+            int z = (int) Math.Floor(position.z / GridSize);
+
+            return new GridCoord(x, z);
+        }
+
         private int getWorldX() {
             return (_x * GridSize) + (GridSize / 2);
         }
