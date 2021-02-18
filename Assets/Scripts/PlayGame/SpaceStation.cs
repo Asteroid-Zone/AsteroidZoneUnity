@@ -19,5 +19,15 @@ namespace PlayGame
             _stationHealth += resources;
         }
 
+        public int GetHealth()
+        {
+            return _stationHealth;
+        }
+
+        public int GetMaxHealth()
+        {
+            return MaxStationHealth;
+        }
+
     }
 }
