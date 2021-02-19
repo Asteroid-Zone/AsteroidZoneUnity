@@ -61,6 +61,10 @@ namespace PlayGame.Speech
             if (Input.GetKey(KeyCode.Z)) {
                 speechRecognition.GetResponse("transfer resources");
             }
+            
+            if (Input.GetKey(KeyCode.X)) {
+                speechRecognition.GetResponse("shoot");
+            }
         }
     }
 }
