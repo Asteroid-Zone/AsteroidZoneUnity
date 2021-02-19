@@ -1,7 +1,8 @@
 ﻿using System.Linq;
 using System.Text.RegularExpressions;
-using PlayGame.Movement;
 using PlayGame.Pings;
+using PlayGame.Player;
+using PlayGame.Player.Movement;
 using UnityEngine;
 using UnityEngine.UI;
 using Ping = PlayGame.Pings.Ping;

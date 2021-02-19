@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace PlayGame.Movement {
+namespace PlayGame.Player.Movement {
     public class MoveObjectWithKeys : MonoBehaviour
     {
 

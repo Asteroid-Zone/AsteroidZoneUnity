@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using PlayGame.Player;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace PlayGame.UI

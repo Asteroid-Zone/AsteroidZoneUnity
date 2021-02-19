@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace PlayGame
+namespace PlayGame.Player
 {
     public enum Role {
         StationCommander,

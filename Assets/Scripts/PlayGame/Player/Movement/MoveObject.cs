@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
 
-namespace PlayGame.Movement 
+namespace PlayGame.Player.Movement 
 {
     public class MoveObject : MonoBehaviour 
     {

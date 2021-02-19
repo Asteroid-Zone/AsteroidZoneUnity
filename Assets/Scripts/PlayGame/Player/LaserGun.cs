@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace PlayGame {
+namespace PlayGame.Player {
     public class LaserGun : MonoBehaviour {
 
         public GameObject laserPrefab;

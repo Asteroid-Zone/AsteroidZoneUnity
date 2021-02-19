@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace PlayGame {
+namespace PlayGame.Player {
     public class MiningLaser : MonoBehaviour {
 
         private PlayerData _playerData;
