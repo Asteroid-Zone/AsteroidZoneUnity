@@ -7,7 +7,7 @@ namespace PlayGame.Player {
         
         public LineRenderer laser;
 
-        private const int MiningRange = 50;
+        private const int MiningRange = 20;
         private const int MiningDelay = 20; // Number of frames to wait between mining
 
         private int _lastFrameMined = 0;

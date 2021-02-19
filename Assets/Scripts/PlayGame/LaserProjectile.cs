@@ -1,7 +1,20 @@
 ﻿using UnityEngine;
 
 namespace PlayGame {
-    public class LaserProjectile : MonoBehaviour {
+    public class LaserProjectile : MonoBehaviour
+    {
+
+        private const int MaxRange = 20;
+        
+        private Vector3 _startPosition;
+
+        private void Start() {
+            _startPosition = transform.position;
+        }
+
+        private void Update() {
+            if (Vector3.Distance(transform.position, _startPosition) > MaxRange) Destroy(gameObject); // Limit the lasers range
+        }
 
         private void OnCollisionEnter(Collision collision) {
             if (collision.gameObject.CompareTag("Player")) return;
