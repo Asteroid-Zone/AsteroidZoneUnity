@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.AI;
 
 namespace PlayGame
@@ -23,6 +23,8 @@ namespace PlayGame
     
         private float _maxSpeed;
 
+        private int _laserSpeed;
+
         private int _resources;
 
         private NavMeshAgent _playerAgent;
@@ -35,6 +37,8 @@ namespace PlayGame
         
             _maxHealth = 100; // TODO different stats for different roles
             _maxSpeed = 2.5f;
+
+            _laserSpeed = 1000;
             
             _health = _maxHealth;
             
@@ -76,6 +80,10 @@ namespace PlayGame
             {
                 _playerAgent.enabled = false;
             }
+        }
+
+        public int GetLaserSpeed() {
+            return _laserSpeed;
         }
 
         public int GetMaxHealth() {

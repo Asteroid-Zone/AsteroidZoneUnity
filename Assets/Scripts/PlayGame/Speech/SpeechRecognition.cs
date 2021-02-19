@@ -17,17 +17,18 @@ namespace PlayGame.Speech
         private Collider _spaceStationCollider;
         private MoveObject _moveObject;
         private MiningLaser _miningLaser;
+        private LaserGun _laserGun;
         private PlayerData _playerData;
         private SpaceStation _spaceStation;
     
         public GameObject ping;
         private PingManager _pingManager;
     
-        private void Start()
-        {
+        private void Start() {
             StartSpeechRecognitionInTheBrowser();
             _moveObject = player.GetComponent<MoveObject>();
             _miningLaser = player.GetComponent<MiningLaser>();
+            _laserGun = player.GetComponent<LaserGun>();
             _playerData = player.GetComponent<PlayerData>();
             _pingManager = ping.GetComponent<PingManager>();
             _spaceStationCollider = spaceStation.GetComponent<Collider>();
@@ -164,6 +165,10 @@ namespace PlayGame.Speech
                     _spaceStation.AddResources(_playerData.GetResources()); // Add the resources into the space station
                     _playerData.RemoveResources(); // Remove them from the player
                 }
+            }
+
+            if (phrase.Contains("shoot") || phrase.Contains("fire")) {
+                _laserGun.Shoot();
             }
         }
 
