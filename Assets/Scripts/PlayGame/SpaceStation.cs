@@ -17,12 +17,14 @@ namespace PlayGame
 
         private void Update() {
             if (_stationHealth >= MaxStationHealth) {
+                EventsManager.AddMessageToQueue("Game completed");
                 SceneManager.LoadScene("MainMenu"); // TODO create victory scene
             }
         }
 
         public void AddResources(int resources) {
             _stationHealth += resources;
+            EventsManager.AddMessageToQueue("Space station repaired");
 
             if (_stationHealth > MaxStationHealth) _stationHealth = MaxStationHealth;
         }

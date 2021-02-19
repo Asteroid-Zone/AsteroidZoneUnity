@@ -40,6 +40,7 @@ namespace PlayGame {
             transform.localScale = new Vector3(scale, scale, scale);
 
             if (_asteroidHealth <= 0) {
+                EventsManager.AddMessageToQueue("Asteroid destroyed at " + GridCoord.GetCoordFromVector(transform.position));
                 StartCoroutine(FadeOutAsteroid());
             }
         }
