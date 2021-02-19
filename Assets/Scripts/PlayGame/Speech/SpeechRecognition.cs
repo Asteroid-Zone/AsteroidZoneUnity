@@ -165,11 +165,15 @@ namespace PlayGame.Speech
                 if (GridCoord.GetCoordFromVector(player.transform.position).Equals(GridCoord.GetCoordFromVector(spaceStation.transform.position))) {
                     _spaceStation.AddResources(_playerData.GetResources()); // Add the resources into the space station
                     _playerData.RemoveResources(); // Remove them from the player
+                } else {
+                    EventsManager.AddMessageToQueue("You must be next to the space station to transfer resources");
                 }
             }
 
-            if (phrase.Contains("shoot") || phrase.Contains("fire")) {
-                _laserGun.Shoot();
+            if (phrase.Contains("stop shooting")) {
+                _laserGun.StopShooting();
+            } else if (phrase.Contains("shoot") || phrase.Contains("fire")) {
+                _laserGun.StartShooting();
             }
         }
 

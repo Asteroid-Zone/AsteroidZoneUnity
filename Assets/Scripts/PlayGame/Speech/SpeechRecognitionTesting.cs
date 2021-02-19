@@ -63,6 +63,10 @@ namespace PlayGame.Speech
             }
             
             if (Input.GetKey(KeyCode.X)) {
+                speechRecognition.GetResponse("stop shooting");
+            }
+            
+            if (Input.GetKey(KeyCode.C)) {
                 speechRecognition.GetResponse("shoot");
             }
         }
