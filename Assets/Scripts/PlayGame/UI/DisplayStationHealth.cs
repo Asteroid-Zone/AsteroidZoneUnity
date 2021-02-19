@@ -15,8 +15,7 @@ namespace PlayGame.UI
             _spaceStation = spaceStation.GetComponent<SpaceStation>();
         }
 
-        private void Update()
-        {
+        private void Update() {
             _text.text = "Station Health: " + _spaceStation.GetHealth() + "/" + _spaceStation.GetMaxHealth();
         }
     }
