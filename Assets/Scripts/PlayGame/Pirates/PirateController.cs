@@ -1,4 +1,5 @@
-﻿using PlayGame.Player;
+﻿using System.Collections;
+using PlayGame.Player;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -10,10 +11,12 @@ namespace PlayGame.Pirates
 
         //public Transform target;
         private NavMeshAgent _agent;
+        private PirateLaserGun _laserGun;
     
         private void Start()
         {
             _agent = GetComponent<NavMeshAgent>();
+            _laserGun = GetComponent<PirateLaserGun>();
         }
 
         private void Update()
@@ -38,7 +41,7 @@ namespace PlayGame.Pirates
                 if (closestPlayerDist <= _agent.stoppingDistance)
                 {
                     FaceTarget(closestPlayer.transform);
-                    // TODO: Attack the target
+                    AttackPlayer(closestPlayer);
                 }
             }
         }
@@ -54,6 +57,11 @@ namespace PlayGame.Pirates
         {
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, lookRadius);
+        }
+
+        private void AttackPlayer(GameObject player)
+        {
+            _laserGun.StartShooting();
         }
     }
 }

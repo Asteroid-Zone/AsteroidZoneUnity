@@ -1,18 +1,19 @@
 ﻿using UnityEngine;
 
-namespace PlayGame.Player {
-    public class LaserGun : MonoBehaviour {
+namespace PlayGame.Pirates {
+    public class PirateLaserGun : MonoBehaviour {
 
         public GameObject laserPrefab;
-        private PlayerData _playerData;
+        //private PirateData _pirateData;
 
         private int _lastFrameFired;
-        private const int ShotDelay = 50; // Number of frames to wait between shooting
+        private const int ShotDelay = 100; // Number of frames to wait between shooting
 
         private bool _shooting;
 
         private void Start() {
-            _playerData = GetComponent<PlayerData>();
+            // TODO Implement pirate data
+            //_pirateData = GetComponent<PirateData>();
         }
 
         private void Update() {
@@ -23,7 +24,7 @@ namespace PlayGame.Player {
             Vector3 spawnPosition = transform.position + (transform.forward * 2); // Offset the laser so it doesn't spawn in the players ship
             GameObject laser = Instantiate(laserPrefab, spawnPosition, transform.rotation);
             laser.transform.Rotate(new Vector3(90, 0, 0)); // Rotate the laser so its not facing up
-            laser.GetComponent<Rigidbody>().AddForce(transform.forward * _playerData.GetLaserSpeed());
+            laser.GetComponent<Rigidbody>().AddForce(transform.forward * 1000 /* _pirateData.GetLaserSpeed() */);
             _lastFrameFired = Time.frameCount;
         }
 

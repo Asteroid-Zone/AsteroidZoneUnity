@@ -52,6 +52,14 @@ namespace PlayGame.Player
             _resources = 0;
         }
 
+        private void Update()
+        {
+            if (_health <= 0)
+            {
+                EventsManager.AddMessageToQueue("YOU DIED");
+            }
+        }
+
         public int GetResources() {
             return _resources;
         }
@@ -96,6 +104,15 @@ namespace PlayGame.Player
 
         public int GetHealth() {
             return _health;
+        }
+
+        public void TakeDamage(int damage)
+        {
+            _health -= damage;
+            if (_health < 0)
+            {
+                _health = 0;
+            }
         }
     }
 }

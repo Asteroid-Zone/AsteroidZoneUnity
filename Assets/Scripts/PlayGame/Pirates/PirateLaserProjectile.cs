@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+﻿using PlayGame.Player;
+using UnityEngine;
 
-namespace PlayGame {
-    public class LaserProjectile : MonoBehaviour
+namespace PlayGame.Pirates {
+
+    public class PirateLaserProjectile : MonoBehaviour
     {
-
-        private const int MaxRange = 20;
+        private const int MaxRange = 10;
         
         private Vector3 _startPosition;
 
@@ -17,11 +18,10 @@ namespace PlayGame {
         }
 
         private void OnCollisionEnter(Collision collision) {
-            if (collision.gameObject.CompareTag("Player")) return;
-            
-            if (collision.gameObject.CompareTag("Pirate")) {
-                EventsManager.AddMessageToQueue("Pirate destroyed at " + GridCoord.GetCoordFromVector(collision.gameObject.transform.position));
-                Destroy(collision.gameObject); // TODO damage pirate instead of deleting it
+            if (collision.gameObject.CompareTag("Player"))
+            {
+                PlayerData playerData = collision.gameObject.GetComponent<PlayerData>();
+                playerData.TakeDamage(10);
             }
             
             if (collision.gameObject.CompareTag("Asteroid")) {
@@ -31,6 +31,5 @@ namespace PlayGame {
 
             Destroy(gameObject);
         }
-        
     }
 }
