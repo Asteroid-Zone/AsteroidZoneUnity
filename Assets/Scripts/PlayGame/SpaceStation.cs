@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace PlayGame
 {
@@ -10,13 +11,20 @@ namespace PlayGame
         private int _stationHealth = 0;
         private int _stationShields = 100;
     
-        void Start() {
+        private void Start() {
             transform.position = gridManager.GetGridCentre();
         }
 
-        public void AddResources(int resources)
-        {
+        private void Update() {
+            if (_stationHealth >= MaxStationHealth) {
+                SceneManager.LoadScene("MainMenu"); // TODO create victory scene
+            }
+        }
+
+        public void AddResources(int resources) {
             _stationHealth += resources;
+
+            if (_stationHealth > MaxStationHealth) _stationHealth = MaxStationHealth;
         }
 
         public int GetHealth()
