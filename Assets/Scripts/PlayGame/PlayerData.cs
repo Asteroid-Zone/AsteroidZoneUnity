@@ -14,7 +14,7 @@ namespace PlayGame
     public class PlayerData : MonoBehaviour
     {
         private const string PlayerTag = "Player";
-        public static readonly List<GameObject> Players = new List<GameObject>();
+        public static List<GameObject> Players;
 
         private Role _role;
 
@@ -32,7 +32,11 @@ namespace PlayGame
         private void Start() {
             _playerAgent = GetComponent<NavMeshAgent>();
             
+            // Initialise the players list
+            Players = new List<GameObject>();
             Players.AddRange(GameObject.FindGameObjectsWithTag(PlayerTag));
+            // TODO add other players to list
+            
             _role = Role.StationCommander; // TODO assign roles in the menu
         
             _maxHealth = 100; // TODO different stats for different roles
