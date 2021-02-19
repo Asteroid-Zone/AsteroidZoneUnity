@@ -21,7 +21,7 @@ namespace PlayGame.Player {
         private void Update() {
             if (laser.enabled) {
                 RaycastHit hit;
-                Physics.Raycast(transform.position, transform.forward, out hit); // Get the game object that the laser is hitting
+                Physics.Raycast(transform.position, transform.forward, out hit, MiningRange); // Get the game object that the laser is hitting
 
                 if (hit.collider) { // If the laser is hitting a game object
                     UpdateLaser((int) hit.distance);
