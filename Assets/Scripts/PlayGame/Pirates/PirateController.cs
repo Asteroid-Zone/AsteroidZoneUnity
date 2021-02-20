@@ -10,6 +10,8 @@ namespace PlayGame.Pirates
         private int _lastFrameWentRandom;
         private const int GoRandomTimer = 600;
         private Vector3 _randomDestination;
+        private const float StoppingDistGoingRand = 1f;
+        private const float StoppingDistChasingPlayer = 4f;
 
         private NavMeshAgent _agent;
         private PirateLaserGun _laserGun;
@@ -38,6 +40,7 @@ namespace PlayGame.Pirates
 
             if (closestPlayer != null && closestPlayerDist <= lookRadius)
             {
+                _agent.stoppingDistance = StoppingDistChasingPlayer;
                 _agent.SetDestination(closestPlayer.transform.position);
 
                 if (closestPlayerDist <= _agent.stoppingDistance)
@@ -48,12 +51,13 @@ namespace PlayGame.Pirates
             }
             else
             {
+                _agent.stoppingDistance = StoppingDistGoingRand;
                 _laserGun.StopShooting();
                 _agent.SetDestination(_randomDestination);
                     
                 if (Time.frameCount - _lastFrameWentRandom > GoRandomTimer)
                 {
-                    _randomDestination = transform.position + new Vector3(Random.Range(-5, 5), 0, Random.Range(-5, 5));
+                    _randomDestination = transform.position + new Vector3(Random.Range(-10, 10), 0, Random.Range(-10, 10));
                     _lastFrameWentRandom = Time.frameCount;
                 }
             }
