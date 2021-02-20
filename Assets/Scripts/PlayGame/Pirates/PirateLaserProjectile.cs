@@ -10,6 +10,8 @@ namespace PlayGame.Pirates {
         
         private Vector3 _startPosition;
 
+        private PirateData _shootingPirateData;
+
         private void Start() {
             _startPosition = transform.position;
         }
@@ -24,7 +26,7 @@ namespace PlayGame.Pirates {
             if (collision.gameObject.CompareTag(Tags.PlayerTag))
             {
                 PlayerData playerData = collision.gameObject.GetComponent<PlayerData>();
-                playerData.TakeDamage(10);
+                playerData.TakeDamage(_shootingPirateData.GetLaserDamage());
             }
             
             if (collision.gameObject.CompareTag(Tags.AsteroidTag)) {
@@ -33,6 +35,11 @@ namespace PlayGame.Pirates {
             }
 
             Destroy(gameObject);
+        }
+
+        public void SetShootingPirateData(PirateData shootingPirateData)
+        {
+            _shootingPirateData = shootingPirateData;
         }
     }
 }

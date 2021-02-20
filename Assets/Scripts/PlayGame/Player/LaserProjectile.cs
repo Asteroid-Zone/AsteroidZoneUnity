@@ -1,4 +1,5 @@
-﻿using Statics;
+﻿using PlayGame.Pirates;
+using Statics;
 using UnityEngine;
 
 namespace PlayGame.Player {
@@ -8,6 +9,7 @@ namespace PlayGame.Player {
         private const int MaxRange = 20;
         
         private Vector3 _startPosition;
+        private PlayerData _shootingPlayerData;
 
         private void Start() {
             _startPosition = transform.position;
@@ -18,14 +20,11 @@ namespace PlayGame.Player {
         }
 
         private void OnCollisionEnter(Collision collision) {
-            if (collision.gameObject.CompareTag(Tags.PlayerTag))
-            {
-                return;
-            }
-            
+            if (collision.gameObject.CompareTag(Tags.PlayerTag)) return;
+
             if (collision.gameObject.CompareTag(Tags.PirateTag)) {
-                EventsManager.AddMessageToQueue("Pirate destroyed at " + GridCoord.GetCoordFromVector(collision.gameObject.transform.position));
-                Destroy(collision.gameObject); // TODO damage pirate instead of deleting it
+                PirateData pirateData = collision.gameObject.GetComponent<PirateData>();
+                pirateData.TakeDamage(_shootingPlayerData.GetLaserDamage());
             }
             
             if (collision.gameObject.CompareTag(Tags.AsteroidTag)) {
@@ -34,6 +33,11 @@ namespace PlayGame.Player {
             }
 
             Destroy(gameObject);
+        }
+
+        public void SetShootingPlayerData(PlayerData shootingPlayerData)
+        {
+            _shootingPlayerData = shootingPlayerData;
         }
     }
 }

@@ -2,8 +2,8 @@
 {
     public static class Scenes
     {
-        public static readonly string MainMenuScene = "MainMenu";
-        public static readonly string CreditsScene = "Credits";
-        public static readonly string PlayGameScene = "PlayGame";
+        public const string MainMenuScene = "MainMenu";
+        public const string CreditsScene = "Credits";
+        public const string  PlayGameScene = "PlayGame";
     }
 }

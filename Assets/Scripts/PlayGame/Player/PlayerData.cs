@@ -16,6 +16,8 @@ namespace PlayGame.Player
     {
         public static List<GameObject> Players;
 
+        private const int DamageRange = 10;
+
         private bool _youDiedWrittenOnScreen; // TODO remove this and make something else when player dies
 
         private Role _role;
@@ -28,6 +30,8 @@ namespace PlayGame.Player
         private int _laserSpeed;
 
         private int _resources;
+
+        private int _laserDamage;
 
         private NavMeshAgent _playerAgent;
 
@@ -52,6 +56,8 @@ namespace PlayGame.Player
             _playerAgent.speed = 0;
 
             _resources = 0;
+
+            _laserDamage = 20;
         }
 
         private void Update()
@@ -107,6 +113,11 @@ namespace PlayGame.Player
 
         public int GetHealth() {
             return _health;
+        }
+
+        public int GetLaserDamage()
+        {
+            return _laserDamage + Random.Range(-DamageRange, DamageRange + 1);
         }
 
         public void TakeDamage(int damage)

@@ -6,7 +6,6 @@ namespace PlayGame.Pirates
 {
     public class PirateController : MonoBehaviour
     {
-        public float lookRadius = 10f;
         private int _lastFrameWentRandom;
         private const int GoRandomTimer = 600;
         private Vector3 _randomDestination;
@@ -15,7 +14,7 @@ namespace PlayGame.Pirates
 
         private NavMeshAgent _agent;
         private PirateLaserGun _laserGun;
-    
+
         private void Start()
         {
             _agent = GetComponent<NavMeshAgent>();
@@ -38,7 +37,7 @@ namespace PlayGame.Pirates
                 }
             });
 
-            if (closestPlayer != null && closestPlayerDist <= lookRadius)
+            if (closestPlayer != null && closestPlayerDist <= PirateData.LookRadius)
             {
                 _agent.stoppingDistance = StoppingDistChasingPlayer;
                 _agent.SetDestination(closestPlayer.transform.position);
@@ -73,7 +72,7 @@ namespace PlayGame.Pirates
         private void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(transform.position, lookRadius);
+            Gizmos.DrawWireSphere(transform.position, PirateData.LookRadius);
         }
     }
 }

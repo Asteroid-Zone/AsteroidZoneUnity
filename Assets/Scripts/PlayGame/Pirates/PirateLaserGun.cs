@@ -4,7 +4,7 @@ namespace PlayGame.Pirates {
     public class PirateLaserGun : MonoBehaviour {
 
         public GameObject laserPrefab;
-        //private PirateData _pirateData;
+        private PirateData _pirateData;
 
         private int _lastFrameFired;
         private const int ShotDelay = 100; // Number of frames to wait between shooting
@@ -12,8 +12,7 @@ namespace PlayGame.Pirates {
         private bool _shooting;
 
         private void Start() {
-            // TODO Implement pirate data
-            //_pirateData = GetComponent<PirateData>();
+            _pirateData = GetComponent<PirateData>();
         }
 
         private void Update() {
@@ -23,8 +22,9 @@ namespace PlayGame.Pirates {
         private void Shoot() {
             Vector3 spawnPosition = transform.position + (transform.forward * 2); // Offset the laser so it doesn't spawn in the players ship
             GameObject laser = Instantiate(laserPrefab, spawnPosition, transform.rotation);
+            laser.GetComponent<PirateLaserProjectile>().SetShootingPirateData(_pirateData);
             laser.transform.Rotate(new Vector3(90, 0, 0)); // Rotate the laser so its not facing up
-            laser.GetComponent<Rigidbody>().AddForce(transform.forward * 1000 /* _pirateData.GetLaserSpeed() */);
+            laser.GetComponent<Rigidbody>().AddForce(transform.forward * PirateData.LaserSpeed /* _pirateData.GetLaserSpeed() */);
             _lastFrameFired = Time.frameCount;
         }
 
