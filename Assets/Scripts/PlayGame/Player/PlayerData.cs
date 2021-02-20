@@ -16,6 +16,8 @@ namespace PlayGame.Player
         private const string PlayerTag = "Player";
         public static List<GameObject> Players;
 
+        private bool _youDiedWrittenOnScreen;
+
         private Role _role;
 
         private int _maxHealth;
@@ -54,9 +56,10 @@ namespace PlayGame.Player
 
         private void Update()
         {
-            if (_health <= 0)
+            if (!_youDiedWrittenOnScreen &&_health <= 0)
             {
                 EventsManager.AddMessageToQueue("YOU DIED");
+                _youDiedWrittenOnScreen = true;
             }
         }
 

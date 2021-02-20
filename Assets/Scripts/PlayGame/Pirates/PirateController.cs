@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using PlayGame.Player;
+﻿using PlayGame.Player;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,8 +7,10 @@ namespace PlayGame.Pirates
     public class PirateController : MonoBehaviour
     {
         public float lookRadius = 10f;
+        private int _lastFrameWentRandom;
+        private const int GoRandomTimer = 600;
+        private Vector3 _randomDestination;
 
-        //public Transform target;
         private NavMeshAgent _agent;
         private PirateLaserGun _laserGun;
     
@@ -17,6 +18,7 @@ namespace PlayGame.Pirates
         {
             _agent = GetComponent<NavMeshAgent>();
             _laserGun = GetComponent<PirateLaserGun>();
+            _randomDestination = transform.position;
         }
 
         private void Update()
@@ -41,7 +43,18 @@ namespace PlayGame.Pirates
                 if (closestPlayerDist <= _agent.stoppingDistance)
                 {
                     FaceTarget(closestPlayer.transform);
-                    AttackPlayer(closestPlayer);
+                    _laserGun.StartShooting();
+                }
+            }
+            else
+            {
+                _laserGun.StopShooting();
+                _agent.SetDestination(_randomDestination);
+                    
+                if (Time.frameCount - _lastFrameWentRandom > GoRandomTimer)
+                {
+                    _randomDestination = transform.position + new Vector3(Random.Range(-5, 5), 0, Random.Range(-5, 5));
+                    _lastFrameWentRandom = Time.frameCount;
                 }
             }
         }
@@ -57,11 +70,6 @@ namespace PlayGame.Pirates
         {
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, lookRadius);
-        }
-
-        private void AttackPlayer(GameObject player)
-        {
-            _laserGun.StartShooting();
         }
     }
 }

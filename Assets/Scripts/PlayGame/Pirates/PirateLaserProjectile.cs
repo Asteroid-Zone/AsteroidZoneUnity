@@ -18,6 +18,11 @@ namespace PlayGame.Pirates {
         }
 
         private void OnCollisionEnter(Collision collision) {
+            if (collision.gameObject.CompareTag("Pirate"))
+            {
+                return;
+            }
+            
             if (collision.gameObject.CompareTag("Player"))
             {
                 PlayerData playerData = collision.gameObject.GetComponent<PlayerData>();
