@@ -25,6 +25,7 @@ namespace PlayGame.Pirates
             _laserDamage = 10;
 
             _pirateAgent.speed = Speed;
+            healthBar.maxValue = MaxHealth;
         }
 
         private void Update()
@@ -37,8 +38,7 @@ namespace PlayGame.Pirates
             }
             else
             {
-                float healthPercent = _health / MaxHealth;
-                healthBar.value = healthPercent;
+                healthBar.value = _health;
             }
         }
 
