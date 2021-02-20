@@ -13,10 +13,9 @@ namespace PlayGame.Player
 
     public class PlayerData : MonoBehaviour
     {
-        private const string PlayerTag = "Player";
         public static List<GameObject> Players;
 
-        private bool _youDiedWrittenOnScreen;
+        private bool _youDiedWrittenOnScreen; // TODO remove this and make something else when player dies
 
         private Role _role;
 
@@ -36,7 +35,7 @@ namespace PlayGame.Player
             
             // Initialise the players list
             Players = new List<GameObject>();
-            Players.AddRange(GameObject.FindGameObjectsWithTag(PlayerTag));
+            Players.AddRange(GameObject.FindGameObjectsWithTag(Tags.PlayerTag));
             // TODO add other players to list
             
             _role = Role.StationCommander; // TODO assign roles in the menu

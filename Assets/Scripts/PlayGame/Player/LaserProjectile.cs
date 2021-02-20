@@ -17,17 +17,17 @@ namespace PlayGame.Player {
         }
 
         private void OnCollisionEnter(Collision collision) {
-            if (collision.gameObject.CompareTag("Player"))
+            if (collision.gameObject.CompareTag(Tags.PlayerTag))
             {
                 return;
             }
             
-            if (collision.gameObject.CompareTag("Pirate")) {
+            if (collision.gameObject.CompareTag(Tags.PirateTag)) {
                 EventsManager.AddMessageToQueue("Pirate destroyed at " + GridCoord.GetCoordFromVector(collision.gameObject.transform.position));
                 Destroy(collision.gameObject); // TODO damage pirate instead of deleting it
             }
             
-            if (collision.gameObject.CompareTag("Asteroid")) {
+            if (collision.gameObject.CompareTag(Tags.AsteroidTag)) {
                 Asteroid asteroid = collision.gameObject.GetComponent<Asteroid>();
                 asteroid.MineAsteroid();
             }

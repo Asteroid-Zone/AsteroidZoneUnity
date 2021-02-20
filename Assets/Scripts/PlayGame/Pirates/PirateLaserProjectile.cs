@@ -18,18 +18,15 @@ namespace PlayGame.Pirates {
         }
 
         private void OnCollisionEnter(Collision collision) {
-            if (collision.gameObject.CompareTag("Pirate"))
-            {
-                return;
-            }
-            
-            if (collision.gameObject.CompareTag("Player"))
+            if (collision.gameObject.CompareTag(Tags.PirateTag)) return;
+
+            if (collision.gameObject.CompareTag(Tags.PlayerTag))
             {
                 PlayerData playerData = collision.gameObject.GetComponent<PlayerData>();
                 playerData.TakeDamage(10);
             }
             
-            if (collision.gameObject.CompareTag("Asteroid")) {
+            if (collision.gameObject.CompareTag(Tags.AsteroidTag)) {
                 Asteroid asteroid = collision.gameObject.GetComponent<Asteroid>();
                 asteroid.MineAsteroid();
             }

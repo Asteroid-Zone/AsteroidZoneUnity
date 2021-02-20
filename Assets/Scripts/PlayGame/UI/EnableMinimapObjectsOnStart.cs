@@ -10,7 +10,7 @@ namespace PlayGame.UI
         {
             (FindObjectsOfType(typeof(GameObject))
                     as GameObject[] ?? Array.Empty<GameObject>())
-                .Where(o => o.layer == LayerMask.NameToLayer("Minimap"))
+                .Where(o => o.layer == LayerMask.NameToLayer(Layers.MinimapLayer))
                 .ToList()
                 .ForEach(o =>
                 {
