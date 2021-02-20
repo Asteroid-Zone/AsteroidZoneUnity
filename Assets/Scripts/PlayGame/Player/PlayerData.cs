@@ -16,7 +16,7 @@ namespace PlayGame.Player
     {
         public static List<GameObject> Players;
 
-        private const int DamageRange = 10;
+        private const int LaserDamageRange = 10; // Makes the amount of damage the laser does vary a bit
 
         private bool _youDiedWrittenOnScreen; // TODO remove this and make something else when player dies
 
@@ -117,7 +117,8 @@ namespace PlayGame.Player
 
         public int GetLaserDamage()
         {
-            return _laserDamage + Random.Range(-DamageRange, DamageRange + 1);
+            // Make the amount of damage vary a bit.
+            return _laserDamage + Random.Range(-LaserDamageRange, LaserDamageRange + 1);
         }
 
         public void TakeDamage(int damage)
