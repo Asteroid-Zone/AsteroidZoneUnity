@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 namespace PlayGame.Pirates
 {
@@ -14,6 +15,8 @@ namespace PlayGame.Pirates
         private float _health;
         private int _laserDamage;
         private NavMeshAgent _pirateAgent;
+
+        public Slider healthBar;
 
         private void Start()
         {
@@ -31,6 +34,11 @@ namespace PlayGame.Pirates
                 // TODO Play some animation
                 Destroy(gameObject);
                 EventsManager.AddMessageToQueue("Pirate destroyed at " + GridCoord.GetCoordFromVector(gameObject.transform.position));
+            }
+            else
+            {
+                float healthPercent = _health / MaxHealth;
+                healthBar.value = healthPercent;
             }
         }
 
