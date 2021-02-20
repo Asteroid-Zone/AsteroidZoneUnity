@@ -124,7 +124,7 @@ namespace MainMenu
         public void ViewCredits()
         {
             buttonPress.Play();
-            SceneManager.LoadScene("Credits");
+            SceneManager.LoadScene(Scenes.CreditsScene);
         }
     }
 }

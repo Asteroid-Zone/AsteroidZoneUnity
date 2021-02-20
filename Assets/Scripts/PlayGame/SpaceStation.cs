@@ -18,7 +18,7 @@ namespace PlayGame
         private void Update() {
             if (_stationHealth >= MaxStationHealth) {
                 EventsManager.AddMessageToQueue("Game completed");
-                SceneManager.LoadScene("MainMenu"); // TODO create victory scene
+                SceneManager.LoadScene(Scenes.MainMenuScene); // TODO create victory scene
             }
         }
 

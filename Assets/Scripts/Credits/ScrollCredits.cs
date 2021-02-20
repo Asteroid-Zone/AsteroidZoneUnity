@@ -17,7 +17,7 @@ namespace Credits
         {
             if (Input.GetButtonDown("Cancel"))
             {
-                SceneManager.LoadScene("MainMenu");
+                SceneManager.LoadScene(Scenes.MainMenuScene);
             }
         }
 
@@ -27,7 +27,7 @@ namespace Credits
 
             yield return new WaitForSeconds(25);
 
-            SceneManager.LoadScene("MainMenu");
+            SceneManager.LoadScene(Scenes.MainMenuScene);
         }
     }
 }
