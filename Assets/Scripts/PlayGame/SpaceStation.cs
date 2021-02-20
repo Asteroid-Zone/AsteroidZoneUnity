@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Statics;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace PlayGame

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Statics;
 using UnityEngine;
 using UnityEngine.AI;
 

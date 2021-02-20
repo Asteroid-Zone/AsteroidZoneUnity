@@ -1,4 +1,5 @@
 ﻿using PlayGame.Player;
+using Statics;
 using UnityEngine;
 
 namespace PlayGame.Pirates {

@@ -2,6 +2,7 @@
 using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Photon.Realtime;
+using Statics;
 
 
 namespace MainMenu

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Statics;
 using UnityEngine;
 
 namespace PlayGame.UI
