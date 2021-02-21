@@ -29,6 +29,8 @@ namespace PlayGame.Pirates
             _pirateAgent.speed = Speed;
             healthBar.maxValue = MaxHealth;
 
+            // Set the health bar of the pirate
+            healthBar.maxValue = MaxHealth;
             SetHealthBar();
         }
 
@@ -42,7 +44,7 @@ namespace PlayGame.Pirates
         private void SetHealthBar()
         {
             healthBar.value = _health;
-            healthBarFill.color = healthBarGradient.Evaluate(0.5f);
+            healthBarFill.color = healthBarGradient.Evaluate(healthBar.normalizedValue);
         }
 
         public void TakeDamage(float damage)
