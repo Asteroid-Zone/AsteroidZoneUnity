@@ -4,12 +4,11 @@ using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
 
-
 namespace MainMenu
 {
     /// Player name input field. Let the user input their name, will appear above the player in the game.
     [RequireComponent(typeof(InputField))]
-    public class PlayerNameInputField : MonoBehaviour
+    public class PlayerNameInput : MonoBehaviour
     {
         // Store the PlayerPref Key to avoid typos
         const string playerNamePrefKey = "PlayerName";
