@@ -18,5 +18,10 @@ namespace PlayGame.Camera
             followCamera.enabled = !followCamera.enabled;
             tacticalCamera.enabled = !tacticalCamera.enabled;
         }
+
+        public UnityEngine.Camera GetCurrentCamera()
+        {
+            return (followCamera.enabled) ? followCamera : tacticalCamera;
+        }
     }
 }
