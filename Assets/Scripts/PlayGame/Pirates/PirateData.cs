@@ -17,6 +17,8 @@ namespace PlayGame.Pirates
         private NavMeshAgent _pirateAgent;
 
         public Slider healthBar;
+        public Gradient healthBarGradient;
+        public Image healthBarFill;
 
         private void Start()
         {
@@ -26,20 +28,21 @@ namespace PlayGame.Pirates
 
             _pirateAgent.speed = Speed;
             healthBar.maxValue = MaxHealth;
+
+            SetHealthBar();
         }
 
-        private void Update()
+        private void Die()
         {
-            if (_health == 0)
-            {
-                // TODO Play some animation
-                Destroy(gameObject);
-                EventsManager.AddMessageToQueue("Pirate destroyed at " + GridCoord.GetCoordFromVector(gameObject.transform.position));
-            }
-            else
-            {
-                healthBar.value = _health;
-            }
+            // TODO Play some animation
+            Destroy(gameObject);
+            EventsManager.AddMessageToQueue("Pirate destroyed at " + GridCoord.GetCoordFromVector(gameObject.transform.position));
+        }
+
+        private void SetHealthBar()
+        {
+            healthBar.value = _health;
+            healthBarFill.color = healthBarGradient.Evaluate(0.5f);
         }
 
         public void TakeDamage(float damage)
@@ -47,8 +50,11 @@ namespace PlayGame.Pirates
             _health -= damage;
             if (_health <= 0)
             {
-                _health = 0;
+                Die();
             }
+
+            // Display the damage on the health bar
+            SetHealthBar();
         }
 
         public int GetLaserDamage()
