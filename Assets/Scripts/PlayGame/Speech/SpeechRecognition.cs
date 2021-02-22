@@ -175,6 +175,12 @@ namespace PlayGame.Speech
             } else if (phrase.Contains("shoot") || phrase.Contains("fire")) {
                 _laserGun.StartShooting();
             }
+
+            if (phrase.Contains("lock on nearest enemy"))
+            {
+                Transform transform = player.GetComponent<MoveObject>().GetNearestEnemyTransform();
+                player.GetComponent<MoveObject>().FaceTarget(transform);
+            }
         }
 
         private static void StartSpeechRecognitionInTheBrowser() {
