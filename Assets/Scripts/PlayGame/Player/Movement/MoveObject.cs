@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.AI;
 
 namespace PlayGame.Player.Movement 
@@ -18,6 +20,9 @@ namespace PlayGame.Player.Movement
 
         // Whether the ship is headed to a specific object
         private bool _hasTargetObject;
+
+        // Needed to reference enemies in order to rotate towards them
+        public GameObject EnemySpawner;
 
         private void Start() 
         {
@@ -76,6 +81,43 @@ namespace PlayGame.Player.Movement
             }
 
             return false;
+        }
+
+        // Enemy target needed for lock-on
+        public Transform GetNearestEnemyTransform()
+        {
+            // Probably a better way to do this
+            List<Transform> enemyTransforms = new List<Transform>();
+            foreach (Transform child in EnemySpawner.transform)
+            {
+                enemyTransforms.Add(child);
+            }
+
+            float bestDistance = Single.PositiveInfinity;
+            int closestEnemyIndex = -1;
+            
+            for (int i = 0; i < enemyTransforms.Count; i++)
+            {
+                float calculatedDistance =
+                    Vector3.SqrMagnitude(enemyTransforms[i].transform.position - transform.position);
+                if (calculatedDistance < bestDistance)
+                {
+                    bestDistance = calculatedDistance;
+                    closestEnemyIndex = i;
+                }
+            }
+
+            if (closestEnemyIndex == -1) return null;
+            
+            Transform closestEnemyTransform = enemyTransforms[closestEnemyIndex].transform;
+            return closestEnemyTransform;
+        }
+        
+        public void FaceTarget(Transform target)
+        {
+            Vector3 direction = (target.position - transform.position).normalized;
+            Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5);
         }
 
         // Turn to face the direction the player is moving

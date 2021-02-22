@@ -69,6 +69,14 @@ namespace PlayGame.Speech
             if (Input.GetKey(KeyCode.C)) {
                 speechRecognition.GetResponse("shoot");
             }
+
+            if (Input.GetKey(KeyCode.L)) {
+                speechRecognition.GetResponse("lock on nearest enemy");
+            }
+            
+            if (Input.GetKey(KeyCode.M)) {
+                speechRecognition.GetResponse("disengage lock on");
+            }
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using PlayGame.Pings;
 using PlayGame.Player;
@@ -24,6 +26,8 @@ namespace PlayGame.Speech
     
         public GameObject ping;
         private PingManager _pingManager;
+
+        private bool _lockedOn = false;
     
         private void Start() {
             StartSpeechRecognitionInTheBrowser();
@@ -134,6 +138,16 @@ namespace PlayGame.Speech
                 _moveObject.SetDestination(spaceStation.transform.position, _spaceStationCollider);
             }
         }
+        
+        IEnumerator LockOn()
+        {
+            while (_lockedOn)
+            {
+                Transform transform = player.GetComponent<MoveObject>().GetNearestEnemyTransform();
+                player.GetComponent<MoveObject>().FaceTarget(transform);
+                yield return null;
+            }
+        }
     
         private void PerformActions(string phrase) {
             if (IsMovementCommand(phrase)) {
@@ -174,6 +188,18 @@ namespace PlayGame.Speech
                 _laserGun.StopShooting();
             } else if (phrase.Contains("shoot") || phrase.Contains("fire")) {
                 _laserGun.StartShooting();
+            }
+
+            if (phrase.Contains("lock on nearest enemy"))
+            {
+                _lockedOn = true;
+                StartCoroutine(LockOn());
+            }
+
+            if (phrase.Contains("disengage lock on"))
+            {
+                _lockedOn = false;
+                StopCoroutine(LockOn());
             }
         }
 
