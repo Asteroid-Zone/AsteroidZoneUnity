@@ -7,6 +7,7 @@ namespace PlayGame
     public class SpaceStation : MonoBehaviour {
 
         public GridManager gridManager;
+        public UI.GameManager gameManager;
 
         private const int MaxStationHealth = 100;
         private int _stationHealth = 0;
@@ -19,7 +20,7 @@ namespace PlayGame
         private void Update() {
             if (_stationHealth >= MaxStationHealth) {
                 EventsManager.AddMessageToQueue("Game completed");
-                SceneManager.LoadScene(Scenes.MainMenuScene); // TODO create victory scene
+                gameManager.LeaveRoom(); // TODO create victory scene
             }
         }
 
