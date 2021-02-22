@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Numerics;
+using UnityEngine;
+using Vector3 = UnityEngine.Vector3;
 
 namespace PlayGame.Camera
 {
@@ -11,13 +13,18 @@ namespace PlayGame.Camera
         private Vector3 _prevMousePos = new Vector3(255f, 255f, 255f);
         private GameObject _focusPoint;
         private UnityEngine.Camera _camera;
+        private float _cameraDistance = 50f;
         private GameObject _trackingObject;
+        
+        // TODO: Base this on the grid manager settings
+        private Bounds _focusPointBounds = new Bounds(new Vector3(50f, 0f, 50f), new Vector3(100f, 1f, 100f));
 
         private void Start()
         {
             _focusPoint = GameObject.Find("FocusPoint");
             _camera = GetComponent<UnityEngine.Camera>();
             transform.LookAt(_focusPoint.transform.position);
+            CorrectCameraDistance();
         }
 
         private void Update()
@@ -34,6 +41,7 @@ namespace PlayGame.Camera
                 {
                     // Start tracking the target
                     _trackingObject = hit.transform.gameObject;
+                    _cameraDistance = minCamDistance;
                     FocusTrackedObject();
                 }
             }
@@ -48,9 +56,17 @@ namespace PlayGame.Camera
                 _trackingObject = null;
                 
                 // Change camera position if MMB is held (based on mouse movement)
-                var positionChange = -mouseDifference.x * sensitivity * camTransform.right;
-                camTransform.position += positionChange;
-                _focusPoint.transform.position += positionChange;
+                var camForward = camTransform.forward;
+                var camForwardXZ = new Vector3(camForward.x, 0, camForward.z);
+                var positionChangeX = -mouseDifference.x * sensitivity * camTransform.right;
+                var positionChangeY = -mouseDifference.y * sensitivity * camForwardXZ;
+                var positionChange = positionChangeX + positionChangeY;
+                var newFocusPosition = _focusPoint.transform.position + positionChange;
+                if (_focusPointBounds.Contains(newFocusPosition))
+                {
+                    camTransform.position += positionChange;
+                    _focusPoint.transform.position = newFocusPosition;
+                }
             }
             else if (Input.mouseScrollDelta.y != 0)
             {
@@ -60,17 +76,16 @@ namespace PlayGame.Camera
                 if (minCamDistance <= newCameraDistance && newCameraDistance <= maxCamDistance)
                 {
                     camTransform.position = newPosition;
+                    _cameraDistance = newCameraDistance;
                 }
             }
             
-            FocusTrackedObject();
+            if (_trackingObject) FocusTrackedObject();
             _prevMousePos = Input.mousePosition;
         }
 
         private void FocusTrackedObject()
         {
-            if (_trackingObject == null) return;
-
             var camTransform = transform;
             
             // Move the Focus Point game object to be centered on the target
@@ -79,9 +94,17 @@ namespace PlayGame.Camera
             var positionDifference = _trackingObject.transform.position - focusPosition;
             focusPosition += positionDifference;
             _focusPoint.transform.position = focusPosition;
-                
-            // Reposition the camera so that it's at the minimum distance from the new focus point position
-            camTransform.position = (camTransform.position - focusPosition + positionDifference).normalized * minCamDistance + focusPosition;
+            camTransform.position += positionDifference;
+            
+            CorrectCameraDistance();
+        }
+
+        private void CorrectCameraDistance()
+        {
+            // Reposition camera so that it's at the correct distance from the focus point
+            var camTransform = transform;
+            var focusPosition = _focusPoint.transform.position;
+            camTransform.position = (camTransform.position - focusPosition).normalized * _cameraDistance + focusPosition;
         }
     }
 }
