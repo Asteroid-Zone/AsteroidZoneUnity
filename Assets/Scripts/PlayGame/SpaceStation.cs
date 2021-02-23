@@ -12,6 +12,7 @@ namespace PlayGame
         private const int MaxStationHealth = 100;
         private int _stationHealth = 0;
         private int _stationShields = 100;
+        private bool complete = false;
     
         private void Start() {
             transform.position = gridManager.GetGridCentre();
@@ -20,7 +21,12 @@ namespace PlayGame
         private void Update() {
             if (_stationHealth >= MaxStationHealth) {
                 EventsManager.AddMessageToQueue("Game completed");
-                gameManager.LeaveRoom(); // TODO create victory scene
+                // Ensures LeaveRoom is only called once
+                if (!complete)
+                {
+                    gameManager.LeaveRoom(); // TODO create victory scene
+                    complete = true;
+                }
             }
         }
 

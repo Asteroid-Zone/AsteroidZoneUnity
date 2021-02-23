@@ -101,14 +101,7 @@ namespace MainMenu
         public override void OnJoinedRoom()
         {
             Debug.Log("Asteroid Zone/MainMenuFunction: OnJoinedRoom() called by PUN. Now this client is in a room.");
-            // We only load if we are the first player, else we rely on `PhotonNetwork.AutomaticallySyncScene` to sync our instance scene.
-            if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
-            {
-                Debug.Log("We load PlayGame");
-
-                // Load the Game.
-                PhotonNetwork.LoadLevel("PlayGame");
-            }
+            PhotonNetwork.LoadLevel("PlayGame");
         }
 
         public void PlayGame()
