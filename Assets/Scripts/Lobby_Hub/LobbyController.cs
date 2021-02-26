@@ -26,6 +26,7 @@ namespace MainMenu
       /// we need to keep track of this to properly adjust the behavior when we receive call back by Photon.
       /// This is used for the OnConnectedToMaster() callback when a user wants to leave the game.
       bool isConnecting;
+      bool isJoining;
 
       public AudioSource buttonPress;
 
@@ -45,15 +46,23 @@ namespace MainMenu
     ///Joining a game
     public void ConnectGame()
     {
-      PhotonNetwork.JoinRoom("Test");
-      Debug.Log("Room Test Joined");
+      progressLabelLobby.SetActive(true);
+      controlPanelLobby.SetActive(false);
+      if(PhotonNetwork.IsConnected)
+      {
+        PhotonNetwork.JoinRoom("Test");
+        Debug.Log("Room Test Joined");
+      }
+      else
+      {
+        // keep track of the will to join a room, because when we come back from the game we will get a callback that we are connected, so we need to know what to do then
+        isJoining = PhotonNetwork.ConnectUsingSettings();
+        PhotonNetwork.GameVersion = gameVersion;
+      }
+
     }
 
-    //if join room fails this function is called for error catching
-    public void OnPhotonJoinRoomFailed()
-    {
-      Debug.Log("Joining room failed please try again");
-    }
+
     /// Start the connection process.
     /// - If already connected, we create the room as designated by the input
     /// - if not yet connected, Connect this application instance to Photon Cloud Network
@@ -83,39 +92,53 @@ namespace MainMenu
           Connect();
           isConnecting = false;
         }
+        if(isJoining)
+        {
+          Debug.Log("now calling connectgame()");
+          ConnectGame();
+          isJoining = false;
+        }
       }
 
-        public override void OnDisconnected(DisconnectCause cause)
-        {
-            progressLabelLobby.SetActive(false);
-            controlPanelLobby.SetActive(true);
-            isConnecting = false;
-            Debug.LogWarningFormat("Asteroid Zone/MainMenuFunction: OnDisconnected() was called by PUN with reason {0}", cause);
-        }
 
-        public override void OnJoinedRoom()
-        {
-            Debug.Log("Asteroid Zone/MainMenuFunction: OnJoinedRoom() called by PUN. Now this client is in a room.");
-            // We only load if we are the first player, else we rely on `PhotonNetwork.AutomaticallySyncScene` to sync our instance scene.
-            if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
-            {
-                Debug.Log("We load PlayGame");
 
+      //if join room fails this function is called for error catching
+      public override void OnJoinRoomFailed(short returnCode, string message)
+      {
+        Debug.Log("Joining room failed please try again. Reason being");
+        Debug.Log(message);
+      }
+
+      public override void OnDisconnected(DisconnectCause cause)
+      {
+          progressLabelLobby.SetActive(false);
+          controlPanelLobby.SetActive(true);
+          isConnecting = false;
+          Debug.LogWarningFormat("Asteroid Zone/MainMenuFunction: OnDisconnected() was called by PUN with reason {0}", cause);
+      }
+
+    public override void OnJoinedRoom()
+      {
+          Debug.Log("Asteroid Zone/MainMenuFunction: OnJoinedRoom() called by PUN. Now this client is in a room.");
+          // We only load if we are the first player, else we rely on `PhotonNetwork.AutomaticallySyncScene` to sync our instance scene.
+          if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
+          {
+              Debug.Log("We load PlayGame");
                 // Load the Game.
-                PhotonNetwork.LoadLevel("Lobby");
-            }
-        }
+              PhotonNetwork.LoadLevel("Lobby");
+          }
+      }
 
-        public void CreateGame()
-        {
-            buttonPress.Play();
-            Connect();
-        }
+    public void CreateGame()
+      {
+          buttonPress.Play();
+          Connect();
+      }
 
-        public void JoinGame()
-        {
-            buttonPress.Play();
-            ConnectGame();
-        }
-    }
+    public void JoinGame()
+      {
+          buttonPress.Play();
+          ConnectGame();
+      }
+  }
 }
