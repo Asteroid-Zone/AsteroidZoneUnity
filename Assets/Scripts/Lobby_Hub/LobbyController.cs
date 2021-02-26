@@ -42,6 +42,18 @@ namespace MainMenu
         PhotonNetwork.AutomaticallySyncScene = true;
     }
 
+    ///Joining a game
+    public void ConnectGame()
+    {
+      PhotonNetwork.JoinRoom("Test");
+      Debug.Log("Room Test Joined");
+    }
+
+    //if join room fails this function is called for error catching
+    public void OnPhotonJoinRoomFailed()
+    {
+      Debug.Log("Joining room failed please try again");
+    }
     /// Start the connection process.
     /// - If already connected, we create the room as designated by the input
     /// - if not yet connected, Connect this application instance to Photon Cloud Network
@@ -98,6 +110,12 @@ namespace MainMenu
         {
             buttonPress.Play();
             Connect();
+        }
+
+        public void JoinGame()
+        {
+            buttonPress.Play();
+            ConnectGame();
         }
     }
 }
