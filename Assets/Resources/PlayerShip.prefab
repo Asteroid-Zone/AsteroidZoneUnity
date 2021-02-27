@@ -18,7 +18,8 @@ GameObject:
   - component: {fileID: 2551174986814475516}
   - component: {fileID: 2551174986814475490}
   - component: {fileID: 2551174986814475491}
-  - component: {fileID: 4260808117848163987}
+  - component: {fileID: 3221443318928257621}
+  - component: {fileID: 5322255746144783499}
   m_Layer: 0
   m_Name: PlayerShip
   m_TagString: Player
@@ -165,7 +166,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c2d3ee8c7f561b48921db07ee1b90dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EnemySpawner: {fileID: 0}
+  EnemySpawner: {fileID: 3372416722083646108, guid: f9785da7cbf73d34d8bb4a1bc113b383,
+    type: 3}
 --- !u!114 &2551174986814475490
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -191,7 +193,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   laser: {fileID: 3433697794835343957}
---- !u!114 &4260808117848163987
+--- !u!114 &3221443318928257621
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -209,10 +211,27 @@ MonoBehaviour:
   observableSearch: 2
   Synchronization: 3
   OwnershipTransfer: 0
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: 5322255746144783499}
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &5322255746144783499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2551174986814475488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
 --- !u!1 &3433697794066583157
 GameObject:
   m_ObjectHideFlags: 0
