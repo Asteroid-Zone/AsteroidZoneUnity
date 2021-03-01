@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Photon.Pun;
+using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -23,6 +24,7 @@ namespace PlayGame.Pirates
     
         private void Start()
         {
+            if (!PhotonNetwork.IsMasterClient) return;
             _gridManager = gridManager.GetComponent<GridManager>();
             InvokeRepeating(nameof(PirateRNG), 0, everyXSeconds);
             
@@ -33,6 +35,7 @@ namespace PlayGame.Pirates
 
         private void PirateRNG()
         {
+            if (!PhotonNetwork.IsMasterClient) return;
             // Don't spawn pirates if the maximum count is reached.
             if (transform.childCount >= _maxPirates)
             {
@@ -48,6 +51,7 @@ namespace PlayGame.Pirates
 
         private void SpawnPirate()
         {
+            if (!PhotonNetwork.IsMasterClient) return;
             // Initialise some random grid coordinates on the map
             var randomGridCoord = new Vector2(Random.Range(0, _gridManager.width), Random.Range(0, _gridManager.height));
             
@@ -63,7 +67,7 @@ namespace PlayGame.Pirates
             }
             
             // Spawn the new pirate
-            var newPirate = Instantiate(pirate, randomGlobalCoord, Quaternion.identity);
+            var newPirate = PhotonNetwork.Instantiate("PirateShip", randomGlobalCoord, Quaternion.identity);
             newPirate.transform.parent = gameObject.transform;
         }
     }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Photon.Pun;
+using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -23,6 +24,7 @@ namespace PlayGame
     
         private void Start()
         {
+            if (!PhotonNetwork.IsMasterClient) return;
             _gridManager = gridManager.GetComponent<GridManager>();
             InvokeRepeating(nameof(AsteroidRNG), 0, everyXSeconds);
             
@@ -33,6 +35,7 @@ namespace PlayGame
 
         private void AsteroidRNG()
         {
+            if (!PhotonNetwork.IsMasterClient) return;
             // Don't spawn asteroids if the maximum count is reached.
             if (transform.childCount >= _maxAsteroids)
             {
@@ -48,6 +51,7 @@ namespace PlayGame
 
         private void SpawnAsteroid()
         {
+            if (!PhotonNetwork.IsMasterClient) return;
             // Initialise some random grid coordinates on the map
             var randomGridCoord = new Vector2(Random.Range(0, _gridManager.width), Random.Range(0, _gridManager.height));
             
@@ -63,7 +67,7 @@ namespace PlayGame
             }
             
             // Spawn the new asteroid
-            var newAsteroid = Instantiate(asteroid, randomGlobalCoord, Quaternion.identity);
+            var newAsteroid = PhotonNetwork.Instantiate("Asteroid", randomGlobalCoord, Quaternion.identity);
             newAsteroid.transform.parent = gameObject.transform;
         
         }

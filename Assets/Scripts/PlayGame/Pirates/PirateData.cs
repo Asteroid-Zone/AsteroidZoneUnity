@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Photon.Pun;
+using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
 
@@ -37,7 +38,7 @@ namespace PlayGame.Pirates
         private void Die()
         {
             // TODO Play some animation
-            Destroy(gameObject);
+            PhotonNetwork.Destroy(gameObject);
             EventsManager.AddMessageToQueue("Pirate destroyed at " + GridCoord.GetCoordFromVector(gameObject.transform.position));
         }
 

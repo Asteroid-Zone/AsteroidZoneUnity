@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Photon.Pun;
+using System.Collections;
 using UnityEngine;
 
 namespace PlayGame {
@@ -31,7 +32,7 @@ namespace PlayGame {
                 yield return null;
             }
             
-            Destroy(gameObject); // Delete the game object when its faded
+            PhotonNetwork.Destroy(gameObject); // Delete the game object when its faded
         }
 
         public void MineAsteroid() {

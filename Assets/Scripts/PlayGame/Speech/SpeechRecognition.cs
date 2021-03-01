@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using PhotonClass.GameController;
 using PlayGame.Pings;
 using PlayGame.Player;
 using PlayGame.Player.Movement;
@@ -31,9 +32,11 @@ namespace PlayGame.Speech
     
         private void Start() {
             StartSpeechRecognitionInTheBrowser();
+            player = PhotonPlayer.PP.myAvatar;
             _moveObject = player.GetComponent<MoveObject>();
             _miningLaser = player.GetComponent<MiningLaser>();
             _laserGun = player.GetComponent<LaserGun>();
+            if (_laserGun == null) Debug.Log("Laser Gun is Null!");
             _playerData = player.GetComponent<PlayerData>();
             _pingManager = ping.GetComponent<PingManager>();
             _spaceStationCollider = spaceStation.GetComponent<Collider>();

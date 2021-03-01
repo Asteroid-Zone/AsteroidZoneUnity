@@ -44,7 +44,7 @@ namespace PhotonClass
 
         public override void OnDisable()
         {
-            //subscribe to functions
+            //unsubscribe to functions
             base.OnDisable();
             PhotonNetwork.RemoveCallbackTarget(this);
             SceneManager.sceneLoaded -= OnSceneFinishedLoading;
@@ -77,7 +77,7 @@ namespace PhotonClass
         private void CreatePlayer()
         {
 
-            PhotonNetwork.Instantiate("PlayerShip", new Vector3(5f, 0f, 5f), Quaternion.identity, 0);
+            PhotonNetwork.Instantiate("PhotonNetworkPlayer", new Vector3(5f,0f,10f) , Quaternion.identity, 0);
         }
         // Start is called before the first frame update
         void Start()
