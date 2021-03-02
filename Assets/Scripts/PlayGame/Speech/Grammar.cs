@@ -116,10 +116,10 @@ namespace PlayGame.Speech {
 
             if (LockCommands.Contains(activatableObject)) {
                 string lockTarget = GetLockTarget(phrase);
-                if (lockTarget != null) return new TurnOnCommand(on, TurnOnCommand.ObjectType.Lock, lockTarget);
+                if (lockTarget != null) return new ToggleCommand(on, ToggleCommand.ObjectType.Lock, lockTarget);
             }
 
-            if (activatableObject != null) return new TurnOnCommand(on, TurnOnCommand.ObjectType.MiningLaser);
+            if (activatableObject != null) return new ToggleCommand(on, ToggleCommand.ObjectType.MiningLaser);
             
             return new Command(); // Return an invalid command 
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using PlayGame.Pings;
 using PlayGame.Player;
 using PlayGame.Player.Movement;
@@ -7,8 +8,7 @@ using UnityEngine;
 using Ping = PlayGame.Pings.Ping;
 
 namespace PlayGame.Speech {
-    public class ActionController
-    {
+    public class ActionController : MonoBehaviour{
 
         public GameObject player;
         public GameObject spaceStationObject;
@@ -21,6 +21,8 @@ namespace PlayGame.Speech {
     
         public GameObject ping;
         public PingManager pingManager;
+
+        private bool _lockedOn = false;
 
         public void PerformActions(Command command) {
             switch (command.GetCommandType()) {
@@ -37,6 +39,7 @@ namespace PlayGame.Speech {
                     PerformTransferCommand();
                     break;
                 case Command.CommandType.Toggle:
+                    PerformToggleCommand((ToggleCommand) command);
                     break;
                 case Command.CommandType.Speed:
                     break;
@@ -96,6 +99,30 @@ namespace PlayGame.Speech {
                 playerData.RemoveResources(); // Remove them from the player
             } else {
                 EventsManager.AddMessageToQueue("You must be next to the space station to transfer resources");
+            }
+        }
+
+        private void PerformToggleCommand(ToggleCommand command) {
+            switch (command.objectType) {
+                case ToggleCommand.ObjectType.MiningLaser:
+                    if (command.on) miningLaser.EnableMiningLaser(); 
+                    else miningLaser.DisableMiningLaser();
+                    break;
+                case ToggleCommand.ObjectType.Lock:
+                    _lockedOn = command.on;
+                    if (command.on) StartCoroutine(LockOn(command.lockTarget));
+                    else StopCoroutine(LockOn(command.lockTarget));
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+        
+        IEnumerator LockOn(GameObject lockTarget) {
+            while (_lockedOn) {
+                // Transform transform = player.GetComponent<MoveObject>().GetNearestEnemyTransform();
+                player.GetComponent<MoveObject>().FaceTarget(lockTarget.transform);
+                yield return null;
             }
         }
         
