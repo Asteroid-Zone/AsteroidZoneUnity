@@ -34,7 +34,7 @@ namespace PlayGame.Speech
             }
         
             if (Input.GetKeyDown(KeyCode.F)) { // Move towards ping
-                speechRecognition.GetResponse("go to ping"); // todo only move if there is a ping
+                speechRecognition.GetResponse("go to ping");
             }
         
             if (Input.GetKeyDown(KeyCode.T)) { // Create ping at Grid(C, 4)

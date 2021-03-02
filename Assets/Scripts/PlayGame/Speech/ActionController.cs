@@ -87,6 +87,8 @@ namespace PlayGame.Speech {
                 if(onlyPing.GetPingType() != PingType.None) { // Only move to ping if theres an active ping
                     moveObject.SetDestination(onlyPing.GetPositionVector());
                 } 
+            } else { // Dont move if there's no ping
+                moveObject.SetSpeed(0);
             }
         }
 
