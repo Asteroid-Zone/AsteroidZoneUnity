@@ -23,6 +23,7 @@ namespace PlayGame.Speech {
         public PingManager pingManager;
 
         private bool _lockedOn = false;
+        private bool _shooting = false;
 
         public void PerformActions(Command command) {
             switch (command.GetCommandType()) {
@@ -42,8 +43,10 @@ namespace PlayGame.Speech {
                     PerformToggleCommand((ToggleCommand) command);
                     break;
                 case Command.CommandType.Speed:
+                    PerformSpeedCommand((SpeedCommand) command);
                     break;
                 case Command.CommandType.Shoot:
+                    PerformShootCommand();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -117,6 +120,21 @@ namespace PlayGame.Speech {
                     throw new ArgumentOutOfRangeException();
             }
         }
+
+        private void PerformSpeedCommand(SpeedCommand command) {
+            moveObject.SetSpeed(command.speed);
+        }
+
+        // todo shooting should be part of toggle
+        private void PerformShootCommand() {
+            if (_shooting) {
+                laserGun.StopShooting();
+                _shooting = false;
+            } else {
+                laserGun.StartShooting();
+                _shooting = true;
+            }
+        }
         
         IEnumerator LockOn(GameObject lockTarget) {
             while (_lockedOn) {
@@ -125,7 +143,7 @@ namespace PlayGame.Speech {
                 yield return null;
             }
         }
-        
+
     }
 }
 
