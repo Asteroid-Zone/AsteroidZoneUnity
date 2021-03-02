@@ -14,7 +14,7 @@ namespace PlayGame.UI
         private Vector3 _lastPosition;
 
         private void Start() {
-            player = PhotonPlayer.PP.myAvatar;
+            //player = PhotonPlayer.PP.myAvatar;
             _text = GetComponent<Text>();
             _playerData = player.GetComponent<PlayerData>();
         }

@@ -13,7 +13,7 @@ namespace PlayGame.UI
         private Text _text;
 
         private void Start() {
-            player = PhotonPlayer.PP.myAvatar;
+            //player = PhotonPlayer.PP.myAvatar;
             _text = GetComponent<Text>();
             _playerData = player.GetComponent<PlayerData>();
         }

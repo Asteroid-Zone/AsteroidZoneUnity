@@ -20,7 +20,7 @@ namespace PlayGame.Speech {
     
         private void Start() {
             StartSpeechRecognitionInTheBrowser();
-            player = PhotonPlayer.PP.myAvatar;
+            //player = PhotonPlayer.PP.myAvatar;
 
             _actionController = new ActionController {
                 speechRecognition = this,

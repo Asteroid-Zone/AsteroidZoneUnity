@@ -11,7 +11,7 @@ namespace PlayGame.UI
 
         private void Start()
         {
-            target = PhotonPlayer.PP.myAvatar.transform;
+            //target = PhotonPlayer.PP.myAvatar.transform;
             _text = GetComponent<Text>();
         }
 

@@ -26,7 +26,7 @@ namespace PlayGame.Speech
             }
 
             if (Input.GetKey(KeyCode.E)) { // Start Moving
-                speechRecognition.GetResponse("go"); // todo not working
+                speechRecognition.GetResponse("go");
             }
 
             if (Input.GetKey(KeyCode.R)) { // Move towards Grid(C, 6)
