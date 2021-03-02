@@ -1,4 +1,5 @@
-﻿using PlayGame.Pings;
+﻿using System;
+using PlayGame.Pings;
 
 namespace PlayGame.Speech.Commands {
     public class PingCommand : Command {
@@ -8,15 +9,20 @@ namespace PlayGame.Speech.Commands {
 
         public PingCommand(string type, string coord) : base(CommandType.Ping) {
             pingType = GetPingTypeFromString(type);
-            gridCoord = GetGridCoordFromString(coord);
+            gridCoord = GridCoord.GetCoordFromString(coord);
         }
 
-        private PingType GetPingTypeFromString(string type) {
-            throw new System.NotImplementedException();
-        }
-
-        private GridCoord GetGridCoordFromString(string coord) {
-            throw new System.NotImplementedException();
+        private static PingType GetPingTypeFromString(string type) {
+            switch (type) {
+                case "none":
+                    return PingType.None;
+                case "asteroid":
+                    return PingType.Asteroid;
+                case "pirate":
+                    return PingType.Pirate;
+                default:
+                    throw new ArgumentException("Invalid Ping Type");
+            }
         }
     }
 }

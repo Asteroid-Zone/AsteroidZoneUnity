@@ -36,11 +36,11 @@ namespace PlayGame.Speech {
             };
         }
 
-        public void StartLockOn(GameObject lockTarget) {
+        public void StartLockOn(Transform lockTarget) {
             StartCoroutine(_actionController.LockOn(lockTarget));
         }
 
-        public void StopLockOn(GameObject lockTarget) {
+        public void StopLockOn(Transform lockTarget) {
             StopCoroutine(_actionController.LockOn(lockTarget));
         }
 

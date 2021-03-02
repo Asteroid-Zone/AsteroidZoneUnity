@@ -33,14 +33,14 @@ namespace PlayGame.Speech.Commands {
                     destinationType = GetDestinationTypeFromString(data);
                     break;
                 case MovementType.Grid:
-                    gridCoord = GetCoordFromString(data);
+                    gridCoord = GridCoord.GetCoordFromString(data);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(movementType), movementType, null);
             }
         }
 
-        private static Vector3 GetDirectionVectorFromString(string data) {
+        public static Vector3 GetDirectionVectorFromString(string data) {
             switch (data) {
                 case "north":
                     return Vector3.forward;
@@ -55,7 +55,7 @@ namespace PlayGame.Speech.Commands {
             }
         }
         
-        private static DestinationType GetDestinationTypeFromString(string data) {
+        public static DestinationType GetDestinationTypeFromString(string data) {
             switch (data) {
                 case "station":
                     return DestinationType.SpaceStation;
@@ -66,13 +66,5 @@ namespace PlayGame.Speech.Commands {
             }
         }
 
-        private static GridCoord GetCoordFromString(string data) {
-            Match number = Regex.Match(data, @"(\d+)"); // One or more numbers
-            char x = data[0];
-            int z = int.Parse(number.Value);
-
-            return new GridCoord(x, z);
-        }
-        
     }
 }

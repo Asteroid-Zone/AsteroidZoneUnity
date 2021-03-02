@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace PlayGame.Speech.Commands {
     public class ToggleCommand : Command {
@@ -8,23 +9,35 @@ namespace PlayGame.Speech.Commands {
             Lock
         }
 
+        public enum LockTargetType {
+            Pirate,
+            Asteroid
+        }
+
         public readonly bool on; // true if turning on, false if turning off
         public readonly ObjectType objectType;
-        public readonly GameObject lockTarget;
+        public readonly LockTargetType lockTargetType;
 
         public ToggleCommand(bool on, ObjectType objectType) : base(CommandType.Toggle) {
             this.on = on;
             this.objectType = objectType;
         }
         
-        public ToggleCommand(bool on, ObjectType objectType, string lockTarget) : base(CommandType.Toggle) {
+        public ToggleCommand(bool on, ObjectType objectType, string lockTargetType) : base(CommandType.Toggle) {
             this.on = on;
             this.objectType = objectType;
-            this.lockTarget = GetLockTargetFromString(lockTarget);
+            this.lockTargetType = GetLockTargetTypeFromString(lockTargetType);
         }
 
-        private GameObject GetLockTargetFromString(string lockTarget) {
-            throw new System.NotImplementedException();
+        private static LockTargetType GetLockTargetTypeFromString(string lockTargetType) {
+            switch (lockTargetType) {
+                case "pirate":
+                    return LockTargetType.Pirate;
+                case "asteroid":
+                    return LockTargetType.Asteroid;
+                default:
+                    throw new ArgumentException("Invalid Lock Target Type");
+            }
         }
     }
 }

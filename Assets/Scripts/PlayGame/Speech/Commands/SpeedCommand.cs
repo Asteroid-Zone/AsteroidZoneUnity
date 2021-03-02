@@ -1,4 +1,6 @@
-﻿namespace PlayGame.Speech.Commands {
+﻿using System;
+
+namespace PlayGame.Speech.Commands {
     public class SpeedCommand : Command {
 
         public readonly float speed;
@@ -7,8 +9,15 @@
             this.speed = GetSpeedFromString(speed);
         }
 
-        private float GetSpeedFromString(string speed) {
-            throw new System.NotImplementedException();
+        private static float GetSpeedFromString(string speed) {
+            switch (speed) {
+                case "stop":
+                    return 0f;
+                case "go":
+                    return 1f;
+                default:
+                    throw new ArgumentException("Invalid Speed");
+            }
         }
     }
 }

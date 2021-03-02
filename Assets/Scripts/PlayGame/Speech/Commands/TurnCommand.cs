@@ -12,32 +12,26 @@ namespace PlayGame.Speech.Commands {
         
         public readonly TurnType turnType;
         public readonly Vector3 direction;
-        public readonly Vector3 destination;
+        
+        public readonly MovementCommand.DestinationType destinationType;
+        
         public readonly GridCoord gridCoord;
 
         public TurnCommand(TurnType turnType, string data) : base(CommandType.Turn) {
             this.turnType = turnType;
             switch (turnType) {
                 case TurnType.Direction:
-                    direction = GetVectorFromString(data);
+                    direction = MovementCommand.GetDirectionVectorFromString(data);
                     break;
                 case TurnType.Destination:
-                    destination = GetVectorFromString(data);
+                    destinationType = MovementCommand.GetDestinationTypeFromString(data);
                     break;
                 case TurnType.Grid:
-                    gridCoord = GetCoordFromString(data);
+                    gridCoord = GridCoord.GetCoordFromString(data);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(turnType), turnType, null);
             }
-        }
-        
-        private static Vector3 GetVectorFromString(string data) {
-            throw new NotImplementedException();
-        }
-        
-        private static GridCoord GetCoordFromString(string data) {
-            throw new NotImplementedException();
         }
     }
 }

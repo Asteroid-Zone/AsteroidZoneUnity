@@ -96,7 +96,9 @@ namespace PlayGame.Speech {
                     moveObject.SetDirection(command.direction);
                     break;
                 case TurnCommand.TurnType.Destination:
-                    moveObject.SetDestination(command.destination);
+                    if (command.destinationType == MovementCommand.DestinationType.SpaceStation) {
+                        moveObject.SetDestination(spaceStationObject.transform.position, spaceStationCollider);
+                    } else MoveToPing();
                     break;
                 case TurnCommand.TurnType.Grid:
                     moveObject.SetDestination(command.gridCoord.GetWorldVector());
@@ -131,12 +133,25 @@ namespace PlayGame.Speech {
                     break;
                 case ToggleCommand.ObjectType.Lock:
                     _lockedOn = command.on;
-                    if (command.on) speechRecognition.StartLockOn(command.lockTarget);
-                    else speechRecognition.StopLockOn(command.lockTarget);
+                    if (command.on) speechRecognition.StartLockOn(GetLockTarget(command.lockTargetType));
+                    else speechRecognition.StopLockOn(GetLockTarget(command.lockTargetType));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        private Transform GetLockTarget(ToggleCommand.LockTargetType lockTargetType) {
+            if (lockTargetType == ToggleCommand.LockTargetType.Pirate) return GetNearestPirate();
+            return GetNearestAsteroid();
+        }
+
+        private Transform GetNearestAsteroid() {
+            throw new NotImplementedException();
+        }
+
+        private Transform GetNearestPirate() {
+            return player.GetComponent<MoveObject>().GetNearestEnemyTransform();
         }
 
         private void PerformSpeedCommand(SpeedCommand command) {
@@ -154,10 +169,9 @@ namespace PlayGame.Speech {
             }
         }
         
-        public IEnumerator LockOn(GameObject lockTarget) {
+        public IEnumerator LockOn(Transform lockTarget) {
             while (_lockedOn) {
-                // Transform transform = player.GetComponent<MoveObject>().GetNearestEnemyTransform();
-                player.GetComponent<MoveObject>().FaceTarget(lockTarget.transform);
+                player.GetComponent<MoveObject>().FaceTarget(lockTarget);
                 yield return null;
             }
         }
