@@ -46,7 +46,7 @@ namespace PlayGame.Pirates
             var generatedProb = Random.Range(0, 1.0f);
             if (generatedProb < probability)
             {
-                SpawnPirate();
+                if (Variables.SpawnPirates) SpawnPirate();
             }
         }
 

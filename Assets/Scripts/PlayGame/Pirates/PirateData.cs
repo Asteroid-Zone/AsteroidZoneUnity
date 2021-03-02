@@ -41,6 +41,7 @@ namespace PlayGame.Pirates
         {
             // TODO Play some animation
             if(!Variables.Debug) PhotonNetwork.Destroy(gameObject);
+            else Destroy(gameObject);
             EventsManager.AddMessageToQueue("Pirate destroyed at " + GridCoord.GetCoordFromVector(gameObject.transform.position));
         }
 

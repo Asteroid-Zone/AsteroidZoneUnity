@@ -55,7 +55,7 @@ namespace PlayGame.Speech
             }
             
             if (Input.GetKeyDown(KeyCode.J)) {
-                speechRecognition.GetResponse("deactivate mining laser"); // todo not working
+                speechRecognition.GetResponse("deactivate mining laser");
             }
             
             if (Input.GetKeyDown(KeyCode.Z)) {
@@ -67,7 +67,7 @@ namespace PlayGame.Speech
             }
             
             if (Input.GetKeyDown(KeyCode.C)) {
-                speechRecognition.GetResponse("shoot"); // todo not working
+                speechRecognition.GetResponse("shoot");
             }
 
             if (Input.GetKeyDown(KeyCode.L)) {
