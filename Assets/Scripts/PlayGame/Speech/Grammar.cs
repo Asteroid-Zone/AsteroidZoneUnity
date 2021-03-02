@@ -66,7 +66,7 @@ namespace PlayGame.Speech {
             if (commandList.Equals(TurnCommands)) return GetTurnCommand(phrase);
             if (commandList.Equals(PingCommands)) return GetPingCommand(phrase);
             if (commandList.Equals(TransferCommands)) return GetTransferCommand(phrase);
-            // todo if (commandList.Equals(OnCommands)) return HasActivatableObject(phrase);
+            if (commandList.Equals(OnCommands)) return GetTurnOnCommand(phrase);
             // todo if (commandList.Equals(OffCommands)) return HasActivatableObject(phrase);
 
             return new Command(); // Return an invalid command
@@ -110,7 +110,20 @@ namespace PlayGame.Speech {
             if (HasTransferableObject(phrase)) return new Command(Command.CommandType.Transfer);
             return new Command(); // Return an invalid command
         }
-        
+
+        private static Command GetTurnOnCommand(string phrase) {
+            string activatableObject = GetActivatableObject(phrase);
+
+            if (LockCommands.Contains(activatableObject)) {
+                string lockTarget = GetLockTarget(phrase);
+                if (lockTarget != null) return new TurnOnCommand(TurnOnCommand.ObjectType.Lock, lockTarget);
+            }
+
+            if (activatableObject != null) return new TurnOnCommand(TurnOnCommand.ObjectType.MiningLaser);
+            
+            return new Command(); // Return an invalid command 
+        }
+
         private static string GetDirection(string phrase) {
             foreach (List<string> commandList in Directions) {
                 foreach (string command in commandList) {
@@ -137,6 +150,26 @@ namespace PlayGame.Speech {
 
         private static string GetPingType(string phrase) {
             foreach (string command in PingTypes) {
+                if (phrase.Contains(command)) return command;
+            }
+
+            return null;
+        }
+        
+        private static string GetActivatableObject(string phrase) {
+            foreach (List<string> commandList in Activatable) {
+                foreach (string command in commandList) {
+                    if (phrase.Contains(command)) {
+                        return command;
+                    }
+                }
+            }
+    
+            return null;
+        }
+        
+        private static string GetLockTarget(string phrase) {
+            foreach (string command in LockTargets) {
                 if (phrase.Contains(command)) return command;
             }
 

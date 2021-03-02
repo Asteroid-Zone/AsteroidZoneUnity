@@ -4,7 +4,9 @@
             Movement,
             Turn,
             Ping,
-            Transfer
+            Transfer,
+            TurnOn,
+            TurnOff
         }
 
         private readonly bool _isValid;
