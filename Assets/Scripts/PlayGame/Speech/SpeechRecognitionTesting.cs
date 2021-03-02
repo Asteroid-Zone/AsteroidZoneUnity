@@ -7,8 +7,7 @@ namespace PlayGame.Speech
 
         public SpeechRecognition speechRecognition;
 
-        void Update()
-        {
+        void Update() {
             if (Input.GetKey(KeyCode.W)) { // Face north and start moving
                 speechRecognition.GetResponse("move north");
             }
@@ -27,7 +26,7 @@ namespace PlayGame.Speech
             }
 
             if (Input.GetKey(KeyCode.E)) { // Start Moving
-                speechRecognition.GetResponse("go");
+                speechRecognition.GetResponse("go"); // todo not working
             }
 
             if (Input.GetKey(KeyCode.R)) { // Move towards Grid(C, 6)
@@ -55,7 +54,7 @@ namespace PlayGame.Speech
             }
             
             if (Input.GetKey(KeyCode.J)) {
-                speechRecognition.GetResponse("deactivate mining laser");
+                speechRecognition.GetResponse("deactivate mining laser"); // todo not working
             }
             
             if (Input.GetKey(KeyCode.Z)) {
@@ -63,19 +62,19 @@ namespace PlayGame.Speech
             }
             
             if (Input.GetKey(KeyCode.X)) {
-                speechRecognition.GetResponse("stop shooting");
+                speechRecognition.GetResponse("stop shooting"); // todo not working
             }
             
             if (Input.GetKey(KeyCode.C)) {
-                speechRecognition.GetResponse("shoot");
+                speechRecognition.GetResponse("shoot"); // todo not working
             }
 
             if (Input.GetKey(KeyCode.L)) {
-                speechRecognition.GetResponse("lock on nearest enemy");
+                speechRecognition.GetResponse("lock on nearest enemy"); // todo not working
             }
             
             if (Input.GetKey(KeyCode.M)) {
-                speechRecognition.GetResponse("disengage lock on");
+                speechRecognition.GetResponse("disengage lock on"); // todo not working
             }
         }
     }

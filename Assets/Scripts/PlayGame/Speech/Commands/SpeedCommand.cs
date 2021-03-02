@@ -12,9 +12,9 @@ namespace PlayGame.Speech.Commands {
         private static float GetSpeedFromString(string speed) {
             switch (speed) {
                 case "stop":
-                    return 0f;
+                    return 0;
                 case "go":
-                    return 1f;
+                    return 1;
                 default:
                     throw new ArgumentException("Invalid Speed");
             }

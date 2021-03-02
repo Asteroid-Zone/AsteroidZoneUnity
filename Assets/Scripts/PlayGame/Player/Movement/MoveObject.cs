@@ -158,8 +158,7 @@ namespace PlayGame.Player.Movement
         }
 
         // Sets the current speed to a percentage of the players maximum speed
-        public void SetSpeed(float fraction) 
-        {
+        public void SetSpeed(float fraction) {
             _playerData.SetSpeed(fraction);
         }
     }

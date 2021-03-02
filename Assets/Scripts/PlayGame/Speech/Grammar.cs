@@ -39,26 +39,32 @@ namespace PlayGame.Speech {
         private static readonly List<List<string>> CompoundCommands = new List<List<string>>{MovementCommands, TurnCommands, PingCommands, TransferCommands, OnCommands, OffCommands};
 
         public static Command GetCommand(string phrase) {
+            Command c = new Command();
+            
             // Check if the phrase contains a command that requires more info
             foreach (List<string> commandList in CompoundCommands) {
                 foreach (string command in commandList) {
                     if (phrase.Contains(command)) {
-                       return GetCompoundCommand(phrase, commandList);
-                    }
-                }
-            }
-            
-            // Check if the phrase contains a single word command
-            foreach (List<string> commandList in SingleCommands) {
-                foreach (string command in commandList) {
-                    if (phrase.Contains(command)) {
-                        if (commandList == SpeedCommands) return new SpeedCommand(command);
-                        if (commandList == ShootCommands) return new Command(Command.CommandType.Shoot);
+                       c = GetCompoundCommand(phrase, commandList);
                     }
                 }
             }
 
-            return new Command(); // Return an invalid command
+            // If no compound command is found check for single word commands
+            // Have to do it in this order because of the "go" command being used for movement and speed
+            if (!c.IsValid()) {
+                // Check if the phrase contains a single word command
+                foreach (List<string> commandList in SingleCommands) {
+                    foreach (string command in commandList) {
+                        if (phrase.Contains(command)) {
+                            if (commandList == SpeedCommands) return new SpeedCommand(command);
+                            if (commandList == ShootCommands) return new Command(Command.CommandType.Shoot);
+                        }
+                    }
+                }
+            }
+
+            return c;
         }
         
         private static Command GetCompoundCommand(string phrase, List<string> commandList) {
