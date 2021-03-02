@@ -66,15 +66,15 @@ namespace PlayGame.Speech
             }
             
             if (Input.GetKeyDown(KeyCode.C)) {
-                speechRecognition.GetResponse("shoot");
+                speechRecognition.GetResponse("shoot"); // currently starts and stops shooting
             }
 
             if (Input.GetKeyDown(KeyCode.L)) {
-                speechRecognition.GetResponse("lock on nearest enemy"); // todo not working
+                speechRecognition.GetResponse("lock on nearest enemy");
             }
             
             if (Input.GetKeyDown(KeyCode.M)) {
-                speechRecognition.GetResponse("disengage lock on"); // todo not working
+                speechRecognition.GetResponse("disengage lock on");
             }
         }
     }

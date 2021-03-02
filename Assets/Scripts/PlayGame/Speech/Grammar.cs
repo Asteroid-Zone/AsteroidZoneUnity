@@ -28,9 +28,10 @@ namespace PlayGame.Speech {
         private static readonly List<string> MiningLaser = new List<string>{"mining laser", "laser", "mining beam"};
         
         private static readonly List<string> LockCommands = new List<string>{"lock", "aim"};
-        private static readonly List<string> LockTargets = new List<string>{"pirate", "asteroid"};
-        
-        private static readonly List<string> OnCommands = new List<string>{"activate", "engage", "turn on"};
+        // private static readonly List<string> Pirate; todo create lists for synonyms
+        private static readonly List<string> LockTargets = new List<string>{"pirate", "enemy", "asteroid"};
+
+        private static readonly List<string> OnCommands = new List<string>{"activate", "engage", "turn on", "lock"};
         private static readonly List<string> OffCommands = new List<string>{"deactivate", "disengage", "turn off"};
         private static readonly List<List<string>> Activatable = new List<List<string>>{MiningLaser, LockCommands};
         
@@ -123,7 +124,8 @@ namespace PlayGame.Speech {
 
             if (LockCommands.Contains(activatableObject)) {
                 string lockTarget = GetLockTarget(phrase);
-                if (lockTarget != null) return new ToggleCommand(on, ToggleCommand.ObjectType.Lock, lockTarget);
+                // Only need a target if lock is being enabled
+                if (lockTarget != null || !on) return new ToggleCommand(on, ToggleCommand.ObjectType.Lock, lockTarget);
             }
 
             if (activatableObject != null) return new ToggleCommand(on, ToggleCommand.ObjectType.MiningLaser);
