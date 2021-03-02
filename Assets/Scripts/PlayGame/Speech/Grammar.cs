@@ -65,7 +65,7 @@ namespace PlayGame.Speech {
             if (commandList.Equals(MovementCommands)) return GetMovementCommand(phrase);
             if (commandList.Equals(TurnCommands)) return GetTurnCommand(phrase);
             if (commandList.Equals(PingCommands)) return GetPingCommand(phrase);
-            // todo if (commandList.Equals(TransferCommands)) return HasTransferableObject(phrase);
+            if (commandList.Equals(TransferCommands)) return GetTransferCommand(phrase);
             // todo if (commandList.Equals(OnCommands)) return HasActivatableObject(phrase);
             // todo if (commandList.Equals(OffCommands)) return HasActivatableObject(phrase);
 
@@ -103,6 +103,11 @@ namespace PlayGame.Speech {
             string gridCoord = GetGridCoord(phrase);
 
             if (pingType != null && gridCoord != null) return new PingCommand(pingType, gridCoord);
+            return new Command(); // Return an invalid command
+        }
+
+        private static Command GetTransferCommand(string phrase) {
+            if (HasTransferableObject(phrase)) return new Command(Command.CommandType.Transfer);
             return new Command(); // Return an invalid command
         }
         

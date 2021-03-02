@@ -3,7 +3,8 @@
         public enum CommandType {
             Movement,
             Turn,
-            Ping
+            Ping,
+            Transfer
         }
 
         private readonly bool _isValid;
@@ -14,7 +15,7 @@
             _isValid = false;
         }
 
-        protected Command(CommandType commandType) {
+        public Command(CommandType commandType) {
             _isValid = true;
             _commandType = commandType;
         }
