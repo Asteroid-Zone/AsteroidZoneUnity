@@ -37,7 +37,7 @@ namespace PlayGame.Speech {
         private static readonly List<string> ShootCommands = new List<string>{"shoot", "fire"};
 
         private static readonly List<List<string>> SingleCommands = new List<List<string>>{SpeedCommands, ShootCommands};
-        private static readonly List<List<string>> CompoundCommands = new List<List<string>>{MovementCommands, TurnCommands, PingCommands, TransferCommands, OnCommands, OffCommands};
+        private static readonly List<List<string>> CompoundCommands = new List<List<string>>{MovementCommands, TurnCommands, PingCommands, TransferCommands, OffCommands, OnCommands};
 
         public static Command GetCommand(string phrase) {
             Command c = new Command();
@@ -73,8 +73,8 @@ namespace PlayGame.Speech {
             if (commandList.Equals(TurnCommands)) return GetTurnCommand(phrase);
             if (commandList.Equals(PingCommands)) return GetPingCommand(phrase);
             if (commandList.Equals(TransferCommands)) return GetTransferCommand(phrase);
-            if (commandList.Equals(OnCommands)) return GetToggleCommand(phrase, true);
             if (commandList.Equals(OffCommands)) return GetToggleCommand(phrase, false);
+            if (commandList.Equals(OnCommands)) return GetToggleCommand(phrase, true);
 
             return new Command(); // Return an invalid command
         }
