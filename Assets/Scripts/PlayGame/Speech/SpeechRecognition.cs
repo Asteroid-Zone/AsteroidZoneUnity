@@ -9,8 +9,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Ping = PlayGame.Pings.Ping;
 
-namespace PlayGame.Speech
-{
+namespace PlayGame.Speech {
     public class SpeechRecognition : MonoBehaviour {
         public Text text;
         private string _myResponse = "...";
@@ -54,7 +53,8 @@ namespace PlayGame.Speech
         // Called by javascript when speech is detected
         public void GetResponse(string result) {
             _myResponse = result.ToLower();
-            PerformActions(_myResponse);
+            Command command = Grammar.GetCommand(_myResponse);
+            if (command.IsValid()) ActionController.PerformActions(command);
         }
 
         private static bool IsMovementCommand(string phrase) {

@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace PlayGame.Speech {
-    public class Grammar {
+    public static class Grammar {
         
-        private static string _gridCoordRegex = @"[a-z]( )?(\d+)";
-        
+        private const string GridCoordRegex = @"[a-z]( )?(\d+)";
+
         private static readonly List<string> MovementCommands = new List<string>{"move", "go"};
         private static readonly List<string> TurnCommands = new List<string>{"face", "turn"};
         
@@ -13,11 +13,11 @@ namespace PlayGame.Speech {
         private static readonly List<string> CompassDirections = new List<string>{"north", "east", "south", "west"};
         private static readonly List<List<string>> Directions = new List<List<string>>{CompassDirections};
         
+        private static readonly List<string> Destinations = new List<string>{"space station", "station", "ping"};
+        
         private static readonly List<string> PingTypes = new List<string>{"none", "asteroid", "pirate"};
-        private static readonly List<string> PingCommands = new List<string>{"ping", "mark"};
-        
-        private static readonly List<string> Destinations = new List<string>{"space station", "station"};
-        
+        private static readonly List<string> PingCommands = new List<string>{"ping", "pin", "mark"};
+
         private static readonly List<string> SpeedCommands = new List<string>{"stop", "go"};
         
         private static readonly List<string> TransferCommands = new List<string>{"transfer", "deposit"};
@@ -37,15 +37,79 @@ namespace PlayGame.Speech {
         private static readonly List<List<string>> SingleCommands = new List<List<string>>{SpeedCommands, ShootCommands};
         private static readonly List<List<string>> CompoundCommands = new List<List<string>>{MovementCommands, TurnCommands, PingCommands, TransferCommands, OnCommands, OffCommands};
 
-        // Checks if a phrase is valid
-        private static bool IsValidPhrase(string phrase) {
-            // Check if the phrase contains a single word command
-            foreach (List<string> commandList in SingleCommands) {
+        public static Command GetCommand(string phrase) {
+            // Check if the phrase contains a command that requires more info
+            foreach (List<string> commandList in CompoundCommands) {
                 foreach (string command in commandList) {
-                    if (phrase.Contains(command)) return true;
+                    if (phrase.Contains(command)) {
+                       return GetCompoundCommand(phrase, commandList);
+                    }
                 }
             }
             
+            // Check if the phrase contains a single word command
+            foreach (List<string> commandList in SingleCommands) {
+                foreach (string command in commandList) {
+                    if (phrase.Contains(command)) {
+                        if (commandList == SpeedCommands) return new Command(); // todo create speed command
+                        if (commandList == ShootCommands) return new Command(); // todo create shoot command
+                    }
+                }
+            }
+
+            return new Command(); // Return an invalid command
+        }
+        
+        private static Command GetCompoundCommand(string phrase, List<string> commandList) {
+            if (commandList.Equals(MovementCommands)) return GetMovementCommand(phrase);
+            // todo if (commandList.Equals(TurnCommands)) return HasDirection(phrase);
+            // todo if (commandList.Equals(PingCommands)) return HasPingType(phrase);
+            // todo if (commandList.Equals(TransferCommands)) return HasTransferableObject(phrase);
+            // todo if (commandList.Equals(OnCommands)) return HasActivatableObject(phrase);
+            // todo if (commandList.Equals(OffCommands)) return HasActivatableObject(phrase);
+
+            return new Command(); // Return an invalid command
+        }
+        
+        private static Command GetMovementCommand(string phrase) {
+            string data = GetDirection(phrase);
+            if (data != null) return new MovementCommand(MovementCommand.MovementType.Direction, data);
+
+            data = GetDestination(phrase);
+            if (data != null) return new MovementCommand(MovementCommand.MovementType.Destination, data);
+
+            data = GetGridCoord(phrase);
+            if (data != null) return new MovementCommand(MovementCommand.MovementType.Grid, data);
+
+            return new Command(); // Return an invalid command
+        }
+        
+        private static string GetDirection(string phrase) {
+            foreach (List<string> commandList in Directions) {
+                foreach (string command in commandList) {
+                    if (phrase.Contains(command)) return command;
+                }
+            }
+    
+            return null;
+        }
+        
+        private static string GetDestination(string phrase) {
+            foreach (string command in Destinations) {
+                if (phrase.Contains(command)) return command;
+            }
+
+            return null;
+        }
+        
+        private static string GetGridCoord(string phrase) {
+            Match coordMatch = Regex.Match(phrase, GridCoordRegex);
+            if (!coordMatch.Success) return null;
+            return coordMatch.Value;
+        }
+        
+        // Checks if a phrase is valid
+        public static bool IsValidPhrase(string phrase) {
             // Check if the phrase contains a command that requires more info
             foreach (List<string> commandList in CompoundCommands) {
                 foreach (string command in commandList) {
@@ -54,13 +118,20 @@ namespace PlayGame.Speech {
                     }
                 }
             }
+            
+            // Check if the phrase contains a single word command
+            foreach (List<string> commandList in SingleCommands) {
+                foreach (string command in commandList) {
+                    if (phrase.Contains(command)) return true;
+                }
+            }
 
             return false;
         }
 
         // Calls the correct method to determine if the command has the required information
         private static bool HasValidSubject(string phrase, List<string> commandList) {
-            if (commandList.Equals(MovementCommands)) return HasDirection(phrase);
+            if (commandList.Equals(MovementCommands)) return HasDirection(phrase) || HasDestination(phrase);
             if (commandList.Equals(TurnCommands)) return HasDirection(phrase);
             if (commandList.Equals(PingCommands)) return HasPingType(phrase);
             if (commandList.Equals(TransferCommands)) return HasTransferableObject(phrase);
@@ -78,6 +149,21 @@ namespace PlayGame.Speech {
             }
     
             return false;
+        }
+        
+        private static bool HasDestination(string phrase) {
+            foreach (string command in Destinations) {
+                if (phrase.Contains(command)) return true;
+            }
+
+            if (HasGridCoord(phrase)) return true;
+    
+            return false;
+        }
+
+        private static bool HasGridCoord(string phrase) {
+            Match coordMatch = Regex.Match(phrase, GridCoordRegex);
+            return coordMatch.Success;
         }
         
         private static bool HasPingType(string phrase) {
