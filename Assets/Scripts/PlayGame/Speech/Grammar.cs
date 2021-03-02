@@ -66,8 +66,8 @@ namespace PlayGame.Speech {
             if (commandList.Equals(TurnCommands)) return GetTurnCommand(phrase);
             if (commandList.Equals(PingCommands)) return GetPingCommand(phrase);
             if (commandList.Equals(TransferCommands)) return GetTransferCommand(phrase);
-            if (commandList.Equals(OnCommands)) return GetTurnOnCommand(phrase);
-            // todo if (commandList.Equals(OffCommands)) return HasActivatableObject(phrase);
+            if (commandList.Equals(OnCommands)) return GetToggleCommand(phrase, true);
+            if (commandList.Equals(OffCommands)) return GetToggleCommand(phrase, false);
 
             return new Command(); // Return an invalid command
         }
@@ -111,15 +111,15 @@ namespace PlayGame.Speech {
             return new Command(); // Return an invalid command
         }
 
-        private static Command GetTurnOnCommand(string phrase) {
+        private static Command GetToggleCommand(string phrase, bool on) { // on is true if turning on, false if turning off
             string activatableObject = GetActivatableObject(phrase);
 
             if (LockCommands.Contains(activatableObject)) {
                 string lockTarget = GetLockTarget(phrase);
-                if (lockTarget != null) return new TurnOnCommand(TurnOnCommand.ObjectType.Lock, lockTarget);
+                if (lockTarget != null) return new TurnOnCommand(on, TurnOnCommand.ObjectType.Lock, lockTarget);
             }
 
-            if (activatableObject != null) return new TurnOnCommand(TurnOnCommand.ObjectType.MiningLaser);
+            if (activatableObject != null) return new TurnOnCommand(on, TurnOnCommand.ObjectType.MiningLaser);
             
             return new Command(); // Return an invalid command 
         }

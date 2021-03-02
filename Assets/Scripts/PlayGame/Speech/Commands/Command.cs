@@ -5,8 +5,7 @@
             Turn,
             Ping,
             Transfer,
-            TurnOn,
-            TurnOff
+            Toggle
         }
 
         private readonly bool _isValid;

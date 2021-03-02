@@ -8,14 +8,17 @@ namespace PlayGame.Speech.Commands {
             Lock
         }
 
+        private bool _on; // true if turning on, false if turning off
         private ObjectType _objectType;
         private GameObject _lockTarget;
 
-        public TurnOnCommand(ObjectType objectType) : base(CommandType.TurnOn) {
+        public TurnOnCommand(bool on, ObjectType objectType) : base(CommandType.Toggle) {
+            _on = on;
             _objectType = objectType;
         }
         
-        public TurnOnCommand(ObjectType objectType, string lockTarget) : base(CommandType.TurnOn) {
+        public TurnOnCommand(bool on, ObjectType objectType, string lockTarget) : base(CommandType.Toggle) {
+            _on = on;
             _objectType = objectType;
             _lockTarget = GetLockTargetFromString(lockTarget);
         }
