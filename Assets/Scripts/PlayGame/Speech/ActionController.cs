@@ -8,8 +8,10 @@ using UnityEngine;
 using Ping = PlayGame.Pings.Ping;
 
 namespace PlayGame.Speech {
-    public class ActionController : MonoBehaviour{
+    public class ActionController {
 
+        public SpeechRecognition speechRecognition;
+        
         public GameObject player;
         public GameObject spaceStationObject;
         public Collider spaceStationCollider;
@@ -113,8 +115,8 @@ namespace PlayGame.Speech {
                     break;
                 case ToggleCommand.ObjectType.Lock:
                     _lockedOn = command.on;
-                    if (command.on) StartCoroutine(LockOn(command.lockTarget));
-                    else StopCoroutine(LockOn(command.lockTarget));
+                    if (command.on) speechRecognition.StartLockOn(command.lockTarget);
+                    else speechRecognition.StopLockOn(command.lockTarget);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -136,7 +138,7 @@ namespace PlayGame.Speech {
             }
         }
         
-        IEnumerator LockOn(GameObject lockTarget) {
+        public IEnumerator LockOn(GameObject lockTarget) {
             while (_lockedOn) {
                 // Transform transform = player.GetComponent<MoveObject>().GetNearestEnemyTransform();
                 player.GetComponent<MoveObject>().FaceTarget(lockTarget.transform);
@@ -146,27 +148,3 @@ namespace PlayGame.Speech {
 
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
