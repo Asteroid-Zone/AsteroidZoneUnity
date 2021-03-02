@@ -1,4 +1,4 @@
-﻿namespace PlayGame.Speech {
+﻿namespace PlayGame.Speech.Commands {
     public class Command {
         public enum CommandType {
             Movement,

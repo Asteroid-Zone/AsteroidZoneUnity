@@ -1,34 +1,34 @@
 ﻿using System;
 using UnityEngine;
 
-namespace PlayGame.Speech {
-    public class MovementCommand : Command {
+namespace PlayGame.Speech.Commands {
+    public class TurnCommand : Command {
 
-        public enum MovementType {
+        public enum TurnType {
             Direction,
             Destination,
             Grid
         }
         
-        private MovementType _movementType;
+        private TurnType _turnType;
         private Vector3 _direction;
         private Vector3 _destination;
         private GridCoord _gridCoord;
 
-        public MovementCommand(MovementType movementType, string data) : base(CommandType.Movement) {
-            _movementType = movementType;
-            switch (movementType) {
-                case MovementType.Direction:
+        public TurnCommand(TurnType turnType, string data) : base(CommandType.Turn) {
+            _turnType = turnType;
+            switch (turnType) {
+                case TurnType.Direction:
                     _direction = GetVectorFromString(data);
                     break;
-                case MovementType.Destination:
+                case TurnType.Destination:
                     _destination = GetVectorFromString(data);
                     break;
-                case MovementType.Grid:
+                case TurnType.Grid:
                     _gridCoord = GetCoordFromString(data);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(movementType), movementType, null);
+                    throw new ArgumentOutOfRangeException(nameof(turnType), turnType, null);
             }
         }
         

@@ -5,6 +5,7 @@ using PhotonClass.GameController;
 using PlayGame.Pings;
 using PlayGame.Player;
 using PlayGame.Player.Movement;
+using PlayGame.Speech.Commands;
 using UnityEngine;
 using UnityEngine.UI;
 using Ping = PlayGame.Pings.Ping;

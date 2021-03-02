@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using PlayGame.Speech.Commands;
 
 namespace PlayGame.Speech {
     public static class Grammar {
@@ -62,7 +63,7 @@ namespace PlayGame.Speech {
         
         private static Command GetCompoundCommand(string phrase, List<string> commandList) {
             if (commandList.Equals(MovementCommands)) return GetMovementCommand(phrase);
-            // todo if (commandList.Equals(TurnCommands)) return HasDirection(phrase);
+            if (commandList.Equals(TurnCommands)) return GetTurnCommand(phrase);
             // todo if (commandList.Equals(PingCommands)) return HasPingType(phrase);
             // todo if (commandList.Equals(TransferCommands)) return HasTransferableObject(phrase);
             // todo if (commandList.Equals(OnCommands)) return HasActivatableObject(phrase);
@@ -80,6 +81,19 @@ namespace PlayGame.Speech {
 
             data = GetGridCoord(phrase);
             if (data != null) return new MovementCommand(MovementCommand.MovementType.Grid, data);
+
+            return new Command(); // Return an invalid command
+        }
+        
+        private static Command GetTurnCommand(string phrase) {
+            string data = GetDirection(phrase);
+            if (data != null) return new TurnCommand(TurnCommand.TurnType.Direction, data);
+
+            data = GetDestination(phrase);
+            if (data != null) return new TurnCommand(TurnCommand.TurnType.Destination, data);
+
+            data = GetGridCoord(phrase);
+            if (data != null) return new TurnCommand(TurnCommand.TurnType.Grid, data);
 
             return new Command(); // Return an invalid command
         }
