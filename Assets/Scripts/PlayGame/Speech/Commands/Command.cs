@@ -2,7 +2,8 @@
     public class Command {
         public enum CommandType {
             Movement,
-            Turn
+            Turn,
+            Ping
         }
 
         private readonly bool _isValid;

@@ -64,7 +64,7 @@ namespace PlayGame.Speech {
         private static Command GetCompoundCommand(string phrase, List<string> commandList) {
             if (commandList.Equals(MovementCommands)) return GetMovementCommand(phrase);
             if (commandList.Equals(TurnCommands)) return GetTurnCommand(phrase);
-            // todo if (commandList.Equals(PingCommands)) return HasPingType(phrase);
+            if (commandList.Equals(PingCommands)) return GetPingCommand(phrase);
             // todo if (commandList.Equals(TransferCommands)) return HasTransferableObject(phrase);
             // todo if (commandList.Equals(OnCommands)) return HasActivatableObject(phrase);
             // todo if (commandList.Equals(OffCommands)) return HasActivatableObject(phrase);
@@ -97,6 +97,14 @@ namespace PlayGame.Speech {
 
             return new Command(); // Return an invalid command
         }
+
+        private static Command GetPingCommand(string phrase) {
+            string pingType = GetPingType(phrase);
+            string gridCoord = GetGridCoord(phrase);
+
+            if (pingType != null && gridCoord != null) return new PingCommand(pingType, gridCoord);
+            return new Command(); // Return an invalid command
+        }
         
         private static string GetDirection(string phrase) {
             foreach (List<string> commandList in Directions) {
@@ -120,6 +128,14 @@ namespace PlayGame.Speech {
             Match coordMatch = Regex.Match(phrase, GridCoordRegex);
             if (!coordMatch.Success) return null;
             return coordMatch.Value;
+        }
+
+        private static string GetPingType(string phrase) {
+            foreach (string command in PingTypes) {
+                if (phrase.Contains(command)) return command;
+            }
+
+            return null;
         }
         
         // Checks if a phrase is valid
@@ -147,7 +163,7 @@ namespace PlayGame.Speech {
         private static bool HasValidSubject(string phrase, List<string> commandList) {
             if (commandList.Equals(MovementCommands)) return HasDirection(phrase) || HasDestination(phrase);
             if (commandList.Equals(TurnCommands)) return HasDirection(phrase);
-            if (commandList.Equals(PingCommands)) return HasPingType(phrase);
+            if (commandList.Equals(PingCommands)) return HasPingType(phrase) && HasGridCoord(phrase);
             if (commandList.Equals(TransferCommands)) return HasTransferableObject(phrase);
             if (commandList.Equals(OnCommands)) return HasActivatableObject(phrase);
             if (commandList.Equals(OffCommands)) return HasActivatableObject(phrase);
