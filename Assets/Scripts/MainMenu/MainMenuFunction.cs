@@ -4,17 +4,11 @@ using Statics;
 using PhotonClass;
 
 
-namespace MainMenu
-{
-    public class MainMenuFunction : MonoBehaviour
-    {
-
-
+namespace MainMenu {
+    public class MainMenuFunction : MonoBehaviour {
+        
         public AudioSource buttonPress;
-
-
-
-
+        
         public void PlayGame()
         {
             buttonPress.Play();

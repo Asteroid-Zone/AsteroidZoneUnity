@@ -5,6 +5,7 @@ using PlayGame.Pings;
 using PlayGame.Player;
 using PlayGame.Player.Movement;
 using PlayGame.Speech.Commands;
+using PlayGame.UI;
 using UnityEngine;
 using Ping = PlayGame.Pings.Ping;
 

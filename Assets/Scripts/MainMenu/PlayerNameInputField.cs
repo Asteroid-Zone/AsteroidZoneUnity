@@ -5,8 +5,7 @@ using Photon.Realtime;
 using System.Collections;
 
 
-namespace MainMenu
-{
+namespace MainMenu {
     /// Player name input field. Let the user input their name, will appear above the player in the game.
     [RequireComponent(typeof(InputField))]
     public class PlayerNameInputField : MonoBehaviour

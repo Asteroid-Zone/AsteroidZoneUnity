@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace PlayGame
-{
+namespace PlayGame.UI {
     public class EventsManager : MonoBehaviour
     {
         public GameObject scrollParent;

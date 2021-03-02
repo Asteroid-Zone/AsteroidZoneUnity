@@ -3,6 +3,7 @@ using PlayGame.Pings;
 using PlayGame.Player;
 using PlayGame.Player.Movement;
 using PlayGame.Speech.Commands;
+using Statics;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,7 +21,7 @@ namespace PlayGame.Speech {
     
         private void Start() {
             StartSpeechRecognitionInTheBrowser();
-            //player = PhotonPlayer.PP.myAvatar;
+            if (!Variables.Debug) player = PhotonPlayer.PP.myAvatar;
 
             _actionController = new ActionController {
                 speechRecognition = this,
