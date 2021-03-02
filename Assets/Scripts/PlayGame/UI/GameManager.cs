@@ -5,10 +5,8 @@ using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Photon.Realtime;
 
-namespace PlayGame.UI
-{
-    public class GameManager : MonoBehaviourPunCallbacks
-    {
+namespace PlayGame.UI {
+    public class GameManager : MonoBehaviourPunCallbacks {
 
         /// Called when the local player left the room. We need to load the launcher scene.
         public override void OnLeftRoom()

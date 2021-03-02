@@ -5,9 +5,8 @@ using UnityEngine.AI;
 
 namespace PlayGame.Player.Movement 
 {
-    public class MoveObject : MonoBehaviour 
-    {
-        // TODO change to Vector2?
+    public class MoveObject : MonoBehaviour {
+        
         private Vector3 _direction;
         private Vector3 _destination = Vector3.positiveInfinity;
 
@@ -159,8 +158,7 @@ namespace PlayGame.Player.Movement
         }
 
         // Sets the current speed to a percentage of the players maximum speed
-        public void SetSpeed(float fraction) 
-        {
+        public void SetSpeed(float fraction) {
             _playerData.SetSpeed(fraction);
         }
     }

@@ -1,5 +1,6 @@
 ﻿using Photon.Pun;
 using System;
+using Statics;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -24,7 +25,7 @@ namespace PlayGame.Pirates
     
         private void Start()
         {
-            if (!PhotonNetwork.IsMasterClient) return;
+            if (!PhotonNetwork.IsMasterClient && !Variables.Debug) return;
             _gridManager = gridManager.GetComponent<GridManager>();
             InvokeRepeating(nameof(PirateRNG), 0, everyXSeconds);
             
@@ -35,7 +36,7 @@ namespace PlayGame.Pirates
 
         private void PirateRNG()
         {
-            if (!PhotonNetwork.IsMasterClient) return;
+            if (!PhotonNetwork.IsMasterClient && !Variables.Debug) return;
             // Don't spawn pirates if the maximum count is reached.
             if (transform.childCount >= _maxPirates)
             {
@@ -45,13 +46,13 @@ namespace PlayGame.Pirates
             var generatedProb = Random.Range(0, 1.0f);
             if (generatedProb < probability)
             {
-                SpawnPirate();
+                if (Variables.SpawnPirates) SpawnPirate();
             }
         }
 
         private void SpawnPirate()
         {
-            if (!PhotonNetwork.IsMasterClient) return;
+            if (!PhotonNetwork.IsMasterClient && !Variables.Debug) return;
             // Initialise some random grid coordinates on the map
             var randomGridCoord = new Vector2(Random.Range(0, _gridManager.width), Random.Range(0, _gridManager.height));
             
@@ -67,7 +68,9 @@ namespace PlayGame.Pirates
             }
             
             // Spawn the new pirate
-            var newPirate = PhotonNetwork.Instantiate("PirateShip", randomGlobalCoord, Quaternion.identity);
+            GameObject newPirate;
+            if (!Variables.Debug) newPirate = PhotonNetwork.Instantiate("PirateShip", randomGlobalCoord, Quaternion.identity);
+            else newPirate = Instantiate(pirate, randomGlobalCoord, Quaternion.identity);
             newPirate.transform.parent = gameObject.transform;
         }
     }

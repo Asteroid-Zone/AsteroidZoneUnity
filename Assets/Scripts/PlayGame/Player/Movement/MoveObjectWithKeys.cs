@@ -1,4 +1,5 @@
 ﻿using PhotonClass.GameController;
+using Statics;
 using UnityEngine;
 
 namespace PlayGame.Player.Movement {
@@ -10,15 +11,13 @@ namespace PlayGame.Player.Movement {
 
         private void Start()
         {
-            player = PhotonPlayer.PP.myAvatar;
+            if (!Variables.Debug) player = PhotonPlayer.PP.myAvatar;
             _playerData = GetComponent<PlayerData>();
         }
     
         // Update is called once per frame
-        private void Update()
-        {
-            if (PhotonPlayer.PP.IsMine())
-            {
+        private void Update() {
+            if (Variables.Debug || PhotonPlayer.PP.IsMine()) {
                 if (Input.GetKey(KeyCode.UpArrow))
                 {
                     // Move the target forward with the necessary speed smoothed by the delta time

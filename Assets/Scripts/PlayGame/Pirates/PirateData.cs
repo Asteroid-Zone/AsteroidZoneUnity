@@ -1,4 +1,6 @@
 ﻿using Photon.Pun;
+using PlayGame.UI;
+using Statics;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
@@ -38,7 +40,8 @@ namespace PlayGame.Pirates
         private void Die()
         {
             // TODO Play some animation
-            PhotonNetwork.Destroy(gameObject);
+            if(!Variables.Debug) PhotonNetwork.Destroy(gameObject);
+            else Destroy(gameObject);
             EventsManager.AddMessageToQueue("Pirate destroyed at " + GridCoord.GetCoordFromVector(gameObject.transform.position));
         }
 

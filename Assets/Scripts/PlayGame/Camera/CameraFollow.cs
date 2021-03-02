@@ -1,4 +1,5 @@
 ﻿using PhotonClass.GameController;
+using Statics;
 using UnityEngine;
 
 namespace PlayGame.Camera
@@ -17,9 +18,8 @@ namespace PlayGame.Camera
         public bool followBehind = true;
         public float rotationDamping = 10.0f;
 
-        private void Start()
-        {
-             target = PhotonPlayer.PP.myAvatar.transform;
+        private void Start() {
+             if (!Variables.Debug) target = PhotonPlayer.PP.myAvatar.transform;
         }
 
         private void LateUpdate()
