@@ -3,19 +3,19 @@
 namespace PlayGame.Speech.Commands {
     public class PingCommand : Command {
 
-        private PingType _pingType;
-        private GridCoord _gridCoord;
+        public readonly PingType pingType;
+        public readonly GridCoord gridCoord;
 
-        public PingCommand(string pingType, string gridCoord) : base(CommandType.Ping) {
-            _pingType = GetPingTypeFromString(pingType);
-            _gridCoord = GetGridCoordFromString(gridCoord);
+        public PingCommand(string type, string coord) : base(CommandType.Ping) {
+            pingType = GetPingTypeFromString(type);
+            gridCoord = GetGridCoordFromString(coord);
         }
 
-        private PingType GetPingTypeFromString(string pingType) {
+        private PingType GetPingTypeFromString(string type) {
             throw new System.NotImplementedException();
         }
 
-        private GridCoord GetGridCoordFromString(string gridCoord) {
+        private GridCoord GetGridCoordFromString(string coord) {
             throw new System.NotImplementedException();
         }
     }

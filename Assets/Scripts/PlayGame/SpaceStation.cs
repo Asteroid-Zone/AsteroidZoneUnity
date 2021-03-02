@@ -1,13 +1,12 @@
-﻿using Statics;
+﻿using PlayGame.UI;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace PlayGame
 {
     public class SpaceStation : MonoBehaviour {
 
         public GridManager gridManager;
-        public UI.GameManager gameManager;
+        public GameManager gameManager;
 
         private const int MaxStationHealth = 100;
         private int _stationHealth = 0;

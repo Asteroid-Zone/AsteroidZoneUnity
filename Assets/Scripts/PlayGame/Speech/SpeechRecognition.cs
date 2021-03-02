@@ -44,6 +44,8 @@ namespace PlayGame.Speech {
             _spaceStation = spaceStation.GetComponent<SpaceStation>();
 
             _actionController = new ActionController {
+                player = player,
+                spaceStationObject = spaceStation,
                 moveObject = player.GetComponent<MoveObject>(),
                 miningLaser = player.GetComponent<MiningLaser>(),
                 laserGun = player.GetComponent<LaserGun>(),

@@ -4,10 +4,14 @@ using PlayGame.Player;
 using PlayGame.Player.Movement;
 using PlayGame.Speech.Commands;
 using UnityEngine;
+using Ping = PlayGame.Pings.Ping;
 
 namespace PlayGame.Speech {
-    public class ActionController {
-        
+    public class ActionController
+    {
+
+        public GameObject player;
+        public GameObject spaceStationObject;
         public Collider spaceStationCollider;
         public MoveObject moveObject;
         public MiningLaser miningLaser;
@@ -21,14 +25,16 @@ namespace PlayGame.Speech {
         public void PerformActions(Command command) {
             switch (command.GetCommandType()) {
                 case Command.CommandType.Movement:
-                    PerformMovement((MovementCommand) command);
+                    PerformMovementCommand((MovementCommand) command);
                     break;
                 case Command.CommandType.Turn:
-                    PerformTurn((TurnCommand) command);
+                    PerformTurnCommand((TurnCommand) command);
                     break;
                 case Command.CommandType.Ping:
+                    PerformPingCommand((PingCommand) command);
                     break;
                 case Command.CommandType.Transfer:
+                    PerformTransferCommand();
                     break;
                 case Command.CommandType.Toggle:
                     break;
@@ -41,7 +47,7 @@ namespace PlayGame.Speech {
             }
         }
 
-        private void PerformMovement(MovementCommand command) {
+        private void PerformMovementCommand(MovementCommand command) {
             moveObject.SetSpeed(1); // Start moving
             
             switch (command.movementType) {
@@ -60,7 +66,7 @@ namespace PlayGame.Speech {
             }
         }
 
-        private void PerformTurn(TurnCommand command) {
+        private void PerformTurnCommand(TurnCommand command) {
             switch (command.turnType) {
                 case TurnCommand.TurnType.Direction:
                     moveObject.SetDirection(command.direction);
@@ -75,6 +81,47 @@ namespace PlayGame.Speech {
                     throw new ArgumentOutOfRangeException();
             }
         }
+
+        private void PerformPingCommand(PingCommand command) {
+            if (playerData.GetRole() != Role.StationCommander) return; // Only let the station commander create pings
+            
+            Ping newPing = new Ping(command.gridCoord, command.pingType);
+            pingManager.AddPing(newPing);
+        }
+
+        private void PerformTransferCommand() {
+            // Check player is in the same grid square as the station
+            if (GridCoord.GetCoordFromVector(player.transform.position).Equals(GridCoord.GetCoordFromVector(spaceStationObject.transform.position))) {
+                spaceStation.AddResources(playerData.GetResources()); // Add the resources into the space station
+                playerData.RemoveResources(); // Remove them from the player
+            } else {
+                EventsManager.AddMessageToQueue("You must be next to the space station to transfer resources");
+            }
+        }
         
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
