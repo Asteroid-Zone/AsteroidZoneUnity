@@ -6,10 +6,13 @@ namespace PlayGame.Speech {
         
         private static string _gridCoordRegex = @"[a-z]( )?(\d+)";
         
-        private static readonly List<string> CompassDirections = new List<string>{"north", "east", "south", "west"};
         private static readonly List<string> MovementCommands = new List<string>{"move", "go"};
         private static readonly List<string> TurnCommands = new List<string>{"face", "turn"};
-
+        
+        // Todo add left/right commands
+        private static readonly List<string> CompassDirections = new List<string>{"north", "east", "south", "west"};
+        private static readonly List<List<string>> Directions = new List<List<string>>{CompassDirections};
+        
         private static readonly List<string> PingTypes = new List<string>{"none", "asteroid", "pirate"};
         private static readonly List<string> PingCommands = new List<string>{"ping", "mark"};
         
@@ -22,12 +25,12 @@ namespace PlayGame.Speech {
 
         private static readonly List<string> MiningLaser = new List<string>{"mining laser", "laser", "mining beam"};
         
-        private static readonly List<string> LockOnCommands = new List<string>{"lock", "aim"};
+        private static readonly List<string> LockCommands = new List<string>{"lock", "aim"};
         private static readonly List<string> LockTargets = new List<string>{"pirate", "asteroid"};
         
         private static readonly List<string> OnCommands = new List<string>{"activate", "engage", "turn on"};
         private static readonly List<string> OffCommands = new List<string>{"deactivate", "disengage", "turn off"};
-        private static readonly List<List<string>> Activatable = new List<List<string>>{MiningLaser, LockOnCommands};
+        private static readonly List<List<string>> Activatable = new List<List<string>>{MiningLaser, LockCommands};
         
         private static readonly List<string> ShootCommands = new List<string>{"shoot", "fire"};
 
@@ -68,19 +71,50 @@ namespace PlayGame.Speech {
         }
 
         private static bool HasDirection(string phrase) {
-            throw new System.NotImplementedException();
+            foreach (List<string> commandList in Directions) {
+                foreach (string command in commandList) {
+                    if (phrase.Contains(command)) return true;
+                }
+            }
+    
+            return false;
         }
         
         private static bool HasPingType(string phrase) {
-            throw new System.NotImplementedException();
+            foreach (string command in PingTypes) {
+                if (phrase.Contains(command)) return true;
+            }
+
+            return false;
         }
         
         private static bool HasTransferableObject(string phrase) {
-            throw new System.NotImplementedException();
+            foreach (string command in Transferable) {
+                if (phrase.Contains(command)) return true;
+            }
+
+            return false;
         }
-        
+
         private static bool HasActivatableObject(string phrase) {
-            throw new System.NotImplementedException();
+            foreach (List<string> commandList in Activatable) {
+                foreach (string command in commandList) {
+                    if (phrase.Contains(command)) {
+                        if (commandList == LockCommands) return HasLockTarget(phrase); // Lock on commands need a target
+                        return true;
+                    }
+                }
+            }
+    
+            return false;
+        }
+
+        private static bool HasLockTarget(string phrase) {
+            foreach (string command in LockTargets) {
+                if (phrase.Contains(command)) return true;
+            }
+
+            return false;
         }
 
     }
