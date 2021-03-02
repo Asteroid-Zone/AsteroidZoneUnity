@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using PlayGame.Speech.Commands;
+using UnityEngine;
 
 namespace PlayGame.Speech {
     public static class Grammar {
@@ -45,7 +46,7 @@ namespace PlayGame.Speech {
             foreach (List<string> commandList in CompoundCommands) {
                 foreach (string command in commandList) {
                     if (phrase.Contains(command)) {
-                       c = GetCompoundCommand(phrase, commandList);
+                        if (!c.IsValid()) c = GetCompoundCommand(phrase, commandList);
                     }
                 }
             }

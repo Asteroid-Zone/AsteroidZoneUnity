@@ -82,12 +82,11 @@ namespace PlayGame.Speech {
         // TODO: somehow number pings so that the player can go to a specific one
         private void MoveToPing() {
             var pings = pingManager.GetPings();
-            
             if (pings.Count == 1) {
                 Ping onlyPing = pings.Keys.ToList()[0];
                 if(onlyPing.GetPingType() != PingType.None) { // Only move to ping if theres an active ping
                     moveObject.SetDestination(onlyPing.GetPositionVector());
-                }
+                } 
             }
         }
 
