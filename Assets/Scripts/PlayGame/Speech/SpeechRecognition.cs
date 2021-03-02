@@ -27,6 +27,8 @@ namespace PlayGame.Speech {
         public GameObject ping;
         private PingManager _pingManager;
 
+        private ActionController _actionController;
+
         private bool _lockedOn = false;
     
         private void Start() {
@@ -40,6 +42,16 @@ namespace PlayGame.Speech {
             _pingManager = ping.GetComponent<PingManager>();
             _spaceStationCollider = spaceStation.GetComponent<Collider>();
             _spaceStation = spaceStation.GetComponent<SpaceStation>();
+
+            _actionController = new ActionController {
+                moveObject = player.GetComponent<MoveObject>(),
+                miningLaser = player.GetComponent<MiningLaser>(),
+                laserGun = player.GetComponent<LaserGun>(),
+                playerData = player.GetComponent<PlayerData>(),
+                pingManager = ping.GetComponent<PingManager>(),
+                spaceStationCollider = spaceStation.GetComponent<Collider>(),
+                spaceStation = spaceStation.GetComponent<SpaceStation>()
+            };
         }
 
         private void Update() {
@@ -55,7 +67,7 @@ namespace PlayGame.Speech {
         public void GetResponse(string result) {
             _myResponse = result.ToLower();
             Command command = Grammar.GetCommand(_myResponse);
-            if (command.IsValid()) ActionController.PerformActions(command);
+            if (command.IsValid()) _actionController.PerformActions(command);
         }
 
         private static bool IsMovementCommand(string phrase) {

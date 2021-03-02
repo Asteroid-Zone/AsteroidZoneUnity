@@ -11,7 +11,7 @@
         }
 
         private readonly bool _isValid;
-        private CommandType _commandType;
+        private readonly CommandType _commandType;
 
         // Creates an invalid command
         public Command() {
@@ -25,6 +25,10 @@
 
         public bool IsValid() {
             return _isValid;
+        }
+
+        public CommandType GetCommandType() {
+            return _commandType;
         }
 
     }

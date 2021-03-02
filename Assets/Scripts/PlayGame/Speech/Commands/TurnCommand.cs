@@ -10,22 +10,22 @@ namespace PlayGame.Speech.Commands {
             Grid
         }
         
-        private TurnType _turnType;
-        private Vector3 _direction;
-        private Vector3 _destination;
-        private GridCoord _gridCoord;
+        public readonly TurnType turnType;
+        public readonly Vector3 direction;
+        public readonly Vector3 destination;
+        public readonly GridCoord gridCoord;
 
         public TurnCommand(TurnType turnType, string data) : base(CommandType.Turn) {
-            _turnType = turnType;
+            this.turnType = turnType;
             switch (turnType) {
                 case TurnType.Direction:
-                    _direction = GetVectorFromString(data);
+                    direction = GetVectorFromString(data);
                     break;
                 case TurnType.Destination:
-                    _destination = GetVectorFromString(data);
+                    destination = GetVectorFromString(data);
                     break;
                 case TurnType.Grid:
-                    _gridCoord = GetCoordFromString(data);
+                    gridCoord = GetCoordFromString(data);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(turnType), turnType, null);

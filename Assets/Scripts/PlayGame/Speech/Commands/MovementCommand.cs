@@ -10,28 +10,28 @@ namespace PlayGame.Speech.Commands {
             Grid
         }
         
-        private MovementType _movementType;
-        private Vector3 _direction;
-        private Vector3 _destination;
-        private GridCoord _gridCoord;
+        public readonly MovementType movementType;
+        public readonly Vector3 direction;
+        public readonly Vector3 destination;
+        public readonly GridCoord gridCoord;
 
         public MovementCommand(MovementType movementType, string data) : base(CommandType.Movement) {
-            _movementType = movementType;
+            this.movementType = movementType;
             switch (movementType) {
                 case MovementType.Direction:
-                    _direction = GetVectorFromString(data);
+                    direction = GetVectorFromString(data);
                     break;
                 case MovementType.Destination:
-                    _destination = GetVectorFromString(data);
+                    destination = GetVectorFromString(data);
                     break;
                 case MovementType.Grid:
-                    _gridCoord = GetCoordFromString(data);
+                    gridCoord = GetCoordFromString(data);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(movementType), movementType, null);
             }
         }
-        
+
         private static Vector3 GetVectorFromString(string data) {
             throw new NotImplementedException();
         }
@@ -39,5 +39,6 @@ namespace PlayGame.Speech.Commands {
         private static GridCoord GetCoordFromString(string data) {
             throw new NotImplementedException();
         }
+        
     }
 }
