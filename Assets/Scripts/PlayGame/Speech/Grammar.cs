@@ -175,96 +175,9 @@ namespace PlayGame.Speech {
 
             return null;
         }
-        
-        // Checks if a phrase is valid
-        public static bool IsValidPhrase(string phrase) {
-            // Check if the phrase contains a command that requires more info
-            foreach (List<string> commandList in CompoundCommands) {
-                foreach (string command in commandList) {
-                    if (phrase.Contains(command)) {
-                        if (HasValidSubject(phrase, commandList)) return true;
-                    }
-                }
-            }
-            
-            // Check if the phrase contains a single word command
-            foreach (List<string> commandList in SingleCommands) {
-                foreach (string command in commandList) {
-                    if (phrase.Contains(command)) return true;
-                }
-            }
 
-            return false;
-        }
-
-        // Calls the correct method to determine if the command has the required information
-        private static bool HasValidSubject(string phrase, List<string> commandList) {
-            if (commandList.Equals(MovementCommands)) return HasDirection(phrase) || HasDestination(phrase);
-            if (commandList.Equals(TurnCommands)) return HasDirection(phrase);
-            if (commandList.Equals(PingCommands)) return HasPingType(phrase) && HasGridCoord(phrase);
-            if (commandList.Equals(TransferCommands)) return HasTransferableObject(phrase);
-            if (commandList.Equals(OnCommands)) return HasActivatableObject(phrase);
-            if (commandList.Equals(OffCommands)) return HasActivatableObject(phrase);
-
-            return false;
-        }
-
-        private static bool HasDirection(string phrase) {
-            foreach (List<string> commandList in Directions) {
-                foreach (string command in commandList) {
-                    if (phrase.Contains(command)) return true;
-                }
-            }
-    
-            return false;
-        }
-        
-        private static bool HasDestination(string phrase) {
-            foreach (string command in Destinations) {
-                if (phrase.Contains(command)) return true;
-            }
-
-            if (HasGridCoord(phrase)) return true;
-    
-            return false;
-        }
-
-        private static bool HasGridCoord(string phrase) {
-            Match coordMatch = Regex.Match(phrase, GridCoordRegex);
-            return coordMatch.Success;
-        }
-        
-        private static bool HasPingType(string phrase) {
-            foreach (string command in PingTypes) {
-                if (phrase.Contains(command)) return true;
-            }
-
-            return false;
-        }
-        
         private static bool HasTransferableObject(string phrase) {
             foreach (string command in Transferable) {
-                if (phrase.Contains(command)) return true;
-            }
-
-            return false;
-        }
-
-        private static bool HasActivatableObject(string phrase) {
-            foreach (List<string> commandList in Activatable) {
-                foreach (string command in commandList) {
-                    if (phrase.Contains(command)) {
-                        if (commandList == LockCommands) return HasLockTarget(phrase); // Lock on commands need a target
-                        return true;
-                    }
-                }
-            }
-    
-            return false;
-        }
-
-        private static bool HasLockTarget(string phrase) {
-            foreach (string command in LockTargets) {
                 if (phrase.Contains(command)) return true;
             }
 
