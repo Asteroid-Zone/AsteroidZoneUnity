@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using PlayGame.Pings;
 using PlayGame.Player;
 using PlayGame.Player.Movement;
@@ -63,7 +64,9 @@ namespace PlayGame.Speech {
                     moveObject.SetDirection(command.direction);
                     break;
                 case MovementCommand.MovementType.Destination:
-                    moveObject.SetDestination(command.destination); // todo destination collider
+                    if (command.destinationType == MovementCommand.DestinationType.SpaceStation) {
+                        moveObject.SetDestination(spaceStationObject.transform.position, spaceStationCollider);
+                    } else MoveToPing();
                     break;
                 case MovementCommand.MovementType.Grid:
                     moveObject.SetDestination(command.gridCoord.GetWorldVector());
@@ -71,6 +74,19 @@ namespace PlayGame.Speech {
                 default:
                     moveObject.SetSpeed(0); // Dont move if theres an error
                     throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        // Check whether there is only one ping and if so go to the ping
+        // TODO: somehow number pings so that the player can go to a specific one
+        private void MoveToPing() {
+            var pings = pingManager.GetPings();
+            
+            if (pings.Count == 1) {
+                Ping onlyPing = pings.Keys.ToList()[0];
+                if(onlyPing.GetPingType() != PingType.None) { // Only move to ping if theres an active ping
+                    moveObject.SetDestination(onlyPing.GetPositionVector());
+                }
             }
         }
 

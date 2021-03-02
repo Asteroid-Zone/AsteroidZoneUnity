@@ -59,46 +59,6 @@ namespace PlayGame.Speech {
             if (command.IsValid()) _actionController.PerformActions(command);
         }
 
-        // Returns the direction vector or null
-        /*private static Vector3? GetDirection(string phrase) {
-            if (phrase.Contains("north")) return Vector3.forward;
-            if (phrase.Contains("south")) return Vector3.back;
-            if (phrase.Contains("west")) return Vector3.left;
-            if (phrase.Contains("east")) return Vector3.right;
-
-            return null;
-        }*/
-
-        // Gets a grid coordinate from the input phrase, if no grid coordinate is found it returns null
-        /*private static GridCoord? GetGridPosition(string phrase) {
-            Match coordMatch = Regex.Match(phrase, @"[a-z]( )?(\d+)"); // Letter followed by one or more numbers with an optional space
-        
-            if (!coordMatch.Success) return null;
-        
-            Match number = Regex.Match(coordMatch.Value, @"(\d+)"); // One or more numbers
-            char x = coordMatch.Value[0];
-            int z = int.Parse(number.Value);
-
-            return new GridCoord(x, z);
-        }*/
-
-        /*private void PerformMovement(string phrase) {
-            // Check if phrase contains ping
-            if (phrase.Contains("ping")) {
-                // Check whether there is only one ping and if so go to the ping
-                // TODO: somehow number pings so that the player can go to a specific one
-                var pings = _pingManager.GetPings();
-                if (pings.Count == 1)
-                {
-                    var onlyPing = pings.Keys.ToList()[0];
-                    if(onlyPing.GetPingType() != PingType.None) { // Only move to ping if theres an active ping
-                        _moveObject.SetDestination(onlyPing.GetPositionVector());
-                    }
-                }
-            }
-        }*/
-        
-
         private static void StartSpeechRecognitionInTheBrowser() {
             Application.ExternalCall("startVoiceRecognition");
         }

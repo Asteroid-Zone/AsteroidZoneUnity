@@ -14,7 +14,7 @@ namespace PlayGame.Speech {
         private static readonly List<string> CompassDirections = new List<string>{"north", "east", "south", "west"};
         private static readonly List<List<string>> Directions = new List<List<string>>{CompassDirections};
         
-        private static readonly List<string> Destinations = new List<string>{"space station", "station", "ping"};
+        private static readonly List<string> Destinations = new List<string>{"station", "ping"};
         
         private static readonly List<string> PingTypes = new List<string>{"none", "asteroid", "pirate"};
         private static readonly List<string> PingCommands = new List<string>{"ping", "pin", "mark"};
