@@ -52,8 +52,8 @@ namespace PlayGame.Speech {
             foreach (List<string> commandList in SingleCommands) {
                 foreach (string command in commandList) {
                     if (phrase.Contains(command)) {
-                        if (commandList == SpeedCommands) return new Command(); // todo create speed command
-                        if (commandList == ShootCommands) return new Command(); // todo create shoot command
+                        if (commandList == SpeedCommands) return new SpeedCommand(command);
+                        if (commandList == ShootCommands) return new Command(Command.CommandType.Shoot);
                     }
                 }
             }

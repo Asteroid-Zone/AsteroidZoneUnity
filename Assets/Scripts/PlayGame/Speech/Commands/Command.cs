@@ -5,7 +5,9 @@
             Turn,
             Ping,
             Transfer,
-            Toggle
+            Toggle,
+            Speed,
+            Shoot
         }
 
         private readonly bool _isValid;
