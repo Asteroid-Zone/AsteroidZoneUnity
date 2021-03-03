@@ -38,6 +38,8 @@ namespace PlayGame.Player
 
         private NavMeshAgent _playerAgent;
 
+        public Transform lockTarget;
+
         private void Start() {
             _playerAgent = GetComponent<NavMeshAgent>();
             

@@ -134,12 +134,13 @@ namespace PlayGame.Speech {
                     else miningLaser.DisableMiningLaser();
                     break;
                 case ToggleCommand.ObjectType.Lock:
-                    _lockedOn = command.on;
+                    _lockedOn = false;
+                    speechRecognition.StopLockOn(playerData.lockTarget); // Disengage lock
                     if (command.on) {
-                        speechRecognition.StopLockOn();
-                        speechRecognition.StartLockOn(GetLockTarget(command.lockTargetType));
+                        playerData.lockTarget = GetLockTarget(command.lockTargetType);
+                        _lockedOn = true;
+                        speechRecognition.StartLockOn(playerData.lockTarget);
                     }
-                    else speechRecognition.StopLockOn();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
