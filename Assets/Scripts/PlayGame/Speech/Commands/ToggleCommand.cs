@@ -6,7 +6,8 @@ namespace PlayGame.Speech.Commands {
 
         public enum ObjectType {
             MiningLaser,
-            Lock
+            Lock,
+            LaserGun
         }
 
         public enum LockTargetType {

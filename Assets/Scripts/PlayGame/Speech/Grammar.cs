@@ -2,47 +2,53 @@
 using System.Text.RegularExpressions;
 using PlayGame.Speech.Commands;
 using Statics;
+using UnityEngine;
 
 namespace PlayGame.Speech {
     public static class Grammar {
         
         private const string GridCoordRegex = @"[a-z]( )?(\d+)";
         
-        // Lists containing synonyms
+        // Lists containing synonyms for commands
+        private static readonly List<string> MovementCommands = new List<string>{"move", "go"};
+        private static readonly List<string> TurnCommands = new List<string>{"face", "turn"};
+        private static readonly List<string> SpeedCommands = new List<string>{Strings.Stop, Strings.Go};
+        private static readonly List<string> TransferCommands = new List<string>{"transfer", "deposit"};
+        
+        private static readonly List<string> GenericOnCommands = new List<string>{"activate", "engage", "turn on"}; // Can be used to activate anything
+        private static readonly List<string> LockCommands = new List<string>{"lock", "aim"}; // Can only be used to activate a lock
+        private static readonly List<string> ShootCommands = new List<string>{"shoot", "fire"}; // Can only be used to activate laser gun
+        //private static readonly List<string> OnCommands = new List<string>{GenericOnCommands, LockCommands, ShootCommands};
+        private static readonly List<string> OnCommands = new List<string>(); // Is initialised to the above line at startup
+        private static readonly List<string> OffCommands = new List<string>{"deactivate", "disengage", "turn off", "stop"};
+
+        // Lists containing synonyms for objects
         private static readonly List<string> Pirate = new List<string>{Strings.Pirate, "enemy"};
         private static readonly List<string> Asteroid = new List<string>{Strings.Asteroid, "meteor"};
-        private static readonly List<string> MiningLaser = new List<string>{Strings.MiningLaser, "laser", "mining beam"};
+        private static readonly List<string> MiningLaser = new List<string>{Strings.MiningLaser, "mining beam"};
         private static readonly List<string> SpaceStation = new List<string>{Strings.SpaceStation, "space station", "base"};
         private static readonly List<string> Ping = new List<string>{Strings.Ping, "pin", "mark"};
         private static readonly List<string> Resources = new List<string>{Strings.Resources, "materials"};
-
-        private static readonly List<string> MovementCommands = new List<string>{"move", "go"};
-        private static readonly List<string> TurnCommands = new List<string>{"face", "turn"};
+        private static readonly List<string> LaserGun = new List<string> {Strings.LaserGun, "gun", "shoot"};
         
         // Todo add left/right commands
         private static readonly List<string> CompassDirections = new List<string>{Strings.North, Strings.East, Strings.South, Strings.West};
         private static readonly List<List<string>> Directions = new List<List<string>>{CompassDirections};
         
         private static readonly List<List<string>> Destinations = new List<List<string>>{SpaceStation, Ping};
-        
         private static readonly List<List<string>> PingTypes = new List<List<string>>{Asteroid, Pirate};
-
-        private static readonly List<string> SpeedCommands = new List<string>{Strings.Stop, Strings.Go};
-        
-        private static readonly List<string> TransferCommands = new List<string>{"transfer", "deposit"};
-
-        private static readonly List<string> LockCommands = new List<string>{"lock", "aim"};
         private static readonly List<List<string>> LockTargets = new List<List<string>>{Pirate, Asteroid};
-
-        private static readonly List<string> OnCommands = new List<string>{"activate", "engage", "turn on", "lock"};
-        private static readonly List<string> OffCommands = new List<string>{"deactivate", "disengage", "turn off"};
-        private static readonly List<List<string>> Activatable = new List<List<string>>{MiningLaser, LockCommands};
+        private static readonly List<List<string>> Activatable = new List<List<string>>{MiningLaser, LockCommands, LaserGun};
         
-        private static readonly List<string> ShootCommands = new List<string>{"shoot", "fire"};
-
         private static readonly List<List<string>> SingleCommands = new List<List<string>>{SpeedCommands, ShootCommands};
         private static readonly List<List<string>> CompoundCommands = new List<List<string>>{MovementCommands, TurnCommands, Ping, TransferCommands, OffCommands, OnCommands};
 
+        static Grammar() {
+            OnCommands.AddRange(GenericOnCommands);
+            OnCommands.AddRange(LockCommands);
+            OnCommands.AddRange(ShootCommands);
+        }
+        
         public static Command GetCommand(string phrase) {
             Command c = new Command();
             
@@ -50,7 +56,7 @@ namespace PlayGame.Speech {
             foreach (List<string> commandList in CompoundCommands) {
                 foreach (string command in commandList) {
                     if (phrase.Contains(command)) {
-                        if (!c.IsValid()) c = GetCompoundCommand(phrase, commandList);
+                        if (!c.IsValid()) c = GetCompoundCommand(phrase, commandList, command);
                     }
                 }
             }
@@ -63,7 +69,7 @@ namespace PlayGame.Speech {
                     foreach (string command in commandList) {
                         if (phrase.Contains(command)) {
                             if (commandList == SpeedCommands) return new SpeedCommand(command);
-                            if (commandList == ShootCommands) return new Command(Command.CommandType.Shoot);
+                            if (commandList == ShootCommands) return new ToggleCommand(true, ToggleCommand.ObjectType.LaserGun); // Turn laser gun on
                         }
                     }
                 }
@@ -72,13 +78,13 @@ namespace PlayGame.Speech {
             return c;
         }
         
-        private static Command GetCompoundCommand(string phrase, List<string> commandList) {
+        private static Command GetCompoundCommand(string phrase, List<string> commandList, string command) {
             if (commandList.Equals(MovementCommands)) return GetMovementCommand(phrase);
             if (commandList.Equals(TurnCommands)) return GetTurnCommand(phrase);
             if (commandList.Equals(Ping)) return GetPingCommand(phrase);
             if (commandList.Equals(TransferCommands)) return GetTransferCommand(phrase);
-            if (commandList.Equals(OffCommands)) return GetToggleCommand(phrase, false);
-            if (commandList.Equals(OnCommands)) return GetToggleCommand(phrase, true);
+            if (commandList.Equals(OffCommands)) return GetToggleCommand(phrase, false, command);
+            if (commandList.Equals(OnCommands)) return GetToggleCommand(phrase, true, command);
 
             return new Command(); // Return an invalid command
         }
@@ -122,17 +128,20 @@ namespace PlayGame.Speech {
             return new Command(); // Return an invalid command
         }
 
-        private static Command GetToggleCommand(string phrase, bool on) { // on is true if turning on, false if turning off
+        private static Command GetToggleCommand(string phrase, bool on, string command) { // on is true if turning on, false if turning off
             List<string> activatableObject = GetCommandList(phrase, Activatable);
-
+            if (activatableObject == null) return new Command(); // Return an invalid command
+            
             // If toggling lock
-            if (activatableObject.Equals(LockCommands)) {
+            if (activatableObject.Equals(LockCommands) && (LockCommands.Contains(command) || GenericOnCommands.Contains(command) || OffCommands.Contains(command))) { // Has to use either a lock command or a generic on command
                 string lockTarget = GetCommandListIdentifier(phrase, LockTargets);
                 // Only need a target if lock is being enabled
                 if (lockTarget != null || !on) return new ToggleCommand(on, ToggleCommand.ObjectType.Lock, lockTarget);
             }
 
-            if (activatableObject.Equals(MiningLaser)) return new ToggleCommand(on, ToggleCommand.ObjectType.MiningLaser);
+            // Must use either generic or shoot command
+            if (activatableObject.Equals(MiningLaser) && (GenericOnCommands.Contains(command) || OffCommands.Contains(command) || ShootCommands.Contains(command))) return new ToggleCommand(on, ToggleCommand.ObjectType.MiningLaser);
+            if (activatableObject.Equals(LaserGun) && (GenericOnCommands.Contains(command) || OffCommands.Contains(command) || ShootCommands.Contains(command))) return new ToggleCommand(on, ToggleCommand.ObjectType.LaserGun);
             
             return new Command(); // Return an invalid command 
         }

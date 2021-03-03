@@ -6,8 +6,7 @@
             Ping,
             Transfer,
             Toggle,
-            Speed,
-            Shoot
+            Speed
         }
 
         private readonly bool _isValid;

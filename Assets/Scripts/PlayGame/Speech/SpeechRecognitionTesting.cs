@@ -62,11 +62,11 @@ namespace PlayGame.Speech
             }
             
             if (Input.GetKeyDown(KeyCode.X)) {
-                speechRecognition.GetResponse("stop shooting"); // todo not working (shooting needs to be part of toggle command)
+                speechRecognition.GetResponse("stop shooting");
             }
-            
+
             if (Input.GetKeyDown(KeyCode.C)) {
-                speechRecognition.GetResponse("shoot"); // currently starts and stops shooting
+                speechRecognition.GetResponse("shoot");
             }
 
             if (Input.GetKeyDown(KeyCode.L)) {
