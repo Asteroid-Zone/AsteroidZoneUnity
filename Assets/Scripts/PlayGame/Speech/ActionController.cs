@@ -135,8 +135,11 @@ namespace PlayGame.Speech {
                     break;
                 case ToggleCommand.ObjectType.Lock:
                     _lockedOn = command.on;
-                    if (command.on) speechRecognition.StartLockOn(GetLockTarget(command.lockTargetType));
-                    else speechRecognition.StopLockOn(GetLockTarget(command.lockTargetType));
+                    if (command.on) {
+                        speechRecognition.StopLockOn();
+                        speechRecognition.StartLockOn(GetLockTarget(command.lockTargetType));
+                    }
+                    else speechRecognition.StopLockOn();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
