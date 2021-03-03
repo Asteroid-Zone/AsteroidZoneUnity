@@ -41,8 +41,8 @@ namespace PlayGame.Speech
                 speechRecognition.GetResponse("ping asteroid at C4");
             }
             
-            if (Input.GetKeyDown(KeyCode.Y)) { // Create ping at Grid(C, 4)
-                speechRecognition.GetResponse("ping pirate at C4");
+            if (Input.GetKeyDown(KeyCode.Y)) { // Create ping at Grid(G, 6)
+                speechRecognition.GetResponse("ping pirate at G6");
             }
             
             if (Input.GetKeyDown(KeyCode.G)) { // Move towards the space station
