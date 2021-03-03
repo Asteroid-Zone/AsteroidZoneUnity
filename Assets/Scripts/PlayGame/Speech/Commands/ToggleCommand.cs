@@ -37,7 +37,7 @@ namespace PlayGame.Speech.Commands {
                 case "asteroid":
                     return LockTargetType.Asteroid;
                 default:
-                    throw new ArgumentException("Invalid Lock Target Type");
+                    throw new ArgumentException("Invalid Lock Target Type: " + lockTargetType);
             }
         }
     }

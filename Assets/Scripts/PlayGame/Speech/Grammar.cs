@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using ExitGames.Client.Photon.StructWrapping;
 using PlayGame.Speech.Commands;
 using UnityEngine;
 
@@ -28,8 +29,10 @@ namespace PlayGame.Speech {
         private static readonly List<string> MiningLaser = new List<string>{"mining laser", "laser", "mining beam"};
         
         private static readonly List<string> LockCommands = new List<string>{"lock", "aim"};
-        // private static readonly List<string> Pirate; todo create lists for synonyms
-        private static readonly List<string> LockTargets = new List<string>{"pirate", "enemy", "asteroid"};
+        
+        private static readonly List<string> Pirate = new List<string>{"pirate", "enemy"};
+        private static readonly List<string> Asteroid = new List<string>{"asteroid", "meteor"};
+        private static readonly List<List<string>> LockTargets = new List<List<string>>{Pirate, Asteroid};
 
         private static readonly List<string> OnCommands = new List<string>{"activate", "engage", "turn on", "lock"};
         private static readonly List<string> OffCommands = new List<string>{"deactivate", "disengage", "turn off"};
@@ -84,7 +87,7 @@ namespace PlayGame.Speech {
             string data = GetDirection(phrase);
             if (data != null) return new MovementCommand(MovementCommand.MovementType.Direction, data);
 
-            data = GetDestination(phrase);
+            data = GetCommandFromList(phrase, Destinations);
             if (data != null) return new MovementCommand(MovementCommand.MovementType.Destination, data);
 
             data = GetGridCoord(phrase);
@@ -97,7 +100,7 @@ namespace PlayGame.Speech {
             string data = GetDirection(phrase);
             if (data != null) return new TurnCommand(TurnCommand.TurnType.Direction, data);
 
-            data = GetDestination(phrase);
+            data = GetCommandFromList(phrase, Destinations);
             if (data != null) return new TurnCommand(TurnCommand.TurnType.Destination, data);
 
             data = GetGridCoord(phrase);
@@ -107,7 +110,7 @@ namespace PlayGame.Speech {
         }
 
         private static Command GetPingCommand(string phrase) {
-            string pingType = GetPingType(phrase);
+            string pingType = GetCommandFromList(phrase, PingTypes);
             string gridCoord = GetGridCoord(phrase);
 
             if (pingType != null && gridCoord != null) return new PingCommand(pingType, gridCoord);
@@ -115,16 +118,16 @@ namespace PlayGame.Speech {
         }
 
         private static Command GetTransferCommand(string phrase) {
-            if (HasTransferableObject(phrase)) return new Command(Command.CommandType.Transfer);
+            if (GetCommandFromList(phrase, Transferable) != null) return new Command(Command.CommandType.Transfer);
             return new Command(); // Return an invalid command
         }
 
         private static Command GetToggleCommand(string phrase, bool on) { // on is true if turning on, false if turning off
-            List<string> activatableObject = GetActivatableObject(phrase);
+            List<string> activatableObject = GetCommandList(phrase, Activatable);
 
             // If toggling lock
             if (activatableObject.Equals(LockCommands)) {
-                string lockTarget = GetLockTarget(phrase);
+                string lockTarget = GetCommandListIdentifier(phrase, LockTargets);
                 // Only need a target if lock is being enabled
                 if (lockTarget != null || !on) return new ToggleCommand(on, ToggleCommand.ObjectType.Lock, lockTarget);
             }
@@ -144,55 +147,38 @@ namespace PlayGame.Speech {
             return null;
         }
         
-        private static string GetDestination(string phrase) {
-            foreach (string command in Destinations) {
-                if (phrase.Contains(command)) return command;
-            }
-
-            return null;
-        }
-        
         private static string GetGridCoord(string phrase) {
             Match coordMatch = Regex.Match(phrase, GridCoordRegex);
             if (!coordMatch.Success) return null;
             return coordMatch.Value;
         }
 
-        private static string GetPingType(string phrase) {
-            foreach (string command in PingTypes) {
-                if (phrase.Contains(command)) return command;
-            }
-
+        // Returns the first element of the list which contains the string which was found in the phrase or null
+        public static string GetCommandListIdentifier(string phrase, List<List<string>> SearchList) {
+            List<string> commandList = GetCommandList(phrase, SearchList);
+            if (commandList != null) return commandList[0];
             return null;
         }
         
-        private static List<string> GetActivatableObject(string phrase) {
-            foreach (List<string> commandList in Activatable) {
+        // Returns the list which contains the string which was found in the phrase or null
+        private static List<string> GetCommandList(string phrase, List<List<string>> SearchList) {
+            foreach (List<string> commandList in SearchList) {
                 foreach (string command in commandList) {
-                    if (phrase.Contains(command)) {
-                        return commandList;
-                    }
+                    if (phrase.Contains(command)) return commandList;
                 }
             }
-    
+
             return null;
         }
-        
-        private static string GetLockTarget(string phrase) {
-            foreach (string command in LockTargets) {
+
+        // Returns the string which was found in the phrase or null
+        private static string GetCommandFromList(string phrase, List<string> SearchList) {
+            foreach (string command in SearchList) {
                 if (phrase.Contains(command)) return command;
             }
 
             return null;
         }
-
-        private static bool HasTransferableObject(string phrase) {
-            foreach (string command in Transferable) {
-                if (phrase.Contains(command)) return true;
-            }
-
-            return false;
-        }
-
+        
     }
 }

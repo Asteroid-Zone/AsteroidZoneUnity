@@ -91,8 +91,6 @@ namespace PlayGame.Player.Movement
             {
                 enemyTransforms.Add(child);
             }
-            
-            Debug.Log(enemyTransforms.Count);
 
             float bestDistance = Single.PositiveInfinity;
             int closestEnemyIndex = -1;
