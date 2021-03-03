@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using ExitGames.Client.Photon.StructWrapping;
 using PlayGame.Speech.Commands;
-using UnityEngine;
+using Statics;
 
 namespace PlayGame.Speech {
     public static class Grammar {
@@ -10,25 +9,25 @@ namespace PlayGame.Speech {
         private const string GridCoordRegex = @"[a-z]( )?(\d+)";
         
         // Lists containing synonyms
-        private static readonly List<string> Pirate = new List<string>{"pirate", "enemy"};
-        private static readonly List<string> Asteroid = new List<string>{"asteroid", "meteor"};
-        private static readonly List<string> MiningLaser = new List<string>{"mining laser", "laser", "mining beam"};
-        private static readonly List<string> SpaceStation = new List<string>{"station", "space station", "base"};
-        private static readonly List<string> Ping = new List<string>{"ping", "pin", "mark"};
-        private static readonly List<string> Resources = new List<string>{"resources", "materials"};
+        private static readonly List<string> Pirate = new List<string>{Strings.Pirate, "enemy"};
+        private static readonly List<string> Asteroid = new List<string>{Strings.Asteroid, "meteor"};
+        private static readonly List<string> MiningLaser = new List<string>{Strings.MiningLaser, "laser", "mining beam"};
+        private static readonly List<string> SpaceStation = new List<string>{Strings.SpaceStation, "space station", "base"};
+        private static readonly List<string> Ping = new List<string>{Strings.Ping, "pin", "mark"};
+        private static readonly List<string> Resources = new List<string>{Strings.Resources, "materials"};
 
         private static readonly List<string> MovementCommands = new List<string>{"move", "go"};
         private static readonly List<string> TurnCommands = new List<string>{"face", "turn"};
         
         // Todo add left/right commands
-        private static readonly List<string> CompassDirections = new List<string>{"north", "east", "south", "west"};
+        private static readonly List<string> CompassDirections = new List<string>{Strings.North, Strings.East, Strings.South, Strings.West};
         private static readonly List<List<string>> Directions = new List<List<string>>{CompassDirections};
         
         private static readonly List<List<string>> Destinations = new List<List<string>>{SpaceStation, Ping};
         
         private static readonly List<List<string>> PingTypes = new List<List<string>>{Asteroid, Pirate};
 
-        private static readonly List<string> SpeedCommands = new List<string>{"stop", "go"};
+        private static readonly List<string> SpeedCommands = new List<string>{Strings.Stop, Strings.Go};
         
         private static readonly List<string> TransferCommands = new List<string>{"transfer", "deposit"};
 

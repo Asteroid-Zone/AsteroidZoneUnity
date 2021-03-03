@@ -1,4 +1,5 @@
 ﻿using System;
+using Statics;
 using UnityEngine;
 
 namespace PlayGame.Speech.Commands {
@@ -41,13 +42,13 @@ namespace PlayGame.Speech.Commands {
 
         public static Vector3 GetDirectionVectorFromString(string data) {
             switch (data) {
-                case "north":
+                case Strings.North:
                     return Vector3.forward;
-                case "east":
+                case Strings.East:
                     return Vector3.right;
-                case "south":
+                case Strings.South:
                     return Vector3.back;
-                case "west":
+                case Strings.West:
                     return Vector3.left;
                 default:
                     throw new ArgumentException("Invalid Direction");
@@ -56,9 +57,9 @@ namespace PlayGame.Speech.Commands {
         
         public static DestinationType GetDestinationTypeFromString(string data) {
             switch (data) {
-                case "station":
+                case Strings.SpaceStation:
                     return DestinationType.SpaceStation;
-                case "ping":
+                case Strings.Ping:
                     return DestinationType.Ping;
                 default:
                     throw new ArgumentException("Invalid Destination");

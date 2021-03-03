@@ -1,5 +1,6 @@
 ﻿using System;
 using PlayGame.Pings;
+using Statics;
 
 namespace PlayGame.Speech.Commands {
     public class PingCommand : Command {
@@ -14,11 +15,11 @@ namespace PlayGame.Speech.Commands {
 
         private static PingType GetPingTypeFromString(string type) {
             switch (type) {
-                case "none":
+                case Strings.None:
                     return PingType.None;
-                case "asteroid":
+                case Strings.Asteroid:
                     return PingType.Asteroid;
-                case "pirate":
+                case Strings.Pirate:
                     return PingType.Pirate;
                 default:
                     throw new ArgumentException("Invalid Ping Type");

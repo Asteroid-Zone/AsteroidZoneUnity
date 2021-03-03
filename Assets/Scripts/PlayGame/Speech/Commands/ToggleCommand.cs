@@ -1,4 +1,5 @@
 ﻿using System;
+using Statics;
 
 namespace PlayGame.Speech.Commands {
     public class ToggleCommand : Command {
@@ -30,11 +31,9 @@ namespace PlayGame.Speech.Commands {
 
         private static LockTargetType GetLockTargetTypeFromString(string lockTargetType) {
             switch (lockTargetType) {
-                case "pirate":
+                case Strings.Pirate:
                     return LockTargetType.Pirate;
-                case "enemy":
-                    return LockTargetType.Pirate;
-                case "asteroid":
+                case Strings.Asteroid:
                     return LockTargetType.Asteroid;
                 default:
                     throw new ArgumentException("Invalid Lock Target Type: " + lockTargetType);

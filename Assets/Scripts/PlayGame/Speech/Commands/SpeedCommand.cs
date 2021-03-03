@@ -1,4 +1,5 @@
 ﻿using System;
+using Statics;
 
 namespace PlayGame.Speech.Commands {
     public class SpeedCommand : Command {
@@ -11,9 +12,9 @@ namespace PlayGame.Speech.Commands {
 
         private static float GetSpeedFromString(string speed) {
             switch (speed) {
-                case "stop":
+                case Strings.Stop:
                     return 0;
-                case "go":
+                case Strings.Go:
                     return 1;
                 default:
                     throw new ArgumentException("Invalid Speed");
