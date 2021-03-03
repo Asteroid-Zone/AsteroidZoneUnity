@@ -20,6 +20,7 @@ GameObject:
   - component: {fileID: 2551174986814475491}
   - component: {fileID: 3221443318928257621}
   - component: {fileID: 5322255746144783499}
+  - component: {fileID: 1993416217956485898}
   m_Layer: 0
   m_Name: PlayerShip
   m_TagString: Player
@@ -214,7 +215,6 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 5322255746144783499}
-  - {fileID: 0}
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -234,6 +234,20 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
   m_UseLocal: 1
+--- !u!114 &1993416217956485898
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2551174986814475488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7286624bddd2e32489593d62440d7cfa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  laserPrefab: {fileID: 836171050094007385, guid: db0d0ceab41307946a6733ea2c61a01d,
+    type: 3}
 --- !u!1 &3433697794066583157
 GameObject:
   m_ObjectHideFlags: 0
