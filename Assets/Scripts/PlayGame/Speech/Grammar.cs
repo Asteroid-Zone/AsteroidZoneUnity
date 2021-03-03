@@ -120,15 +120,16 @@ namespace PlayGame.Speech {
         }
 
         private static Command GetToggleCommand(string phrase, bool on) { // on is true if turning on, false if turning off
-            string activatableObject = GetActivatableObject(phrase);
+            List<string> activatableObject = GetActivatableObject(phrase);
 
-            if (LockCommands.Contains(activatableObject)) {
+            // If toggling lock
+            if (activatableObject.Equals(LockCommands)) {
                 string lockTarget = GetLockTarget(phrase);
                 // Only need a target if lock is being enabled
                 if (lockTarget != null || !on) return new ToggleCommand(on, ToggleCommand.ObjectType.Lock, lockTarget);
             }
 
-            if (activatableObject != null) return new ToggleCommand(on, ToggleCommand.ObjectType.MiningLaser);
+            if (activatableObject.Equals(MiningLaser)) return new ToggleCommand(on, ToggleCommand.ObjectType.MiningLaser);
             
             return new Command(); // Return an invalid command 
         }
@@ -165,11 +166,11 @@ namespace PlayGame.Speech {
             return null;
         }
         
-        private static string GetActivatableObject(string phrase) {
+        private static List<string> GetActivatableObject(string phrase) {
             foreach (List<string> commandList in Activatable) {
                 foreach (string command in commandList) {
                     if (phrase.Contains(command)) {
-                        return command;
+                        return commandList;
                     }
                 }
             }
