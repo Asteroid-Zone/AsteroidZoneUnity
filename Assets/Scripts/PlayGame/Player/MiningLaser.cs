@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Statics;
+using UnityEngine;
 
 namespace PlayGame.Player {
     public class MiningLaser : MonoBehaviour {
@@ -7,7 +8,8 @@ namespace PlayGame.Player {
         
         public LineRenderer laser;
 
-        private const int MiningRange = 20;
+        private static int MiningRange = 20;
+        private const int MiningRate = 8; // Amount of resources gathered every mining tick
         private const int MiningDelay = 20; // Number of frames to wait between mining
 
         private int _lastFrameMined = 0;
@@ -16,6 +18,8 @@ namespace PlayGame.Player {
             _playerData = GetComponent<PlayerData>();
             laser.positionCount = 2;
             laser.enabled = false;
+
+            if (DebugSettings.InfiniteMiningRange) MiningRange = 10000;
         }
         
         private void Update() {
@@ -37,8 +41,8 @@ namespace PlayGame.Player {
         private void MineAsteroid(GameObject asteroid) {
             if (Time.frameCount - _lastFrameMined > MiningDelay) { // Only mine the asteroid every x frames
                 Asteroid asteroidScript = asteroid.GetComponent<Asteroid>();
-                asteroidScript.MineAsteroid();
-                _playerData.AddResources(asteroidScript.GetResources());
+                asteroidScript.MineAsteroid(MiningRate);
+                _playerData.AddResources(asteroidScript.GetResources(MiningRate));
                 _lastFrameMined = Time.frameCount;
             }
         }

@@ -15,7 +15,7 @@ namespace PlayGame.UI
         private Vector3 _lastPosition;
 
         private void Start() {
-            if(!Variables.Debug) player = PhotonPlayer.PP.myAvatar;
+            if(!DebugSettings.Debug) player = PhotonPlayer.PP.myAvatar;
             _text = GetComponent<Text>();
             _playerData = player.GetComponent<PlayerData>();
         }

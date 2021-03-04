@@ -25,7 +25,7 @@ namespace PlayGame.Pirates
     
         private void Start()
         {
-            if (!PhotonNetwork.IsMasterClient && !Variables.Debug) return;
+            if (!PhotonNetwork.IsMasterClient && !DebugSettings.Debug) return;
             _gridManager = gridManager.GetComponent<GridManager>();
             InvokeRepeating(nameof(PirateRNG), 0, everyXSeconds);
             
@@ -36,7 +36,7 @@ namespace PlayGame.Pirates
 
         private void PirateRNG()
         {
-            if (!PhotonNetwork.IsMasterClient && !Variables.Debug) return;
+            if (!PhotonNetwork.IsMasterClient && !DebugSettings.Debug) return;
             // Don't spawn pirates if the maximum count is reached.
             if (transform.childCount >= _maxPirates)
             {
@@ -46,13 +46,13 @@ namespace PlayGame.Pirates
             var generatedProb = Random.Range(0, 1.0f);
             if (generatedProb < probability)
             {
-                if (Variables.SpawnPirates) SpawnPirate();
+                if (DebugSettings.SpawnPirates) SpawnPirate();
             }
         }
 
         private void SpawnPirate()
         {
-            if (!PhotonNetwork.IsMasterClient && !Variables.Debug) return;
+            if (!PhotonNetwork.IsMasterClient && !DebugSettings.Debug) return;
             // Initialise some random grid coordinates on the map
             var randomGridCoord = new Vector2(Random.Range(0, _gridManager.width), Random.Range(0, _gridManager.height));
             
@@ -69,7 +69,7 @@ namespace PlayGame.Pirates
             
             // Spawn the new pirate
             GameObject newPirate;
-            if (!Variables.Debug) newPirate = PhotonNetwork.Instantiate("PirateShip", randomGlobalCoord, Quaternion.identity);
+            if (!DebugSettings.Debug) newPirate = PhotonNetwork.Instantiate("PirateShip", randomGlobalCoord, Quaternion.identity);
             else newPirate = Instantiate(pirate, randomGlobalCoord, Quaternion.identity);
             newPirate.transform.parent = gameObject.transform;
         }

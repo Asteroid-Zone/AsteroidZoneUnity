@@ -19,7 +19,7 @@ namespace PlayGame.Camera
         public float rotationDamping = 10.0f;
 
         private void Start() {
-             if (!Variables.Debug) target = PhotonPlayer.PP.myAvatar.transform;
+             if (!DebugSettings.Debug) target = PhotonPlayer.PP.myAvatar.transform;
         }
 
         private void LateUpdate()

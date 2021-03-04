@@ -14,7 +14,7 @@ namespace PlayGame.UI
         
         private void Start()
         {
-            if (!Variables.Debug) target = PhotonPlayer.PP.myAvatar.transform;
+            if (!DebugSettings.Debug) target = PhotonPlayer.PP.myAvatar.transform;
             _text = GetComponent<Text>();
             _cellSize = gridManager.GetCellSize();
         }

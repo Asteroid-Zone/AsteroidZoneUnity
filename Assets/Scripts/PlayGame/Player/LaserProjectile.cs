@@ -4,8 +4,9 @@ using UnityEngine;
 
 namespace PlayGame.Player {
   
-    public class LaserProjectile : MonoBehaviour
-    {
+    public class LaserProjectile : MonoBehaviour {
+        
+        private const int MiningRate = 4; // Amount of resources gathered every mining tick
         private const int MaxRange = 20;
         
         private Vector3 _startPosition;
@@ -29,7 +30,7 @@ namespace PlayGame.Player {
             
             if (collision.gameObject.CompareTag(Tags.AsteroidTag)) {
                 Asteroid asteroid = collision.gameObject.GetComponent<Asteroid>();
-                asteroid.MineAsteroid();
+                asteroid.MineAsteroid(MiningRate);
             }
 
             Destroy(gameObject);

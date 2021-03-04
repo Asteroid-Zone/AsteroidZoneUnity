@@ -14,7 +14,7 @@ namespace PlayGame.UI
         private Text _text;
 
         private void Start() {
-            if(!Variables.Debug) player = PhotonPlayer.PP.myAvatar;
+            if(!DebugSettings.Debug) player = PhotonPlayer.PP.myAvatar;
             _text = GetComponent<Text>();
             _playerData = player.GetComponent<PlayerData>();
         }
