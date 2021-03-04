@@ -1,14 +1,16 @@
-﻿using PhotonClass.GameController;
+﻿using Photon.Pun;
+using PhotonClass.GameController;
 using PlayGame.Pings;
 using PlayGame.Player;
 using PlayGame.Player.Movement;
 using PlayGame.Speech.Commands;
 using Statics;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace PlayGame.Speech {
-    public class SpeechRecognition : MonoBehaviour {
+    public class SpeechRecognition : MonoBehaviourPun {
         
         public Text text;
         private string _myResponse = "...";
@@ -18,12 +20,19 @@ namespace PlayGame.Speech {
         public GameObject ping;
 
         private ActionController _actionController;
-    
-        private void Start() {
+
+        private void Start()
+        {
             StartSpeechRecognitionInTheBrowser();
             if (!DebugSettings.Debug) player = PhotonPlayer.PP.myAvatar;
 
-            _actionController = new ActionController {
+            _actionController = CreateActionController(player);
+        }
+
+        private ActionController CreateActionController(GameObject player)
+        {
+            _actionController = new ActionController
+            {
                 speechRecognition = this,
                 player = player,
                 spaceStationObject = spaceStation,
@@ -34,6 +43,7 @@ namespace PlayGame.Speech {
                 pingManager = ping.GetComponent<PingManager>(),
                 spaceStation = spaceStation.GetComponent<SpaceStation>()
             };
+            return _actionController;
         }
 
         public void StartLockOn(Transform lockTarget) {
@@ -53,10 +63,38 @@ namespace PlayGame.Speech {
         }
 
         // Called by javascript when speech is detected
-        public void GetResponse(string result) {
+        public void GetResponse(string result)
+        {
+            if (!DebugSettings.Debug && !PhotonPlayer.PP.photonView.IsMine) return;
             _myResponse = result.ToLower();
             Command command = Grammar.GetCommand(_myResponse);
-            if (command.IsValid()) _actionController.PerformActions(command);
+            if (command.IsValid())
+            {
+                if (DebugSettings.Debug) _actionController.PerformActions(command);
+                else
+                {
+
+                    this.photonView.RPC("RPC_PerformActions", RpcTarget.AllBuffered, player.GetComponent<PhotonView>().ViewID, _myResponse);
+                }
+            }
+        }
+
+        [PunRPC]
+        public void RPC_PerformActions(int viewID, string _myResponse)
+        {
+            GameObject prev_player = player;
+            Command command = Grammar.GetCommand(_myResponse);
+            List<GameObject> playerList = player.GetComponent<PlayerData>().GetList();
+            foreach (GameObject _player in playerList)
+            {
+                if (viewID == _player.GetComponent<PhotonView>().ViewID) player = _player;
+            }
+
+
+            _actionController = CreateActionController(player);
+            _actionController.PerformActions(command);
+            player = prev_player;
+
         }
 
         private static void StartSpeechRecognitionInTheBrowser() {
