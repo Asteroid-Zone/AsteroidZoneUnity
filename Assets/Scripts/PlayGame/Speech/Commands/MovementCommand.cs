@@ -17,6 +17,8 @@ namespace PlayGame.Speech.Commands {
             Pirate,
             Asteroid
         }
+
+        public static Transform player;
         
         public readonly MovementType movementType;
         public readonly Vector3 direction;
@@ -25,9 +27,11 @@ namespace PlayGame.Speech.Commands {
         
         public readonly GridCoord gridCoord;
 
+        public readonly bool turnOnly;
         public readonly bool turn;
 
-        public MovementCommand(MovementType movementType, string data, bool turn) : base(CommandType.Movement) {
+        public MovementCommand(MovementType movementType, string data, bool turnOnly, bool turn) : base(CommandType.Movement) {
+            this.turnOnly = turnOnly;
             this.turn = turn;
             this.movementType = movementType;
             switch (movementType) {
@@ -55,6 +59,14 @@ namespace PlayGame.Speech.Commands {
                     return Vector3.back;
                 case Strings.West:
                     return Vector3.left;
+                case Strings.Forward:
+                    return player.forward;
+                case Strings.Back:
+                    return -player.forward;
+                case Strings.Right:
+                    return player.right;
+                case Strings.Left:
+                    return -player.right;
                 default:
                     throw new ArgumentException("Invalid Direction");
             }

@@ -63,7 +63,7 @@ namespace PlayGame.Speech {
         }
 
         private void PerformMovementCommand(MovementCommand command) {
-            if (!command.turn) moveObject.SetSpeed(1); // Start moving if not a turn command
+            if (!command.turnOnly) moveObject.SetSpeed(1); // Start moving if not a turn command
             
             switch (command.movementType) {
                 case MovementCommand.MovementType.Direction:

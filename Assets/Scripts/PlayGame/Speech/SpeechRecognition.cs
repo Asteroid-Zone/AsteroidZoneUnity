@@ -23,6 +23,8 @@ namespace PlayGame.Speech {
             StartSpeechRecognitionInTheBrowser();
             if (!DebugSettings.Debug) player = PhotonPlayer.PP.myAvatar;
 
+            MovementCommand.player = player.transform;
+
             _actionController = new ActionController {
                 speechRecognition = this,
                 player = player,

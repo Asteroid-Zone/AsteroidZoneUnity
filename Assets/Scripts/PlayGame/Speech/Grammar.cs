@@ -31,9 +31,9 @@ namespace PlayGame.Speech {
         private static readonly List<string> Resources = new List<string>{Strings.Resources, "materials"};
         private static readonly List<string> LaserGun = new List<string> {Strings.LaserGun, "gun", "shoot"};
         
-        // Todo add left/right commands
         private static readonly List<string> CompassDirections = new List<string>{Strings.North, Strings.East, Strings.South, Strings.West};
-        private static readonly List<List<string>> Directions = new List<List<string>>{CompassDirections};
+        private static readonly List<string> RelativeDirections = new List<string>{Strings.Forward, Strings.Back, Strings.Left, Strings.Right};
+        private static readonly List<List<string>> Directions = new List<List<string>>{CompassDirections, RelativeDirections};
         
         private static readonly List<List<string>> Destinations = new List<List<string>>{SpaceStation, Ping, Pirate, Asteroid};
         private static readonly List<List<string>> PingTypes = new List<List<string>>{Asteroid, Pirate};
@@ -91,26 +91,29 @@ namespace PlayGame.Speech {
         
         private static Command GetMovementCommand(string phrase) {
             string data = GetDirection(phrase);
-            if (data != null) return new MovementCommand(MovementCommand.MovementType.Direction, data, false);
+            if (data != null) {
+                bool turn = !RelativeDirections.Contains(data); // If moving using relative direction dont turn the camera
+                return new MovementCommand(MovementCommand.MovementType.Direction, data, false, turn);
+            }
 
             data = GetCommandListIdentifier(phrase, Destinations);
-            if (data != null) return new MovementCommand(MovementCommand.MovementType.Destination, data, false);
+            if (data != null) return new MovementCommand(MovementCommand.MovementType.Destination, data, false, true);
 
             data = GetGridCoord(phrase);
-            if (data != null) return new MovementCommand(MovementCommand.MovementType.Grid, data, false);
+            if (data != null) return new MovementCommand(MovementCommand.MovementType.Grid, data, false, true);
 
             return new Command(); // Return an invalid command
         }
         
         private static Command GetTurnCommand(string phrase) {
             string data = GetDirection(phrase);
-            if (data != null) return new MovementCommand(MovementCommand.MovementType.Direction, data, true);
+            if (data != null) return new MovementCommand(MovementCommand.MovementType.Direction, data, true, true);
 
             data = GetCommandListIdentifier(phrase, Destinations);
-            if (data != null) return new MovementCommand(MovementCommand.MovementType.Destination, data, true);
+            if (data != null) return new MovementCommand(MovementCommand.MovementType.Destination, data, true, true);
 
             data = GetGridCoord(phrase);
-            if (data != null) return new MovementCommand(MovementCommand.MovementType.Grid, data, true);
+            if (data != null) return new MovementCommand(MovementCommand.MovementType.Grid, data, true, true);
 
             return new Command(); // Return an invalid command
         }
