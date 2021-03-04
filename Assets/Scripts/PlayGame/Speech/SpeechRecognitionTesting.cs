@@ -18,7 +18,7 @@ namespace PlayGame.Speech
                 speechRecognition.GetResponse("face west");
             }
             if (Input.GetKeyDown(KeyCode.D)) { // Face east and start moving
-                speechRecognition.GetResponse("move east");
+                speechRecognition.GetResponse("move left");
             }
 
             if (Input.GetKeyDown(KeyCode.Q)) { // Stop Moving

@@ -18,21 +18,26 @@ namespace PlayGame.Camera
         public bool followBehind = true;
         public float rotationDamping = 10.0f;
 
+        public bool turn = true;
+
         private void Start() {
              if (!DebugSettings.Debug) target = PhotonPlayer.PP.myAvatar.transform;
         }
 
-        private void LateUpdate()
-        {
-            var  wantedPosition = target.TransformPoint(0, height, followBehind ? -distance : distance);
-            transform.position = Vector3.Lerp(transform.position, wantedPosition, Time.deltaTime * damping);
+        private void LateUpdate() {
+            if (turn) {
+                var  wantedPosition = target.TransformPoint(0, height, followBehind ? -distance : distance);
+                transform.position = Vector3.Lerp(transform.position, wantedPosition, Time.deltaTime * damping);
 
-            if (smoothRotation)
-            {
-                var wantedRotation = Quaternion.LookRotation(target.position - transform.position, target.up);
-                transform.rotation = Quaternion.Slerp(transform.rotation, wantedRotation, Time.deltaTime * rotationDamping);
+            
+                if (smoothRotation)
+                {
+                    var wantedRotation = Quaternion.LookRotation(target.position - transform.position, target.up);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, wantedRotation,
+                        Time.deltaTime * rotationDamping);
+                }
+                else transform.LookAt(target, target.up);
             }
-            else transform.LookAt(target, target.up);
         }
     }
 }
