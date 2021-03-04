@@ -138,10 +138,13 @@ namespace PlayGame.Player.Movement
             UpdateRotation();
         }
 
-        public void SetDestination(Vector3 destination) 
-        {
+        public void SetDestination(Vector3 destination) {
             // Set the destination
             _destination = destination;
+            
+            // Set the direction to destination
+            Vector3 direction = (destination - transform.position).normalized;
+            SetDirection(direction);
             
             // Set the flags specifying that the player is not headed to a specific object and enable the AI
             _hasTargetObject = false;

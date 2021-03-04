@@ -13,7 +13,9 @@ namespace PlayGame.Speech.Commands {
 
         public enum DestinationType {
             SpaceStation,
-            Ping
+            Ping,
+            Pirate,
+            Asteroid
         }
         
         public readonly MovementType movementType;
@@ -23,7 +25,10 @@ namespace PlayGame.Speech.Commands {
         
         public readonly GridCoord gridCoord;
 
-        public MovementCommand(MovementType movementType, string data) : base(CommandType.Movement) {
+        public readonly bool turn;
+
+        public MovementCommand(MovementType movementType, string data, bool turn) : base(CommandType.Movement) {
+            this.turn = turn;
             this.movementType = movementType;
             switch (movementType) {
                 case MovementType.Direction:
@@ -61,6 +66,10 @@ namespace PlayGame.Speech.Commands {
                     return DestinationType.SpaceStation;
                 case Strings.Ping:
                     return DestinationType.Ping;
+                case Strings.Pirate:
+                    return DestinationType.Pirate;
+                case Strings.Asteroid:
+                    return DestinationType.Asteroid;
                 default:
                     throw new ArgumentException("Invalid Destination");
             }

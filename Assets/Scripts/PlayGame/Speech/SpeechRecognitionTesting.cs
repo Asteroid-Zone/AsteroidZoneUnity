@@ -30,7 +30,7 @@ namespace PlayGame.Speech
             }
 
             if (Input.GetKeyDown(KeyCode.R)) { // Move towards Grid(C, 6)
-                speechRecognition.GetResponse("go to C6");
+                speechRecognition.GetResponse("move to c6");
             }
         
             if (Input.GetKeyDown(KeyCode.F)) { // Move towards ping

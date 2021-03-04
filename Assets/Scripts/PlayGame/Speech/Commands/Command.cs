@@ -2,7 +2,6 @@
     public class Command {
         public enum CommandType {
             Movement,
-            Turn,
             Ping,
             Transfer,
             Toggle,

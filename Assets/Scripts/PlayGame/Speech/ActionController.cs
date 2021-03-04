@@ -16,7 +16,6 @@ namespace PlayGame.Speech {
         
         public GameObject player;
         public GameObject spaceStationObject;
-        public Collider spaceStationCollider;
         public MoveObject moveObject;
         public MiningLaser miningLaser;
         public LaserGun laserGun;
@@ -32,9 +31,6 @@ namespace PlayGame.Speech {
             switch (command.GetCommandType()) {
                 case Command.CommandType.Movement:
                     PerformMovementCommand((MovementCommand) command);
-                    break;
-                case Command.CommandType.Turn:
-                    PerformTurnCommand((TurnCommand) command);
                     break;
                 case Command.CommandType.Ping:
                     PerformPingCommand((PingCommand) command);
@@ -53,17 +49,34 @@ namespace PlayGame.Speech {
             }
         }
 
+        private Transform GetDestination(MovementCommand command) {
+            switch (command.destinationType) {
+                case MovementCommand.DestinationType.SpaceStation:
+                    return spaceStationObject.transform;
+                case MovementCommand.DestinationType.Pirate:
+                    return GetNearestPirate();
+                case MovementCommand.DestinationType.Asteroid:
+                    return GetNearestAsteroid();
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
         private void PerformMovementCommand(MovementCommand command) {
-            moveObject.SetSpeed(1); // Start moving
+            if (!command.turn) moveObject.SetSpeed(1); // Start moving if not a turn command
             
             switch (command.movementType) {
                 case MovementCommand.MovementType.Direction:
                     moveObject.SetDirection(command.direction);
                     break;
                 case MovementCommand.MovementType.Destination:
-                    if (command.destinationType == MovementCommand.DestinationType.SpaceStation) {
-                        moveObject.SetDestination(spaceStationObject.transform.position, spaceStationCollider);
-                    } else MoveToPing();
+                    if (command.destinationType == MovementCommand.DestinationType.Ping) {
+                        MoveToPing();
+                    } else {
+                        Transform destination = GetDestination(command);
+                        moveObject.SetDestination(destination.position, destination.GetComponent<Collider>());
+                    }
+                    
                     break;
                 case MovementCommand.MovementType.Grid:
                     moveObject.SetDestination(command.gridCoord.GetWorldVector());
@@ -85,24 +98,6 @@ namespace PlayGame.Speech {
                 } 
             } else { // Dont move if there's no ping
                 moveObject.SetSpeed(0);
-            }
-        }
-
-        private void PerformTurnCommand(TurnCommand command) {
-            switch (command.turnType) {
-                case TurnCommand.TurnType.Direction:
-                    moveObject.SetDirection(command.direction);
-                    break;
-                case TurnCommand.TurnType.Destination:
-                    if (command.destinationType == MovementCommand.DestinationType.SpaceStation) {
-                        moveObject.SetDestination(spaceStationObject.transform.position, spaceStationCollider);
-                    } else MoveToPing();
-                    break;
-                case TurnCommand.TurnType.Grid:
-                    moveObject.SetDestination(command.gridCoord.GetWorldVector());
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
         }
 

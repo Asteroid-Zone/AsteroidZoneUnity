@@ -16,7 +16,7 @@ namespace PlayGame.Speech {
         private static readonly List<string> TransferCommands = new List<string>{"transfer", "deposit"};
         
         private static readonly List<string> GenericOnCommands = new List<string>{"activate", "engage", "turn on"}; // Can be used to activate anything
-        private static readonly List<string> LockCommands = new List<string>{"lock", "aim"}; // Can only be used to activate a lock
+        private static readonly List<string> LockCommands = new List<string>{"lock", "aim", "target"}; // Can only be used to activate a lock
         private static readonly List<string> ShootCommands = new List<string>{"shoot", "fire"}; // Can only be used to activate laser gun
         //private static readonly List<string> OnCommands = new List<string>{GenericOnCommands, LockCommands, ShootCommands};
         private static readonly List<string> OnCommands = new List<string>(); // Is initialised to the above line at startup
@@ -35,7 +35,7 @@ namespace PlayGame.Speech {
         private static readonly List<string> CompassDirections = new List<string>{Strings.North, Strings.East, Strings.South, Strings.West};
         private static readonly List<List<string>> Directions = new List<List<string>>{CompassDirections};
         
-        private static readonly List<List<string>> Destinations = new List<List<string>>{SpaceStation, Ping};
+        private static readonly List<List<string>> Destinations = new List<List<string>>{SpaceStation, Ping, Pirate, Asteroid};
         private static readonly List<List<string>> PingTypes = new List<List<string>>{Asteroid, Pirate};
         private static readonly List<List<string>> LockTargets = new List<List<string>>{Pirate, Asteroid};
         private static readonly List<List<string>> Activatable = new List<List<string>>{MiningLaser, LockCommands, LaserGun};
@@ -91,26 +91,26 @@ namespace PlayGame.Speech {
         
         private static Command GetMovementCommand(string phrase) {
             string data = GetDirection(phrase);
-            if (data != null) return new MovementCommand(MovementCommand.MovementType.Direction, data);
+            if (data != null) return new MovementCommand(MovementCommand.MovementType.Direction, data, false);
 
             data = GetCommandListIdentifier(phrase, Destinations);
-            if (data != null) return new MovementCommand(MovementCommand.MovementType.Destination, data);
+            if (data != null) return new MovementCommand(MovementCommand.MovementType.Destination, data, false);
 
             data = GetGridCoord(phrase);
-            if (data != null) return new MovementCommand(MovementCommand.MovementType.Grid, data);
+            if (data != null) return new MovementCommand(MovementCommand.MovementType.Grid, data, false);
 
             return new Command(); // Return an invalid command
         }
         
         private static Command GetTurnCommand(string phrase) {
             string data = GetDirection(phrase);
-            if (data != null) return new TurnCommand(TurnCommand.TurnType.Direction, data);
+            if (data != null) return new MovementCommand(MovementCommand.MovementType.Direction, data, true);
 
             data = GetCommandListIdentifier(phrase, Destinations);
-            if (data != null) return new TurnCommand(TurnCommand.TurnType.Destination, data);
+            if (data != null) return new MovementCommand(MovementCommand.MovementType.Destination, data, true);
 
             data = GetGridCoord(phrase);
-            if (data != null) return new TurnCommand(TurnCommand.TurnType.Grid, data);
+            if (data != null) return new MovementCommand(MovementCommand.MovementType.Grid, data, true);
 
             return new Command(); // Return an invalid command
         }

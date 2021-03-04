@@ -32,7 +32,6 @@ namespace PlayGame.Speech {
                 laserGun = player.GetComponent<LaserGun>(),
                 playerData = player.GetComponent<PlayerData>(),
                 pingManager = ping.GetComponent<PingManager>(),
-                spaceStationCollider = spaceStation.GetComponent<Collider>(),
                 spaceStation = spaceStation.GetComponent<SpaceStation>()
             };
         }
