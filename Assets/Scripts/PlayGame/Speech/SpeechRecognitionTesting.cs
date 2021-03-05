@@ -76,6 +76,10 @@ namespace PlayGame.Speech
                 speechRecognition.GetResponse("lock on nearest enemy");
             }
             
+            if (Input.GetKeyDown(KeyCode.K)) {
+                speechRecognition.GetResponse("target nearest asteroid");
+            }
+            
             if (Input.GetKeyDown(KeyCode.M)) {
                 speechRecognition.GetResponse("disengage lock on");
             }

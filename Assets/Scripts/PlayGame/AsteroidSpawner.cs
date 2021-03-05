@@ -72,7 +72,6 @@ namespace PlayGame
             if (!DebugSettings.Debug) newAsteroid = PhotonNetwork.Instantiate("Asteroid", randomGlobalCoord, Quaternion.identity);
             else newAsteroid = Instantiate(asteroid, randomGlobalCoord, Quaternion.identity);
             newAsteroid.transform.parent = gameObject.transform;
-        
         }
     }
 }

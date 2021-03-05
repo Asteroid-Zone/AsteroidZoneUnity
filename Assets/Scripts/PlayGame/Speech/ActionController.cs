@@ -154,7 +154,7 @@ namespace PlayGame.Speech {
         }
 
         private Transform GetNearestAsteroid() {
-            throw new NotImplementedException();
+            return player.GetComponent<MoveObject>().GetNearestAsteroidTransform();
         }
 
         private Transform GetNearestPirate() {
