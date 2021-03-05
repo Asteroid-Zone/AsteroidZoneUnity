@@ -5,9 +5,8 @@ using UnityEngine;
 
 namespace PhotonClass.GameController
 {
-    public class PhotonPlayer : MonoBehaviour
+    public class PhotonPlayer : MonoBehaviourPun
     {
-        private PhotonView PV;
         public GameObject myAvatar;
 
         public static PhotonPlayer PP;
@@ -22,19 +21,13 @@ namespace PhotonClass.GameController
     
         void Awake()
             {
-                PV = GetComponent<PhotonView>();
                 int spawnPicker = Random.Range(0, GameSetup.GS.spawnPoints.Length);
-                if(PV.IsMine)
+                if(this.photonView.IsMine)
                 {
                     myAvatar = PhotonNetwork.Instantiate("PlayerShip", GameSetup.GS.spawnPoints[spawnPicker].position,
                         GameSetup.GS.spawnPoints[spawnPicker].rotation, 0);
                 }
             }
 
-
-        public bool IsMine()
-        {
-            return (PV.IsMine);
-        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Photon.Pun;
 using PlayGame.UI;
 using Statics;
 using UnityEngine;
@@ -15,7 +16,7 @@ namespace PlayGame.Player
         Researcher
     }
 
-    public class PlayerData : MonoBehaviour
+    public class PlayerData : MonoBehaviourPun
     {
         public static List<GameObject> Players;
 
@@ -48,6 +49,7 @@ namespace PlayGame.Player
             // Initialise the players list
             Players = new List<GameObject>();
             Players.AddRange(GameObject.FindGameObjectsWithTag(Tags.PlayerTag));
+            if (!DebugSettings.Debug) this.photonView.RPC("RPC_UpdatePlayerLists", RpcTarget.Others);
             // TODO add other players to list
             
             _role = Role.StationCommander; // TODO assign roles in the menu
@@ -69,6 +71,13 @@ namespace PlayGame.Player
             _laserDamage = 20;
         }
 
+        [PunRPC]
+        public void RPC_UpdatePlayerLists()
+        {
+            Players.Clear();
+            Players.AddRange(GameObject.FindGameObjectsWithTag(Tags.PlayerTag));
+        }
+
         private void Update()
         {
             if (!_youDiedWrittenOnScreen &&_health <= 0)
@@ -78,6 +87,10 @@ namespace PlayGame.Player
             }
         }
 
+        public List<GameObject> GetList()
+        {
+            return Players;
+        }
         public int GetResources() {
             return _resources;
         }
