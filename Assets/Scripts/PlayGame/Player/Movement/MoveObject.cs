@@ -20,7 +20,7 @@ namespace PlayGame.Player.Movement
         // Whether the ship is headed to a specific object
         private bool _hasTargetObject;
 
-        public bool _rotating;
+        public bool rotating;
         private bool _turnRight; // false = turn left, true = turn right
 
         // Needed to reference enemies in order to rotate towards them
@@ -55,7 +55,7 @@ namespace PlayGame.Player.Movement
             }
             
             // Rotate slowly
-            if (_rotating) Rotate();
+            if (rotating) Rotate();
         }
 
         private void Rotate() {
@@ -138,7 +138,7 @@ namespace PlayGame.Player.Movement
         }
         
         public void FaceTarget(Transform target) {
-            _rotating = false;
+            rotating = false;
             Vector3 direction = (target.position - transform.position).normalized;
             Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5);
@@ -150,16 +150,16 @@ namespace PlayGame.Player.Movement
         }
 
         public void StartRotating(Vector3 targetDirection) {
-            _rotating = true;
+            rotating = true;
             _turnRight = targetDirection == transform.right;
         }
 
         public void StopRotating() {
-            _rotating = false;
+            rotating = false;
         }
     
         public void SetDirection(Vector3 newDirection, bool rotate) {
-            _rotating = false;
+            rotating = false;
             // Set the direction to be the new direction
             _direction = newDirection;
             

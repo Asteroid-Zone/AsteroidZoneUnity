@@ -34,13 +34,13 @@ namespace PlayGame.Player.Movement {
             }
 
             if (Input.GetKey(KeyCode.LeftArrow)) {
-                _moveObject._rotating = false;
+                _moveObject.rotating = false;
                 // Rotate the target to the left with the necessary rotational speed smoothed by the delta time
                 player.transform.Rotate(Vector3.down, 50f * Time.deltaTime);
             }
 
             if (Input.GetKey(KeyCode.RightArrow)) {
-                _moveObject._rotating = false;
+                _moveObject.rotating = false;
                 // Rotate the target to the right with the necessary rotational speed smoothed by the delta time
                 player.transform.Rotate(Vector3.up, 50f * Time.deltaTime);
             }
