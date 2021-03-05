@@ -20,6 +20,9 @@ namespace PlayGame.Player.Movement
         // Whether the ship is headed to a specific object
         private bool _hasTargetObject;
 
+        private bool _rotating;
+        private bool _turnRight; // false = turn left, true = turn right
+
         // Needed to reference enemies in order to rotate towards them
         public GameObject EnemySpawner;
 
@@ -33,8 +36,7 @@ namespace PlayGame.Player.Movement
             UpdateRotation();
         }
 
-        private void Update()
-        {
+        private void Update() {
             // Get the speed of the player's ship
             var speed = _playerData.GetSpeed();
             
@@ -48,6 +50,18 @@ namespace PlayGame.Player.Movement
                 // The speed is not 0, so the ship should be moving
                 transform.Translate((Time.deltaTime * speed) * _direction, Space.World);
             }
+            
+            // Rotate slowly
+            if (_rotating) Rotate();
+        }
+
+        private void Rotate() {
+            float rotateSpeed = _playerData.GetRotateSpeed();
+            Vector3 newDirection;
+            if (_turnRight) newDirection = Vector3.Slerp(transform.forward, transform.right, rotateSpeed);
+            else newDirection = Vector3.Slerp(transform.forward, -transform.right, rotateSpeed);
+            transform.localRotation = Quaternion.LookRotation(newDirection);
+            _direction = newDirection;
         }
 
         private bool HasReachedDestination() 
@@ -120,13 +134,21 @@ namespace PlayGame.Player.Movement
         }
 
         // Turn to face the direction the player is moving
-        private void UpdateRotation() 
-        {
+        private void UpdateRotation() {
             transform.localRotation = Quaternion.LookRotation(_direction);
         }
+
+        public void StartRotating(Vector3 targetDirection) {
+            _rotating = true;
+            _turnRight = targetDirection == transform.right;
+        }
+
+        public void StopRotating() {
+            _rotating = false;
+        }
     
-        public void SetDirection(Vector3 newDirection) 
-        {
+        public void SetDirection(Vector3 newDirection, bool rotate) {
+            _rotating = false;
             // Set the direction to be the new direction
             _direction = newDirection;
             
@@ -135,7 +157,7 @@ namespace PlayGame.Player.Movement
             _playerAgent.enabled = false;
             
             // Update the rotation of the player
-            UpdateRotation();
+            if (rotate) UpdateRotation();
         }
 
         public void SetDestination(Vector3 destination) {
@@ -144,7 +166,7 @@ namespace PlayGame.Player.Movement
             
             // Set the direction to destination
             Vector3 direction = (destination - transform.position).normalized;
-            SetDirection(direction);
+            SetDirection(direction, true);
             
             // Set the flags specifying that the player is not headed to a specific object and enable the AI
             _hasTargetObject = false;

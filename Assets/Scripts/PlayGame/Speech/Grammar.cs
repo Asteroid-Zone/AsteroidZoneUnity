@@ -2,7 +2,6 @@
 using System.Text.RegularExpressions;
 using PlayGame.Speech.Commands;
 using Statics;
-using UnityEngine;
 
 namespace PlayGame.Speech {
     public static class Grammar {
@@ -11,7 +10,9 @@ namespace PlayGame.Speech {
         
         // Lists containing synonyms for commands
         private static readonly List<string> MovementCommands = new List<string>{"move", "go"};
-        private static readonly List<string> TurnCommands = new List<string>{"face", "turn"};
+        private static readonly List<string> InstantTurn = new List<string>{"face", "look"};
+        private static readonly List<string> SmoothTurn = new List<string>{"turn"};
+        private static readonly List<string> TurnCommands = new List<string>(); // Initialised at startup
         private static readonly List<string> SpeedCommands = new List<string>{Strings.Stop, Strings.Go};
         private static readonly List<string> TransferCommands = new List<string>{"transfer", "deposit"};
         
@@ -31,9 +32,9 @@ namespace PlayGame.Speech {
         private static readonly List<string> Resources = new List<string>{Strings.Resources, "materials"};
         private static readonly List<string> LaserGun = new List<string> {Strings.LaserGun, "gun", "shoot"};
         
-        // Todo add left/right commands
         private static readonly List<string> CompassDirections = new List<string>{Strings.North, Strings.East, Strings.South, Strings.West};
-        private static readonly List<List<string>> Directions = new List<List<string>>{CompassDirections};
+        private static readonly List<string> RelativeDirections = new List<string>{Strings.Forward, Strings.Back, Strings.Left, Strings.Right};
+        private static readonly List<List<string>> Directions = new List<List<string>>{CompassDirections, RelativeDirections};
         
         private static readonly List<List<string>> Destinations = new List<List<string>>{SpaceStation, Ping, Pirate, Asteroid};
         private static readonly List<List<string>> PingTypes = new List<List<string>>{Asteroid, Pirate};
@@ -44,6 +45,9 @@ namespace PlayGame.Speech {
         private static readonly List<List<string>> CompoundCommands = new List<List<string>>{MovementCommands, TurnCommands, Ping, TransferCommands, OffCommands, OnCommands};
 
         static Grammar() {
+            TurnCommands.AddRange(InstantTurn);
+            TurnCommands.AddRange(SmoothTurn);
+            
             OnCommands.AddRange(GenericOnCommands);
             OnCommands.AddRange(LockCommands);
             OnCommands.AddRange(ShootCommands);
@@ -80,7 +84,7 @@ namespace PlayGame.Speech {
         
         private static Command GetCompoundCommand(string phrase, List<string> commandList, string command) {
             if (commandList.Equals(MovementCommands)) return GetMovementCommand(phrase);
-            if (commandList.Equals(TurnCommands)) return GetTurnCommand(phrase);
+            if (commandList.Equals(TurnCommands)) return GetTurnCommand(phrase, command);
             if (commandList.Equals(Ping)) return GetPingCommand(phrase);
             if (commandList.Equals(TransferCommands)) return GetTransferCommand(phrase);
             if (commandList.Equals(OffCommands)) return GetToggleCommand(phrase, false, command);
@@ -91,26 +95,43 @@ namespace PlayGame.Speech {
         
         private static Command GetMovementCommand(string phrase) {
             string data = GetDirection(phrase);
-            if (data != null) return new MovementCommand(MovementCommand.MovementType.Direction, data, false);
+            if (data != null) {
+                // If moving using relative direction dont turn the camera
+                if (RelativeDirections.Contains(data)) {
+                    return new MovementCommand(MovementCommand.MovementType.Direction, data, false, MovementCommand.TurnType.None);
+                }
+                return new MovementCommand(MovementCommand.MovementType.Direction, data, false, MovementCommand.TurnType.Instant);
+            }
 
             data = GetCommandListIdentifier(phrase, Destinations);
-            if (data != null) return new MovementCommand(MovementCommand.MovementType.Destination, data, false);
+            if (data != null) return new MovementCommand(MovementCommand.MovementType.Destination, data, false, MovementCommand.TurnType.Instant);
 
             data = GetGridCoord(phrase);
-            if (data != null) return new MovementCommand(MovementCommand.MovementType.Grid, data, false);
+            if (data != null) return new MovementCommand(MovementCommand.MovementType.Grid, data, false, MovementCommand.TurnType.Instant);
 
             return new Command(); // Return an invalid command
         }
         
-        private static Command GetTurnCommand(string phrase) {
+        private static Command GetTurnCommand(string phrase, string command) {
             string data = GetDirection(phrase);
-            if (data != null) return new MovementCommand(MovementCommand.MovementType.Direction, data, true);
+            if (data != null) {
+                if (InstantTurn.Contains(command)) {
+                    return new MovementCommand(MovementCommand.MovementType.Direction, data, true, MovementCommand.TurnType.Instant);
+                }
+                
+                if (SmoothTurn.Contains(command)) {
+                    if (data == Strings.Left || data == Strings.Right) {
+                        return new MovementCommand(MovementCommand.MovementType.Direction, data, true, MovementCommand.TurnType.Smooth);
+                    }
+                    return new MovementCommand(MovementCommand.MovementType.Direction, data, true, MovementCommand.TurnType.Instant);
+                }
+            }
 
             data = GetCommandListIdentifier(phrase, Destinations);
-            if (data != null) return new MovementCommand(MovementCommand.MovementType.Destination, data, true);
+            if (data != null) return new MovementCommand(MovementCommand.MovementType.Destination, data, true, MovementCommand.TurnType.Instant);
 
             data = GetGridCoord(phrase);
-            if (data != null) return new MovementCommand(MovementCommand.MovementType.Grid, data, true);
+            if (data != null) return new MovementCommand(MovementCommand.MovementType.Grid, data, true, MovementCommand.TurnType.Instant);
 
             return new Command(); // Return an invalid command
         }
@@ -163,15 +184,15 @@ namespace PlayGame.Speech {
         }
 
         // Returns the first element of the list which contains the string which was found in the phrase or null
-        public static string GetCommandListIdentifier(string phrase, List<List<string>> SearchList) {
-            List<string> commandList = GetCommandList(phrase, SearchList);
+        public static string GetCommandListIdentifier(string phrase, List<List<string>> searchList) {
+            List<string> commandList = GetCommandList(phrase, searchList);
             if (commandList != null) return commandList[0];
             return null;
         }
         
         // Returns the list which contains the string which was found in the phrase or null
-        private static List<string> GetCommandList(string phrase, List<List<string>> SearchList) {
-            foreach (List<string> commandList in SearchList) {
+        private static List<string> GetCommandList(string phrase, List<List<string>> searchList) {
+            foreach (List<string> commandList in searchList) {
                 foreach (string command in commandList) {
                     if (phrase.Contains(command)) return commandList;
                 }
@@ -181,8 +202,8 @@ namespace PlayGame.Speech {
         }
 
         // Returns the string which was found in the phrase or null
-        private static string GetCommandFromList(string phrase, List<string> SearchList) {
-            foreach (string command in SearchList) {
+        private static string GetCommandFromList(string phrase, List<string> searchList) {
+            foreach (string command in searchList) {
                 if (phrase.Contains(command)) return command;
             }
 

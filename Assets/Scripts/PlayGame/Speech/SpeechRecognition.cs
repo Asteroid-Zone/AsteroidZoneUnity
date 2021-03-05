@@ -1,4 +1,5 @@
 ﻿using PhotonClass.GameController;
+using PlayGame.Camera;
 using PlayGame.Pings;
 using PlayGame.Player;
 using PlayGame.Player.Movement;
@@ -16,12 +17,15 @@ namespace PlayGame.Speech {
         public GameObject player;
         public GameObject spaceStation;
         public GameObject ping;
-
+        public GameObject cameraManager;
+        
         private ActionController _actionController;
-    
+
         private void Start() {
             StartSpeechRecognitionInTheBrowser();
             if (!DebugSettings.Debug) player = PhotonPlayer.PP.myAvatar;
+
+            MovementCommand.player = player.transform;
 
             _actionController = new ActionController {
                 speechRecognition = this,
@@ -32,7 +36,8 @@ namespace PlayGame.Speech {
                 laserGun = player.GetComponent<LaserGun>(),
                 playerData = player.GetComponent<PlayerData>(),
                 pingManager = ping.GetComponent<PingManager>(),
-                spaceStation = spaceStation.GetComponent<SpaceStation>()
+                spaceStation = spaceStation.GetComponent<SpaceStation>(),
+                cameraFollow = cameraManager.GetComponent<CameraManager>().followCamera.GetComponent<CameraFollow>()
             };
         }
 

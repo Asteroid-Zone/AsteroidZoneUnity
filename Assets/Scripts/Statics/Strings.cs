@@ -14,6 +14,11 @@
         public const string East = "east";
         public const string South = "south";
         public const string West = "west";
+        
+        public const string Forward = "forward";
+        public const string Back = "back";
+        public const string Left = "left";
+        public const string Right = "right";
 
         public const string Stop = "stop";
         public const string Go = "go";

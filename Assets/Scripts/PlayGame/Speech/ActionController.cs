@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
+using PlayGame.Camera;
 using PlayGame.Pings;
 using PlayGame.Player;
 using PlayGame.Player.Movement;
@@ -24,6 +25,8 @@ namespace PlayGame.Speech {
     
         public GameObject ping;
         public PingManager pingManager;
+
+        public CameraFollow cameraFollow;
 
         private bool _lockedOn = false;
 
@@ -63,11 +66,14 @@ namespace PlayGame.Speech {
         }
 
         private void PerformMovementCommand(MovementCommand command) {
-            if (!command.turn) moveObject.SetSpeed(1); // Start moving if not a turn command
+            if (!command.turnOnly) moveObject.SetSpeed(1); // Start moving if not a turn command
+            cameraFollow.turn = command.turn;
             
             switch (command.movementType) {
                 case MovementCommand.MovementType.Direction:
-                    moveObject.SetDirection(command.direction);
+                    if (command.turn == MovementCommand.TurnType.None) moveObject.SetDirection(command.direction, false);
+                    if (command.turn == MovementCommand.TurnType.Instant) moveObject.SetDirection(command.direction, true);
+                    if (command.turn == MovementCommand.TurnType.Smooth) moveObject.StartRotating(command.direction);
                     break;
                 case MovementCommand.MovementType.Destination:
                     if (command.destinationType == MovementCommand.DestinationType.Ping) {
@@ -157,6 +163,7 @@ namespace PlayGame.Speech {
 
         private void PerformSpeedCommand(SpeedCommand command) {
             moveObject.SetSpeed(command.speed);
+            if (command.speed == 0) moveObject.StopRotating();
         }
 
         public IEnumerator LockOn(Transform lockTarget) {
