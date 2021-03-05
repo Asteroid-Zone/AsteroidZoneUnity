@@ -30,6 +30,8 @@ namespace PlayGame.Player
     
         private float _maxSpeed;
 
+        private float _rotateSpeed;
+
         private int _laserSpeed;
 
         private int _resources;
@@ -52,6 +54,8 @@ namespace PlayGame.Player
         
             _maxHealth = 100; // TODO different stats for different roles
             _maxSpeed = 2.5f;
+
+            _rotateSpeed = 0.005f;
 
             _laserSpeed = 1000;
             
@@ -97,6 +101,10 @@ namespace PlayGame.Player
 
         public float GetSpeed() {
             return _playerAgent.speed;
+        }
+
+        public float GetRotateSpeed() {
+            return _rotateSpeed;
         }
 
         public void SetSpeed(float fraction) {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Skybox;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -57,12 +56,12 @@ namespace PlayGame.Player.Movement
         }
 
         private void Rotate() {
-            float rotateSpeed = 0.005f;
+            float rotateSpeed = _playerData.GetRotateSpeed();
             Vector3 newDirection;
             if (_turnRight) newDirection = Vector3.Slerp(transform.forward, transform.right, rotateSpeed);
             else newDirection = Vector3.Slerp(transform.forward, -transform.right, rotateSpeed);
-            Debug.Log(newDirection);
             transform.localRotation = Quaternion.LookRotation(newDirection);
+            _direction = newDirection;
         }
 
         private bool HasReachedDestination() 

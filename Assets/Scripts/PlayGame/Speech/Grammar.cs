@@ -2,7 +2,6 @@
 using System.Text.RegularExpressions;
 using PlayGame.Speech.Commands;
 using Statics;
-using UnityEngine;
 
 namespace PlayGame.Speech {
     public static class Grammar {
@@ -121,7 +120,10 @@ namespace PlayGame.Speech {
                 }
                 
                 if (SmoothTurn.Contains(command)) {
-                    return new MovementCommand(MovementCommand.MovementType.Direction, data, true, MovementCommand.TurnType.Smooth);
+                    if (data == Strings.Left || data == Strings.Right) {
+                        return new MovementCommand(MovementCommand.MovementType.Direction, data, true, MovementCommand.TurnType.Smooth);
+                    }
+                    return new MovementCommand(MovementCommand.MovementType.Direction, data, true, MovementCommand.TurnType.Instant);
                 }
             }
 
@@ -182,15 +184,15 @@ namespace PlayGame.Speech {
         }
 
         // Returns the first element of the list which contains the string which was found in the phrase or null
-        public static string GetCommandListIdentifier(string phrase, List<List<string>> SearchList) {
-            List<string> commandList = GetCommandList(phrase, SearchList);
+        public static string GetCommandListIdentifier(string phrase, List<List<string>> searchList) {
+            List<string> commandList = GetCommandList(phrase, searchList);
             if (commandList != null) return commandList[0];
             return null;
         }
         
         // Returns the list which contains the string which was found in the phrase or null
-        private static List<string> GetCommandList(string phrase, List<List<string>> SearchList) {
-            foreach (List<string> commandList in SearchList) {
+        private static List<string> GetCommandList(string phrase, List<List<string>> searchList) {
+            foreach (List<string> commandList in searchList) {
                 foreach (string command in commandList) {
                     if (phrase.Contains(command)) return commandList;
                 }
@@ -200,8 +202,8 @@ namespace PlayGame.Speech {
         }
 
         // Returns the string which was found in the phrase or null
-        private static string GetCommandFromList(string phrase, List<string> SearchList) {
-            foreach (string command in SearchList) {
+        private static string GetCommandFromList(string phrase, List<string> searchList) {
+            foreach (string command in searchList) {
                 if (phrase.Contains(command)) return command;
             }
 
