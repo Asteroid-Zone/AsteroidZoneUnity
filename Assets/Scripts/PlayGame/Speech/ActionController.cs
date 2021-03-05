@@ -71,7 +71,7 @@ namespace PlayGame.Speech {
 
             switch (command.movementType) {
                 case MovementCommand.MovementType.Direction:
-                    moveObject.SetDirection(command.direction);
+                    moveObject.SetDirection(command.direction, command.turn);
                     break;
                 case MovementCommand.MovementType.Destination:
                     if (command.destinationType == MovementCommand.DestinationType.Ping) {

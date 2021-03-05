@@ -11,7 +11,7 @@ namespace PlayGame.Speech {
         
         // Lists containing synonyms for commands
         private static readonly List<string> MovementCommands = new List<string>{"move", "go"};
-        private static readonly List<string> TurnCommands = new List<string>{"face", "turn"};
+        private static readonly List<string> TurnCommands = new List<string>{"face", "turn", "look"};
         private static readonly List<string> SpeedCommands = new List<string>{Strings.Stop, Strings.Go};
         private static readonly List<string> TransferCommands = new List<string>{"transfer", "deposit"};
         

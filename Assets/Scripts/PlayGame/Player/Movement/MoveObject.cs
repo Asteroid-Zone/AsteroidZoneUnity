@@ -50,6 +50,10 @@ namespace PlayGame.Player.Movement
             }
         }
 
+        public Vector3 GetNormalisedMovementDirection() {
+            return _direction.normalized;
+        }
+
         private bool HasReachedDestination() 
         {
             // If AI is disabled then the destination has either been reached or there is no destination at all
@@ -125,7 +129,7 @@ namespace PlayGame.Player.Movement
             transform.localRotation = Quaternion.LookRotation(_direction);
         }
     
-        public void SetDirection(Vector3 newDirection) 
+        public void SetDirection(Vector3 newDirection, bool rotate) 
         {
             // Set the direction to be the new direction
             _direction = newDirection;
@@ -135,7 +139,7 @@ namespace PlayGame.Player.Movement
             _playerAgent.enabled = false;
             
             // Update the rotation of the player
-            UpdateRotation();
+            if (rotate) UpdateRotation();
         }
 
         public void SetDestination(Vector3 destination) {
@@ -144,7 +148,7 @@ namespace PlayGame.Player.Movement
             
             // Set the direction to destination
             Vector3 direction = (destination - transform.position).normalized;
-            SetDirection(direction);
+            SetDirection(direction, true);
             
             // Set the flags specifying that the player is not headed to a specific object and enable the AI
             _hasTargetObject = false;
