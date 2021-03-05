@@ -20,12 +20,15 @@ namespace PlayGame.Player.Movement
         // Whether the ship is headed to a specific object
         private bool _hasTargetObject;
 
-        private bool _rotating;
+        public bool _rotating;
         private bool _turnRight; // false = turn left, true = turn right
 
         // Needed to reference enemies in order to rotate towards them
         public GameObject EnemySpawner;
 
+        // Needed to reference asteroids in order to rotate towards them
+        public GameObject AsteroidSpawner;
+        
         private void Start() 
         {
             // Get the initial components
@@ -97,24 +100,33 @@ namespace PlayGame.Player.Movement
         }
 
         // Enemy target needed for lock-on
-        public Transform GetNearestEnemyTransform()
-        {
-            // Probably a better way to do this
-            List<Transform> enemyTransforms = new List<Transform>();
-            foreach (Transform child in EnemySpawner.transform)
-            {
-                enemyTransforms.Add(child);
+        public Transform GetNearestEnemyTransform() {
+            return GetNearestTransform(GetChildren(EnemySpawner.transform));
+        }
+
+        public Transform GetNearestAsteroidTransform() {
+            return GetNearestTransform(GetChildren(AsteroidSpawner.transform));
+        }
+
+        // Returns a list of all child transforms
+        private List<Transform> GetChildren(Transform parent) {
+            List<Transform> children = new List<Transform>();
+            
+            foreach (Transform child in parent) {
+                children.Add(child);
             }
 
+            return children;
+        }
+
+        // Returns the nearest transform from a list
+        private Transform GetNearestTransform(List<Transform> transforms) {
             float bestDistance = Single.PositiveInfinity;
             int closestEnemyIndex = -1;
             
-            for (int i = 0; i < enemyTransforms.Count; i++)
-            {
-                float calculatedDistance =
-                    Vector3.SqrMagnitude(enemyTransforms[i].transform.position - transform.position);
-                if (calculatedDistance < bestDistance)
-                {
+            for (int i = 0; i < transforms.Count; i++) {
+                float calculatedDistance = Vector3.SqrMagnitude(transforms[i].transform.position - transform.position);
+                if (calculatedDistance < bestDistance) {
                     bestDistance = calculatedDistance;
                     closestEnemyIndex = i;
                 }
@@ -122,12 +134,11 @@ namespace PlayGame.Player.Movement
 
             if (closestEnemyIndex == -1) return null;
             
-            Transform closestEnemyTransform = enemyTransforms[closestEnemyIndex].transform;
-            return closestEnemyTransform;
+            return transforms[closestEnemyIndex].transform;
         }
         
-        public void FaceTarget(Transform target)
-        {
+        public void FaceTarget(Transform target) {
+            _rotating = false;
             Vector3 direction = (target.position - transform.position).normalized;
             Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5);

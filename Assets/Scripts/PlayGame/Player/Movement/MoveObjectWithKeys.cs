@@ -9,14 +9,14 @@ namespace PlayGame.Player.Movement {
 
         private PlayerData _playerData;
         public GameObject player;
+        private MoveObject _moveObject;
 
-        private void Start()
-        {
+        private void Start() {
             if (!DebugSettings.Debug) player = PhotonPlayer.PP.myAvatar;
             _playerData = GetComponent<PlayerData>();
+            _moveObject = GetComponent<MoveObject>();
         }
-
-
+        
         // Update is called once per frame
         private void Update()
         {
@@ -33,14 +33,14 @@ namespace PlayGame.Player.Movement {
                 player.transform.Translate(Vector3.back * (Time.deltaTime * _playerData.GetMaxSpeed()));
             }
 
-            if (Input.GetKey(KeyCode.LeftArrow))
-            {
+            if (Input.GetKey(KeyCode.LeftArrow)) {
+                _moveObject._rotating = false;
                 // Rotate the target to the left with the necessary rotational speed smoothed by the delta time
                 player.transform.Rotate(Vector3.down, 50f * Time.deltaTime);
             }
 
-            if (Input.GetKey(KeyCode.RightArrow))
-            {
+            if (Input.GetKey(KeyCode.RightArrow)) {
+                _moveObject._rotating = false;
                 // Rotate the target to the right with the necessary rotational speed smoothed by the delta time
                 player.transform.Rotate(Vector3.up, 50f * Time.deltaTime);
             }
