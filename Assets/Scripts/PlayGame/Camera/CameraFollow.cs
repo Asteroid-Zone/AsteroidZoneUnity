@@ -1,5 +1,6 @@
 ﻿using PhotonClass.GameController;
 using PlayGame.Player.Movement;
+using PlayGame.Speech.Commands;
 using Statics;
 using UnityEngine;
 
@@ -20,7 +21,7 @@ namespace PlayGame.Camera
         public bool followBehind = true;
         public float rotationDamping = 10.0f;
 
-        public bool turn = true;
+        public MovementCommand.TurnType turn = MovementCommand.TurnType.Instant;
 
         private void Start() {
              if (!DebugSettings.Debug) target = PhotonPlayer.PP.myAvatar.transform;
@@ -28,7 +29,7 @@ namespace PlayGame.Camera
         }
 
         private void LateUpdate() {
-            if (turn) {
+            if (turn == MovementCommand.TurnType.Instant) {
                 // Follow the player from behind
                 var  wantedPosition = target.TransformPoint(0, height, followBehind ? -distance : distance);
                 transform.position = Vector3.Lerp(transform.position, wantedPosition, Time.deltaTime * damping);
@@ -39,7 +40,7 @@ namespace PlayGame.Camera
                     transform.rotation = Quaternion.Slerp(transform.rotation, wantedRotation, Time.deltaTime * rotationDamping);
                 }
                 else transform.LookAt(target, target.up);
-            } else {
+            } else if (turn == MovementCommand.TurnType.None) {
                 // Keep the camera orientation the same but follow the player
                 float followDistance = followBehind ? -distance : distance;
                 Vector3 wantedPosition = target.TransformPoint(0, height,  followDistance);

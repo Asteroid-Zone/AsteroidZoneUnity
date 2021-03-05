@@ -129,7 +129,7 @@ namespace PlayGame.Player.Movement
             transform.localRotation = Quaternion.LookRotation(_direction);
         }
     
-        public void SetDirection(Vector3 newDirection, bool rotate) 
+        public void SetDirection(Vector3 newDirection, bool rotate)
         {
             // Set the direction to be the new direction
             _direction = newDirection;

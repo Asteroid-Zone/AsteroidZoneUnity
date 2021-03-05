@@ -9,16 +9,19 @@ namespace PlayGame.Speech
 
         void Update() {
             if (Input.GetKeyDown(KeyCode.W)) { // Face north and start moving
-                speechRecognition.GetResponse("move forward");
+                speechRecognition.GetResponse("move north");
             }
+            
             if (Input.GetKeyDown(KeyCode.S)) { // Face south and start moving
-                speechRecognition.GetResponse("move back");
+                speechRecognition.GetResponse("move south");
             }
+            
             if (Input.GetKeyDown(KeyCode.A)) { // Face west but dont change speed
-                speechRecognition.GetResponse("move left");
+                speechRecognition.GetResponse("move west");
             }
+            
             if (Input.GetKeyDown(KeyCode.D)) { // Face east and start moving
-                speechRecognition.GetResponse("move right");
+                speechRecognition.GetResponse("move east");
             }
 
             if (Input.GetKeyDown(KeyCode.Q)) { // Stop Moving

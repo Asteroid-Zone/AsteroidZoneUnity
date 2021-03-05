@@ -18,6 +18,12 @@ namespace PlayGame.Speech.Commands {
             Asteroid
         }
 
+        public enum TurnType {
+            None,
+            Instant,
+            Smooth
+        }
+
         public static Transform player;
         
         public readonly MovementType movementType;
@@ -28,9 +34,9 @@ namespace PlayGame.Speech.Commands {
         public readonly GridCoord gridCoord;
 
         public readonly bool turnOnly;
-        public readonly bool turn;
+        public readonly TurnType turn;
 
-        public MovementCommand(MovementType movementType, string data, bool turnOnly, bool turn) : base(CommandType.Movement) {
+        public MovementCommand(MovementType movementType, string data, bool turnOnly, TurnType turn) : base(CommandType.Movement) {
             this.turnOnly = turnOnly;
             this.turn = turn;
             this.movementType = movementType;
