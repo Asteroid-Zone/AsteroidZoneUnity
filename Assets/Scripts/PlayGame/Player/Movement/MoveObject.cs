@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Skybox;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -20,6 +21,9 @@ namespace PlayGame.Player.Movement
         // Whether the ship is headed to a specific object
         private bool _hasTargetObject;
 
+        private bool _rotating;
+        private bool _turnRight; // false = turn left, true = turn right
+
         // Needed to reference enemies in order to rotate towards them
         public GameObject EnemySpawner;
 
@@ -33,8 +37,7 @@ namespace PlayGame.Player.Movement
             UpdateRotation();
         }
 
-        private void Update()
-        {
+        private void Update() {
             // Get the speed of the player's ship
             var speed = _playerData.GetSpeed();
             
@@ -48,10 +51,18 @@ namespace PlayGame.Player.Movement
                 // The speed is not 0, so the ship should be moving
                 transform.Translate((Time.deltaTime * speed) * _direction, Space.World);
             }
+            
+            // Rotate slowly
+            if (_rotating) Rotate();
         }
 
-        public Vector3 GetNormalisedMovementDirection() {
-            return _direction.normalized;
+        private void Rotate() {
+            float rotateSpeed = 0.005f;
+            Vector3 newDirection;
+            if (_turnRight) newDirection = Vector3.Slerp(transform.forward, transform.right, rotateSpeed);
+            else newDirection = Vector3.Slerp(transform.forward, -transform.right, rotateSpeed);
+            Debug.Log(newDirection);
+            transform.localRotation = Quaternion.LookRotation(newDirection);
         }
 
         private bool HasReachedDestination() 
@@ -124,13 +135,21 @@ namespace PlayGame.Player.Movement
         }
 
         // Turn to face the direction the player is moving
-        private void UpdateRotation() 
-        {
+        private void UpdateRotation() {
             transform.localRotation = Quaternion.LookRotation(_direction);
         }
+
+        public void StartRotating(Vector3 targetDirection) {
+            _rotating = true;
+            _turnRight = targetDirection == transform.right;
+        }
+
+        public void StopRotating() {
+            _rotating = false;
+        }
     
-        public void SetDirection(Vector3 newDirection, bool rotate)
-        {
+        public void SetDirection(Vector3 newDirection, bool rotate) {
+            _rotating = false;
             // Set the direction to be the new direction
             _direction = newDirection;
             

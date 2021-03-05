@@ -29,13 +29,12 @@ namespace PlayGame.Camera
         }
 
         private void LateUpdate() {
-            if (turn == MovementCommand.TurnType.Instant) {
+            if (turn == MovementCommand.TurnType.Instant || turn == MovementCommand.TurnType.Smooth) {
                 // Follow the player from behind
                 var  wantedPosition = target.TransformPoint(0, height, followBehind ? -distance : distance);
                 transform.position = Vector3.Lerp(transform.position, wantedPosition, Time.deltaTime * damping);
             
-                if (smoothRotation)
-                {
+                if (smoothRotation) {
                     var wantedRotation = Quaternion.LookRotation(target.position - transform.position, target.up);
                     transform.rotation = Quaternion.Slerp(transform.rotation, wantedRotation, Time.deltaTime * rotationDamping);
                 }

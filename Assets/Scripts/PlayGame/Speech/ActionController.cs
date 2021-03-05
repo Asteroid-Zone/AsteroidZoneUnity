@@ -68,10 +68,12 @@ namespace PlayGame.Speech {
         private void PerformMovementCommand(MovementCommand command) {
             if (!command.turnOnly) moveObject.SetSpeed(1); // Start moving if not a turn command
             cameraFollow.turn = command.turn;
-
+            
             switch (command.movementType) {
                 case MovementCommand.MovementType.Direction:
-                    moveObject.SetDirection(command.direction, command.turn != MovementCommand.TurnType.None);
+                    if (command.turn == MovementCommand.TurnType.None) moveObject.SetDirection(command.direction, false);
+                    if (command.turn == MovementCommand.TurnType.Instant) moveObject.SetDirection(command.direction, true);
+                    if (command.turn == MovementCommand.TurnType.Smooth) moveObject.StartRotating(command.direction);
                     break;
                 case MovementCommand.MovementType.Destination:
                     if (command.destinationType == MovementCommand.DestinationType.Ping) {
@@ -161,6 +163,7 @@ namespace PlayGame.Speech {
 
         private void PerformSpeedCommand(SpeedCommand command) {
             moveObject.SetSpeed(command.speed);
+            if (command.speed == 0) moveObject.StopRotating();
         }
 
         public IEnumerator LockOn(Transform lockTarget) {

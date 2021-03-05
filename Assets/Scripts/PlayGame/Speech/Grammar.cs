@@ -85,7 +85,7 @@ namespace PlayGame.Speech {
         
         private static Command GetCompoundCommand(string phrase, List<string> commandList, string command) {
             if (commandList.Equals(MovementCommands)) return GetMovementCommand(phrase);
-            if (commandList.Equals(TurnCommands)) return GetTurnCommand(phrase);
+            if (commandList.Equals(TurnCommands)) return GetTurnCommand(phrase, command);
             if (commandList.Equals(Ping)) return GetPingCommand(phrase);
             if (commandList.Equals(TransferCommands)) return GetTransferCommand(phrase);
             if (commandList.Equals(OffCommands)) return GetToggleCommand(phrase, false, command);
@@ -113,9 +113,17 @@ namespace PlayGame.Speech {
             return new Command(); // Return an invalid command
         }
         
-        private static Command GetTurnCommand(string phrase) {
+        private static Command GetTurnCommand(string phrase, string command) {
             string data = GetDirection(phrase);
-            if (data != null) return new MovementCommand(MovementCommand.MovementType.Direction, data, true, MovementCommand.TurnType.Instant);
+            if (data != null) {
+                if (InstantTurn.Contains(command)) {
+                    return new MovementCommand(MovementCommand.MovementType.Direction, data, true, MovementCommand.TurnType.Instant);
+                }
+                
+                if (SmoothTurn.Contains(command)) {
+                    return new MovementCommand(MovementCommand.MovementType.Direction, data, true, MovementCommand.TurnType.Smooth);
+                }
+            }
 
             data = GetCommandListIdentifier(phrase, Destinations);
             if (data != null) return new MovementCommand(MovementCommand.MovementType.Destination, data, true, MovementCommand.TurnType.Instant);
