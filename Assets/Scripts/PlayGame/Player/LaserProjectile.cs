@@ -21,7 +21,7 @@ namespace PlayGame.Player {
         }
 
         private void OnCollisionEnter(Collision collision) {
-            if (collision.gameObject.CompareTag(Tags.PlayerTag)) return;
+            if (collision.gameObject == _shootingPlayerData.gameObject) return;
 
             if (collision.gameObject.CompareTag(Tags.PirateTag)) {
                 PirateData pirateData = collision.gameObject.GetComponent<PirateData>();

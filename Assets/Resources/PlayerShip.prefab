@@ -130,10 +130,10 @@ NavMeshAgent:
   m_GameObject: {fileID: 2551174986814475488}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 2
+  m_Radius: 2.5
   m_Speed: 2.5
   m_Acceleration: 8
-  avoidancePriority: 50
+  avoidancePriority: 99
   m_AngularSpeed: 120
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
@@ -168,6 +168,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c2d3ee8c7f561b48921db07ee1b90dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rotating: 0
   EnemySpawner: {fileID: 3372416722083646108, guid: f9785da7cbf73d34d8bb4a1bc113b383,
     type: 3}
   AsteroidSpawner: {fileID: 4482027528778611906, guid: df00d7a43c1bf4e419010706c5e2d530,
