@@ -82,7 +82,7 @@ namespace PlayGame.Player
         {
             if (!_youDiedWrittenOnScreen &&_health <= 0)
             {
-                EventsManager.AddMessageToQueue("YOU DIED");
+                EventsManager.AddMessage("YOU DIED");
                 _youDiedWrittenOnScreen = true;
             }
         }

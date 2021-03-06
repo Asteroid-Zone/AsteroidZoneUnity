@@ -54,7 +54,7 @@ namespace PlayGame {
 
             if (_resourcesRemaining <= 0 && !_asteroidDestroyed) {
                 _asteroidDestroyed = true;
-                EventsManager.AddMessageToQueue("Asteroid destroyed at " + GridCoord.GetCoordFromVector(transform.position));
+                EventsManager.AddMessage("Asteroid destroyed at " + GridCoord.GetCoordFromVector(transform.position));
                 StartCoroutine(FadeOutAsteroid());
             }
         }

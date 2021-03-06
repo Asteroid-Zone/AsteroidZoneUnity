@@ -19,7 +19,7 @@ namespace PlayGame
 
         private void Update() {
             if (_stationHealth >= MaxStationHealth) {
-                EventsManager.AddMessageToQueue("Game completed");
+                EventsManager.AddMessage("Game completed");
                 // Ensures LeaveRoom is only called once
                 if (!complete)
                 {
@@ -31,7 +31,7 @@ namespace PlayGame
 
         public void AddResources(int resources) {
             _stationHealth += resources;
-            EventsManager.AddMessageToQueue("Space station repaired");
+            EventsManager.AddMessage("Space station repaired");
 
             if (_stationHealth > MaxStationHealth) _stationHealth = MaxStationHealth;
         }

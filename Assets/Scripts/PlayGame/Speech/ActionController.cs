@@ -120,7 +120,7 @@ namespace PlayGame.Speech {
                 spaceStation.AddResources(playerData.GetResources()); // Add the resources into the space station
                 playerData.RemoveResources(); // Remove them from the player
             } else {
-                EventsManager.AddMessageToQueue("You must be next to the space station to transfer resources");
+                EventsManager.AddMessage("You must be next to the space station to transfer resources");
             }
         }
 
