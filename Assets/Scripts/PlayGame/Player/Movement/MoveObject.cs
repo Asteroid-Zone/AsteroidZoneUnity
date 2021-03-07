@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using PlayGame.Pirates;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -23,13 +24,17 @@ namespace PlayGame.Player.Movement
         private bool _turnRight; // false = turn left, true = turn right
 
         // Needed to reference enemies in order to rotate towards them
-        public GameObject enemySpawner;
+        private GameObject _enemySpawner;
 
         // Needed to reference asteroids in order to rotate towards them
-        public GameObject asteroidSpawner;
+        private GameObject _asteroidSpawner;
         
-        private void Start() 
+        private void Start()
         {
+            // fetch the objects of the spawners
+            _enemySpawner = PirateSpawner.GetInstance().gameObject;
+            _asteroidSpawner = AsteroidSpawner.GetInstance().gameObject;
+            
             // Get the initial components
             _direction = transform.rotation.eulerAngles;
             _playerData = GetComponent<PlayerData>();
@@ -100,11 +105,11 @@ namespace PlayGame.Player.Movement
 
         // Enemy target needed for lock-on
         public Transform GetNearestEnemyTransform() {
-            return GetNearestTransform(GetChildren(enemySpawner.transform));
+            return GetNearestTransform(GetChildren(_enemySpawner.transform));
         }
 
         public Transform GetNearestAsteroidTransform() {
-            return GetNearestTransform(GetChildren(asteroidSpawner.transform));
+            return GetNearestTransform(GetChildren(_asteroidSpawner.transform));
         }
 
         // Returns a list of all child transforms

@@ -8,6 +8,25 @@ namespace PlayGame
 {
     public class AsteroidSpawner : MonoBehaviour
     {
+        #region Singleton
+        private static AsteroidSpawner _instance;
+
+        private void Awake()
+        {
+            if (_instance != null && _instance != this)
+            {
+                Destroy(gameObject);
+            } else {
+                _instance = this;
+            }
+        }
+
+        public static AsteroidSpawner GetInstance()
+        {
+            return _instance;
+        }
+        #endregion
+        
         public GameObject gridManager;
         public GameObject asteroid;
         

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Photon.Pun;
 using PlayGame.UI;
 using Statics;
@@ -41,7 +40,7 @@ namespace PlayGame.Player
 
         private NavMeshAgent _playerAgent;
 
-        public Transform lockTarget;
+        private Transform _lockTarget;
 
         private void Start() {
             _playerAgent = GetComponent<NavMeshAgent>();
@@ -160,6 +159,11 @@ namespace PlayGame.Player
             {
                 _health = 0;
             }
+        }
+
+        public void SetLockTarget(Transform lockTarget)
+        {
+            _lockTarget = lockTarget;
         }
     }
 }

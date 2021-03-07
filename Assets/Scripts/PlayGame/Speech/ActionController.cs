@@ -133,11 +133,11 @@ namespace PlayGame.Speech {
                     break;
                 case ToggleCommand.ObjectType.Lock:
                     _lockedOn = false;
-                    speechRecognition.StopLockOn(); // Disengage lock
+                    moveObject.StopCoroutine(LockOn()); // Disengage lock
                     if (command.on) {
-                        playerData.lockTarget = GetLockTarget(command.lockTargetType);
+                        _lockTarget = GetLockTarget(command.lockTargetType);
                         _lockedOn = true;
-                        speechRecognition.StartLockOn(playerData.lockTarget);
+                        moveObject.StartCoroutine(LockOn());
                     }
                     break;
                 case ToggleCommand.ObjectType.LaserGun:
@@ -154,7 +154,7 @@ namespace PlayGame.Speech {
             if (lockTargetType == ToggleCommand.LockTargetType.Asteroid) return GetNearestAsteroid();
             return null;
         }
-
+        
         private Transform GetNearestAsteroid() {
             return player.GetComponent<MoveObject>().GetNearestAsteroidTransform();
         }
@@ -168,7 +168,7 @@ namespace PlayGame.Speech {
             if (command.speed == 0) moveObject.StopRotating();
         }
 
-        public IEnumerator LockOn() {
+        private IEnumerator LockOn() {
             // Stop the routine if there is no target
             if (_lockTarget == null)
             {

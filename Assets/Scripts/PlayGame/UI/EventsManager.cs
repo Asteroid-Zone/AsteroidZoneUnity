@@ -5,10 +5,8 @@ using UnityEngine.UI;
 namespace PlayGame.UI {
     public class EventsManager : MonoBehaviour
     {
-        
+        #region Singleton
         private static EventsManager _instance;
-
-        private static EventsManager Instance => _instance;
 
         private void Awake()
         {
@@ -19,6 +17,7 @@ namespace PlayGame.UI {
                 _instance = this;
             }
         }
+        #endregion
         
         public GameObject scrollParent;
         
@@ -35,12 +34,12 @@ namespace PlayGame.UI {
 
         public static void AddMessage(string message)
         {
-            Instance._eventsListText.text += $"[{DateTime.Now}]"
-                                    + Environment.NewLine
-                                    + message
-                                    + Environment.NewLine + Environment.NewLine;
+            _instance._eventsListText.text += $"[{DateTime.Now}]"
+                                              + Environment.NewLine
+                                              + message
+                                              + Environment.NewLine + Environment.NewLine;
             
-            Instance._scrollRect.normalizedPosition = new Vector2(0, 0);
+            _instance._scrollRect.normalizedPosition = new Vector2(0, 0);
         }
     }
 }

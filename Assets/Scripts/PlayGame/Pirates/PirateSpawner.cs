@@ -8,6 +8,25 @@ namespace PlayGame.Pirates
 {
     public class PirateSpawner : MonoBehaviour
     {
+        #region Singleton
+        private static PirateSpawner _instance;
+
+        private void Awake()
+        {
+            if (_instance != null && _instance != this)
+            {
+                Destroy(gameObject);
+            } else {
+                _instance = this;
+            }
+        }
+        
+        public static PirateSpawner GetInstance()
+        {
+            return _instance;
+        }
+        #endregion
+        
         public GameObject gridManager;
         public GameObject pirate;
         
