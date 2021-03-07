@@ -25,7 +25,7 @@ namespace PlayGame.Speech {
 
         private void Start() {
             StartSpeechRecognitionInTheBrowser();
-            if (!DebugSettings.Debug) player = PhotonPlayer.Instance.myAvatar;
+            player = !DebugSettings.Debug ? PhotonPlayer.Instance.myAvatar : TestPlayer.GetPlayerShip();
 
             MovementCommand.player = player.transform;
 

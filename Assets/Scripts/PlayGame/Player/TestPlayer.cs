@@ -5,13 +5,35 @@ namespace PlayGame.Player
 {
     public class TestPlayer : MonoBehaviour
     {
-        // Enable the test player ship if Debug mode.
-        private void Start()
+        #region Singleton
+        private static TestPlayer _instance;
+
+        private void Awake()
         {
-            if (!DebugSettings.Debug)
+            if (_instance != null && _instance != this)
             {
-                gameObject.SetActive(false);
+                Destroy(gameObject);
             }
+            else
+            {
+                _instance = this;
+            }
+
+            // Enable the test player ship if Debug mode.
+            if (DebugSettings.Debug)
+            {
+                _playerShipInstance = Instantiate(playerShipPrefab, new Vector3(5, 0, 5), Quaternion.identity);
+            }
+        }
+
+        #endregion
+        
+        public GameObject playerShipPrefab;
+        private GameObject _playerShipInstance;
+
+        public static GameObject GetPlayerShip()
+        {
+            return _instance != null ? _instance._playerShipInstance : null;
         }
     }
 }
