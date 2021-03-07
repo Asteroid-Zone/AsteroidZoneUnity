@@ -28,7 +28,8 @@ namespace PlayGame.Speech {
 
         public CameraFollow cameraFollow;
 
-        private bool _lockedOn = false;
+        private Transform _lockTarget;
+        private bool _lockedOn;
 
         public void PerformActions(Command command) {
             switch (command.GetCommandType()) {
@@ -132,7 +133,7 @@ namespace PlayGame.Speech {
                     break;
                 case ToggleCommand.ObjectType.Lock:
                     _lockedOn = false;
-                    speechRecognition.StopLockOn(playerData.lockTarget); // Disengage lock
+                    speechRecognition.StopLockOn(); // Disengage lock
                     if (command.on) {
                         playerData.lockTarget = GetLockTarget(command.lockTargetType);
                         _lockedOn = true;
@@ -150,7 +151,8 @@ namespace PlayGame.Speech {
 
         private Transform GetLockTarget(ToggleCommand.LockTargetType lockTargetType) {
             if (lockTargetType == ToggleCommand.LockTargetType.Pirate) return GetNearestPirate();
-            return GetNearestAsteroid();
+            if (lockTargetType == ToggleCommand.LockTargetType.Asteroid) return GetNearestAsteroid();
+            return null;
         }
 
         private Transform GetNearestAsteroid() {
@@ -166,11 +168,22 @@ namespace PlayGame.Speech {
             if (command.speed == 0) moveObject.StopRotating();
         }
 
-        public IEnumerator LockOn(Transform lockTarget) {
+        public IEnumerator LockOn() {
+            // Stop the routine if there is no target
+            if (_lockTarget == null)
+            {
+                yield break;
+            }
+            
             while (_lockedOn) {
-                player.GetComponent<MoveObject>().FaceTarget(lockTarget);
+                player.GetComponent<MoveObject>().FaceTarget(_lockTarget);
                 yield return null;
             }
+        }
+
+        public void SetLockTarget(Transform lockTarget)
+        {
+            _lockTarget = lockTarget;
         }
 
     }

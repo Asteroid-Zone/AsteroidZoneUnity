@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -24,10 +23,10 @@ namespace PlayGame.Player.Movement
         private bool _turnRight; // false = turn left, true = turn right
 
         // Needed to reference enemies in order to rotate towards them
-        public GameObject EnemySpawner;
+        public GameObject enemySpawner;
 
         // Needed to reference asteroids in order to rotate towards them
-        public GameObject AsteroidSpawner;
+        public GameObject asteroidSpawner;
         
         private void Start() 
         {
@@ -101,15 +100,15 @@ namespace PlayGame.Player.Movement
 
         // Enemy target needed for lock-on
         public Transform GetNearestEnemyTransform() {
-            return GetNearestTransform(GetChildren(EnemySpawner.transform));
+            return GetNearestTransform(GetChildren(enemySpawner.transform));
         }
 
         public Transform GetNearestAsteroidTransform() {
-            return GetNearestTransform(GetChildren(AsteroidSpawner.transform));
+            return GetNearestTransform(GetChildren(asteroidSpawner.transform));
         }
 
         // Returns a list of all child transforms
-        private List<Transform> GetChildren(Transform parent) {
+        private static List<Transform> GetChildren(Transform parent) {
             List<Transform> children = new List<Transform>();
             
             foreach (Transform child in parent) {
@@ -121,7 +120,7 @@ namespace PlayGame.Player.Movement
 
         // Returns the nearest transform from a list
         private Transform GetNearestTransform(List<Transform> transforms) {
-            float bestDistance = Single.PositiveInfinity;
+            float bestDistance = float.PositiveInfinity;
             int closestEnemyIndex = -1;
             
             for (int i = 0; i < transforms.Count; i++) {
@@ -137,10 +136,13 @@ namespace PlayGame.Player.Movement
             return transforms[closestEnemyIndex].transform;
         }
         
-        public void FaceTarget(Transform target) {
+        public void FaceTarget(Transform target)
+        {
+            if (target == null) return; // If the target is destroyed just return.
+
             rotating = false;
             Vector3 direction = (target.position - transform.position).normalized;
-            Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+            Quaternion lookRotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5);
         }
 
