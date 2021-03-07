@@ -29,6 +29,8 @@ namespace PlayGame.Player.Movement
         // Needed to reference asteroids in order to rotate towards them
         private GameObject _asteroidSpawner;
         
+        private Transform _lockTarget;
+        
         private void Start()
         {
             // fetch the objects of the spawners
@@ -60,6 +62,11 @@ namespace PlayGame.Player.Movement
             
             // Rotate slowly
             if (rotating) Rotate();
+
+            if (_lockTarget)
+            {
+                FaceTarget(_lockTarget);
+            }
         }
 
         private void Rotate() {
@@ -203,6 +210,11 @@ namespace PlayGame.Player.Movement
         // Sets the current speed to a percentage of the players maximum speed
         public void SetSpeed(float fraction) {
             _playerData.SetSpeed(fraction);
+        }
+
+        public void SetLockTarget(Transform lockTarget)
+        {
+            _lockTarget = lockTarget;
         }
     }
 }

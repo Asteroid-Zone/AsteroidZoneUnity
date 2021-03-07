@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Linq;
 using PlayGame.Camera;
 using PlayGame.Pings;
@@ -27,9 +26,6 @@ namespace PlayGame.Speech {
         public PingManager pingManager;
 
         public CameraFollow cameraFollow;
-
-        private Transform _lockTarget;
-        private bool _lockedOn;
 
         public void PerformActions(Command command) {
             switch (command.GetCommandType()) {
@@ -132,13 +128,7 @@ namespace PlayGame.Speech {
                     else miningLaser.DisableMiningLaser();
                     break;
                 case ToggleCommand.ObjectType.Lock:
-                    _lockedOn = false;
-                    moveObject.StopCoroutine(LockOn()); // Disengage lock
-                    if (command.on) {
-                        _lockTarget = GetLockTarget(command.lockTargetType);
-                        _lockedOn = true;
-                        moveObject.StartCoroutine(LockOn());
-                    }
+                    moveObject.SetLockTarget(command.@on ? GetLockTarget(command.lockTargetType) : null);
                     break;
                 case ToggleCommand.ObjectType.LaserGun:
                     if (command.on) laserGun.StartShooting();
@@ -167,24 +157,5 @@ namespace PlayGame.Speech {
             moveObject.SetSpeed(command.speed);
             if (command.speed == 0) moveObject.StopRotating();
         }
-
-        private IEnumerator LockOn() {
-            // Stop the routine if there is no target
-            if (_lockTarget == null)
-            {
-                yield break;
-            }
-            
-            while (_lockedOn) {
-                player.GetComponent<MoveObject>().FaceTarget(_lockTarget);
-                yield return null;
-            }
-        }
-
-        public void SetLockTarget(Transform lockTarget)
-        {
-            _lockTarget = lockTarget;
-        }
-
     }
 }
