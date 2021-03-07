@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Photon.Realtime;
+using Photon.GameControllers;
+using PlayGame.Player;
 
 namespace PlayGame.UI {
     public class GameManager : MonoBehaviourPunCallbacks {
@@ -39,6 +41,7 @@ namespace PlayGame.UI {
 
         public override void OnPlayerLeftRoom(Photon.Realtime.Player other)
         {
+            PlayerData.UpdatePlayerLists();
             Debug.LogFormat("OnPlayerLeftRoom() {0}", other.NickName); // seen when other disconnects
 
 

@@ -28,13 +28,17 @@ namespace PlayGame.Pirates
             float closestPlayerDist = float.MaxValue;
             PlayerData.Players.ForEach(p =>
             {
-                var position = p.transform.position;
-                var distance = Vector3.Distance(transform.position, position);
-                if (distance < closestPlayerDist)
+                if (p != null)
                 {
-                    closestPlayer = p;
-                    closestPlayerDist = distance;
+                    var position = p.transform.position;
+                    var distance = Vector3.Distance(transform.position, position);
+                    if (distance < closestPlayerDist)
+                    {
+                        closestPlayer = p;
+                        closestPlayerDist = distance;
+                    }
                 }
+              
             });
 
             if (closestPlayer != null && closestPlayerDist <= PirateData.LookRadius)

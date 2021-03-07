@@ -78,6 +78,12 @@ namespace PlayGame.Player
             Players.AddRange(GameObject.FindGameObjectsWithTag(Tags.PlayerTag));
         }
 
+        public static void UpdatePlayerLists()
+        {
+            Players.Clear();
+            Players.AddRange(GameObject.FindGameObjectsWithTag(Tags.PlayerTag));
+        }
+
         private void Update()
         {
             if (!_youDiedWrittenOnScreen &&_health <= 0)
