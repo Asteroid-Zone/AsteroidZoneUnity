@@ -69,7 +69,7 @@ namespace PlayGame.Pirates
             
             // Spawn the new pirate
             GameObject newPirate;
-            if (!DebugSettings.Debug) newPirate = PhotonNetwork.InstantiateRoomObject("PirateShip", randomGlobalCoord, Quaternion.identity);
+            if (!DebugSettings.Debug) newPirate = PhotonNetwork.InstantiateRoomObject(Prefabs.PirateShip, randomGlobalCoord, Quaternion.identity);
             else newPirate = Instantiate(pirate, randomGlobalCoord, Quaternion.identity);
             newPirate.transform.parent = gameObject.transform;
         }

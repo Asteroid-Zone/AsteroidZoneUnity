@@ -69,7 +69,7 @@ namespace PlayGame
             
             // Spawn the new asteroid
             GameObject newAsteroid;
-            if (!DebugSettings.Debug) newAsteroid = PhotonNetwork.InstantiateRoomObject("Asteroid", randomGlobalCoord, Quaternion.identity);
+            if (!DebugSettings.Debug) newAsteroid = PhotonNetwork.InstantiateRoomObject(Prefabs.Asteroid, randomGlobalCoord, Quaternion.identity);
             else newAsteroid = Instantiate(asteroid, randomGlobalCoord, Quaternion.identity);
             newAsteroid.transform.parent = gameObject.transform;
         }
