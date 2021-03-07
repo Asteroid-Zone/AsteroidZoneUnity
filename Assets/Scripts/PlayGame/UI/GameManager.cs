@@ -1,9 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
-using Statics
-using Photon.Realtime;
-using Photon.GameControllers;
+using Statics;
 using PlayGame.Player;
 
 namespace PlayGame.UI {
