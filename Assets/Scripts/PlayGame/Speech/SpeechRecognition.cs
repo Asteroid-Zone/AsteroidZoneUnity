@@ -4,8 +4,8 @@ using PlayGame.Player.Movement;
 using PlayGame.Speech.Commands;
 using Statics;
 using System.Collections.Generic;
+using Photon.GameControllers;
 using Photon.Pun;
-using PhotonClass.GameController;
 using PlayGame.Camera;
 using UnityEngine;
 using UnityEngine.UI;
@@ -25,7 +25,7 @@ namespace PlayGame.Speech {
 
         private void Start() {
             StartSpeechRecognitionInTheBrowser();
-            if (!DebugSettings.Debug) player = PhotonPlayer.PP.myAvatar;
+            if (!DebugSettings.Debug) player = PhotonPlayer.Instance.myAvatar;
 
             MovementCommand.player = player.transform;
 
@@ -66,7 +66,7 @@ namespace PlayGame.Speech {
 
         // Called by javascript when speech is detected
         public void GetResponse(string result) {
-            if (!DebugSettings.Debug && !PhotonPlayer.PP.photonView.IsMine) return;
+            if (!DebugSettings.Debug && !PhotonPlayer.Instance.photonView.IsMine) return;
             
             _myResponse = result.ToLower();
             Command command = Grammar.GetCommand(_myResponse);

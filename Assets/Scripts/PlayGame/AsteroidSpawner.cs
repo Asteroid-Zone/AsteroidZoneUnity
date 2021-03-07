@@ -27,7 +27,7 @@ namespace PlayGame
         {
             if (!PhotonNetwork.IsMasterClient && !DebugSettings.Debug) return;
             _gridManager = gridManager.GetComponent<GridManager>();
-            InvokeRepeating(nameof(AsteroidRNG), 0, everyXSeconds);
+            InvokeRepeating(nameof(AsteroidRNG), 0, 0.001f);
             
             // Checked space is the half size in OverlapBoxNonAlloc
             _spawnRangeCheck = _gridManager.GetCellSize() / 2f;

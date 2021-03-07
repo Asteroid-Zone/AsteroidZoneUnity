@@ -1,7 +1,7 @@
-﻿using UnityEngine;
+﻿using Photon;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using Statics;
-using PhotonClass;
 
 
 namespace MainMenu {
@@ -12,7 +12,7 @@ namespace MainMenu {
         public void PlayGame()
         {
             buttonPress.Play();
-            PhotonClass.PhotonLobby.getInstance().Connect();
+            PhotonLobby.getInstance().Connect();
         }
 
         public void QuitGame()

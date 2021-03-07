@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Photon.Pun;
+﻿using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
 
-namespace PhotonClass
+namespace Photon
 {
     public class PhotonLobby : MonoBehaviourPunCallbacks 
     {
@@ -19,25 +17,25 @@ namespace PhotonClass
         [SerializeField]
         private GameObject progressLabel;
 
-        public static PhotonLobby lobby;
+        private static PhotonLobby _instance;
 
 
         /// This client's version number. Users are separated from each other by gameVersion.
-        string gameVersion = "1";
+        private const string GameVersion = "1";
 
         /// Keep track of the current process. Since connection is asynchronous and is based on several callbacks from Photon,
         /// we need to keep track of this to properly adjust the behavior when we receive call back by Photon.
         /// This is used for the OnConnectedToMaster() callback when a user wants to leave the game.
-        bool isConnecting;
+        private bool _isConnecting;
 
         /// MonoBehaviour methods called on GameObject by Unity during early initialization phase.
         
         private void Awake()
         {
-            lobby = this;
+            _instance = this;
         }
 
-        void Start()
+        private void Start()
         {
             progressLabel.SetActive(false);
             controlPanel.SetActive(true);
@@ -45,7 +43,7 @@ namespace PhotonClass
 
         public static PhotonLobby getInstance()
         {
-            return lobby;
+            return _instance;
         }
 
         /// Start the connection process.
@@ -63,8 +61,8 @@ namespace PhotonClass
             else
             {
                 // keep track of the will to join a room, because when we come back from the game we will get a callback that we are connected, so we need to know what to do then
-                isConnecting = PhotonNetwork.ConnectUsingSettings();
-                PhotonNetwork.GameVersion = gameVersion;
+                _isConnecting = PhotonNetwork.ConnectUsingSettings();
+                PhotonNetwork.GameVersion = GameVersion;
             }
         }
 
@@ -76,11 +74,11 @@ namespace PhotonClass
             // we don't want to do anything if we are not attempting to join a room.
             // this case where isConnecting is false is typically when you lost or quit the game, when this level is loaded, OnConnectedToMaster will be called, in that case
             // we don't want to do anything.
-            if (isConnecting)
+            if (_isConnecting)
             {
                 // The first we try to do is to join a potential existing room. If there is, good, else, we'll be called back with OnJoinRandomFailed()
                 PhotonNetwork.JoinRandomRoom();
-                isConnecting = false;
+                _isConnecting = false;
             }
 
         }
@@ -90,7 +88,7 @@ namespace PhotonClass
         {
             progressLabel.SetActive(false);
             controlPanel.SetActive(true);
-            isConnecting = false;
+            _isConnecting = false;
             Debug.LogWarningFormat("Asteroid Zone/MainMenuFunction: OnDisconnected() was called by PUN with reason {0}", cause);
         }
 

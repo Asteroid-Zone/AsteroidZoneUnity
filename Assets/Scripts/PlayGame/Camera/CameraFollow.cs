@@ -1,4 +1,4 @@
-﻿using PhotonClass.GameController;
+﻿using Photon.GameControllers;
 using PlayGame.Speech.Commands;
 using Statics;
 using UnityEngine;
@@ -22,7 +22,7 @@ namespace PlayGame.Camera
         public MovementCommand.TurnType turn = MovementCommand.TurnType.Instant;
 
         private void Start() {
-             if (!DebugSettings.Debug) target = PhotonPlayer.PP.myAvatar.transform;
+             if (!DebugSettings.Debug) target = PhotonPlayer.Instance.myAvatar.transform;
         }
 
         private void LateUpdate() {

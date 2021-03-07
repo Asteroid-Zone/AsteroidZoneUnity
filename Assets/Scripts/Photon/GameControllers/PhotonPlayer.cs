@@ -1,31 +1,30 @@
 ﻿using Photon.Pun;
-using System.Collections;
-using System.Collections.Generic;
+using Statics;
 using UnityEngine;
 
-namespace PhotonClass.GameController
+namespace Photon.GameControllers
 {
     public class PhotonPlayer : MonoBehaviourPun
     {
         public GameObject myAvatar;
 
-        public static PhotonPlayer PP;
+        public static PhotonPlayer Instance;
 
         private void OnEnable()
         {
-            if (PhotonPlayer.PP == null)
+            if (Instance == null)
             {
-                PhotonPlayer.PP = this;
+                Instance = this;
             }
         }
-    
-        void Awake()
+
+        private void Awake()
             {
-                int spawnPicker = Random.Range(0, GameSetup.GS.spawnPoints.Length);
+                int spawnPicker = Random.Range(0, GameSetup.Instance.spawnPoints.Length);
                 if(this.photonView.IsMine)
                 {
-                    myAvatar = PhotonNetwork.Instantiate("PlayerShip", GameSetup.GS.spawnPoints[spawnPicker].position,
-                        GameSetup.GS.spawnPoints[spawnPicker].rotation, 0);
+                    myAvatar = PhotonNetwork.Instantiate(Prefabs.PlayerShip, GameSetup.Instance.spawnPoints[spawnPicker].position,
+                        GameSetup.Instance.spawnPoints[spawnPicker].rotation, 0);
                 }
             }
 

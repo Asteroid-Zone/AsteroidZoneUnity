@@ -1,4 +1,4 @@
-﻿using PhotonClass.GameController;
+﻿using Photon.GameControllers;
 using Statics;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,7 +14,7 @@ namespace PlayGame.UI
         
         private void Start()
         {
-            if (!DebugSettings.Debug) target = PhotonPlayer.PP.myAvatar.transform;
+            if (!DebugSettings.Debug) target = PhotonPlayer.Instance.myAvatar.transform;
             _text = GetComponent<Text>();
             _cellSize = gridManager.GetCellSize();
         }

@@ -1,7 +1,7 @@
-﻿using PlayGame.Player;
+﻿using Photon.GameControllers;
+using PlayGame.Player;
 using UnityEngine;
 using UnityEngine.UI;
-using PhotonClass.GameController;
 using Statics;
 
 namespace PlayGame.UI
@@ -15,7 +15,7 @@ namespace PlayGame.UI
         private Vector3 _lastPosition;
 
         private void Start() {
-            if(!DebugSettings.Debug) player = PhotonPlayer.PP.myAvatar;
+            if(!DebugSettings.Debug) player = PhotonPlayer.Instance.myAvatar;
             _text = GetComponent<Text>();
             _playerData = player.GetComponent<PlayerData>();
         }
