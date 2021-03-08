@@ -40,7 +40,7 @@ namespace PlayGame {
                 yield return null;
             }
             
-            if(!DebugSettings.Debug) PhotonNetwork.Destroy(gameObject); // Delete the game object when its faded
+            if(!DebugSettings.Debug && PhotonNetwork.IsMasterClient) PhotonNetwork.Destroy(gameObject); // Delete the game object when its faded
             else Destroy(gameObject);
         }
 
