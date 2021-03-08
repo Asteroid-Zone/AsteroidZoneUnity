@@ -74,12 +74,20 @@ namespace PlayGame.Speech {
 
         // Returns the command which was most likely intended by the player
         public static string GetSuggestedCommand(string phrase) {
-            string closestCommandWord = GetClosestWordFromList(CommandWords, phrase.Split(' ')[0]);
+            Tuple<string, int> closestCommandWord = new Tuple<string, int>("", phrase.Length);
 
-            return closestCommandWord;
+            // Finds the closest command word within the phrase
+            string[] words = phrase.Split(' ');
+            foreach (string word in words) {
+                Tuple<string, int> closestWord = GetClosestWordFromList(CommandWords, word);
+                if (closestWord.Item2 < closestCommandWord.Item2) closestCommandWord = closestWord;
+            }
+
+            return closestCommandWord.Item1;
         }
 
-        private static string GetClosestWordFromList(List<string> list, string word) {
+        // Returns the word which has the smallest levenshtein distance in the list and its distance
+        private static Tuple<string, int> GetClosestWordFromList(List<string> list, string word) {
             string closestWord = "";
             int distance = word.Length;
             
@@ -91,7 +99,7 @@ namespace PlayGame.Speech {
                 }
             }
 
-            return closestWord;
+            return new Tuple<string, int>(closestWord, distance);
         }
 
         // Returns the Levenshtein distance (number of single character edits required to make the strings equal)
