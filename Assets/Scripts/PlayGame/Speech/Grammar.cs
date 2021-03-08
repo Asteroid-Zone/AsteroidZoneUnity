@@ -6,20 +6,34 @@ using Statics;
 
 namespace PlayGame.Speech {
     public static class Grammar {
+
+        // Stores information about the data in the phrase
+        private struct DataProvided {
+            public bool direction;
+            public bool destination;
+            public bool grid;
+            public bool pingType;
+            public bool resource;
+            public bool activatableObject;
+            public bool activatableLock;
+            public bool activatableLaser;
+            public bool activatableMiningLaser;
+            public bool lockTarget;
+        }
         
         private const string GridCoordRegex = @"[a-z]( )?(\d+)";
         
         // Lists containing synonyms for commands
-        private static readonly List<string> MovementCommands = new List<string>{"move", "go"};
+        private static readonly List<string> MovementCommands = new List<string>{"move", "go"}; // Needs direction/destination/grid
         private static readonly List<string> InstantTurn = new List<string>{"face", "look"};
         private static readonly List<string> SmoothTurn = new List<string>{"turn"};
-        private static readonly List<string> TurnCommands = new List<string>(); // Initialised at startup
+        private static readonly List<string> TurnCommands = new List<string>(); // Initialised at startup, Needs direction/destination/grid
         private static readonly List<string> SpeedCommands = new List<string>{Strings.Stop, Strings.Go};
-        private static readonly List<string> TransferCommands = new List<string>{"transfer", "deposit"};
+        private static readonly List<string> TransferCommands = new List<string>{"transfer", "deposit"}; // Needs resources
         
         private static readonly List<string> GenericOnCommands = new List<string>{"activate", "engage", "turn on"}; // Can be used to activate anything
         private static readonly List<string> LockCommands = new List<string>{"lock", "aim", "target"}; // Can only be used to activate a lock
-        private static readonly List<string> ShootCommands = new List<string>{"shoot", "fire"}; // Can only be used to activate laser gun
+        private static readonly List<string> ShootCommands = new List<string>{"shoot", "fire"}; // Can only be used to activate laser gun or mining laser
         //private static readonly List<string> OnCommands = new List<string>{GenericOnCommands, LockCommands, ShootCommands};
         private static readonly List<string> OnCommands = new List<string>(); // Is initialised to the above line at startup
         private static readonly List<string> OffCommands = new List<string>{"deactivate", "disengage", "turn off", "stop"};
@@ -58,6 +72,7 @@ namespace PlayGame.Speech {
             CommandWords = GetAllCommandWords();
         }
 
+        // Returns a list containing all the command words
         private static List<string> GetAllCommandWords() {
             List<string> commandWords = new List<string>();
             
@@ -74,16 +89,83 @@ namespace PlayGame.Speech {
 
         // Returns the command which was most likely intended by the player
         public static string GetSuggestedCommand(string phrase) {
+            Tuple<string, int> closestCommandWord = GetClosestCommand(phrase); // Closest command word and distance from phrase
+            List<Tuple<string, float>> commandData = GetDataProvidedForCommands(phrase); // Commands that have some of the required data in the phrase
+
+            return closestCommandWord.Item1;
+        }
+
+        private static List<Tuple<string, float>> GetDataProvidedForCommands(string phrase) {
+            DataProvided dataProvided = GetDataProvided(phrase);
+            List<Tuple<string, float>> commands = new List<Tuple<string, float>>(); // List of (command, dataRequiredPercentage)
+
+            // Movement/turn data
+            if (dataProvided.direction || dataProvided.destination || dataProvided.grid) {
+                commands.Add(new Tuple<string, float>(MovementCommands[0], 1));
+                commands.Add(new Tuple<string, float>(TurnCommands[0], 1));
+            }
+
+            // Ping data
+            float pingData = 0;
+            if (dataProvided.pingType) pingData += 0.5f;
+            if (dataProvided.grid) pingData += 0.5f;
+            if (pingData != 0) commands.Add(new Tuple<string, float>(Strings.Ping, pingData));
+            
+            // Transfer data
+            if (dataProvided.resource) commands.Add(new Tuple<string, float>(TransferCommands[0], 1));
+            
+            // Off data
+            if (dataProvided.activatableObject) commands.Add(new Tuple<string, float>(OffCommands[0], 1));
+            
+            // On data
+            if (dataProvided.activatableLaser) commands.Add(new Tuple<string, float>(OnCommands[0] + " " + LaserGun[0], 1));
+            if (dataProvided.activatableMiningLaser) commands.Add(new Tuple<string, float>(OnCommands[0] + " " + MiningLaser[0], 1));
+
+            // Lock on data
+            float lockData = 0;
+            if (dataProvided.lockTarget) lockData += 0.5f;
+            if (dataProvided.activatableLock) lockData += 0.5f;
+            if (lockData != 0) commands.Add(new Tuple<string, float>(LockCommands[0], lockData));
+            
+            return commands;
+        }
+
+        // Finds the closest command word within the phrase
+        private static Tuple<string, int> GetClosestCommand(string phrase) {
             Tuple<string, int> closestCommandWord = new Tuple<string, int>("", phrase.Length);
 
-            // Finds the closest command word within the phrase
             string[] words = phrase.Split(' ');
             foreach (string word in words) {
                 Tuple<string, int> closestWord = GetClosestWordFromList(CommandWords, word);
                 if (closestWord.Item2 < closestCommandWord.Item2) closestCommandWord = closestWord;
             }
 
-            return closestCommandWord.Item1;
+            return closestCommandWord;
+        }
+
+        // Finds out what data is provided in the phrase
+        private static DataProvided GetDataProvided(string phrase) {
+            DataProvided dataProvided = new DataProvided();
+            dataProvided.direction = GetDirection(phrase) != null;
+            dataProvided.destination = GetCommandListIdentifier(phrase, Destinations) != null;
+            dataProvided.grid = GetGridCoord(phrase) != null;
+            dataProvided.pingType = GetCommandListIdentifier(phrase, PingTypes) != null;
+            dataProvided.resource = GetCommandFromList(phrase, Resources) != null;
+            dataProvided.lockTarget = GetCommandListIdentifier(phrase, LockTargets) != null;
+
+            List<string> activatableObject = GetCommandList(phrase, Activatable);
+            if (activatableObject.Equals(LockCommands)) {
+                dataProvided.activatableObject = true;
+                dataProvided.activatableLock = true;
+            } else if (activatableObject.Equals(MiningLaser)) {
+                dataProvided.activatableObject = true;
+                dataProvided.activatableMiningLaser = true;
+            } else if (activatableObject.Equals(LaserGun)) {
+                dataProvided.activatableObject = true;
+                dataProvided.activatableLaser = true;
+            }
+
+            return dataProvided;
         }
 
         // Returns the word which has the smallest levenshtein distance in the list and its distance
