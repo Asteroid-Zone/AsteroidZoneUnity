@@ -41,7 +41,7 @@ namespace PlayGame {
             }
             
             if(!DebugSettings.Debug && PhotonNetwork.IsMasterClient) PhotonNetwork.Destroy(gameObject); // Delete the game object when its faded
-            else Destroy(gameObject);
+            else if (DebugSettings.Debug) Destroy(gameObject);
         }
 
         public void MineAsteroid(int miningRate) {
