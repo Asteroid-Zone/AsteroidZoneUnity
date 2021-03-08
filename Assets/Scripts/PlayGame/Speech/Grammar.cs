@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using PlayGame.Speech.Commands;
 using Statics;
@@ -44,6 +45,8 @@ namespace PlayGame.Speech {
         private static readonly List<List<string>> SingleCommands = new List<List<string>>{SpeedCommands, ShootCommands};
         private static readonly List<List<string>> CompoundCommands = new List<List<string>>{MovementCommands, TurnCommands, Ping, TransferCommands, OffCommands, OnCommands};
 
+        private static readonly List<string> CommandWords;
+        
         static Grammar() {
             TurnCommands.AddRange(InstantTurn);
             TurnCommands.AddRange(SmoothTurn);
@@ -51,8 +54,86 @@ namespace PlayGame.Speech {
             OnCommands.AddRange(GenericOnCommands);
             OnCommands.AddRange(LockCommands);
             OnCommands.AddRange(ShootCommands);
+
+            CommandWords = GetAllCommandWords();
         }
-        
+
+        private static List<string> GetAllCommandWords() {
+            List<string> commandWords = new List<string>();
+            
+            foreach (List<string> commandList in SingleCommands) {
+                commandWords.AddRange(commandList);
+            }
+
+            foreach (List<string> commandList in CompoundCommands) {
+                commandWords.AddRange(commandList);
+            }
+
+            return commandWords;
+        }
+
+        // Returns the command which was most likely intended by the player
+        private static string GetSuggestedCommand(string phrase) {
+            string closestCommandWord = GetClosestWordFromList(CommandWords, phrase.Split(' ')[0]);
+
+            return closestCommandWord;
+        }
+
+        private static string GetClosestWordFromList(List<string> list, string word) {
+            string closestWord = "";
+            int distance = word.Length;
+            
+            foreach (string word1 in list) {
+                int d = GetLevenshteinDistance(word1, word);
+                if (d < distance) {
+                    distance = d;
+                    closestWord = word1;
+                }
+            }
+
+            return closestWord;
+        }
+
+        // Returns the Levenshtein distance (number of single character edits required to make the strings equal)
+        private static int GetLevenshteinDistance(string a, string b) {
+            if (string.IsNullOrEmpty(a)) {
+                if (!string.IsNullOrEmpty(b)) return b.Length;
+                return 0;
+            }
+
+            if (string.IsNullOrEmpty(b)) {
+                if (!string.IsNullOrEmpty(a)) return a.Length;
+                return 0;
+            }
+
+            int cost;
+            int[,] d = new int[a.Length, b.Length];
+            int min1;
+            int min2;
+            int min3;
+            
+            for (int i = 0; i <= d.GetUpperBound(0); i += 1) {
+                d[i, 0] = i;
+            }
+
+            for (int i = 0; i <= d.GetUpperBound(1); i += 1) {
+                d[0, i] = i;
+            }
+            
+            for (int i = 1; i <= d.GetUpperBound(0); i += 1) {
+                for (int j = 1; j <= d.GetUpperBound(1); j += 1) {
+                    cost = (a[i-1] != b[j-1])? 1 : 0; 
+
+                    min1 = d[i - 1, j] + 1;
+                    min2 = d[i, j - 1] + 1;
+                    min3 = d[i - 1, j - 1] + cost;
+                    d[i, j] = Math.Min(Math.Min(min1, min2), min3);
+                }
+            }
+            
+            return d[d.GetUpperBound(0), d.GetUpperBound(1)];
+        }
+
         public static Command GetCommand(string phrase) {
             Command c = new Command();
             
