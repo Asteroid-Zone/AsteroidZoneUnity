@@ -2,9 +2,20 @@
 
 namespace PlayGame.UI
 {
-    public class TipsFunctions : MonoBehaviour
+    public class MenuFunctions : MonoBehaviour
     {
+        public GameObject menuPanel;
         public GameObject tipsPanel;
+        
+        public void ShowMenuPanel()
+        {
+            menuPanel.SetActive(true);
+        }
+
+        public void HideMenuPanel()
+        {
+            menuPanel.SetActive(false);
+        } 
 
         public void ShowTipsPanel()
         {
