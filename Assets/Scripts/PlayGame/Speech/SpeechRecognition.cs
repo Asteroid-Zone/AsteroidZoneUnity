@@ -71,11 +71,12 @@ namespace PlayGame.Speech {
 
         [PunRPC]
         public void RPC_PerformActions(int viewID, string _myResponse) {
+            if (player == null) return;
             GameObject prev_player = player;
             Command command = Grammar.GetCommand(_myResponse);
             List<GameObject> playerList = player.GetComponent<PlayerData>().GetList();
             foreach (GameObject _player in playerList) {
-                if (viewID == _player.GetComponent<PhotonView>().ViewID) player = _player;
+                if (_player != null && viewID == _player.GetComponent<PhotonView>().ViewID) player = _player;
             }
 
             _actionController = CreateActionController(player);
