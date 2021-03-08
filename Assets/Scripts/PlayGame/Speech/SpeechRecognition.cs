@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Photon.GameControllers;
 using Photon.Pun;
 using PlayGame.Camera;
+using PlayGame.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -66,7 +67,14 @@ namespace PlayGame.Speech {
             if (command.IsValid()) {
                 if (DebugSettings.Debug) _actionController.PerformActions(command);
                 else photonView.RPC("RPC_PerformActions", RpcTarget.AllBuffered, player.GetComponent<PhotonView>().ViewID, _myResponse);
+            } else {
+                DisplaySuggestedCommand(_myResponse);
             }
+        }
+
+        private void DisplaySuggestedCommand(string phrase) {
+            string suggestedCommand = Grammar.GetSuggestedCommand(phrase);
+            EventsManager.AddMessage("Invalid command. Did you mean '" + suggestedCommand + "' ?");
         }
 
         [PunRPC]

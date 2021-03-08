@@ -73,7 +73,7 @@ namespace PlayGame.Speech {
         }
 
         // Returns the command which was most likely intended by the player
-        private static string GetSuggestedCommand(string phrase) {
+        public static string GetSuggestedCommand(string phrase) {
             string closestCommandWord = GetClosestWordFromList(CommandWords, phrase.Split(' ')[0]);
 
             return closestCommandWord;
