@@ -1,32 +1,34 @@
 ﻿using System.Collections;
+using Statics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ScrollCredits : MonoBehaviour
+namespace Credits
 {
-
-    public GameObject creditsRun;
-
-    // Start is called before the first frame update
-    private void Start()
+    public class ScrollCredits : MonoBehaviour
     {
-        StartCoroutine(RollCredits());
-    }
-
-    private void Update()
-    {
-        if (Input.GetButtonDown("Cancel"))
+        public GameObject creditsRun;
+    
+        private void Start()
         {
-            SceneManager.LoadScene("MainMenu");
+            StartCoroutine(RollCredits());
         }
-    }
 
-    private IEnumerator RollCredits()
-    {
-        creditsRun.SetActive(true);
+        private void Update()
+        {
+            if (Input.GetButtonDown("Cancel"))
+            {
+                SceneManager.LoadScene(Scenes.MainMenuScene);
+            }
+        }
 
-        yield return new WaitForSeconds(25);
+        private IEnumerator RollCredits()
+        {
+            creditsRun.SetActive(true);
 
-        SceneManager.LoadScene("MainMenu");
+            yield return new WaitForSeconds(25);
+
+            SceneManager.LoadScene(Scenes.MainMenuScene);
+        }
     }
 }
