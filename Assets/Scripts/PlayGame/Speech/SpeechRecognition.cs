@@ -74,7 +74,8 @@ namespace PlayGame.Speech {
 
         private void DisplaySuggestedCommand(string phrase) {
             string suggestedCommand = Grammar.GetSuggestedCommand(phrase);
-            EventsManager.AddMessage("'" + phrase + "' is an invalid command. Did you mean '" + suggestedCommand + "' ?");
+            if (suggestedCommand.Equals(Strings.NoCommand)) EventsManager.AddMessage("'" + phrase + "' is an invalid command. We're not sure what you meant.");
+            else EventsManager.AddMessage("'" + phrase + "' is an invalid command. Did you mean '" + suggestedCommand + "' ?");
         }
 
         [PunRPC]

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Statics;
+using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace PlayGame.Speech {
@@ -92,7 +93,7 @@ namespace PlayGame.Speech {
             Assert.AreEqual("move north", Grammar.GetSuggestedCommand("travel north"));
             Assert.AreEqual("move (direction)", Grammar.GetSuggestedCommand("move"));
             Assert.AreEqual("move (direction)", Grammar.GetSuggestedCommand("move up"));
-            Assert.AreEqual("no command found", Grammar.GetSuggestedCommand("gp"));
+            Assert.AreEqual(Strings.NoCommand, Grammar.GetSuggestedCommand("gp"));
         }
         
     }

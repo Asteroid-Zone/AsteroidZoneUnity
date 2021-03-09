@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using PlayGame.Speech.Commands;
 using Statics;
-using UnityEngine;
 
 namespace PlayGame.Speech {
     public static class Grammar {
@@ -96,17 +95,15 @@ namespace PlayGame.Speech {
                     if (command.Item2 > mostCompleteCommand.Item2) mostCompleteCommand = command;
                 }
             }
-
-            //Debug.Log("Partially complete ("+ mostCompleteCommand.Item2 + "): " + mostCompleteCommand.Item1);
+            
             if (mostCompleteCommand.Item2 > 0) return mostCompleteCommand.Item1;
             
             // If no partially complete commands are found search for the closest command word using levenshtein distance
             Tuple<string, int> closestCommandWord = GetClosestCommand(phrase);
-            //Debug.Log("Closest ("+ closestCommandWord.Item2 + "): " + closestCommandWord.Item1);
             
             int thresholdDistance = closestCommandWord.Item1.Length / 2; // More than half of the letters in the command must be correct
             if (closestCommandWord.Item1 != "" && closestCommandWord.Item2 < thresholdDistance) return closestCommandWord.Item1;
-            return "no command found";
+            return Strings.NoCommand;
         }
 
         private static List<Tuple<string, float>> GetPartiallyCompleteCommands(string phrase) {

@@ -1,6 +1,8 @@
 ﻿namespace Statics {
     public static class Strings {
 
+        public const string NoCommand = "No command found";
+
         public const string None = "none";
         public const string Pirate = "pirate";
         public const string Asteroid = "asteroid";
