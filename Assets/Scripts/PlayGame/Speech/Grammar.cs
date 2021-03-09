@@ -9,16 +9,13 @@ namespace PlayGame.Speech {
 
         // Stores information about the data in the phrase
         private struct DataProvided {
-            public bool direction;
-            public bool destination;
-            public bool grid;
-            public bool pingType;
-            public bool resource;
-            public bool activatableObject;
-            public bool activatableLock;
-            public bool activatableLaser;
-            public bool activatableMiningLaser;
-            public bool lockTarget;
+            public string direction;
+            public string destination;
+            public string grid;
+            public string pingType;
+            public string resource;
+            public string activatableObject;
+            public string lockTarget;
         }
         
         private const string GridCoordRegex = @"[a-z]( )?(\d+)";
@@ -89,43 +86,222 @@ namespace PlayGame.Speech {
 
         // Returns the command which was most likely intended by the player
         public static string GetSuggestedCommand(string phrase) {
+            List<Tuple<string, float>> partiallyCompleteCommands = GetPartiallyCompleteCommands(phrase); // Commands that have some of the required data in the phrase
             Tuple<string, int> closestCommandWord = GetClosestCommand(phrase); // Closest command word and distance from phrase
-            List<Tuple<string, float>> commandData = GetDataProvidedForCommands(phrase); // Commands that have some of the required data in the phrase
-
+            
             return closestCommandWord.Item1;
         }
 
-        private static List<Tuple<string, float>> GetDataProvidedForCommands(string phrase) {
+        private static List<Tuple<string, float>> GetPartiallyCompleteCommands(string phrase) {
             DataProvided dataProvided = GetDataProvided(phrase);
             List<Tuple<string, float>> commands = new List<Tuple<string, float>>(); // List of (command, dataRequiredPercentage)
 
-            // Movement/turn data
-            if (dataProvided.direction || dataProvided.destination || dataProvided.grid) {
-                commands.Add(new Tuple<string, float>(MovementCommands[0], 1));
-                commands.Add(new Tuple<string, float>(TurnCommands[0], 1));
+            commands.AddRange(GetPartiallyCompleteMovementCommands(phrase, dataProvided, MovementCommands));
+            commands.AddRange(GetPartiallyCompleteMovementCommands(phrase, dataProvided, TurnCommands));
+            
+            commands.Add(GetPartiallyCompletePingCommand(phrase, dataProvided));
+            commands.Add(GetPartiallyCompleteTransferCommand(phrase, dataProvided));
+            commands.Add(GetPartiallyCompleteOffCommand(phrase, dataProvided));
+            
+            commands.AddRange(GetPartiallyCompleteOnCommands(phrase, dataProvided));
+            
+            return commands;
+        }
+
+        private static Tuple<string, float> GetPartiallyCompleteLockCommand(string phrase, DataProvided dataProvided) {
+            float completeness = 0;
+
+            string c = "";
+            
+            // Add the command word they used or the default lock command if one isn't found
+            foreach (string command in LockCommands) {
+                if (phrase.Contains(command)) {
+                    completeness = 0.5f;
+                    c = command;
+                }
+            }
+            if (c == "") c = LockCommands[0];
+            
+            // Lock target
+            if (dataProvided.lockTarget != null) {
+                completeness += 0.5f;
+                c += " " + dataProvided.lockTarget;
+            } else {
+                c += " (lock target)";
             }
 
-            // Ping data
-            float pingData = 0;
-            if (dataProvided.pingType) pingData += 0.5f;
-            if (dataProvided.grid) pingData += 0.5f;
-            if (pingData != 0) commands.Add(new Tuple<string, float>(Strings.Ping, pingData));
-            
-            // Transfer data
-            if (dataProvided.resource) commands.Add(new Tuple<string, float>(TransferCommands[0], 1));
-            
-            // Off data
-            if (dataProvided.activatableObject) commands.Add(new Tuple<string, float>(OffCommands[0], 1));
-            
-            // On data
-            if (dataProvided.activatableLaser) commands.Add(new Tuple<string, float>(OnCommands[0] + " " + LaserGun[0], 1));
-            if (dataProvided.activatableMiningLaser) commands.Add(new Tuple<string, float>(OnCommands[0] + " " + MiningLaser[0], 1));
+            if (completeness != 0) return new Tuple<string, float>(c, completeness);
+            return null;
+        }
+        
+        private static List<Tuple<string, float>> GetPartiallyCompleteLaserCommands(string phrase, DataProvided dataProvided) {
+            List<Tuple<string, float>> commands = new List<Tuple<string, float>>(); // List of (command, dataRequiredPercentage)
+            float completeness = 0;
 
-            // Lock on data
-            float lockData = 0;
-            if (dataProvided.lockTarget) lockData += 0.5f;
-            if (dataProvided.activatableLock) lockData += 0.5f;
-            if (lockData != 0) commands.Add(new Tuple<string, float>(LockCommands[0], lockData));
+            string c = "";
+            
+            // Add the command word they used or the default on command if one isn't found
+            foreach (string command in ShootCommands) {
+                if (phrase.Contains(command)) {
+                    completeness = 0.5f;
+                    c = command;
+                }
+            }
+            if (c == "") { // If no shoot command was found check for generic on commands
+                foreach (string command in GenericOnCommands) {
+                    if (phrase.Contains(command)) {
+                        completeness = 0.5f;
+                        c = command;
+                    }
+                }
+                if (c == "") c = GenericOnCommands[0];
+            }
+            
+            // Laser
+            if (dataProvided.activatableObject != null) {
+                if (MiningLaser.Contains(dataProvided.activatableObject)) {
+                    commands.Add(new Tuple<string, float>(c + " " + dataProvided.activatableObject, completeness + 0.5f));
+                }
+                
+                if (LaserGun.Contains(dataProvided.activatableObject)) {
+                    commands.Add(new Tuple<string, float>(c + " " + dataProvided.activatableObject, completeness + 0.5f));
+                }
+            } else {
+                if (completeness != 0) commands.Add(new Tuple<string, float>(c + " " + MiningLaser[0], completeness));
+                if (completeness != 0) commands.Add(new Tuple<string, float>(c + " " + LaserGun[0], completeness));
+            }
+            
+            return commands;
+        }
+
+        private static List<Tuple<string, float>> GetPartiallyCompleteOnCommands(string phrase, DataProvided dataProvided) {
+            List<Tuple<string, float>> commands = new List<Tuple<string, float>>(); // List of (command, dataRequiredPercentage)
+
+            commands.Add(GetPartiallyCompleteLockCommand(phrase, dataProvided));
+            commands.AddRange(GetPartiallyCompleteLaserCommands(phrase, dataProvided));
+
+            return commands;
+        }
+        
+        // Returns a transfer command with the percentage of data provided
+        private static Tuple<string, float> GetPartiallyCompleteOffCommand(string phrase, DataProvided dataProvided) {
+
+            float completeness = 0;
+
+            string c = "";
+            
+            // Add the command word they used or the default off command if one isn't found
+            foreach (string command in OffCommands) {
+                if (phrase.Contains(command)) {
+                    completeness = 0.5f;
+                    c = command;
+                }
+            }
+            if (c == "") c = OffCommands[0];
+            
+            // Activatable Object
+            if (dataProvided.activatableObject != null) {
+                completeness += 0.5f;
+                c += " " + dataProvided.activatableObject;
+            } else {
+                c += " (activatable object)";
+            }
+
+            if (completeness != 0) return new Tuple<string, float>(c, completeness);
+            return null;
+        }
+        
+        // Returns a transfer command with the percentage of data provided
+        private static Tuple<string, float> GetPartiallyCompleteTransferCommand(string phrase, DataProvided dataProvided) {
+
+            float completeness = 0;
+
+            string c = "";
+            
+            // Add the command word they used or the default transfer command if one isn't found
+            foreach (string command in TransferCommands) {
+                if (phrase.Contains(command)) {
+                    completeness = 0.5f;
+                    c = command;
+                }
+            }
+            if (c == "") c = TransferCommands[0];
+            
+            // Resource
+            if (dataProvided.resource != null) {
+                completeness += 0.5f;
+                c += " " + dataProvided.resource;
+            } else {
+                c += " " + Resources[0];
+            }
+
+            if (completeness != 0) return new Tuple<string, float>(c, completeness);
+            return null;
+        }
+
+        // Returns a ping command with the percentage of data provided
+        private static Tuple<string, float> GetPartiallyCompletePingCommand(string phrase, DataProvided dataProvided) {
+
+            float completeness = 0;
+            float third = 1f / 3;
+
+            string c = "";
+            
+            // Add the command word they used or the default ping command if one isn't found
+            foreach (string command in Ping) {
+                if (phrase.Contains(command)) {
+                    completeness = third;
+                    c = command;
+                }
+            }
+            if (c == "") c = Ping[0];
+            
+            // Ping type
+            if (dataProvided.pingType != null) {
+                completeness += third;
+                c += " " + dataProvided.pingType;
+            } else {
+                c += " (ping type)";
+            }
+
+            // Grid coord
+            if (dataProvided.grid != null) {
+                completeness += third;
+                c += " " + dataProvided.grid;
+            } else {
+                c += " (grid coord)";
+            }
+
+            if (completeness != 0) return new Tuple<string, float>(c, completeness);
+            return null;
+        }
+
+        private static List<Tuple<string, float>> GetPartiallyCompleteMovementCommands(string phrase, DataProvided dataProvided, List<string> commandList) {
+            List<Tuple<string, float>> commands = new List<Tuple<string, float>>(); // List of (command, dataRequiredPercentage)
+
+            float completeness = 0;
+            string c = "";
+            
+            // Check for command word
+            foreach (string command in commandList) {
+                if (phrase.Contains(command)) {
+                    completeness = 0.5f;
+                    c = command;
+                }
+            }
+            if (c == "") c = commandList[0];
+
+            if (dataProvided.direction != null) {
+                commands.Add(new Tuple<string, float>(c + " " + dataProvided.direction, completeness + 0.5f));
+            }
+            
+            if (dataProvided.destination != null) {
+                commands.Add(new Tuple<string, float>(c + " " + dataProvided.destination, completeness + 0.5f));
+            }
+            
+            if (dataProvided.grid != null) {
+                commands.Add(new Tuple<string, float>(c + " " + dataProvided.grid, completeness + 0.5f));
+            }
             
             return commands;
         }
@@ -146,24 +322,13 @@ namespace PlayGame.Speech {
         // Finds out what data is provided in the phrase
         private static DataProvided GetDataProvided(string phrase) {
             DataProvided dataProvided = new DataProvided();
-            dataProvided.direction = GetDirection(phrase) != null;
-            dataProvided.destination = GetCommandListIdentifier(phrase, Destinations) != null;
-            dataProvided.grid = GetGridCoord(phrase) != null;
-            dataProvided.pingType = GetCommandListIdentifier(phrase, PingTypes) != null;
-            dataProvided.resource = GetCommandFromList(phrase, Resources) != null;
-            dataProvided.lockTarget = GetCommandListIdentifier(phrase, LockTargets) != null;
-
-            List<string> activatableObject = GetCommandList(phrase, Activatable);
-            if (activatableObject.Equals(LockCommands)) {
-                dataProvided.activatableObject = true;
-                dataProvided.activatableLock = true;
-            } else if (activatableObject.Equals(MiningLaser)) {
-                dataProvided.activatableObject = true;
-                dataProvided.activatableMiningLaser = true;
-            } else if (activatableObject.Equals(LaserGun)) {
-                dataProvided.activatableObject = true;
-                dataProvided.activatableLaser = true;
-            }
+            dataProvided.direction = GetDirection(phrase);
+            dataProvided.destination = GetCommandListIdentifier(phrase, Destinations);
+            dataProvided.grid = GetGridCoord(phrase);
+            dataProvided.pingType = GetCommandListIdentifier(phrase, PingTypes);
+            dataProvided.resource = GetCommandFromList(phrase, Resources);
+            dataProvided.activatableObject = GetCommandListIdentifier(phrase, Activatable);
+            dataProvided.lockTarget = GetCommandListIdentifier(phrase, LockTargets);
 
             return dataProvided;
         }
