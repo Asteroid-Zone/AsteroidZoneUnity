@@ -16,7 +16,7 @@ namespace PlayGame.Player.Movement {
             _playerData = GetComponent<PlayerData>();
             _moveObject = GetComponent<MoveObject>();
         }
-        
+
         // Update is called once per frame
         private void Update()
         {
@@ -43,7 +43,7 @@ namespace PlayGame.Player.Movement {
                 _moveObject.rotating = false;
                 // Rotate the target to the right with the necessary rotational speed smoothed by the delta time
                 _player.transform.Rotate(Vector3.up, 50f * Time.deltaTime);
-            }
+            }            
         }
     }
 }

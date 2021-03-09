@@ -3,10 +3,10 @@ using PlayGame.Pirates;
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace PlayGame.Player.Movement 
+namespace PlayGame.Player.Movement
 {
     public class MoveObject : MonoBehaviour {
-        
+
         private Vector3 _direction;
         private Vector3 _destination = Vector3.positiveInfinity;
 
@@ -22,35 +22,39 @@ namespace PlayGame.Player.Movement
 
         public bool rotating;
         private bool _turnRight; // false = turn left, true = turn right
-
+        private bool _BarellRoll;
+        private float t;
         // Needed to reference enemies in order to rotate towards them
         private GameObject _enemySpawner;
 
         // Needed to reference asteroids in order to rotate towards them
         private GameObject _asteroidSpawner;
-        
+
         private Transform _lockTarget;
-        
+
+
         private void Start()
         {
             // fetch the objects of the spawners
             _enemySpawner = PirateSpawner.GetInstance().gameObject;
             _asteroidSpawner = AsteroidSpawner.GetInstance().gameObject;
-            
+
             // Get the initial components
             _direction = transform.rotation.eulerAngles;
             _playerData = GetComponent<PlayerData>();
             _playerCollider = GetComponent<Collider>();
             _playerAgent = GetComponent<NavMeshAgent>();
+
+            t = 0f;
             UpdateRotation();
         }
 
         private void Update() {
             // Get the speed of the player's ship
             var speed = _playerData.GetSpeed();
-            
+
             // Check if destination has been reached and if not provide it to AI
-            if (!HasReachedDestination()) 
+            if (!HasReachedDestination())
             {
                 _playerAgent.SetDestination(_destination);
             }
@@ -59,13 +63,20 @@ namespace PlayGame.Player.Movement
                 // The speed is not 0, so the ship should be moving
                 transform.Translate((Time.deltaTime * speed) * _direction, Space.World);
             }
-            
+
             // Rotate slowly
             if (rotating) Rotate();
 
             if (_lockTarget)
             {
                 FaceTarget(_lockTarget);
+            }
+            if (Input.GetKeyDown(KeyCode.O))
+            {
+              _BarellRoll = true;
+            }
+            if(_BarellRoll){
+              BarellRoll();
             }
         }
 
@@ -78,14 +89,14 @@ namespace PlayGame.Player.Movement
             _direction = newDirection;
         }
 
-        private bool HasReachedDestination() 
+        private bool HasReachedDestination()
         {
             // If AI is disabled then the destination has either been reached or there is no destination at all
             if (!_playerAgent.enabled)
             {
                 return true;
             }
-            
+
             // The destination was reached, stop the player ship
             if (Vector3.Distance(transform.position, _destination) < 0.2)
             {
@@ -94,13 +105,13 @@ namespace PlayGame.Player.Movement
             }
 
             // If moving to a target check distance based on closest points of collision
-            if (_hasTargetObject) 
+            if (_hasTargetObject)
             {
                 Vector3 closestPointTarget = _targetCollider.ClosestPoint(transform.position);
                 Vector3 closestPointPlayer = _playerCollider.ClosestPoint(closestPointTarget);
-                
+
                 // The colliders are very close, stop the player ship
-                if (Vector3.Distance(closestPointPlayer, closestPointTarget) < 0.1) 
+                if (Vector3.Distance(closestPointPlayer, closestPointTarget) < 0.1)
                 {
                     SetSpeed(0f);
                     return true;
@@ -122,7 +133,7 @@ namespace PlayGame.Player.Movement
         // Returns a list of all child transforms
         private static List<Transform> GetChildren(Transform parent) {
             List<Transform> children = new List<Transform>();
-            
+
             foreach (Transform child in parent) {
                 children.Add(child);
             }
@@ -134,7 +145,7 @@ namespace PlayGame.Player.Movement
         private Transform GetNearestTransform(List<Transform> transforms) {
             float bestDistance = float.PositiveInfinity;
             int closestEnemyIndex = -1;
-            
+
             for (int i = 0; i < transforms.Count; i++) {
                 float calculatedDistance = Vector3.SqrMagnitude(transforms[i].transform.position - transform.position);
                 if (calculatedDistance < bestDistance) {
@@ -144,10 +155,10 @@ namespace PlayGame.Player.Movement
             }
 
             if (closestEnemyIndex == -1) return null;
-            
+
             return transforms[closestEnemyIndex].transform;
         }
-        
+
         public void FaceTarget(Transform target)
         {
             if (target == null) return; // If the target is destroyed just return.
@@ -171,16 +182,16 @@ namespace PlayGame.Player.Movement
         public void StopRotating() {
             rotating = false;
         }
-    
+
         public void SetDirection(Vector3 newDirection, bool rotate) {
             rotating = false;
             // Set the direction to be the new direction
             _direction = newDirection;
-            
+
             // Set the flags for player not heading anywhere
             _hasTargetObject = false;
             _playerAgent.enabled = false;
-            
+
             // Update the rotation of the player
             if (rotate) UpdateRotation();
         }
@@ -188,20 +199,20 @@ namespace PlayGame.Player.Movement
         public void SetDestination(Vector3 destination) {
             // Set the destination
             _destination = destination;
-            
+
             // Set the direction to destination
             Vector3 direction = (destination - transform.position).normalized;
             SetDirection(direction, true);
-            
+
             // Set the flags specifying that the player is not headed to a specific object and enable the AI
             _hasTargetObject = false;
             _playerAgent.enabled = true;
         }
 
-        public void SetDestination(Vector3 destination, Collider targetCollider) 
+        public void SetDestination(Vector3 destination, Collider targetCollider)
         {
             SetDestination(destination);
-            
+
             // Set the target object collider and specify that the player is heading to an object
             _targetCollider = targetCollider;
             _hasTargetObject = true;
@@ -215,6 +226,22 @@ namespace PlayGame.Player.Movement
         public void SetLockTarget(Transform lockTarget)
         {
             _lockTarget = lockTarget;
+        }
+
+        //Makes the player ship do a barrel targetCollider
+        public void BarellRoll()
+        {
+          if (t<1f) {
+            float prevT = t;
+            t += Time.deltaTime;
+            float dt = t-prevT;
+            transform.RotateAround(_destination, Vector3.forward, 360 * dt);
+          }
+          else{
+            Debug.Log("we are being falsified");
+            _BarellRoll = false;
+            t=0f;
+          }
         }
     }
 }
