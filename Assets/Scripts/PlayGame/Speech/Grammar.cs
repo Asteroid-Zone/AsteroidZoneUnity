@@ -97,14 +97,16 @@ namespace PlayGame.Speech {
                 }
             }
 
+            //Debug.Log("Partially complete ("+ mostCompleteCommand.Item2 + "): " + mostCompleteCommand.Item1);
+            if (mostCompleteCommand.Item2 > 0) return mostCompleteCommand.Item1;
+            
             // If no partially complete commands are found search for the closest command word using levenshtein distance
             Tuple<string, int> closestCommandWord = GetClosestCommand(phrase);
+            //Debug.Log("Closest ("+ closestCommandWord.Item2 + "): " + closestCommandWord.Item1);
             
-            Debug.Log("Partially complete ("+ mostCompleteCommand.Item2 + "): " + mostCompleteCommand.Item1);
-            Debug.Log("Closest ("+ closestCommandWord.Item2 + "): " + closestCommandWord.Item1);
-            
-            if (mostCompleteCommand.Item2 > 0) return mostCompleteCommand.Item1; // todo move above getclosestcommand (put here for testing)
-            return closestCommandWord.Item1; // todo add threshold distance
+            int thresholdDistance = closestCommandWord.Item1.Length / 2; // More than half of the letters in the command must be correct
+            if (closestCommandWord.Item1 != "" && closestCommandWord.Item2 < thresholdDistance) return closestCommandWord.Item1;
+            return "no command found";
         }
 
         private static List<Tuple<string, float>> GetPartiallyCompleteCommands(string phrase) {
@@ -304,14 +306,20 @@ namespace PlayGame.Speech {
 
             if (dataProvided.direction != null) {
                 commands.Add(new Tuple<string, float>(c + " " + dataProvided.direction, completeness + 0.5f));
+            } else {
+                if (completeness != 0) commands.Add(new Tuple<string, float>(c + " (direction)", completeness));
             }
             
             if (dataProvided.destination != null) {
                 commands.Add(new Tuple<string, float>(c + " " + dataProvided.destination, completeness + 0.5f));
+            } else {
+                if (completeness != 0) commands.Add(new Tuple<string, float>(c + " (destination)", completeness));
             }
             
             if (dataProvided.grid != null) {
                 commands.Add(new Tuple<string, float>(c + " " + dataProvided.grid, completeness + 0.5f));
+            } else {
+                if (completeness != 0) commands.Add(new Tuple<string, float>(c + " (grid coord)", completeness));
             }
             
             return commands;
@@ -361,44 +369,41 @@ namespace PlayGame.Speech {
         }
 
         // Returns the Levenshtein distance (number of single character edits required to make the strings equal)
-        private static int GetLevenshteinDistance(string a, string b) {
-            if (string.IsNullOrEmpty(a)) {
-                if (!string.IsNullOrEmpty(b)) return b.Length;
-                return 0;
+        private static int GetLevenshteinDistance(string word1, string word2) {
+            if (word1.Length == 0) return word2.Length;
+            if (word2.Length == 0) return word1.Length;
+
+            var distance = new int[word1.Length + 1][];
+            for (int index = 0; index < word1.Length + 1; index++)
+            {
+                distance[index] = new int[word2.Length + 1];
             }
 
-            if (string.IsNullOrEmpty(b)) {
-                if (!string.IsNullOrEmpty(a)) return a.Length;
-                return 0;
+            for (var i = 0; i <= word1.Length; i++) {
+                distance[i][0] = i;
             }
 
-            int cost;
-            int[,] d = new int[a.Length, b.Length];
-            int min1;
-            int min2;
-            int min3;
+            for (var j = 0; j <= word2.Length; j++) {
+                distance[0][j] = j;
+            }
+
+            for (var i = 1; i <= word1.Length; i++) {
+                for (var j = 1; j <= word2.Length; j++) { 
+                    var cost = (word2[j - 1] == word1[i - 1]) ? 0 : 1; 
+                    distance[i][j] = Min( 
+                        distance[i - 1][j] + 1, 
+                        distance[i][j - 1] + 1, 
+                        distance[i - 1][j - 1] + cost 
+                    ); 
+                } 
+            } 
             
-            for (int i = 0; i <= d.GetUpperBound(0); i += 1) {
-                d[i, 0] = i;
-            }
-
-            for (int i = 0; i <= d.GetUpperBound(1); i += 1) {
-                d[0, i] = i;
-            }
-            
-            for (int i = 1; i <= d.GetUpperBound(0); i += 1) {
-                for (int j = 1; j <= d.GetUpperBound(1); j += 1) {
-                    cost = (a[i-1] != b[j-1])? 1 : 0; 
-
-                    min1 = d[i - 1, j] + 1;
-                    min2 = d[i, j - 1] + 1;
-                    min3 = d[i - 1, j - 1] + cost;
-                    d[i, j] = Math.Min(Math.Min(min1, min2), min3);
-                }
-            }
-            
-            return d[d.GetUpperBound(0), d.GetUpperBound(1)];
+            return distance[word1.Length][word2.Length]; 
         }
+
+        private static int Min(int a, int b, int c) {
+          return Math.Min(Math.Min(a, b), c);
+        } 
 
         public static Command GetCommand(string phrase) {
             Command c = new Command();
