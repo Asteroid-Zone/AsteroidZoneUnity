@@ -86,9 +86,20 @@ namespace PlayGame.Speech {
 
         // Returns the command which was most likely intended by the player
         public static string GetSuggestedCommand(string phrase) {
-            List<Tuple<string, float>> partiallyCompleteCommands = GetPartiallyCompleteCommands(phrase); // Commands that have some of the required data in the phrase
-            Tuple<string, int> closestCommandWord = GetClosestCommand(phrase); // Closest command word and distance from phrase
+            // Find commands that have some of the required data in the phrase
+            List<Tuple<string, float>> partiallyCompleteCommands = GetPartiallyCompleteCommands(phrase); 
+            Tuple<string, float> mostCompleteCommand = new Tuple<string, float>("", 0);
             
+            if (partiallyCompleteCommands.Count != 0) {
+                foreach (Tuple<string, float> command in partiallyCompleteCommands) {
+                    if (command.Item2 > mostCompleteCommand.Item2) mostCompleteCommand = command;
+                }
+            }
+
+            if (mostCompleteCommand.Item2 > 0) return mostCompleteCommand.Item1;
+            
+            // If no partially complete commands are found search for the closest command word using levenshtein distance
+            Tuple<string, int> closestCommandWord = GetClosestCommand(phrase);
             return closestCommandWord.Item1;
         }
 
