@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using PlayGame.Speech.Commands;
 using Statics;
+using UnityEngine;
 
 namespace PlayGame.Speech {
     public static class Grammar {
@@ -96,11 +97,14 @@ namespace PlayGame.Speech {
                 }
             }
 
-            if (mostCompleteCommand.Item2 > 0) return mostCompleteCommand.Item1;
-            
             // If no partially complete commands are found search for the closest command word using levenshtein distance
             Tuple<string, int> closestCommandWord = GetClosestCommand(phrase);
-            return closestCommandWord.Item1;
+            
+            Debug.Log("Partially complete ("+ mostCompleteCommand.Item2 + "): " + mostCompleteCommand.Item1);
+            Debug.Log("Closest ("+ closestCommandWord.Item2 + "): " + closestCommandWord.Item1);
+            
+            if (mostCompleteCommand.Item2 > 0) return mostCompleteCommand.Item1; // todo move above getclosestcommand (put here for testing)
+            return closestCommandWord.Item1; // todo add threshold distance
         }
 
         private static List<Tuple<string, float>> GetPartiallyCompleteCommands(string phrase) {
@@ -115,7 +119,7 @@ namespace PlayGame.Speech {
             commands.Add(GetPartiallyCompleteOffCommand(phrase, dataProvided));
             
             commands.AddRange(GetPartiallyCompleteOnCommands(phrase, dataProvided));
-            
+
             return commands;
         }
 
@@ -141,8 +145,7 @@ namespace PlayGame.Speech {
                 c += " (lock target)";
             }
 
-            if (completeness != 0) return new Tuple<string, float>(c, completeness);
-            return null;
+            return new Tuple<string, float>(c, completeness);
         }
         
         private static List<Tuple<string, float>> GetPartiallyCompleteLaserCommands(string phrase, DataProvided dataProvided) {
@@ -218,8 +221,7 @@ namespace PlayGame.Speech {
                 c += " (activatable object)";
             }
 
-            if (completeness != 0) return new Tuple<string, float>(c, completeness);
-            return null;
+            return new Tuple<string, float>(c, completeness);
         }
         
         // Returns a transfer command with the percentage of data provided
@@ -246,8 +248,7 @@ namespace PlayGame.Speech {
                 c += " " + Resources[0];
             }
 
-            if (completeness != 0) return new Tuple<string, float>(c, completeness);
-            return null;
+            return new Tuple<string, float>(c, completeness);
         }
 
         // Returns a ping command with the percentage of data provided
@@ -283,8 +284,7 @@ namespace PlayGame.Speech {
                 c += " (grid coord)";
             }
 
-            if (completeness != 0) return new Tuple<string, float>(c, completeness);
-            return null;
+            return new Tuple<string, float>(c, completeness);
         }
 
         private static List<Tuple<string, float>> GetPartiallyCompleteMovementCommands(string phrase, DataProvided dataProvided, List<string> commandList) {
