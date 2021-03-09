@@ -1,18 +1,21 @@
 ﻿using Photon.Pun;
 using System.Collections;
+using System.Collections.Generic;
 using PlayGame.UI;
 using Statics;
 using UnityEngine;
 
 namespace PlayGame {
     public class Asteroid : MonoBehaviour {
+        
+        private static readonly List<Mesh> AsteroidMeshes = new List<Mesh>();
 
         private float _initialScale;
         private int _resourcesRemaining;
         private int _totalResources;
 
         private bool _asteroidDestroyed = false;
-
+        
         private const float MaxScale = 9f;
         private const float MinScale = 2f;
 
@@ -22,6 +25,15 @@ namespace PlayGame {
         private const float FadeSpeed = 2f;
 
         private void Start() {
+            if (AsteroidMeshes.Count == 0) {
+                AsteroidMeshes.Add(Resources.Load<Mesh>("Models/asteroid_1"));
+                AsteroidMeshes.Add(Resources.Load<Mesh>("Models/asteroid_2"));    
+            }
+
+            int asteroidMeshIndex = Random.Range(0, AsteroidMeshes.Count);
+            GetComponent<MeshFilter>().mesh = AsteroidMeshes[asteroidMeshIndex];
+            GetComponent<MeshCollider>().sharedMesh = AsteroidMeshes[asteroidMeshIndex];
+        
             _totalResources = Random.Range(MinResources, MaxResources);
             _resourcesRemaining = _totalResources;
             _initialScale = MaxScale * ((float) _totalResources / MaxResources); // Initial size of the asteroid
