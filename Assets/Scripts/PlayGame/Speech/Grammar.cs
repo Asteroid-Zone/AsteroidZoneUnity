@@ -1,24 +1,37 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using PlayGame.Speech.Commands;
 using Statics;
+using UnityEngine;
 
 namespace PlayGame.Speech {
     public static class Grammar {
+
+        // Stores information about the data in the phrase
+        private struct DataProvided {
+            public string direction;
+            public string destination;
+            public string grid;
+            public string pingType;
+            public string resource;
+            public string activatableObject;
+            public string lockTarget;
+        }
         
         private const string GridCoordRegex = @"[a-z]( )?(\d+)";
         
         // Lists containing synonyms for commands
-        private static readonly List<string> MovementCommands = new List<string>{"move", "go"};
+        private static readonly List<string> MovementCommands = new List<string>{"move", "go"}; // Needs direction/destination/grid
         private static readonly List<string> InstantTurn = new List<string>{"face", "look"};
         private static readonly List<string> SmoothTurn = new List<string>{"turn"};
-        private static readonly List<string> TurnCommands = new List<string>(); // Initialised at startup
+        private static readonly List<string> TurnCommands = new List<string>(); // Initialised at startup, Needs direction/destination/grid
         private static readonly List<string> SpeedCommands = new List<string>{Strings.Stop, Strings.Go};
-        private static readonly List<string> TransferCommands = new List<string>{"transfer", "deposit"};
+        private static readonly List<string> TransferCommands = new List<string>{"transfer", "deposit"}; // Needs resources
         
         private static readonly List<string> GenericOnCommands = new List<string>{"activate", "engage", "turn on"}; // Can be used to activate anything
         private static readonly List<string> LockCommands = new List<string>{"lock", "aim", "target"}; // Can only be used to activate a lock
-        private static readonly List<string> ShootCommands = new List<string>{"shoot", "fire"}; // Can only be used to activate laser gun
+        private static readonly List<string> ShootCommands = new List<string>{"shoot", "fire"}; // Can only be used to activate laser gun or mining laser
         //private static readonly List<string> OnCommands = new List<string>{GenericOnCommands, LockCommands, ShootCommands};
         private static readonly List<string> OnCommands = new List<string>(); // Is initialised to the above line at startup
         private static readonly List<string> OffCommands = new List<string>{"deactivate", "disengage", "turn off", "stop"};
@@ -44,6 +57,8 @@ namespace PlayGame.Speech {
         private static readonly List<List<string>> SingleCommands = new List<List<string>>{SpeedCommands, ShootCommands};
         private static readonly List<List<string>> CompoundCommands = new List<List<string>>{MovementCommands, TurnCommands, Ping, TransferCommands, OffCommands, OnCommands};
 
+        private static readonly List<string> CommandWords;
+        
         static Grammar() {
             TurnCommands.AddRange(InstantTurn);
             TurnCommands.AddRange(SmoothTurn);
@@ -51,8 +66,345 @@ namespace PlayGame.Speech {
             OnCommands.AddRange(GenericOnCommands);
             OnCommands.AddRange(LockCommands);
             OnCommands.AddRange(ShootCommands);
+
+            CommandWords = GetAllCommandWords();
+        }
+
+        // Returns a list containing all the command words
+        private static List<string> GetAllCommandWords() {
+            List<string> commandWords = new List<string>();
+            
+            foreach (List<string> commandList in SingleCommands) {
+                commandWords.AddRange(commandList);
+            }
+
+            foreach (List<string> commandList in CompoundCommands) {
+                commandWords.AddRange(commandList);
+            }
+
+            return commandWords;
+        }
+
+        // Returns the command which was most likely intended by the player
+        public static string GetSuggestedCommand(string phrase) {
+            // Find commands that have some of the required data in the phrase
+            List<Tuple<string, float>> partiallyCompleteCommands = GetPartiallyCompleteCommands(phrase); 
+            Tuple<string, float> mostCompleteCommand = new Tuple<string, float>("", 0);
+            
+            if (partiallyCompleteCommands.Count != 0) {
+                foreach (Tuple<string, float> command in partiallyCompleteCommands) {
+                    if (command.Item2 > mostCompleteCommand.Item2) mostCompleteCommand = command;
+                }
+            }
+
+            //Debug.Log("Partially complete ("+ mostCompleteCommand.Item2 + "): " + mostCompleteCommand.Item1);
+            if (mostCompleteCommand.Item2 > 0) return mostCompleteCommand.Item1;
+            
+            // If no partially complete commands are found search for the closest command word using levenshtein distance
+            Tuple<string, int> closestCommandWord = GetClosestCommand(phrase);
+            //Debug.Log("Closest ("+ closestCommandWord.Item2 + "): " + closestCommandWord.Item1);
+            
+            int thresholdDistance = closestCommandWord.Item1.Length / 2; // More than half of the letters in the command must be correct
+            if (closestCommandWord.Item1 != "" && closestCommandWord.Item2 < thresholdDistance) return closestCommandWord.Item1;
+            return "no command found";
+        }
+
+        private static List<Tuple<string, float>> GetPartiallyCompleteCommands(string phrase) {
+            DataProvided dataProvided = GetDataProvided(phrase);
+            List<Tuple<string, float>> commands = new List<Tuple<string, float>>(); // List of (command, dataRequiredPercentage)
+
+            commands.AddRange(GetPartiallyCompleteMovementCommands(phrase, dataProvided, MovementCommands));
+            commands.AddRange(GetPartiallyCompleteMovementCommands(phrase, dataProvided, TurnCommands));
+            
+            commands.Add(GetPartiallyCompletePingCommand(phrase, dataProvided));
+            commands.Add(GetPartiallyCompleteTransferCommand(phrase, dataProvided));
+            commands.Add(GetPartiallyCompleteOffCommand(phrase, dataProvided));
+            
+            commands.AddRange(GetPartiallyCompleteOnCommands(phrase, dataProvided));
+
+            return commands;
+        }
+
+        private static Tuple<string, float> GetPartiallyCompleteLockCommand(string phrase, DataProvided dataProvided) {
+            float completeness = 0;
+
+            string c = "";
+            
+            // Add the command word they used or the default lock command if one isn't found
+            foreach (string command in LockCommands) {
+                if (phrase.Contains(command)) {
+                    completeness = 0.5f;
+                    c = command;
+                }
+            }
+            if (c == "") c = LockCommands[0];
+            
+            // Lock target
+            if (dataProvided.lockTarget != null) {
+                completeness += 0.5f;
+                c += " " + dataProvided.lockTarget;
+            } else {
+                c += " (lock target)";
+            }
+
+            return new Tuple<string, float>(c, completeness);
         }
         
+        private static List<Tuple<string, float>> GetPartiallyCompleteLaserCommands(string phrase, DataProvided dataProvided) {
+            List<Tuple<string, float>> commands = new List<Tuple<string, float>>(); // List of (command, dataRequiredPercentage)
+            float completeness = 0;
+
+            string c = "";
+            
+            // Add the command word they used or the default on command if one isn't found
+            foreach (string command in ShootCommands) {
+                if (phrase.Contains(command)) {
+                    completeness = 0.5f;
+                    c = command;
+                }
+            }
+            if (c == "") { // If no shoot command was found check for generic on commands
+                foreach (string command in GenericOnCommands) {
+                    if (phrase.Contains(command)) {
+                        completeness = 0.5f;
+                        c = command;
+                    }
+                }
+                if (c == "") c = GenericOnCommands[0];
+            }
+            
+            // Laser
+            if (dataProvided.activatableObject != null) {
+                if (MiningLaser.Contains(dataProvided.activatableObject)) {
+                    commands.Add(new Tuple<string, float>(c + " " + dataProvided.activatableObject, completeness + 0.5f));
+                }
+                
+                if (LaserGun.Contains(dataProvided.activatableObject)) {
+                    commands.Add(new Tuple<string, float>(c + " " + dataProvided.activatableObject, completeness + 0.5f));
+                }
+            } else {
+                if (completeness != 0) commands.Add(new Tuple<string, float>(c + " " + MiningLaser[0], completeness));
+                if (completeness != 0) commands.Add(new Tuple<string, float>(c + " " + LaserGun[0], completeness));
+            }
+            
+            return commands;
+        }
+
+        private static List<Tuple<string, float>> GetPartiallyCompleteOnCommands(string phrase, DataProvided dataProvided) {
+            List<Tuple<string, float>> commands = new List<Tuple<string, float>>(); // List of (command, dataRequiredPercentage)
+
+            commands.Add(GetPartiallyCompleteLockCommand(phrase, dataProvided));
+            commands.AddRange(GetPartiallyCompleteLaserCommands(phrase, dataProvided));
+
+            return commands;
+        }
+        
+        // Returns a transfer command with the percentage of data provided
+        private static Tuple<string, float> GetPartiallyCompleteOffCommand(string phrase, DataProvided dataProvided) {
+
+            float completeness = 0;
+
+            string c = "";
+            
+            // Add the command word they used or the default off command if one isn't found
+            foreach (string command in OffCommands) {
+                if (phrase.Contains(command)) {
+                    completeness = 0.5f;
+                    c = command;
+                }
+            }
+            if (c == "") c = OffCommands[0];
+            
+            // Activatable Object
+            if (dataProvided.activatableObject != null) {
+                completeness += 0.5f;
+                c += " " + dataProvided.activatableObject;
+            } else {
+                c += " (activatable object)";
+            }
+
+            return new Tuple<string, float>(c, completeness);
+        }
+        
+        // Returns a transfer command with the percentage of data provided
+        private static Tuple<string, float> GetPartiallyCompleteTransferCommand(string phrase, DataProvided dataProvided) {
+
+            float completeness = 0;
+
+            string c = "";
+            
+            // Add the command word they used or the default transfer command if one isn't found
+            foreach (string command in TransferCommands) {
+                if (phrase.Contains(command)) {
+                    completeness = 0.5f;
+                    c = command;
+                }
+            }
+            if (c == "") c = TransferCommands[0];
+            
+            // Resource
+            if (dataProvided.resource != null) {
+                completeness += 0.5f;
+                c += " " + dataProvided.resource;
+            } else {
+                c += " " + Resources[0];
+            }
+
+            return new Tuple<string, float>(c, completeness);
+        }
+
+        // Returns a ping command with the percentage of data provided
+        private static Tuple<string, float> GetPartiallyCompletePingCommand(string phrase, DataProvided dataProvided) {
+
+            float completeness = 0;
+            float third = 1f / 3;
+
+            string c = "";
+            
+            // Add the command word they used or the default ping command if one isn't found
+            foreach (string command in Ping) {
+                if (phrase.Contains(command)) {
+                    completeness = third;
+                    c = command;
+                }
+            }
+            if (c == "") c = Ping[0];
+            
+            // Ping type
+            if (dataProvided.pingType != null) {
+                completeness += third;
+                c += " " + dataProvided.pingType;
+            } else {
+                c += " (ping type)";
+            }
+
+            // Grid coord
+            if (dataProvided.grid != null) {
+                completeness += third;
+                c += " " + dataProvided.grid;
+            } else {
+                c += " (grid coord)";
+            }
+
+            return new Tuple<string, float>(c, completeness);
+        }
+
+        private static List<Tuple<string, float>> GetPartiallyCompleteMovementCommands(string phrase, DataProvided dataProvided, List<string> commandList) {
+            List<Tuple<string, float>> commands = new List<Tuple<string, float>>(); // List of (command, dataRequiredPercentage)
+
+            float completeness = 0;
+            string c = "";
+            
+            // Check for command word
+            foreach (string command in commandList) {
+                if (phrase.Contains(command)) {
+                    completeness = 0.5f;
+                    c = command;
+                }
+            }
+            if (c == "") c = commandList[0];
+
+            if (dataProvided.direction != null) {
+                commands.Add(new Tuple<string, float>(c + " " + dataProvided.direction, completeness + 0.5f));
+            } else {
+                if (completeness != 0) commands.Add(new Tuple<string, float>(c + " (direction)", completeness));
+            }
+            
+            if (dataProvided.destination != null) {
+                commands.Add(new Tuple<string, float>(c + " " + dataProvided.destination, completeness + 0.5f));
+            } else {
+                if (completeness != 0) commands.Add(new Tuple<string, float>(c + " (destination)", completeness));
+            }
+            
+            if (dataProvided.grid != null) {
+                commands.Add(new Tuple<string, float>(c + " " + dataProvided.grid, completeness + 0.5f));
+            } else {
+                if (completeness != 0) commands.Add(new Tuple<string, float>(c + " (grid coord)", completeness));
+            }
+            
+            return commands;
+        }
+
+        // Finds the closest command word within the phrase
+        private static Tuple<string, int> GetClosestCommand(string phrase) {
+            Tuple<string, int> closestCommandWord = new Tuple<string, int>("", phrase.Length);
+
+            string[] words = phrase.Split(' ');
+            foreach (string word in words) {
+                Tuple<string, int> closestWord = GetClosestWordFromList(CommandWords, word);
+                if (closestWord.Item2 < closestCommandWord.Item2) closestCommandWord = closestWord;
+            }
+
+            return closestCommandWord;
+        }
+
+        // Finds out what data is provided in the phrase
+        private static DataProvided GetDataProvided(string phrase) {
+            DataProvided dataProvided = new DataProvided();
+            dataProvided.direction = GetDirection(phrase);
+            dataProvided.destination = GetCommandListIdentifier(phrase, Destinations);
+            dataProvided.grid = GetGridCoord(phrase);
+            dataProvided.pingType = GetCommandListIdentifier(phrase, PingTypes);
+            dataProvided.resource = GetCommandFromList(phrase, Resources);
+            dataProvided.activatableObject = GetCommandListIdentifier(phrase, Activatable);
+            dataProvided.lockTarget = GetCommandListIdentifier(phrase, LockTargets);
+
+            return dataProvided;
+        }
+
+        // Returns the word which has the smallest levenshtein distance in the list and its distance
+        private static Tuple<string, int> GetClosestWordFromList(List<string> list, string word) {
+            string closestWord = "";
+            int distance = word.Length;
+            
+            foreach (string word1 in list) {
+                int d = GetLevenshteinDistance(word1, word);
+                if (d < distance) {
+                    distance = d;
+                    closestWord = word1;
+                }
+            }
+
+            return new Tuple<string, int>(closestWord, distance);
+        }
+
+        // Returns the Levenshtein distance (number of single character edits required to make the strings equal)
+        private static int GetLevenshteinDistance(string word1, string word2) {
+            if (word1.Length == 0) return word2.Length;
+            if (word2.Length == 0) return word1.Length;
+
+            var distance = new int[word1.Length + 1][];
+            for (int index = 0; index < word1.Length + 1; index++)
+            {
+                distance[index] = new int[word2.Length + 1];
+            }
+
+            for (var i = 0; i <= word1.Length; i++) {
+                distance[i][0] = i;
+            }
+
+            for (var j = 0; j <= word2.Length; j++) {
+                distance[0][j] = j;
+            }
+
+            for (var i = 1; i <= word1.Length; i++) {
+                for (var j = 1; j <= word2.Length; j++) { 
+                    var cost = (word2[j - 1] == word1[i - 1]) ? 0 : 1; 
+                    distance[i][j] = Min( 
+                        distance[i - 1][j] + 1, 
+                        distance[i][j - 1] + 1, 
+                        distance[i - 1][j - 1] + cost 
+                    ); 
+                } 
+            } 
+            
+            return distance[word1.Length][word2.Length]; 
+        }
+
+        private static int Min(int a, int b, int c) {
+          return Math.Min(Math.Min(a, b), c);
+        } 
+
         public static Command GetCommand(string phrase) {
             Command c = new Command();
             

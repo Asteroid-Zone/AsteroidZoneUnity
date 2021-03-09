@@ -1,12 +1,15 @@
 ﻿using UnityEngine;
+using UnityEngine.Assertions;
 
-namespace PlayGame.Speech
-{
-    public class SpeechRecognitionTesting : MonoBehaviour
-    {
+namespace PlayGame.Speech {
+    public class SpeechRecognitionTesting : MonoBehaviour {
 
         public SpeechRecognition speechRecognition;
 
+        void Start() {
+            TestSuggestedCommands();
+        }
+        
         void Update() {
             if (Input.GetKeyDown(KeyCode.W)) { // Move forward
                 speechRecognition.GetResponse("move forward");
@@ -84,5 +87,14 @@ namespace PlayGame.Speech
                 speechRecognition.GetResponse("disengage lock on");
             }
         }
+
+        private void TestSuggestedCommands() {
+            Assert.AreEqual("move north", Grammar.GetSuggestedCommand("travel north"));
+            Assert.AreEqual("move (direction)", Grammar.GetSuggestedCommand("move"));
+            Assert.AreEqual("move (direction)", Grammar.GetSuggestedCommand("move up"));
+            Assert.AreEqual("no command found", Grammar.GetSuggestedCommand("gp"));
+        }
+        
     }
+    
 }
