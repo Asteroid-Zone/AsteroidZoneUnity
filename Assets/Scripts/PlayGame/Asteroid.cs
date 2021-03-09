@@ -45,6 +45,7 @@ namespace PlayGame {
             GetComponent<MeshFilter>().mesh = AsteroidMeshes[asteroidMeshIndex].mesh;
             GetComponent<MeshCollider>().sharedMesh = AsteroidMeshes[asteroidMeshIndex].mesh;
             _modelScale = AsteroidMeshes[asteroidMeshIndex].scale;
+            transform.rotation = Random.rotation;
 
             _totalResources = Random.Range(MinResources, MaxResources);
             _resourcesRemaining = _totalResources;
