@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5319216397735278670}
   - component: {fileID: 6506446531403733647}
   - component: {fileID: 740847417651920386}
-  - component: {fileID: 2301551859936809067}
+  - component: {fileID: 1620221716286332781}
   - component: {fileID: -8172816358051543400}
   - component: {fileID: -5197946703251062350}
   - component: {fileID: 2800915369396299757}
@@ -31,8 +31,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5512704986627930115}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 20, y: 0, z: 20}
-  m_LocalScale: {x: 9, y: 9, z: 9}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -84,8 +84,8 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!135 &2301551859936809067
-SphereCollider:
+--- !u!64 &1620221716286332781
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -94,9 +94,10 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!208 &-8172816358051543400
 NavMeshObstacle:
   m_ObjectHideFlags: 0
