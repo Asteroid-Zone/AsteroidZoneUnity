@@ -1,5 +1,6 @@
 ﻿using Photon.Pun;
 using Photon.Realtime;
+using PlayGame.Stats;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -61,6 +62,7 @@ namespace Photon
         {
             Debug.Log("Loading Level");
             PhotonNetwork.LoadLevel(multiplayerScene);
+            StatsManager.GameStats.startTime = Time.time;
         }
 
         private void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)

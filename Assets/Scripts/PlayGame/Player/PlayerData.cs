@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Photon.Pun;
+using PlayGame.Stats;
 using PlayGame.UI;
 using Statics;
 using UnityEngine;
@@ -15,8 +16,7 @@ namespace PlayGame.Player
         Researcher
     }
 
-    public class PlayerData : MonoBehaviourPun
-    {
+    public class PlayerData : MonoBehaviourPun {
         public static List<GameObject> Players;
 
         private const int LaserDamageRange = 10; // Makes the amount of damage the laser does vary a bit
@@ -42,9 +42,14 @@ namespace PlayGame.Player
 
         private Transform _lockTarget;
 
+        public PlayerStats playerStats;
+
         private void Start() {
             _playerAgent = GetComponent<NavMeshAgent>();
-            
+            playerStats = new PlayerStats();
+            StatsManager.PlayerStatsList.Add(playerStats);
+            playerStats.playerName = PhotonNetwork.NickName;
+
             // Initialise the players list
             Players = new List<GameObject>();
             Players.AddRange(GameObject.FindGameObjectsWithTag(Tags.PlayerTag));
@@ -102,6 +107,8 @@ namespace PlayGame.Player
 
         public void AddResources(int resources) {
             _resources += resources;
+            playerStats.resourcesHarvested += resources;
+            StatsManager.GameStats.resourcesHarvested += resources;
         }
 
         public void RemoveResources()
