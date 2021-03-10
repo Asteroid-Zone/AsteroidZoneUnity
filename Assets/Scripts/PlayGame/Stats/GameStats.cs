@@ -1,7 +1,8 @@
 ﻿namespace PlayGame.Stats {
     public class GameStats {
 
-        public int gameTime;
+        public float startTime;
+        public float endTime;
         
         public int resourcesHarvested;
         public int asteroidsDestroyed;
