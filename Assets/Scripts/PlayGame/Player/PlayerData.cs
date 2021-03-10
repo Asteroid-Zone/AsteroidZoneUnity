@@ -108,6 +108,7 @@ namespace PlayGame.Player
         public void AddResources(int resources) {
             _resources += resources;
             playerStats.resourcesHarvested += resources;
+            StatsManager.GameStats.resourcesHarvested += resources;
         }
 
         public void RemoveResources()

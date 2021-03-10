@@ -5,7 +5,7 @@ namespace PlayGame.Stats {
     public static class StatsManager {
 
         public static readonly List<PlayerStats> PlayerStatsList = new List<PlayerStats>();
-        // todo public GameStats gameStats;
+        public static readonly GameStats GameStats = new GameStats();
 
         public static PlayerStats GetPlayerStats(string nickname) {
             foreach (PlayerStats playerStats in PlayerStatsList) {

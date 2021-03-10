@@ -10,19 +10,27 @@ namespace EndGame {
     
         public AudioSource buttonPress;
 
-        public Text name;
-        public Text resourcesHarvested;
-        public Text asteroidsDestroyed;
-        public Text piratesDestroyed;
+        public Text playerName;
+        public Text playerResourcesHarvested;
+        public Text playerAsteroidsDestroyed;
+        public Text playerPiratesDestroyed;
+
+        public Text gameResourcesHarvested;
+        public Text gameAsteroidsDestroyed;
+        public Text gamePiratesDestroyed;
         
         private PlayerStats _playerStats;
         
         private void Start() {
             _playerStats = StatsManager.GetPlayerStats(PhotonNetwork.NickName);
-            name.text += _playerStats.playerName;
-            resourcesHarvested.text += _playerStats.resourcesHarvested;
-            asteroidsDestroyed.text += _playerStats.asteroidsDestroyed;
-            piratesDestroyed.text += _playerStats.piratesDestroyed;
+            playerName.text += _playerStats.playerName;
+            playerResourcesHarvested.text += _playerStats.resourcesHarvested;
+            playerAsteroidsDestroyed.text += _playerStats.asteroidsDestroyed;
+            playerPiratesDestroyed.text += _playerStats.piratesDestroyed;
+            
+            gameResourcesHarvested.text += StatsManager.GameStats.resourcesHarvested;
+            gameAsteroidsDestroyed.text += StatsManager.GameStats.asteroidsDestroyed;
+            gamePiratesDestroyed.text += StatsManager.GameStats.piratesDestroyed;
         }
 
         public void BackToMenu() {

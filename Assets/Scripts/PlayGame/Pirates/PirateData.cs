@@ -1,5 +1,6 @@
 ﻿using Photon.Pun;
 using PlayGame.Player;
+using PlayGame.Stats;
 using PlayGame.UI;
 using Statics;
 using UnityEngine;
@@ -56,6 +57,7 @@ namespace PlayGame.Pirates
             _health -= playerData.GetLaserDamage();
             if (_health <= 0) {
                 playerData.playerStats.piratesDestroyed++;
+                StatsManager.GameStats.piratesDestroyed++;
                 Die();
             }
 
