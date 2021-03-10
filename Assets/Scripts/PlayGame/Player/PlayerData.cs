@@ -42,13 +42,13 @@ namespace PlayGame.Player
 
         private Transform _lockTarget;
 
-        private PlayerStats _playerStats;
+        public PlayerStats playerStats;
 
         private void Start() {
             _playerAgent = GetComponent<NavMeshAgent>();
-            _playerStats = new PlayerStats();
-            StatsManager.playerStatsList.Add(_playerStats);
-            _playerStats.playerName = PhotonNetwork.NickName;
+            playerStats = new PlayerStats();
+            StatsManager.PlayerStatsList.Add(playerStats);
+            playerStats.playerName = PhotonNetwork.NickName;
 
             // Initialise the players list
             Players = new List<GameObject>();
@@ -107,7 +107,7 @@ namespace PlayGame.Player
 
         public void AddResources(int resources) {
             _resources += resources;
-            _playerStats.resourcesHarvested += resources;
+            playerStats.resourcesHarvested += resources;
         }
 
         public void RemoveResources()

@@ -1,4 +1,5 @@
 ﻿using Photon.Pun;
+using PlayGame.Player;
 using PlayGame.UI;
 using Statics;
 using UnityEngine;
@@ -51,11 +52,10 @@ namespace PlayGame.Pirates
             healthBarFill.color = healthBarGradient.Evaluate(healthBar.normalizedValue);
         }
 
-        public void TakeDamage(float damage)
-        {
-            _health -= damage;
-            if (_health <= 0)
-            {
+        public void TakeDamage(PlayerData playerData) {
+            _health -= playerData.GetLaserDamage();
+            if (_health <= 0) {
+                playerData.playerStats.piratesDestroyed++;
                 Die();
             }
 

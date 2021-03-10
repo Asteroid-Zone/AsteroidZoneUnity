@@ -12,13 +12,17 @@ namespace EndGame {
 
         public Text name;
         public Text resourcesHarvested;
-
+        public Text asteroidsDestroyed;
+        public Text piratesDestroyed;
+        
         private PlayerStats _playerStats;
         
         private void Start() {
             _playerStats = StatsManager.GetPlayerStats(PhotonNetwork.NickName);
             name.text += _playerStats.playerName;
             resourcesHarvested.text += _playerStats.resourcesHarvested;
+            asteroidsDestroyed.text += _playerStats.asteroidsDestroyed;
+            piratesDestroyed.text += _playerStats.piratesDestroyed;
         }
 
         public void BackToMenu() {

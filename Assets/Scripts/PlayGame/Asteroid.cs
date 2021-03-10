@@ -1,6 +1,7 @@
 ﻿using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
+using PlayGame.Player;
 using PlayGame.UI;
 using Statics;
 using UnityEngine;
@@ -76,7 +77,7 @@ namespace PlayGame {
             else if (DebugSettings.Debug) Destroy(gameObject);
         }
 
-        public void MineAsteroid(int miningRate) {
+        public void MineAsteroid(int miningRate, PlayerData playerData) {
             _resourcesRemaining -= miningRate;
             if (_resourcesRemaining < 0) _resourcesRemaining = 0;
             
@@ -86,6 +87,7 @@ namespace PlayGame {
 
             if (_resourcesRemaining <= 0 && !_asteroidDestroyed) {
                 _asteroidDestroyed = true;
+                if (playerData != null) playerData.playerStats.asteroidsDestroyed++;
                 EventsManager.AddMessage("Asteroid destroyed at " + GridCoord.GetCoordFromVector(transform.position));
                 StartCoroutine(FadeOutAsteroid());
             }

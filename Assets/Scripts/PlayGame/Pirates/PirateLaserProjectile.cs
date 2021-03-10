@@ -33,7 +33,7 @@ namespace PlayGame.Pirates {
             
             if (collision.gameObject.CompareTag(Tags.AsteroidTag)) {
                 Asteroid asteroid = collision.gameObject.GetComponent<Asteroid>();
-                asteroid.MineAsteroid(MiningRate);
+                asteroid.MineAsteroid(MiningRate, null);
             }
 
             Destroy(gameObject);
