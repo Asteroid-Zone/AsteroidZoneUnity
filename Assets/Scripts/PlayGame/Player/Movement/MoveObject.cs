@@ -23,6 +23,7 @@ namespace PlayGame.Player.Movement
         public bool rotating;
         private bool _turnRight; // false = turn left, true = turn right
         private bool _BarellRoll;
+        //time float for evasive moves
         private float t;
         // Needed to reference enemies in order to rotate towards them
         private GameObject _enemySpawner;
@@ -73,6 +74,7 @@ namespace PlayGame.Player.Movement
             }
             if (Input.GetKeyDown(KeyCode.O))
             {
+              if(rotating) rotating = false;
               _BarellRoll = true;
             }
             if(_BarellRoll){
@@ -232,10 +234,8 @@ namespace PlayGame.Player.Movement
         public void BarellRoll()
         {
           if (t<1f) {
-            float prevT = t;
             t += Time.deltaTime;
-            float dt = t-prevT;
-            transform.RotateAround(_destination, Vector3.forward, 360 * dt);
+            transform.Rotate(Vector3.forward, 360 * Time.deltaTime);
           }
           else{
             Debug.Log("we are being falsified");
