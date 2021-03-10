@@ -1,4 +1,5 @@
 ﻿using PlayGame.UI;
+using Statics;
 using UnityEngine;
 
 namespace PlayGame
@@ -21,9 +22,9 @@ namespace PlayGame
             if (_stationHealth >= MaxStationHealth) {
                 EventsManager.AddMessage("Game completed");
                 // Ensures LeaveRoom is only called once
-                if (!complete)
-                {
-                    gameManager.LeaveRoom(); // TODO create victory scene
+                if (!complete) {
+                    gameManager.exitScene = Scenes.VictoryScene;
+                    gameManager.LeaveRoom();
                     complete = true;
                 }
             }

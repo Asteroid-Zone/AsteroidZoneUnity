@@ -7,10 +7,11 @@ using PlayGame.Player;
 namespace PlayGame.UI {
     public class GameManager : MonoBehaviourPunCallbacks {
 
+        public string exitScene = Scenes.MainMenuScene;
+
         /// Called when the local player left the room. We need to load the launcher scene.
-        public override void OnLeftRoom()
-        {
-            SceneManager.LoadScene(Scenes.MainMenuScene);
+        public override void OnLeftRoom() {
+            SceneManager.LoadScene(exitScene);
         }
 
         public void LeaveRoom()
