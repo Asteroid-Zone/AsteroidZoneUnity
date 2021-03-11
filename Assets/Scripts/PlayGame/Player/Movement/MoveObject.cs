@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections;
 using PlayGame.Pirates;
 using UnityEngine;
 using UnityEngine.AI;
@@ -9,6 +10,7 @@ namespace PlayGame.Player.Movement
 
         private Vector3 _direction;
         private Vector3 _destination = Vector3.positiveInfinity;
+        private Vector3 right;
 
         private PlayerData _playerData;
         private NavMeshAgent _playerAgent;
@@ -32,7 +34,6 @@ namespace PlayGame.Player.Movement
         private GameObject _asteroidSpawner;
 
         private Transform _lockTarget;
-
 
         private void Start()
         {
@@ -75,10 +76,8 @@ namespace PlayGame.Player.Movement
             if (Input.GetKeyDown(KeyCode.O))
             {
               if(rotating) rotating = false;
-              _BarellRoll = true;
-            }
-            if(_BarellRoll){
-              BarellRoll();
+              right = Vector3.right;
+              StartCoroutine(BarellRoll());
             }
         }
 
@@ -230,17 +229,17 @@ namespace PlayGame.Player.Movement
             _lockTarget = lockTarget;
         }
 
-        //Makes the player ship do a barrel targetCollider
-        public void BarellRoll()
+
+        public IEnumerator BarellRoll()
         {
-          if (t<1f) {
-            t += Time.deltaTime;
-            transform.Rotate(Vector3.forward, 360 * Time.deltaTime);
-          }
-          else{
-            Debug.Log("we are being falsified");
-            _BarellRoll = false;
-            t=0f;
+          float rotation_smoothness = 100;
+          float rotation_step = 360 / rotation_smoothness;
+          float time_pause = 1 / rotation_smoothness;
+          for( int rotate = 0; rotate < rotation_smoothness; rotate++)
+          {
+            transform.Translate(right * (time_pause * _playerData.GetMaxSpeed() * 2.0f), Space.World);
+            transform.Rotate(Vector3.forward, rotation_step);
+            yield return new WaitForSeconds(time_pause);
           }
         }
     }
