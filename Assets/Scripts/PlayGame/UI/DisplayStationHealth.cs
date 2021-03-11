@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using PlayGame.SpaceStation;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace PlayGame.UI
@@ -7,16 +8,17 @@ namespace PlayGame.UI
     
         public GameObject spaceStation;
 
-        private SpaceStation _spaceStation;
+        private SpaceStation.SpaceStation _spaceStation;
         private Text _text;
 
         private void Start() {
             _text = GetComponent<Text>();
-            _spaceStation = spaceStation.GetComponent<SpaceStation>();
+            _spaceStation = spaceStation.GetComponent<SpaceStation.SpaceStation>();
         }
 
         private void Update() {
-            _text.text = "Station Health: " + _spaceStation.GetHealth() + "/" + _spaceStation.GetMaxHealth();
+            StationModule module = _spaceStation.GetSelectedModule();
+            _text.text = module.name + " Health: " + module.moduleHealth + "/" + module.maxHealth;
         }
     }
 }
