@@ -1,4 +1,5 @@
-﻿using PlayGame.UI;
+﻿using PlayGame.Stats;
+using PlayGame.UI;
 using Statics;
 using UnityEngine;
 
@@ -23,6 +24,7 @@ namespace PlayGame
                 EventsManager.AddMessage("Game completed");
                 // Ensures LeaveRoom is only called once
                 if (!complete) {
+                    StatsManager.GameStats.endTime = Time.time;
                     gameManager.exitScene = Scenes.VictoryScene;
                     gameManager.LeaveRoom();
                     complete = true;

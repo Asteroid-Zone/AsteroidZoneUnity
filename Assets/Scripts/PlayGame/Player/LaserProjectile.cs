@@ -25,12 +25,12 @@ namespace PlayGame.Player {
 
             if (collision.gameObject.CompareTag(Tags.PirateTag)) {
                 PirateData pirateData = collision.gameObject.GetComponent<PirateData>();
-                pirateData.TakeDamage(_shootingPlayerData.GetLaserDamage());
+                pirateData.TakeDamage(_shootingPlayerData);
             }
             
             if (collision.gameObject.CompareTag(Tags.AsteroidTag)) {
                 Asteroid asteroid = collision.gameObject.GetComponent<Asteroid>();
-                asteroid.MineAsteroid(MiningRate);
+                asteroid.MineAsteroid(MiningRate, _shootingPlayerData);
             }
 
             Destroy(gameObject);

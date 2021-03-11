@@ -41,7 +41,7 @@ namespace PlayGame.Player {
         private void MineAsteroid(GameObject asteroid) {
             if (Time.frameCount - _lastFrameMined > MiningDelay) { // Only mine the asteroid every x frames
                 Asteroid asteroidScript = asteroid.GetComponent<Asteroid>();
-                asteroidScript.MineAsteroid(MiningRate);
+                asteroidScript.MineAsteroid(MiningRate, _playerData);
                 _playerData.AddResources(asteroidScript.GetResources(MiningRate));
                 _lastFrameMined = Time.frameCount;
             }

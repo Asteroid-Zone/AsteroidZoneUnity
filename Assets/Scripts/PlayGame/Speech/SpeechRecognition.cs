@@ -13,7 +13,7 @@ using UnityEngine.UI;
 
 namespace PlayGame.Speech {
     public class SpeechRecognition : MonoBehaviourPun {
-        
+
         public Text text;
         private string _myResponse = "...";
 
@@ -21,27 +21,29 @@ namespace PlayGame.Speech {
         public GameObject spaceStation;
         public GameObject ping;
         public GameObject cameraManager;
-        
+
+        private PlayerData _playerData;
+
         private ActionController _actionController;
 
         private void Start() {
             StartSpeechRecognitionInTheBrowser();
             player = !DebugSettings.Debug ? PhotonPlayer.Instance.myAvatar : TestPlayer.GetPlayerShip();
 
-            MovementCommand.player = player.transform;
+            _playerData = player.GetComponent<PlayerData>();
 
             _actionController = CreateActionController(player);
         }
 
-        private ActionController CreateActionController(GameObject player) {
+        private ActionController CreateActionController(GameObject playerObject) {
             _actionController = new ActionController {
                 speechRecognition = this,
-                player = player,
+                player = playerObject,
                 spaceStationObject = spaceStation,
-                moveObject = player.GetComponent<MoveObject>(),
-                miningLaser = player.GetComponent<MiningLaser>(),
-                laserGun = player.GetComponent<LaserGun>(),
-                playerData = player.GetComponent<PlayerData>(),
+                moveObject = playerObject.GetComponent<MoveObject>(),
+                miningLaser = playerObject.GetComponent<MiningLaser>(),
+                laserGun = playerObject.GetComponent<LaserGun>(),
+                playerData = playerObject.GetComponent<PlayerData>(),
                 pingManager = ping.GetComponent<PingManager>(),
                 spaceStation = spaceStation.GetComponent<SpaceStation>(),
                 cameraFollow = cameraManager.GetComponent<CameraManager>().followCamera.GetComponent<CameraFollow>()
@@ -60,10 +62,10 @@ namespace PlayGame.Speech {
         // Called by javascript when speech is detected
         public void GetResponse(string result) {
             if (!DebugSettings.Debug && !PhotonPlayer.Instance.photonView.IsMine) return;
-            
+
             _myResponse = result.ToLower();
-            Command command = Grammar.GetCommand(_myResponse);
-            
+            Command command = Grammar.GetCommand(_myResponse, _playerData, player.transform);
+
             if (command.IsValid()) {
                 if (DebugSettings.Debug) _actionController.PerformActions(command);
                 else photonView.RPC("RPC_PerformActions", RpcTarget.AllBuffered, player.GetComponent<PhotonView>().ViewID, _myResponse);
@@ -79,24 +81,25 @@ namespace PlayGame.Speech {
         }
 
         [PunRPC]
-        public void RPC_PerformActions(int viewID, string _myResponse) {
+        public void RPC_PerformActions(int viewID, string phrase) {
             if (player == null) return;
-            GameObject prev_player = player;
-            Command command = Grammar.GetCommand(_myResponse);
+            GameObject prevPlayer = player;
             List<GameObject> playerList = player.GetComponent<PlayerData>().GetList();
-            foreach (GameObject _player in playerList) {
-                if (_player != null && viewID == _player.GetComponent<PhotonView>().ViewID) player = _player;
+            foreach (GameObject p in playerList) {
+                if (p != null && viewID == p.GetComponent<PhotonView>().ViewID) player = p;
             }
+            
+            Command command = Grammar.GetCommand(phrase, player.GetComponent<PlayerData>(), player.transform);
 
             _actionController = CreateActionController(player);
             _actionController.PerformActions(command);
-            player = prev_player;
+            player = prevPlayer;
         }
 
         private static void StartSpeechRecognitionInTheBrowser() {
             Application.ExternalCall("startVoiceRecognition");
         }
-        
+
         private static void StopSpeechRecognitionInTheBrowser() {
             Application.ExternalCall("stopVoiceRecognition");
         }
