@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using PlayGame.Player;
 using PlayGame.Speech.Commands;
 using Statics;
 
@@ -402,14 +403,14 @@ namespace PlayGame.Speech {
           return Math.Min(Math.Min(a, b), c);
         } 
 
-        public static Command GetCommand(string phrase) {
+        public static Command GetCommand(string phrase, PlayerData playerData) {
             Command c = new Command();
             
             // Check if the phrase contains a command that requires more info
             foreach (List<string> commandList in CompoundCommands) {
                 foreach (string command in commandList) {
                     if (phrase.Contains(command)) {
-                        if (!c.IsValid()) c = GetCompoundCommand(phrase, commandList, command);
+                        if (!c.IsValid()) c = GetCompoundCommand(phrase, commandList, command, playerData);
                     }
                 }
             }
@@ -431,11 +432,11 @@ namespace PlayGame.Speech {
             return c;
         }
         
-        private static Command GetCompoundCommand(string phrase, List<string> commandList, string command) {
+        private static Command GetCompoundCommand(string phrase, List<string> commandList, string command, PlayerData playerData) {
             if (commandList.Equals(MovementCommands)) return GetMovementCommand(phrase);
             if (commandList.Equals(TurnCommands)) return GetTurnCommand(phrase, command);
             if (commandList.Equals(Ping)) return GetPingCommand(phrase);
-            if (commandList.Equals(TransferCommands)) return GetTransferCommand(phrase);
+            if (commandList.Equals(TransferCommands)) return GetTransferCommand(phrase, playerData);
             if (commandList.Equals(OffCommands)) return GetToggleCommand(phrase, false, command);
             if (commandList.Equals(OnCommands)) return GetToggleCommand(phrase, true, command);
 
@@ -493,8 +494,8 @@ namespace PlayGame.Speech {
             return new Command(); // Return an invalid command
         }
 
-        private static Command GetTransferCommand(string phrase) {
-            if (GetCommandFromList(phrase, Resources) != null) return new Command(Command.CommandType.Transfer);
+        private static Command GetTransferCommand(string phrase, PlayerData playerData) {
+            if (GetCommandFromList(phrase, Resources) != null) return new TransferCommand(playerData.GetResources());
             return new Command(); // Return an invalid command
         }
 

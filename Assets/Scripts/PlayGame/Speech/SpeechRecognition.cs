@@ -11,10 +11,8 @@ using PlayGame.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace PlayGame.Speech
-{
-    public class SpeechRecognition : MonoBehaviourPun
-    {
+namespace PlayGame.Speech {
+    public class SpeechRecognition : MonoBehaviourPun {
 
         public Text text;
         private string _myResponse = "...";
@@ -24,29 +22,30 @@ namespace PlayGame.Speech
         public GameObject ping;
         public GameObject cameraManager;
 
+        private PlayerData _playerData;
+
         private ActionController _actionController;
 
-        private void Start()
-        {
+        private void Start() {
             StartSpeechRecognitionInTheBrowser();
             player = !DebugSettings.Debug ? PhotonPlayer.Instance.myAvatar : TestPlayer.GetPlayerShip();
 
             MovementCommand.player = player.transform;
 
+            _playerData = player.GetComponent<PlayerData>();
+
             _actionController = CreateActionController(player);
         }
 
-        private ActionController CreateActionController(GameObject player)
-        {
-            _actionController = new ActionController
-            {
+        private ActionController CreateActionController(GameObject playerObject) {
+            _actionController = new ActionController {
                 speechRecognition = this,
-                player = player,
+                player = playerObject,
                 spaceStationObject = spaceStation,
-                moveObject = player.GetComponent<MoveObject>(),
-                miningLaser = player.GetComponent<MiningLaser>(),
-                laserGun = player.GetComponent<LaserGun>(),
-                playerData = player.GetComponent<PlayerData>(),
+                moveObject = playerObject.GetComponent<MoveObject>(),
+                miningLaser = playerObject.GetComponent<MiningLaser>(),
+                laserGun = playerObject.GetComponent<LaserGun>(),
+                playerData = playerObject.GetComponent<PlayerData>(),
                 pingManager = ping.GetComponent<PingManager>(),
                 spaceStation = spaceStation.GetComponent<SpaceStation>(),
                 cameraFollow = cameraManager.GetComponent<CameraManager>().followCamera.GetComponent<CameraFollow>()
@@ -54,66 +53,56 @@ namespace PlayGame.Speech
             return _actionController;
         }
 
-        private void Update()
-        {
+        private void Update() {
             text.text = _myResponse;
         }
 
-        private void OnDestroy()
-        {
+        private void OnDestroy() {
             StopSpeechRecognitionInTheBrowser();
         }
 
         // Called by javascript when speech is detected
-        public void GetResponse(string result)
-        {
+        public void GetResponse(string result) {
             if (!DebugSettings.Debug && !PhotonPlayer.Instance.photonView.IsMine) return;
 
             _myResponse = result.ToLower();
-            Command command = Grammar.GetCommand(_myResponse);
+            Command command = Grammar.GetCommand(_myResponse, _playerData);
 
-            if (command.IsValid())
-            {
-                if (DebugSettings.Debug) _actionController.PerformActions(command, _actionController.playerData.GetResources());
-                else photonView.RPC("RPC_PerformActions", RpcTarget.AllBuffered, player.GetComponent<PhotonView>().ViewID, _myResponse, player.GetComponent<PlayerData>().GetResources());
-            }
-            else
-            {
+            if (command.IsValid()) {
+                if (DebugSettings.Debug) _actionController.PerformActions(command);
+                else photonView.RPC("RPC_PerformActions", RpcTarget.AllBuffered, player.GetComponent<PhotonView>().ViewID, _myResponse);
+            } else {
                 DisplaySuggestedCommand(_myResponse);
             }
         }
 
-        private void DisplaySuggestedCommand(string phrase)
-        {
+        private void DisplaySuggestedCommand(string phrase) {
             string suggestedCommand = Grammar.GetSuggestedCommand(phrase);
             if (suggestedCommand.Equals(Strings.NoCommand)) EventsManager.AddMessage("'" + phrase + "' is an invalid command. We're not sure what you meant.");
             else EventsManager.AddMessage("'" + phrase + "' is an invalid command. Did you mean '" + suggestedCommand + "' ?");
         }
 
         [PunRPC]
-        public void RPC_PerformActions(int viewID, string _myResponse, int transfer_amount)
-        {
+        public void RPC_PerformActions(int viewID, string _myResponse) {
             if (player == null) return;
             GameObject prev_player = player;
-            Command command = Grammar.GetCommand(_myResponse);
             List<GameObject> playerList = player.GetComponent<PlayerData>().GetList();
-            foreach (GameObject _player in playerList)
-            {
+            foreach (GameObject _player in playerList) {
                 if (_player != null && viewID == _player.GetComponent<PhotonView>().ViewID) player = _player;
             }
+            
+            Command command = Grammar.GetCommand(_myResponse, player.GetComponent<PlayerData>());
 
             _actionController = CreateActionController(player);
-            _actionController.PerformActions(command, transfer_amount);
+            _actionController.PerformActions(command);
             player = prev_player;
         }
 
-        private static void StartSpeechRecognitionInTheBrowser()
-        {
+        private static void StartSpeechRecognitionInTheBrowser() {
             Application.ExternalCall("startVoiceRecognition");
         }
 
-        private static void StopSpeechRecognitionInTheBrowser()
-        {
+        private static void StopSpeechRecognitionInTheBrowser() {
             Application.ExternalCall("stopVoiceRecognition");
         }
 

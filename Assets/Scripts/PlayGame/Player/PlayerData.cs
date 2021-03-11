@@ -111,9 +111,8 @@ namespace PlayGame.Player
             StatsManager.GameStats.resourcesHarvested += resources;
         }
 
-        public void RemoveResources()
-        {
-            _resources = 0;
+        public void RemoveResources(int amount) {
+            _resources -= amount;
         }
 
         public Role GetRole() {
