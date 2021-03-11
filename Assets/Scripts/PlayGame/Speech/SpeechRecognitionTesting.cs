@@ -28,6 +28,14 @@ namespace PlayGame.Speech {
                 speechRecognition.GetResponse("turn right");
             }
 
+            if (Input.GetKeyDown(KeyCode.U)) {
+                speechRecognition.GetResponse("move left");
+            }
+            
+            if (Input.GetKeyDown(KeyCode.I)) {
+                speechRecognition.GetResponse("move right");
+            }
+
             if (Input.GetKeyDown(KeyCode.Q)) { // Stop Moving and turning
                 speechRecognition.GetResponse("stop");
             }

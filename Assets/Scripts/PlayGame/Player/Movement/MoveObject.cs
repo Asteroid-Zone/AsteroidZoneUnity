@@ -173,7 +173,7 @@ namespace PlayGame.Player.Movement
         }
     
         public void SetDirection(Vector3 newDirection, bool rotate) {
-            rotating = false;
+            StopRotating();
             // Set the direction to be the new direction
             _direction = newDirection;
             

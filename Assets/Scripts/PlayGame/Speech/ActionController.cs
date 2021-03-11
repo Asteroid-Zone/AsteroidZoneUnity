@@ -66,14 +66,12 @@ namespace PlayGame.Speech {
 
         private void PerformMovementCommand(MovementCommand command) {
             if (!command.turnOnly) moveObject.SetSpeed(1); // Start moving if not a turn command
-            if (!DebugSettings.Debug && player.GetComponent<PhotonView>().IsMine) cameraFollow.turn = command.turn;
-            else if(DebugSettings.Debug) cameraFollow.turn = command.turn;
 
             switch (command.movementType) {
                 case MovementCommand.MovementType.Direction:
-                    if (command.turn == MovementCommand.TurnType.None) moveObject.SetDirection(command.direction, false);
-                    if (command.turn == MovementCommand.TurnType.Instant) moveObject.SetDirection(command.direction, true);
-                    if (command.turn == MovementCommand.TurnType.Smooth) moveObject.StartRotating(command.direction);
+                    if (command.turn == MovementCommand.TurnType.None) moveObject.SetDirection(command.direction, false); // Move without turning the player
+                    if (command.turn == MovementCommand.TurnType.Instant) moveObject.SetDirection(command.direction, true); // Move and player faces direction of movement
+                    if (command.turn == MovementCommand.TurnType.Smooth) moveObject.StartRotating(command.direction); // Rotate the player
                     break;
                 case MovementCommand.MovementType.Destination:
                     if (command.destinationType == MovementCommand.DestinationType.Ping) {
