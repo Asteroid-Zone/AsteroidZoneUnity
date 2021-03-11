@@ -24,7 +24,7 @@ namespace PlayGame.Speech.Commands {
             Smooth
         }
 
-        public static Transform player;
+        public readonly Transform player;
         
         public readonly MovementType movementType;
         public readonly Vector3 direction;
@@ -36,13 +36,14 @@ namespace PlayGame.Speech.Commands {
         public readonly bool turnOnly;
         public readonly TurnType turn;
 
-        public MovementCommand(MovementType movementType, string data, bool turnOnly, TurnType turn) : base(CommandType.Movement) {
+        public MovementCommand(MovementType movementType, string data, bool turnOnly, TurnType turn, Transform player) : base(CommandType.Movement) {
+            this.player = player;
             this.turnOnly = turnOnly;
             this.turn = turn;
             this.movementType = movementType;
             switch (movementType) {
                 case MovementType.Direction:
-                    direction = GetDirectionVectorFromString(data);
+                    direction = GetDirectionVectorFromString(data, player);
                     break;
                 case MovementType.Destination:
                     destinationType = GetDestinationTypeFromString(data);
@@ -55,7 +56,7 @@ namespace PlayGame.Speech.Commands {
             }
         }
 
-        public static Vector3 GetDirectionVectorFromString(string data) {
+        public static Vector3 GetDirectionVectorFromString(string data, Transform player) {
             switch (data) {
                 case Strings.North:
                     return Vector3.forward;

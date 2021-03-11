@@ -30,8 +30,6 @@ namespace PlayGame.Speech {
             StartSpeechRecognitionInTheBrowser();
             player = !DebugSettings.Debug ? PhotonPlayer.Instance.myAvatar : TestPlayer.GetPlayerShip();
 
-            MovementCommand.player = player.transform;
-
             _playerData = player.GetComponent<PlayerData>();
 
             _actionController = CreateActionController(player);
@@ -66,7 +64,7 @@ namespace PlayGame.Speech {
             if (!DebugSettings.Debug && !PhotonPlayer.Instance.photonView.IsMine) return;
 
             _myResponse = result.ToLower();
-            Command command = Grammar.GetCommand(_myResponse, _playerData);
+            Command command = Grammar.GetCommand(_myResponse, _playerData, player.transform);
 
             if (command.IsValid()) {
                 if (DebugSettings.Debug) _actionController.PerformActions(command);
@@ -83,19 +81,19 @@ namespace PlayGame.Speech {
         }
 
         [PunRPC]
-        public void RPC_PerformActions(int viewID, string _myResponse) {
+        public void RPC_PerformActions(int viewID, string phrase) {
             if (player == null) return;
-            GameObject prev_player = player;
+            GameObject prevPlayer = player;
             List<GameObject> playerList = player.GetComponent<PlayerData>().GetList();
-            foreach (GameObject _player in playerList) {
-                if (_player != null && viewID == _player.GetComponent<PhotonView>().ViewID) player = _player;
+            foreach (GameObject p in playerList) {
+                if (p != null && viewID == p.GetComponent<PhotonView>().ViewID) player = p;
             }
             
-            Command command = Grammar.GetCommand(_myResponse, player.GetComponent<PlayerData>());
+            Command command = Grammar.GetCommand(phrase, player.GetComponent<PlayerData>(), player.transform);
 
             _actionController = CreateActionController(player);
             _actionController.PerformActions(command);
-            player = prev_player;
+            player = prevPlayer;
         }
 
         private static void StartSpeechRecognitionInTheBrowser() {
