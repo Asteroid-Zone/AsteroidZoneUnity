@@ -11,9 +11,11 @@ using PlayGame.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace PlayGame.Speech {
-    public class SpeechRecognition : MonoBehaviourPun {
-        
+namespace PlayGame.Speech
+{
+    public class SpeechRecognition : MonoBehaviourPun
+    {
+
         public Text text;
         private string _myResponse = "...";
 
@@ -21,10 +23,11 @@ namespace PlayGame.Speech {
         public GameObject spaceStation;
         public GameObject ping;
         public GameObject cameraManager;
-        
+
         private ActionController _actionController;
 
-        private void Start() {
+        private void Start()
+        {
             StartSpeechRecognitionInTheBrowser();
             player = !DebugSettings.Debug ? PhotonPlayer.Instance.myAvatar : TestPlayer.GetPlayerShip();
 
@@ -33,8 +36,10 @@ namespace PlayGame.Speech {
             _actionController = CreateActionController(player);
         }
 
-        private ActionController CreateActionController(GameObject player) {
-            _actionController = new ActionController {
+        private ActionController CreateActionController(GameObject player)
+        {
+            _actionController = new ActionController
+            {
                 speechRecognition = this,
                 player = player,
                 spaceStationObject = spaceStation,
@@ -49,55 +54,66 @@ namespace PlayGame.Speech {
             return _actionController;
         }
 
-        private void Update() {
+        private void Update()
+        {
             text.text = _myResponse;
         }
 
-        private void OnDestroy() {
+        private void OnDestroy()
+        {
             StopSpeechRecognitionInTheBrowser();
         }
 
         // Called by javascript when speech is detected
-        public void GetResponse(string result) {
+        public void GetResponse(string result)
+        {
             if (!DebugSettings.Debug && !PhotonPlayer.Instance.photonView.IsMine) return;
-            
+
             _myResponse = result.ToLower();
             Command command = Grammar.GetCommand(_myResponse);
-            
-            if (command.IsValid()) {
-                if (DebugSettings.Debug) _actionController.PerformActions(command);
-                else photonView.RPC("RPC_PerformActions", RpcTarget.AllBuffered, player.GetComponent<PhotonView>().ViewID, _myResponse);
-            } else {
+
+            if (command.IsValid())
+            {
+                if (DebugSettings.Debug) _actionController.PerformActions(command, _actionController.playerData.GetResources());
+                else photonView.RPC("RPC_PerformActions", RpcTarget.AllBuffered, player.GetComponent<PhotonView>().ViewID, _myResponse, player.GetComponent<PlayerData>().GetResources());
+            }
+            else
+            {
                 DisplaySuggestedCommand(_myResponse);
             }
         }
 
-        private void DisplaySuggestedCommand(string phrase) {
+        private void DisplaySuggestedCommand(string phrase)
+        {
             string suggestedCommand = Grammar.GetSuggestedCommand(phrase);
             if (suggestedCommand.Equals(Strings.NoCommand)) EventsManager.AddMessage("'" + phrase + "' is an invalid command. We're not sure what you meant.");
             else EventsManager.AddMessage("'" + phrase + "' is an invalid command. Did you mean '" + suggestedCommand + "' ?");
         }
 
         [PunRPC]
-        public void RPC_PerformActions(int viewID, string _myResponse) {
+        public void RPC_PerformActions(int viewID, string _myResponse, int transfer_amount)
+        {
             if (player == null) return;
             GameObject prev_player = player;
             Command command = Grammar.GetCommand(_myResponse);
             List<GameObject> playerList = player.GetComponent<PlayerData>().GetList();
-            foreach (GameObject _player in playerList) {
+            foreach (GameObject _player in playerList)
+            {
                 if (_player != null && viewID == _player.GetComponent<PhotonView>().ViewID) player = _player;
             }
 
             _actionController = CreateActionController(player);
-            _actionController.PerformActions(command);
+            _actionController.PerformActions(command, transfer_amount);
             player = prev_player;
         }
 
-        private static void StartSpeechRecognitionInTheBrowser() {
+        private static void StartSpeechRecognitionInTheBrowser()
+        {
             Application.ExternalCall("startVoiceRecognition");
         }
-        
-        private static void StopSpeechRecognitionInTheBrowser() {
+
+        private static void StopSpeechRecognitionInTheBrowser()
+        {
             Application.ExternalCall("stopVoiceRecognition");
         }
 
