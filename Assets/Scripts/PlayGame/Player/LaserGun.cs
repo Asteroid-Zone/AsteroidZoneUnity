@@ -5,14 +5,19 @@ namespace PlayGame.Player {
 
         public GameObject laserPrefab;
         private PlayerData _playerData;
-
+        private AudioSource _laserSfx;
+        
         private int _lastFrameFired;
         private const int ShotDelay = 50; // Number of frames to wait between shooting
 
         private bool _shooting;
+        
 
         private void Start() {
             _playerData = GetComponent<PlayerData>();
+            
+            // 2nd child is SFX, 0th child is laser SFX
+            _laserSfx = gameObject.transform.GetChild(2).GetChild(0).GetComponent<AudioSource>();
         }
 
         private void Update() {
@@ -26,6 +31,7 @@ namespace PlayGame.Player {
             laser.transform.Rotate(new Vector3(90, 0, 0)); // Rotate the laser so its not facing up
             laser.GetComponent<Rigidbody>().AddForce(transform.forward * _playerData.GetLaserSpeed());
             _lastFrameFired = Time.frameCount;
+            _laserSfx.Play();
         }
 
         public void StartShooting() {
