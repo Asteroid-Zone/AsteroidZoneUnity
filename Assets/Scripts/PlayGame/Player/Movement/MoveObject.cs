@@ -10,7 +10,8 @@ namespace PlayGame.Player.Movement
 
         private Vector3 _direction;
         private Vector3 _destination = Vector3.positiveInfinity;
-        private Vector3 right;
+        private Vector3 rollDir;
+        private Vector3 barrelDir;
 
         private PlayerData _playerData;
         private NavMeshAgent _playerAgent;
@@ -24,9 +25,8 @@ namespace PlayGame.Player.Movement
 
         public bool rotating;
         private bool _turnRight; // false = turn left, true = turn right
-        private bool _BarellRoll;
-        //time float for evasive moves
-        private float t;
+        private bool _rollRight; // false = roll left, true = roll right
+
         // Needed to reference enemies in order to rotate towards them
         private GameObject _enemySpawner;
 
@@ -47,7 +47,6 @@ namespace PlayGame.Player.Movement
             _playerCollider = GetComponent<Collider>();
             _playerAgent = GetComponent<NavMeshAgent>();
 
-            t = 0f;
             UpdateRotation();
         }
 
@@ -73,11 +72,19 @@ namespace PlayGame.Player.Movement
             {
                 FaceTarget(_lockTarget);
             }
+            //Roll right
             if (Input.GetKeyDown(KeyCode.O))
             {
               if(rotating) rotating = false;
-              right = Vector3.right;
-              StartCoroutine(BarellRoll());
+              _rollRight = true;
+              StartCoroutine(BarrelRollControl());
+            }
+            //Roll left
+            if (Input.GetKeyDown(KeyCode.N))
+            {
+              if(rotating) rotating = false;
+              _rollRight = false;
+              StartCoroutine(BarrelRollControl());
             }
         }
 
@@ -230,17 +237,28 @@ namespace PlayGame.Player.Movement
         }
 
 
-        public IEnumerator BarellRoll()
+        public IEnumerator BarrelRollControl()
         {
           float rotation_smoothness = 100;
           float rotation_step = 360 / rotation_smoothness;
           float time_pause = 1 / rotation_smoothness;
+          if(_rollRight)
+          {
+            rollDir = Vector3.right;
+            barrelDir = Vector3.back;
+          }
+          else
+          {
+            rollDir = Vector3.left;
+            barrelDir = Vector3.forward;
+          }
           for( int rotate = 0; rotate < rotation_smoothness; rotate++)
           {
-            transform.Translate(right * (time_pause * _playerData.GetMaxSpeed() * 2.0f), Space.World);
-            transform.Rotate(Vector3.forward, rotation_step);
+            transform.Translate(rollDir * (time_pause * _playerData.GetMaxSpeed() * 2.0f), Space.World);
+            transform.Rotate(barrelDir, rotation_step);
             yield return new WaitForSeconds(time_pause);
           }
         }
+
     }
 }
