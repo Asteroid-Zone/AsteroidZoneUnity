@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 
 namespace PlayGame.SpaceStation {
-    public class StationModule
-    {
+    public class StationModule {
 
         public readonly string name;
         public readonly int maxHealth;

@@ -1,4 +1,5 @@
-﻿using PlayGame.Stats;
+﻿using System.Collections.Generic;
+using PlayGame.Stats;
 using PlayGame.UI;
 using Statics;
 using UnityEngine;
@@ -9,16 +10,19 @@ namespace PlayGame.SpaceStation {
         public GridManager gridManager;
         public GameManager gameManager;
         
-        private int _stationShields = 100;
         private bool _complete = false;
 
         private StationModule _selectedModule;
 
         private Hyperdrive _hyperdrive;
+        private ShieldGenerator _shieldGenerator;
     
         private void Start() {
             transform.position = gridManager.GetGridCentre();
+            
             _hyperdrive = new Hyperdrive();
+            _shieldGenerator = new ShieldGenerator();
+            
             _selectedModule = _hyperdrive;
         }
 
@@ -33,6 +37,8 @@ namespace PlayGame.SpaceStation {
                     _complete = true;
                 }
             }
+            
+            _shieldGenerator.Update();
         }
 
         public void AddResources(int resources) {
