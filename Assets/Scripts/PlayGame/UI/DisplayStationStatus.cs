@@ -18,7 +18,7 @@ namespace PlayGame.UI {
         private void Update() {
             string text = "Station Modules\n";
             foreach (StationModule module in _spaceStation.GetModules()) {
-                text += module.name + ": " + module.moduleHealth + "/" + module.maxHealth + "\n";
+                text += module + "\n";
             }
             _text.text = text;
         }
