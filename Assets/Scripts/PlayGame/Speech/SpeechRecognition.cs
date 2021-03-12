@@ -45,7 +45,7 @@ namespace PlayGame.Speech {
                 laserGun = playerObject.GetComponent<LaserGun>(),
                 playerData = playerObject.GetComponent<PlayerData>(),
                 pingManager = ping.GetComponent<PingManager>(),
-                spaceStation = spaceStation.GetComponent<SpaceStation>(),
+                spaceStation = spaceStation.GetComponent<SpaceStation.SpaceStation>(),
                 cameraFollow = cameraManager.GetComponent<CameraManager>().followCamera.GetComponent<CameraFollow>()
             };
             return _actionController;

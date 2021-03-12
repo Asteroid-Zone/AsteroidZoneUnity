@@ -2,9 +2,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace PlayGame.UI
-{
-    public class DisplayStationHealth : MonoBehaviour {
+namespace PlayGame.UI {
+    public class DisplayStationStatus : MonoBehaviour {
     
         public GameObject spaceStation;
 
@@ -17,8 +16,11 @@ namespace PlayGame.UI
         }
 
         private void Update() {
-            StationModule module = _spaceStation.GetStationHull();
-            _text.text = module.name + " Health: " + module.moduleHealth + "/" + module.maxHealth;
+            string text = "Station Modules\n";
+            foreach (StationModule module in _spaceStation.GetModules()) {
+                text += module.name + ": " + module.moduleHealth + "/" + module.maxHealth + "\n";
+            }
+            _text.text = text;
         }
     }
 }

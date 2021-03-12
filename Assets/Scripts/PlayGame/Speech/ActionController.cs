@@ -22,7 +22,7 @@ namespace PlayGame.Speech {
         public MiningLaser miningLaser;
         public LaserGun laserGun;
         public PlayerData playerData;
-        public SpaceStation spaceStation;
+        public SpaceStation.SpaceStation spaceStation;
 
         public GameObject ping;
         public PingManager pingManager;

@@ -1,6 +1,8 @@
 ﻿namespace PlayGame.Stats {
     public class GameStats {
 
+        public bool victory;
+        
         public float startTime;
         public float endTime;
         
