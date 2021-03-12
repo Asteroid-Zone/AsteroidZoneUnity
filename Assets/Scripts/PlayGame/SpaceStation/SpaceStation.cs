@@ -1,4 +1,5 @@
-﻿using PlayGame.Stats;
+﻿using System.Collections.Generic;
+using PlayGame.Stats;
 using PlayGame.UI;
 using Statics;
 using UnityEngine;
@@ -11,7 +12,10 @@ namespace PlayGame.SpaceStation {
         
         private bool _complete = false;
 
+        // todo select modules
         private StationModule _selectedModule;
+
+        private readonly List<StationModule> _stationModules = new List<StationModule>();
 
         private Hyperdrive _hyperdrive;
         private ShieldGenerator _shieldGenerator;
@@ -25,7 +29,11 @@ namespace PlayGame.SpaceStation {
             _shieldGenerator = new ShieldGenerator();
             _stationHull = new StationHull(this);
             
-            _selectedModule = _stationHull;
+            _stationModules.Add(_hyperdrive);
+            _stationModules.Add(_shieldGenerator);
+            _stationModules.Add(_stationHull);
+            
+            _selectedModule = _hyperdrive;
         }
 
         private void Update() {
@@ -57,8 +65,13 @@ namespace PlayGame.SpaceStation {
 
         public void TakeDamage(int damage) {
             int damageRemaining = _shieldGenerator.AbsorbDamage(damage); // Shields take as much of the damage as they can
+
+            // Random module takes a random amount of damage
+            int moduleDamage = Random.Range(0, damageRemaining);
+            _stationModules[Random.Range(0, _stationModules.Count)].TakeDamage(moduleDamage);
+            damageRemaining -= moduleDamage;
+            
             _stationHull.TakeDamage(damageRemaining); // Hull takes the rest of the damage
-            // todo random module damage
         }
 
         public StationModule GetSelectedModule() {
