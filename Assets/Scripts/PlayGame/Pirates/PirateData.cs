@@ -65,8 +65,7 @@ namespace PlayGame.Pirates
             SetHealthBar();
         }
 
-        public int GetLaserDamage()
-        {
+        public int GetLaserDamage() {
             // Make the amount of damage vary a bit
             return _laserDamage + Random.Range(-LaserDamageRange, LaserDamageRange + 1);
         }

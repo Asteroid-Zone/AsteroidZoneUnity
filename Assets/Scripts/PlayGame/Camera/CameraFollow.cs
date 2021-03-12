@@ -3,10 +3,8 @@ using PlayGame.Player;
 using Statics;
 using UnityEngine;
 
-namespace PlayGame.Camera
-{
-    public class CameraFollow : MonoBehaviour
-    {
+namespace PlayGame.Camera {
+    public class CameraFollow : MonoBehaviour {
         public Transform target;
 
         // Distance from the target

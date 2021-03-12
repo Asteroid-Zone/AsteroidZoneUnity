@@ -12,6 +12,8 @@ namespace EndGame {
     
         public AudioSource buttonPress;
 
+        public Text winText;
+
         public Text playerName;
         public Text playerResourcesHarvested;
         public Text playerAsteroidsDestroyed;
@@ -25,6 +27,8 @@ namespace EndGame {
         private PlayerStats _playerStats;
         
         private void Start() {
+            winText.text = StatsManager.GameStats.victory ? "You Win!" : "You lose!";
+            
             _playerStats = StatsManager.GetPlayerStats(PhotonNetwork.NickName);
             playerName.text += _playerStats.playerName;
             playerResourcesHarvested.text += _playerStats.resourcesHarvested;
