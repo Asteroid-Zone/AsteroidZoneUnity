@@ -74,9 +74,12 @@ namespace PlayGame.SpaceStation {
             _stationHull.TakeDamage(damageRemaining); // Hull takes the rest of the damage
         }
 
-        public StationModule GetSelectedModule() {
-            return _selectedModule;
+        public StationModule GetStationHull() {
+            return _stationHull;
         }
 
+        public List<StationModule> GetModules() {
+            return _stationModules;
+        }
     }
 }

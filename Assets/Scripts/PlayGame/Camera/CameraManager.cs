@@ -5,23 +5,33 @@ namespace PlayGame.Camera
     public class CameraManager : MonoBehaviour
     {
         public UnityEngine.Camera followCamera, tacticalCamera;
+        
+        public GameObject playerPanel;
+        public GameObject tacticalPanel;
 
-        private void Start()
-        {
-            followCamera.enabled = true;
-            tacticalCamera.enabled = false;
+        private bool _cockpitMode;
+        
+        private void Start() {
+            SetMode(true);
         }
 
-        private void Update()
-        {
+        private void Update() {
             if (!Input.GetKeyDown(KeyCode.P)) return;
-            followCamera.enabled = !followCamera.enabled;
-            tacticalCamera.enabled = !tacticalCamera.enabled;
+            SetMode(!_cockpitMode); // Switch mode
         }
 
-        public UnityEngine.Camera GetCurrentCamera()
-        {
-            return (followCamera.enabled) ? followCamera : tacticalCamera;
+        private void SetMode(bool cockpit) {
+            _cockpitMode = cockpit;
+            
+            followCamera.enabled = cockpit;
+            tacticalCamera.enabled = !cockpit;
+            
+            playerPanel.SetActive(cockpit);
+            tacticalPanel.SetActive(!cockpit);
+        }
+
+        public UnityEngine.Camera GetCurrentCamera() {
+            return (_cockpitMode) ? followCamera : tacticalCamera;
         }
     }
 }

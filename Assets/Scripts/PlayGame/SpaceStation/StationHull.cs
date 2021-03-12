@@ -5,7 +5,7 @@
 
         private readonly SpaceStation _spaceStation;
         
-        public StationHull(SpaceStation station) : base("Hull", MaxHealth) {
+        public StationHull(SpaceStation station) : base("Station Hull", MaxHealth) {
             _spaceStation = station;
             moduleHealth += MaxHealth / 2; // Increase the minimum starting health to half
         }
