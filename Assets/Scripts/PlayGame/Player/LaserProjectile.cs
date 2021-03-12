@@ -32,6 +32,12 @@ namespace PlayGame.Player {
                 Asteroid asteroid = collision.gameObject.GetComponent<Asteroid>();
                 asteroid.MineAsteroid(MiningRate, _shootingPlayerData);
             }
+            
+            // todo remove this (used for testing)
+            if (collision.gameObject.CompareTag(Tags.StationTag)) {
+                SpaceStation.SpaceStation station = collision.gameObject.GetComponent<SpaceStation.SpaceStation>();
+                station.TakeDamage(_shootingPlayerData.GetLaserDamage());
+            }
 
             Destroy(gameObject);
         }

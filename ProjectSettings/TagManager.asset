@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Asteroid
   - Pirate
+  - Station
   layers:
   - Default
   - TransparentFX

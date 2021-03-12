@@ -30,6 +30,13 @@ namespace PlayGame.SpaceStation {
             _shields += _rechargeRate; // Charge the shields
             if (_shields > _maxShields) _shields = _maxShields;
         }
-        
+
+        // Shields take as much of the damage as they can, return the rest of the damage
+        public int AbsorbDamage(int damage) {
+            _shields -= damage;
+            if (_shields < 0) return _shields * -1;
+            return 0;
+        }
+
     }
 }

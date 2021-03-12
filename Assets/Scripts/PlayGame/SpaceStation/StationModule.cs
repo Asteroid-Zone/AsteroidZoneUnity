@@ -22,6 +22,11 @@ namespace PlayGame.SpaceStation {
         public bool isFunctional() {
             return moduleHealth >= maxHealth;
         }
-        
+
+        public virtual void TakeDamage(int damage) {
+            moduleHealth -= damage;
+            if (moduleHealth < 0) moduleHealth = 0;
+        }
+
     }
 }
