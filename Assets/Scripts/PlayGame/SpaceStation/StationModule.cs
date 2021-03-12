@@ -28,5 +28,8 @@ namespace PlayGame.SpaceStation {
             if (moduleHealth < 0) moduleHealth = 0;
         }
 
+        public override string ToString() {
+            return name + ": " + moduleHealth + "/" + maxHealth;
+        }
     }
 }

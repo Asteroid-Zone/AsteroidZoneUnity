@@ -8,13 +8,12 @@ namespace PlayGame.UI
         // Store the VolumePref Key to avoid typos
         private const string VolumePrefKey = "VolumePreference";
         
-        public GameObject backgroundAudio;
         public Slider volumeSlider;
         private AudioSource _audioSource;
         
         private void Start()
         {
-            _audioSource = backgroundAudio.GetComponent<AudioSource>();
+            _audioSource = GetComponent<AudioSource>();
 
             // Get the volume from the prefs
             if (PlayerPrefs.HasKey(VolumePrefKey))
