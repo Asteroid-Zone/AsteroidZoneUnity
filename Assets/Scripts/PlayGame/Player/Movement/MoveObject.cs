@@ -65,6 +65,7 @@ namespace PlayGame.Player.Movement
 
             if (_lockTarget)
             {
+                
                 FaceTarget(_lockTarget);
             }
         }
@@ -215,6 +216,11 @@ namespace PlayGame.Player.Movement
         public void SetLockTarget(Transform lockTarget)
         {
             _lockTarget = lockTarget;
+        }
+        
+        public Transform GetLockTarget()
+        {
+            return _lockTarget;
         }
     }
 }
