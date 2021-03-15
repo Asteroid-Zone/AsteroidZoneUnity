@@ -16,7 +16,9 @@ namespace PlayGame.UI {
         }
 
         private void Update() {
-            string text = "Station Modules\n";
+            string text = "Station Resources: " + _spaceStation.resources + "\n";
+
+            text += "Station Modules\n";
             foreach (StationModule module in _spaceStation.GetModules()) {
                 text += module + "\n";
             }

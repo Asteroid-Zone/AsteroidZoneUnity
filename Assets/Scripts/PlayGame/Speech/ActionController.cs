@@ -24,10 +24,7 @@ namespace PlayGame.Speech {
         public PlayerData playerData;
         public SpaceStation.SpaceStation spaceStation;
 
-        public GameObject ping;
         public PingManager pingManager;
-
-        public CameraFollow cameraFollow;
 
         public void PerformActions(Command command) {
             if (playerData.GetRole() != Role.StationCommander && command.IsCommanderOnly()) return; // Prevent players from performing station commander commands
@@ -48,9 +45,20 @@ namespace PlayGame.Speech {
                 case Command.CommandType.Speed:
                     PerformSpeedCommand((SpeedCommand) command);
                     break;
+                case Command.CommandType.Repair:
+                    PerformRepairCommand((RepairCommand) command);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        private void PerformRepairCommand(RepairCommand command) {
+            int repairAmount;
+            if (command.repairAmount != null) repairAmount = (int) command.repairAmount;
+            else repairAmount = spaceStation.resources; // If no repair amount is given repair the module as much as possible
+            
+            spaceStation.GetModule(command.stationModule).Repair(repairAmount);
         }
 
         private Transform GetDestination(MovementCommand command) {

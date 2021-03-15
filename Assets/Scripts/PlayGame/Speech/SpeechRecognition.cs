@@ -20,7 +20,6 @@ namespace PlayGame.Speech {
         public GameObject player;
         public GameObject spaceStation;
         public GameObject ping;
-        public GameObject cameraManager;
 
         private PlayerData _playerData;
 
@@ -46,7 +45,6 @@ namespace PlayGame.Speech {
                 playerData = playerObject.GetComponent<PlayerData>(),
                 pingManager = ping.GetComponent<PingManager>(),
                 spaceStation = spaceStation.GetComponent<SpaceStation.SpaceStation>(),
-                cameraFollow = cameraManager.GetComponent<CameraManager>().followCamera.GetComponent<CameraFollow>()
             };
             return _actionController;
         }

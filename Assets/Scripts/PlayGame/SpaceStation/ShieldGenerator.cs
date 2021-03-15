@@ -10,12 +10,12 @@ namespace PlayGame.SpaceStation {
         private int _rechargeRate = 1; // Amount the shields recharge per second
         private float _timeSinceLastCharge = 1; // Seconds since last charge
 
-        public ShieldGenerator() : base("Shield Generator", MaxHealth) {
+        public ShieldGenerator(SpaceStation station) : base("Shield Generator", MaxHealth, station) {
             
         }
         
         public void Update() {
-            if (!isFunctional()) return;
+            if (!IsFunctional()) return;
             
             // Only charge the shields every second
             if (_timeSinceLastCharge >= 1) {
