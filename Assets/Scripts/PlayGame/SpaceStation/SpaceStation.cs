@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using PlayGame.Speech.Commands;
 using PlayGame.Stats;
 using PlayGame.UI;
 using Statics;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace PlayGame.SpaceStation {
     public class SpaceStation : MonoBehaviour {
@@ -12,9 +15,6 @@ namespace PlayGame.SpaceStation {
         
         private bool _complete = false;
 
-        // todo select modules
-        private StationModule _selectedModule;
-
         private readonly List<StationModule> _stationModules = new List<StationModule>();
 
         private Hyperdrive _hyperdrive;
@@ -22,31 +22,28 @@ namespace PlayGame.SpaceStation {
         private StationHull _stationHull;
         // todo add turrets
 
+        public int resources = 0;
+
         private void Start() {
             transform.position = gridManager.GetGridCentre();
             
-            _hyperdrive = new Hyperdrive();
-            _shieldGenerator = new ShieldGenerator();
+            _hyperdrive = new Hyperdrive(this);
+            _shieldGenerator = new ShieldGenerator(this);
             _stationHull = new StationHull(this);
             
             _stationModules.Add(_hyperdrive);
             _stationModules.Add(_shieldGenerator);
             _stationModules.Add(_stationHull);
-            
-            _selectedModule = _hyperdrive;
         }
 
         private void Update() {
-            if (_hyperdrive.isFunctional()) {
-                GameOver(true);
-            }
-            
             _shieldGenerator.Update();
         }
 
         public void GameOver(bool victory) {
             // Ensures LeaveRoom is only called once
             if (!_complete) {
+                // todo play animation (station exploding/hyperdrive activating)
                 string eventMessage = "Game over";
                 if (victory) eventMessage = "Game completed";
                 EventsManager.AddMessage(eventMessage);
@@ -59,8 +56,7 @@ namespace PlayGame.SpaceStation {
         }
 
         public void AddResources(int resources) {
-            _selectedModule.Repair(resources);
-            EventsManager.AddMessage(_selectedModule.name + " repaired (" + _selectedModule.moduleHealth + "/" + _selectedModule.maxHealth + ")");
+            this.resources += resources;
         }
 
         public void TakeDamage(int damage) {
@@ -77,9 +73,27 @@ namespace PlayGame.SpaceStation {
         public StationModule GetStationHull() {
             return _stationHull;
         }
+        
+        public Hyperdrive GetHyperdrive() {
+            return _hyperdrive;
+        }
 
         public List<StationModule> GetModules() {
             return _stationModules;
         }
+
+        public StationModule GetModule(RepairCommand.StationModule module) {
+            switch (module) {
+                case RepairCommand.StationModule.Hyperdrive:
+                    return _hyperdrive;
+                case RepairCommand.StationModule.Hull:
+                    return _stationHull;
+                case RepairCommand.StationModule.ShieldGenerator:
+                    return _shieldGenerator;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(module), module, null);
+            }
+        }
+
     }
 }

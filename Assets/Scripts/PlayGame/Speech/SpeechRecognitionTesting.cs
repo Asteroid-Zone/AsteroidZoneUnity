@@ -11,6 +11,10 @@ namespace PlayGame.Speech {
             TestSuggestedCommands();
         }
         
+        // Used letters:
+        // Q W E R T Y U I
+        // A S D F G H J K L
+        // Z X C V B M
         void Update() {
             if (Input.GetKeyDown(KeyCode.W)) { // Move forward
                 speechRecognition.GetResponse("move forward");
@@ -94,6 +98,14 @@ namespace PlayGame.Speech {
             
             if (Input.GetKeyDown(KeyCode.M)) {
                 speechRecognition.GetResponse("disengage lock on");
+            }
+            
+            if (Input.GetKeyDown(KeyCode.B)) {
+                speechRecognition.GetResponse("activate hyperdrive");
+            }
+            
+            if (Input.GetKeyDown(KeyCode.V)) {
+                speechRecognition.GetResponse("repair hyperdrive");
             }
         }
 

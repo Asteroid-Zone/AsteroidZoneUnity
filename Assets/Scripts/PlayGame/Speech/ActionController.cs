@@ -7,14 +7,11 @@ using PlayGame.Player;
 using PlayGame.Player.Movement;
 using PlayGame.Speech.Commands;
 using PlayGame.UI;
-using Statics;
 using UnityEngine;
 using Ping = PlayGame.Pings.Ping;
 
 namespace PlayGame.Speech {
     public class ActionController {
-
-        public SpeechRecognition speechRecognition;
 
         public GameObject player;
         public GameObject spaceStationObject;
@@ -24,12 +21,11 @@ namespace PlayGame.Speech {
         public PlayerData playerData;
         public SpaceStation.SpaceStation spaceStation;
 
-        public GameObject ping;
         public PingManager pingManager;
 
-        public CameraFollow cameraFollow;
-
         public void PerformActions(Command command) {
+            if (playerData.GetRole() != Role.StationCommander && command.IsCommanderOnly()) return; // Prevent players from performing station commander commands
+            
             switch (command.GetCommandType()) {
                 case Command.CommandType.Movement:
                     PerformMovementCommand((MovementCommand) command);
@@ -46,9 +42,20 @@ namespace PlayGame.Speech {
                 case Command.CommandType.Speed:
                     PerformSpeedCommand((SpeedCommand) command);
                     break;
+                case Command.CommandType.Repair:
+                    PerformRepairCommand((RepairCommand) command);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        private void PerformRepairCommand(RepairCommand command) {
+            int repairAmount;
+            if (command.repairAmount != null) repairAmount = (int) command.repairAmount;
+            else repairAmount = spaceStation.resources; // If no repair amount is given repair the module as much as possible
+            
+            spaceStation.GetModule(command.stationModule).Repair(repairAmount);
         }
 
         private Transform GetDestination(MovementCommand command) {
@@ -106,8 +113,6 @@ namespace PlayGame.Speech {
         }
 
         private void PerformPingCommand(PingCommand command) {
-            if (playerData.GetRole() != Role.StationCommander) return; // Only let the station commander create pings
-
             Ping newPing = new Ping(command.gridCoord, command.pingType);
             pingManager.AddPing(newPing);
         }
@@ -134,6 +139,9 @@ namespace PlayGame.Speech {
                 case ToggleCommand.ObjectType.LaserGun:
                     if (command.on) laserGun.StartShooting();
                     else laserGun.StopShooting();
+                    break;
+                case ToggleCommand.ObjectType.Hyperdrive:
+                    if (command.on) spaceStation.GetHyperdrive().Activate(); // Once activated the game will finish so it cannot be deactivated
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

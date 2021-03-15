@@ -6,7 +6,6 @@ using Statics;
 using System.Collections.Generic;
 using Photon.GameControllers;
 using Photon.Pun;
-using PlayGame.Camera;
 using PlayGame.UI;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,7 +19,6 @@ namespace PlayGame.Speech {
         public GameObject player;
         public GameObject spaceStation;
         public GameObject ping;
-        public GameObject cameraManager;
 
         private PlayerData _playerData;
 
@@ -37,7 +35,6 @@ namespace PlayGame.Speech {
 
         private ActionController CreateActionController(GameObject playerObject) {
             _actionController = new ActionController {
-                speechRecognition = this,
                 player = playerObject,
                 spaceStationObject = spaceStation,
                 moveObject = playerObject.GetComponent<MoveObject>(),
@@ -46,7 +43,6 @@ namespace PlayGame.Speech {
                 playerData = playerObject.GetComponent<PlayerData>(),
                 pingManager = ping.GetComponent<PingManager>(),
                 spaceStation = spaceStation.GetComponent<SpaceStation.SpaceStation>(),
-                cameraFollow = cameraManager.GetComponent<CameraManager>().followCamera.GetComponent<CameraFollow>()
             };
             return _actionController;
         }

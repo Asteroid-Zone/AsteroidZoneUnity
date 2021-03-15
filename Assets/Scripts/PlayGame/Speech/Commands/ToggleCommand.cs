@@ -7,7 +7,8 @@ namespace PlayGame.Speech.Commands {
         public enum ObjectType {
             MiningLaser,
             Lock,
-            LaserGun
+            LaserGun,
+            Hyperdrive
         }
 
         public enum LockTargetType {
@@ -19,12 +20,12 @@ namespace PlayGame.Speech.Commands {
         public readonly ObjectType objectType;
         public readonly LockTargetType lockTargetType;
 
-        public ToggleCommand(bool on, ObjectType objectType) : base(CommandType.Toggle) {
+        public ToggleCommand(bool on, ObjectType objectType) : base(CommandType.Toggle, objectType == ObjectType.Hyperdrive) {
             this.on = on;
             this.objectType = objectType;
         }
         
-        public ToggleCommand(bool on, ObjectType objectType, string lockTargetType) : base(CommandType.Toggle) {
+        public ToggleCommand(bool on, ObjectType objectType, string lockTargetType) : base(CommandType.Toggle, false) {
             this.on = on;
             this.objectType = objectType;
             if (on) this.lockTargetType = GetLockTargetTypeFromString(lockTargetType);

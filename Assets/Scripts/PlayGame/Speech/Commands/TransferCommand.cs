@@ -3,7 +3,7 @@
 
         public readonly int transferAmount;
 
-        public TransferCommand(int transferAmount) : base(CommandType.Transfer) {
+        public TransferCommand(int transferAmount) : base(CommandType.Transfer, false) {
             this.transferAmount = transferAmount;
         }
         

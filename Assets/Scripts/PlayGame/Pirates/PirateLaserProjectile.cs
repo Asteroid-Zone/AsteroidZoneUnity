@@ -4,8 +4,7 @@ using UnityEngine;
 
 namespace PlayGame.Pirates {
 
-    public class PirateLaserProjectile : MonoBehaviour
-    {
+    public class PirateLaserProjectile : MonoBehaviour {
         
         private const int MiningRate = 4; // Amount of resources gathered every mining tick
         private const int MaxRange = 10;
@@ -24,7 +23,9 @@ namespace PlayGame.Pirates {
 
         private void OnCollisionEnter(Collision collision) {
             if (collision.gameObject.CompareTag(Tags.PirateTag)) return;
-
+            
+            // todo play animation (explosion)
+            
             if (collision.gameObject.CompareTag(Tags.PlayerTag)) {
                 PlayerData playerData = collision.gameObject.GetComponent<PlayerData>();
                 playerData.TakeDamage(_shootingPirateData.GetLaserDamage());
