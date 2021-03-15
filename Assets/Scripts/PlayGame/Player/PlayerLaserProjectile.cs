@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace PlayGame.Player {
   
-    public class LaserProjectile : MonoBehaviour {
+    public class PlayerLaserProjectile : MonoBehaviour {
         
         private const int MiningRate = 4; // Amount of resources gathered every mining tick
         private const int MaxRange = 20;
@@ -22,6 +22,8 @@ namespace PlayGame.Player {
 
         private void OnCollisionEnter(Collision collision) {
             if (collision.gameObject == _shootingPlayerData.gameObject) return;
+            
+            // todo play animation (explosion)
 
             if (collision.gameObject.CompareTag(Tags.PirateTag)) {
                 PirateData pirateData = collision.gameObject.GetComponent<PirateData>();
@@ -42,8 +44,7 @@ namespace PlayGame.Player {
             Destroy(gameObject);
         }
 
-        public void SetShootingPlayerData(PlayerData shootingPlayerData)
-        {
+        public void SetShootingPlayerData(PlayerData shootingPlayerData) {
             _shootingPlayerData = shootingPlayerData;
         }
     }

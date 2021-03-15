@@ -22,16 +22,14 @@ namespace PlayGame.SpaceStation {
             
             moduleHealth += repairAmount;
             spaceStation.resources -= repairAmount;
-
-            //if (moduleHealth > maxHealth) moduleHealth = maxHealth;
         }
 
         // Returns the repair amount, minimum of station resources, remaining health to repair and the amount chosen by the player
         private int GetRepairAmount(int resources) {
             return Math.Min(Math.Min(maxHealth - moduleHealth, spaceStation.resources), resources);
         }
-        
-        public bool IsFunctional() {
+
+        protected bool IsFunctional() {
             return moduleHealth >= maxHealth;
         }
 

@@ -7,14 +7,11 @@ using PlayGame.Player;
 using PlayGame.Player.Movement;
 using PlayGame.Speech.Commands;
 using PlayGame.UI;
-using Statics;
 using UnityEngine;
 using Ping = PlayGame.Pings.Ping;
 
 namespace PlayGame.Speech {
     public class ActionController {
-
-        public SpeechRecognition speechRecognition;
 
         public GameObject player;
         public GameObject spaceStationObject;

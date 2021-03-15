@@ -43,6 +43,7 @@ namespace PlayGame.SpaceStation {
         public void GameOver(bool victory) {
             // Ensures LeaveRoom is only called once
             if (!_complete) {
+                // todo play animation (station exploding/hyperdrive activating)
                 string eventMessage = "Game over";
                 if (victory) eventMessage = "Game completed";
                 EventsManager.AddMessage(eventMessage);
