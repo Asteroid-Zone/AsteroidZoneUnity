@@ -164,7 +164,9 @@ namespace PlayGame.Speech {
                 c += " (station module)";
             }
 
-            commands.Add(new Tuple<string, float>(c, completeness)); // Command without repair amount
+            // Command without repair amount
+            if (dataProvided.stationModule == Strings.Hull) commands.Add(new Tuple<string, float>(c, 1)); // Hull is only used for repair command so if its included assume they mean repair
+            else commands.Add(new Tuple<string, float>(c, completeness)); 
             
             // Repair amount
             int? repairAmount = GetNumber(phrase);
@@ -175,7 +177,9 @@ namespace PlayGame.Speech {
                 c += " (repair amount)";
             }
 
-            commands.Add(new Tuple<string, float>(c, completenessAmount)); // Command with repair amount
+            // Command with repair amount
+            if (dataProvided.stationModule != null && repairAmount != null) commands.Add(new Tuple<string, float>(c, 1)); // If they have both number and module they must be trying to repair
+            else commands.Add(new Tuple<string, float>(c, completenessAmount));
 
             return commands;
         }
@@ -230,12 +234,14 @@ namespace PlayGame.Speech {
             
             // Laser
             if (dataProvided.activatableObject != null) {
+                // If they have tried to use a laser/mining laser they must be trying to turn it on/off
+                // We assume they want to turn it on because nothing bad can happen by not being able to stop them but they could die if they cant shoot
                 if (MiningLaser.Contains(dataProvided.activatableObject)) {
-                    commands.Add(new Tuple<string, float>(c + " " + dataProvided.activatableObject, completeness + 0.5f));
+                    commands.Add(new Tuple<string, float>(c + " " + dataProvided.activatableObject, 0.9f));
                 }
                 
                 if (LaserGun.Contains(dataProvided.activatableObject)) {
-                    commands.Add(new Tuple<string, float>(c + " " + dataProvided.activatableObject, completeness + 0.5f));
+                    commands.Add(new Tuple<string, float>(c + " " + dataProvided.activatableObject, 0.9f));
                 }
             } else {
                 if (completeness != 0) {
@@ -325,7 +331,7 @@ namespace PlayGame.Speech {
             // Add the command word they used or the default transfer command if one isn't found
             foreach (string command in TransferCommands) {
                 if (phrase.Contains(command)) {
-                    completeness = 0.5f;
+                    completeness = 1f;
                     c = command;
                 }
             }
@@ -333,12 +339,13 @@ namespace PlayGame.Speech {
             
             // Resource
             if (dataProvided.resource != null) {
-                completeness += 0.5f;
+                completeness = 1f;
                 c += " " + dataProvided.resource;
             } else {
                 c += " " + Resources[0];
             }
 
+            // If either the transfer command or resources is in the phrase we know they are trying to transfer resources
             return new Tuple<string, float>(c, completeness);
         }
 
@@ -373,7 +380,9 @@ namespace PlayGame.Speech {
             } else {
                 c += " (grid coord)";
             }
-
+            
+            // If command has ping type and grid coord it must be a ping command
+            if (dataProvided.pingType != null && dataProvided.grid != null) return new Tuple<string, float>(c, 1);
             return new Tuple<string, float>(c, completeness);
         }
 
@@ -393,7 +402,9 @@ namespace PlayGame.Speech {
             if (c == "") c = commandList[0];
 
             if (dataProvided.direction != null) {
-                commands.Add(new Tuple<string, float>(c + " " + dataProvided.direction, completeness + 0.5f));
+                // If forward we know its a movement command
+                if (dataProvided.direction == Strings.Forward) commands.Add(new Tuple<string, float>("move forward", 1));
+                else commands.Add(new Tuple<string, float>(c + " " + dataProvided.direction, completeness + 0.5f));
             } else {
                 if (completeness != 0) commands.Add(new Tuple<string, float>(c + " (direction)", completeness));
             }
