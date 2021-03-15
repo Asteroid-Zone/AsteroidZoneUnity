@@ -27,9 +27,14 @@ namespace PlayGame
                     var position = new Vector3(startX + (x * CellSize), 0, startY + (y * CellSize));
                     var newGridSquare = Instantiate(gridSquarePrefab, position, Quaternion.identity);
                     newGridSquare.transform.parent = gameObject.transform;
-                    newGridSquare.transform.GetChild(0).GetChild(0).GetComponent<Text>().text = $"({x}, {y})";
+                    newGridSquare.transform.GetChild(0).GetChild(0).GetComponent<Text>().text = $"({NumberToLetterCoord(x)}, {y})";
                 }
             }
+        }
+
+        private static char NumberToLetterCoord(int numCoord)
+        {
+            return (char) (numCoord + 65);
         }
 
         public int GetCellSize()
