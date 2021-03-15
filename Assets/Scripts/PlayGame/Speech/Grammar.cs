@@ -18,6 +18,7 @@ namespace PlayGame.Speech {
             public string resource;
             public string activatableObject;
             public string lockTarget;
+            public string stationModule;
         }
         
         private const string GridCoordRegex = @"[a-z]( )?(\d+)";
@@ -36,6 +37,7 @@ namespace PlayGame.Speech {
         //private static readonly List<string> OnCommands = new List<string>{GenericOnCommands, LockCommands, ShootCommands};
         private static readonly List<string> OnCommands = new List<string>(); // Is initialised to the above line at startup
         private static readonly List<string> OffCommands = new List<string>{"deactivate", "disengage", "turn off", "stop"};
+        private static readonly List<string> RepairCommands = new List<string>{"repair", "fix"};
 
         // Lists containing synonyms for objects
         private static readonly List<string> Pirate = new List<string>{Strings.Pirate, "enemy"};
@@ -45,7 +47,10 @@ namespace PlayGame.Speech {
         private static readonly List<string> Ping = new List<string>{Strings.Ping, "pin", "mark"};
         private static readonly List<string> Resources = new List<string>{Strings.Resources, "materials"};
         private static readonly List<string> LaserGun = new List<string> {Strings.LaserGun, "gun", "shoot"};
-        private static readonly List<string> Hyperdrive = new List<string> {Strings.Hyperdrive, "warp drive", "hyper drive", "lightspeed"};
+        
+        private static readonly List<string> Hyperdrive = new List<string> {Strings.Hyperdrive, "warp drive", "hyper drive"};
+        private static readonly List<string> Hull = new List<string> {Strings.Hull};
+        private static readonly List<string> ShieldGenerator = new List<string> {Strings.ShieldGenerator, "shield"};
         
         private static readonly List<string> CompassDirections = new List<string>{Strings.North, Strings.East, Strings.South, Strings.West};
         private static readonly List<string> RelativeDirections = new List<string>{Strings.Forward, Strings.Back, Strings.Left, Strings.Right};
@@ -56,9 +61,10 @@ namespace PlayGame.Speech {
         private static readonly List<List<string>> LockTargets = new List<List<string>>{Pirate, Asteroid};
         private static readonly List<List<string>> Activatable = new List<List<string>>{MiningLaser, LockCommands, LaserGun, Hyperdrive};
         private static readonly List<List<string>> GenericActivatableObjects = new List<List<string>>{Hyperdrive}; // Objects that are only activated using the generic on commands and don't need any extra data
+        private static readonly List<List<string>> StationModules = new List<List<string>>{Hyperdrive, Hull, ShieldGenerator};
         
         private static readonly List<List<string>> SingleCommands = new List<List<string>>{SpeedCommands, ShootCommands};
-        private static readonly List<List<string>> CompoundCommands = new List<List<string>>{MovementCommands, TurnCommands, Ping, TransferCommands, OffCommands, OnCommands};
+        private static readonly List<List<string>> CompoundCommands = new List<List<string>>{MovementCommands, TurnCommands, Ping, TransferCommands, OffCommands, OnCommands, RepairCommands};
 
         private static readonly List<string> CommandWords;
         
@@ -120,8 +126,53 @@ namespace PlayGame.Speech {
             commands.Add(GetPartiallyCompletePingCommand(phrase, dataProvided));
             commands.Add(GetPartiallyCompleteTransferCommand(phrase, dataProvided));
             commands.Add(GetPartiallyCompleteOffCommand(phrase, dataProvided));
+            commands.AddRange(GetPartiallyCompleteRepairCommands(phrase, dataProvided));
             
             commands.AddRange(GetPartiallyCompleteOnCommands(phrase, dataProvided));
+
+            return commands;
+        }
+
+        private static List<Tuple<string, float>> GetPartiallyCompleteRepairCommands(string phrase, DataProvided dataProvided) {
+            List<Tuple<string, float>> commands = new List<Tuple<string, float>>(); // List of (command, dataRequiredPercentage)
+            
+            float completeness = 0; // Completeness of command
+            float completenessAmount = 0; // Completeness of command with repair amount
+            float third = 1f / 3;
+
+            string c = "";
+            
+            // Add the command word they used or the default repair command if one isn't found
+            foreach (string command in RepairCommands) {
+                if (phrase.Contains(command)) {
+                    completeness = 0.5f;
+                    completenessAmount = third;
+                    c = command;
+                }
+            }
+            if (c == "") c = RepairCommands[0];
+            
+            // Station module
+            if (dataProvided.stationModule != null) {
+                completeness += 0.5f;
+                completenessAmount += third;
+                c += " " + dataProvided.stationModule;
+            } else {
+                c += " (station module)";
+            }
+
+            commands.Add(new Tuple<string, float>(c, completeness)); // Command without repair amount
+            
+            // Repair amount
+            int? repairAmount = GetNumber(phrase);
+            if (repairAmount != null) {
+                completenessAmount += third;
+                c += " " + repairAmount;
+            } else {
+                c += " (repair amount)";
+            }
+
+            commands.Add(new Tuple<string, float>(c, completenessAmount)); // Command with repair amount
 
             return commands;
         }
@@ -238,7 +289,6 @@ namespace PlayGame.Speech {
         
         // Returns a transfer command with the percentage of data provided
         private static Tuple<string, float> GetPartiallyCompleteOffCommand(string phrase, DataProvided dataProvided) {
-
             float completeness = 0;
 
             string c = "";
@@ -265,7 +315,6 @@ namespace PlayGame.Speech {
         
         // Returns a transfer command with the percentage of data provided
         private static Tuple<string, float> GetPartiallyCompleteTransferCommand(string phrase, DataProvided dataProvided) {
-
             float completeness = 0;
 
             string c = "";
@@ -292,7 +341,6 @@ namespace PlayGame.Speech {
 
         // Returns a ping command with the percentage of data provided
         private static Tuple<string, float> GetPartiallyCompletePingCommand(string phrase, DataProvided dataProvided) {
-
             float completeness = 0;
             float third = 1f / 3;
 
@@ -385,6 +433,7 @@ namespace PlayGame.Speech {
             dataProvided.resource = GetCommandFromList(phrase, Resources);
             dataProvided.activatableObject = GetCommandListIdentifier(phrase, Activatable);
             dataProvided.lockTarget = GetCommandListIdentifier(phrase, LockTargets);
+            dataProvided.stationModule = GetCommandListIdentifier(phrase, StationModules);
 
             return dataProvided;
         }
@@ -478,6 +527,7 @@ namespace PlayGame.Speech {
             if (commandList.Equals(TransferCommands)) return GetTransferCommand(phrase, playerData);
             if (commandList.Equals(OffCommands)) return GetToggleCommand(phrase, false, command);
             if (commandList.Equals(OnCommands)) return GetToggleCommand(phrase, true, command);
+            if (commandList.Equals(RepairCommands)) return GetRepairCommand(phrase);
 
             return new Command(); // Return an invalid command
         }
@@ -559,6 +609,17 @@ namespace PlayGame.Speech {
             return new Command(); // Return an invalid command
         }
 
+        private static Command GetRepairCommand(string phrase) {
+            string module = GetCommandListIdentifier(phrase, StationModules);
+            int? repairAmount = GetNumber(phrase);
+
+            if (module != null) {
+                return new RepairCommand(module, repairAmount);
+            }
+            
+            return new Command();
+        }
+        
         private static string GetDirection(string phrase) {
             foreach (List<string> commandList in Directions) {
                 foreach (string command in commandList) {
@@ -567,6 +628,14 @@ namespace PlayGame.Speech {
             }
     
             return null;
+        }
+
+        private static int? GetNumber(string phrase) {
+            Match coordMatch = Regex.Match(phrase, @"\d+");
+            if (!coordMatch.Success) return null;
+
+            int value = int.Parse(coordMatch.Value);
+            return value;
         }
         
         private static string GetGridCoord(string phrase) {

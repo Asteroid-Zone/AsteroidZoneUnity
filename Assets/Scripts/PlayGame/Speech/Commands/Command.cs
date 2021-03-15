@@ -5,7 +5,8 @@
             Ping,
             Transfer,
             Toggle,
-            Speed
+            Speed,
+            Repair
         }
 
         private readonly bool _isValid;
