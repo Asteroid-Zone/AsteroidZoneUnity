@@ -94,8 +94,8 @@ namespace PlayGame.Speech {
             return commandWords;
         }
 
-        // Returns the command which was most likely intended by the player
-        public static string GetSuggestedCommand(string phrase) {
+        // Returns the command which was most likely intended by the player and a measure of how confident we are that its the correct command
+        public static Tuple<string, float> GetSuggestedCommandFromData(string phrase) {
             // Find commands that have some of the required data in the phrase
             List<Tuple<string, float>> partiallyCompleteCommands = GetPartiallyCompleteCommands(phrase); 
             Tuple<string, float> mostCompleteCommand = new Tuple<string, float>("", 0);
@@ -106,14 +106,17 @@ namespace PlayGame.Speech {
                 }
             }
             
-            if (mostCompleteCommand.Item2 > 0) return mostCompleteCommand.Item1;
-            
-            // If no partially complete commands are found search for the closest command word using levenshtein distance
+            return mostCompleteCommand;
+        }
+
+        // Returns the closest command word using levenshtein distance and how confident we are that its the correct command
+        public static Tuple<string, float> GetSuggestedCommandFromDistance(string phrase) {
             Tuple<string, int> closestCommandWord = GetClosestCommand(phrase);
             
-            int thresholdDistance = closestCommandWord.Item1.Length / 2; // More than half of the letters in the command must be correct
-            if (closestCommandWord.Item1 != "" && closestCommandWord.Item2 < thresholdDistance) return closestCommandWord.Item1;
-            return Strings.NoCommand;
+            float charactersCorrectPercentage = closestCommandWord.Item2 / (float) closestCommandWord.Item1.Length;
+            float confidence = 1 - charactersCorrectPercentage;
+            if (closestCommandWord.Item1 != "") return new Tuple<string, float>(closestCommandWord.Item1, confidence);
+            return new Tuple<string, float>(Strings.NoCommand, 0);
         }
 
         private static List<Tuple<string, float>> GetPartiallyCompleteCommands(string phrase) {
@@ -161,7 +164,9 @@ namespace PlayGame.Speech {
                 c += " (station module)";
             }
 
-            commands.Add(new Tuple<string, float>(c, completeness)); // Command without repair amount
+            // Command without repair amount
+            if (dataProvided.stationModule == Strings.Hull) commands.Add(new Tuple<string, float>(c, 1)); // Hull is only used for repair command so if its included assume they mean repair
+            else commands.Add(new Tuple<string, float>(c, completeness)); 
             
             // Repair amount
             int? repairAmount = GetNumber(phrase);
@@ -172,7 +177,9 @@ namespace PlayGame.Speech {
                 c += " (repair amount)";
             }
 
-            commands.Add(new Tuple<string, float>(c, completenessAmount)); // Command with repair amount
+            // Command with repair amount
+            if (dataProvided.stationModule != null && repairAmount != null) commands.Add(new Tuple<string, float>(c, 1)); // If they have both number and module they must be trying to repair
+            else commands.Add(new Tuple<string, float>(c, completenessAmount));
 
             return commands;
         }
@@ -227,12 +234,14 @@ namespace PlayGame.Speech {
             
             // Laser
             if (dataProvided.activatableObject != null) {
+                // If they have tried to use a laser/mining laser they must be trying to turn it on/off
+                // We assume they want to turn it on because nothing bad can happen by not being able to stop them but they could die if they cant shoot
                 if (MiningLaser.Contains(dataProvided.activatableObject)) {
-                    commands.Add(new Tuple<string, float>(c + " " + dataProvided.activatableObject, completeness + 0.5f));
+                    commands.Add(new Tuple<string, float>(c + " " + dataProvided.activatableObject, 0.9f));
                 }
                 
                 if (LaserGun.Contains(dataProvided.activatableObject)) {
-                    commands.Add(new Tuple<string, float>(c + " " + dataProvided.activatableObject, completeness + 0.5f));
+                    commands.Add(new Tuple<string, float>(c + " " + dataProvided.activatableObject, 0.9f));
                 }
             } else {
                 if (completeness != 0) {
@@ -322,7 +331,7 @@ namespace PlayGame.Speech {
             // Add the command word they used or the default transfer command if one isn't found
             foreach (string command in TransferCommands) {
                 if (phrase.Contains(command)) {
-                    completeness = 0.5f;
+                    completeness = 1f;
                     c = command;
                 }
             }
@@ -330,12 +339,13 @@ namespace PlayGame.Speech {
             
             // Resource
             if (dataProvided.resource != null) {
-                completeness += 0.5f;
+                completeness = 1f;
                 c += " " + dataProvided.resource;
             } else {
                 c += " " + Resources[0];
             }
 
+            // If either the transfer command or resources is in the phrase we know they are trying to transfer resources
             return new Tuple<string, float>(c, completeness);
         }
 
@@ -370,7 +380,9 @@ namespace PlayGame.Speech {
             } else {
                 c += " (grid coord)";
             }
-
+            
+            // If command has ping type and grid coord it must be a ping command
+            if (dataProvided.pingType != null && dataProvided.grid != null) return new Tuple<string, float>(c, 1);
             return new Tuple<string, float>(c, completeness);
         }
 
@@ -390,7 +402,9 @@ namespace PlayGame.Speech {
             if (c == "") c = commandList[0];
 
             if (dataProvided.direction != null) {
-                commands.Add(new Tuple<string, float>(c + " " + dataProvided.direction, completeness + 0.5f));
+                // If forward we know its a movement command
+                if (dataProvided.direction == Strings.Forward) commands.Add(new Tuple<string, float>("move forward", 1));
+                else commands.Add(new Tuple<string, float>(c + " " + dataProvided.direction, completeness + 0.5f));
             } else {
                 if (completeness != 0) commands.Add(new Tuple<string, float>(c + " (direction)", completeness));
             }

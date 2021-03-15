@@ -32,8 +32,7 @@ namespace PlayGame.UI {
         }
         
 
-        public static void AddMessage(string message)
-        {
+        public static void AddMessage(string message) {
             _instance._eventsListText.text += $"[{DateTime.Now}]"
                                               + Environment.NewLine
                                               + message

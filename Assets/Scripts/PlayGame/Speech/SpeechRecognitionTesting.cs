@@ -1,5 +1,4 @@
-﻿using Statics;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace PlayGame.Speech {
@@ -110,10 +109,9 @@ namespace PlayGame.Speech {
         }
 
         private void TestSuggestedCommands() {
-            Assert.AreEqual("move north", Grammar.GetSuggestedCommand("travel north"));
-            Assert.AreEqual("move (direction)", Grammar.GetSuggestedCommand("move"));
-            Assert.AreEqual("move (direction)", Grammar.GetSuggestedCommand("move up"));
-            Assert.AreEqual(Strings.NoCommand, Grammar.GetSuggestedCommand("gp"));
+            Assert.AreEqual("move north", Grammar.GetSuggestedCommandFromData("travel north").Item1);
+            Assert.AreEqual("move (direction)", Grammar.GetSuggestedCommandFromData("move").Item1);
+            Assert.AreEqual("move (direction)", Grammar.GetSuggestedCommandFromData("move up").Item1);
         }
         
     }
