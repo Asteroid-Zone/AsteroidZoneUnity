@@ -95,6 +95,10 @@ namespace PlayGame.Speech {
             if (Input.GetKeyDown(KeyCode.M)) {
                 speechRecognition.GetResponse("disengage lock on");
             }
+            
+            if (Input.GetKeyDown(KeyCode.B)) {
+                speechRecognition.GetResponse("activate hyperdrive");
+            }
         }
 
         private void TestSuggestedCommands() {

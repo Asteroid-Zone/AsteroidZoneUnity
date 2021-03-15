@@ -9,6 +9,7 @@
         public const string MiningLaser = "mining laser";
         public const string LaserGun = "laser gun";
         public const string SpaceStation = "station";
+        public const string Hyperdrive = "hyperdrive";
         public const string Ping = "ping";
         public const string Resources = "resources";
 

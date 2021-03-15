@@ -30,6 +30,8 @@ namespace PlayGame.Speech {
         public CameraFollow cameraFollow;
 
         public void PerformActions(Command command) {
+            if (playerData.GetRole() != Role.StationCommander && command.IsCommanderOnly()) return; // Prevent players from performing station commander commands
+            
             switch (command.GetCommandType()) {
                 case Command.CommandType.Movement:
                     PerformMovementCommand((MovementCommand) command);
@@ -106,8 +108,6 @@ namespace PlayGame.Speech {
         }
 
         private void PerformPingCommand(PingCommand command) {
-            if (playerData.GetRole() != Role.StationCommander) return; // Only let the station commander create pings
-
             Ping newPing = new Ping(command.gridCoord, command.pingType);
             pingManager.AddPing(newPing);
         }
@@ -134,6 +134,9 @@ namespace PlayGame.Speech {
                 case ToggleCommand.ObjectType.LaserGun:
                     if (command.on) laserGun.StartShooting();
                     else laserGun.StopShooting();
+                    break;
+                case ToggleCommand.ObjectType.Hyperdrive:
+                    if (command.on) spaceStation.GetHyperdrive().Activate(); // Once activated the game will finish so it cannot be deactivated
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

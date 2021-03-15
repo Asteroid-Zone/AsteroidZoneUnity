@@ -10,15 +10,17 @@
 
         private readonly bool _isValid;
         private readonly CommandType _commandType;
+        private readonly bool _commanderOnly;
 
         // Creates an invalid command
         public Command() {
             _isValid = false;
         }
 
-        public Command(CommandType commandType) {
+        public Command(CommandType commandType, bool commanderOnly) {
             _isValid = true;
             _commandType = commandType;
+            _commanderOnly = commanderOnly;
         }
 
         public bool IsValid() {
@@ -27,6 +29,10 @@
 
         public CommandType GetCommandType() {
             return _commandType;
+        }
+
+        public bool IsCommanderOnly() {
+            return _commanderOnly;
         }
 
     }

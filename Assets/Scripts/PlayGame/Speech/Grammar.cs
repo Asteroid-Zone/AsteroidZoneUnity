@@ -45,6 +45,7 @@ namespace PlayGame.Speech {
         private static readonly List<string> Ping = new List<string>{Strings.Ping, "pin", "mark"};
         private static readonly List<string> Resources = new List<string>{Strings.Resources, "materials"};
         private static readonly List<string> LaserGun = new List<string> {Strings.LaserGun, "gun", "shoot"};
+        private static readonly List<string> Hyperdrive = new List<string> {Strings.Hyperdrive, "warp drive", "hyper drive", "lightspeed"};
         
         private static readonly List<string> CompassDirections = new List<string>{Strings.North, Strings.East, Strings.South, Strings.West};
         private static readonly List<string> RelativeDirections = new List<string>{Strings.Forward, Strings.Back, Strings.Left, Strings.Right};
@@ -53,7 +54,8 @@ namespace PlayGame.Speech {
         private static readonly List<List<string>> Destinations = new List<List<string>>{SpaceStation, Ping, Pirate, Asteroid};
         private static readonly List<List<string>> PingTypes = new List<List<string>>{Asteroid, Pirate};
         private static readonly List<List<string>> LockTargets = new List<List<string>>{Pirate, Asteroid};
-        private static readonly List<List<string>> Activatable = new List<List<string>>{MiningLaser, LockCommands, LaserGun};
+        private static readonly List<List<string>> Activatable = new List<List<string>>{MiningLaser, LockCommands, LaserGun, Hyperdrive};
+        private static readonly List<List<string>> GenericActivatableObjects = new List<List<string>>{Hyperdrive}; // Objects that are only activated using the generic on commands and don't need any extra data
         
         private static readonly List<List<string>> SingleCommands = new List<List<string>>{SpeedCommands, ShootCommands};
         private static readonly List<List<string>> CompoundCommands = new List<List<string>>{MovementCommands, TurnCommands, Ping, TransferCommands, OffCommands, OnCommands};
@@ -182,18 +184,54 @@ namespace PlayGame.Speech {
                     commands.Add(new Tuple<string, float>(c + " " + dataProvided.activatableObject, completeness + 0.5f));
                 }
             } else {
-                if (completeness != 0) commands.Add(new Tuple<string, float>(c + " " + MiningLaser[0], completeness));
-                if (completeness != 0) commands.Add(new Tuple<string, float>(c + " " + LaserGun[0], completeness));
+                if (completeness != 0) {
+                    commands.Add(new Tuple<string, float>(c + " " + MiningLaser[0], completeness));
+                    commands.Add(new Tuple<string, float>(c + " " + LaserGun[0], completeness));
+                }
             }
             
             return commands;
         }
 
+        private static List<Tuple<string, float>> GetPartiallyCompleteGenericOnCommands(string phrase, DataProvided dataProvided) {
+            List<Tuple<string, float>> commands = new List<Tuple<string, float>>(); // List of (command, dataRequiredPercentage)
+            float completeness = 0;
+
+            string c = "";
+            
+            // Add the command word they used or the default on command if one isn't found
+            foreach (string command in GenericOnCommands) {
+                if (phrase.Contains(command)) {
+                    completeness = 0.5f;
+                    c = command;
+                }
+            }
+            if (c == "") c = GenericOnCommands[0];
+            
+            // Activatable Object
+            if (dataProvided.activatableObject != null) {
+                foreach (List<string> commandList in GenericActivatableObjects) {
+                    if (commandList.Contains(dataProvided.activatableObject)) {
+                        commands.Add(new Tuple<string, float>(c + " " + dataProvided.activatableObject, completeness + 0.5f));
+                    }
+                }
+            } else {
+                if (completeness != 0) {
+                    foreach (List<string> commandList in GenericActivatableObjects) {
+                        commands.Add(new Tuple<string, float>(c + " " + commandList[0], completeness));
+                    }
+                }
+            }
+            
+            return commands;
+        }
+        
         private static List<Tuple<string, float>> GetPartiallyCompleteOnCommands(string phrase, DataProvided dataProvided) {
             List<Tuple<string, float>> commands = new List<Tuple<string, float>>(); // List of (command, dataRequiredPercentage)
 
             commands.Add(GetPartiallyCompleteLockCommand(phrase, dataProvided));
             commands.AddRange(GetPartiallyCompleteLaserCommands(phrase, dataProvided));
+            commands.AddRange(GetPartiallyCompleteGenericOnCommands(phrase, dataProvided));
 
             return commands;
         }
@@ -515,7 +553,10 @@ namespace PlayGame.Speech {
             if (activatableObject.Equals(MiningLaser) && (GenericOnCommands.Contains(command) || OffCommands.Contains(command) || ShootCommands.Contains(command))) return new ToggleCommand(on, ToggleCommand.ObjectType.MiningLaser);
             if (activatableObject.Equals(LaserGun) && (GenericOnCommands.Contains(command) || OffCommands.Contains(command) || ShootCommands.Contains(command))) return new ToggleCommand(on, ToggleCommand.ObjectType.LaserGun);
             
-            return new Command(); // Return an invalid command 
+            // Must use only generic command
+            if (activatableObject.Equals(Hyperdrive) && (GenericOnCommands.Contains(command) || OffCommands.Contains(command))) return new ToggleCommand(on, ToggleCommand.ObjectType.Hyperdrive);
+            
+            return new Command(); // Return an invalid command
         }
 
         private static string GetDirection(string phrase) {

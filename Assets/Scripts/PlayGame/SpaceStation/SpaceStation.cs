@@ -25,7 +25,7 @@ namespace PlayGame.SpaceStation {
         private void Start() {
             transform.position = gridManager.GetGridCentre();
             
-            _hyperdrive = new Hyperdrive();
+            _hyperdrive = new Hyperdrive(this);
             _shieldGenerator = new ShieldGenerator();
             _stationHull = new StationHull(this);
             
@@ -37,9 +37,9 @@ namespace PlayGame.SpaceStation {
         }
 
         private void Update() {
-            if (_hyperdrive.isFunctional()) {
-                GameOver(true);
-            }
+            //if (_hyperdrive.isFunctional()) {
+            //     GameOver(true);
+            //}
             
             _shieldGenerator.Update();
         }
@@ -77,9 +77,14 @@ namespace PlayGame.SpaceStation {
         public StationModule GetStationHull() {
             return _stationHull;
         }
+        
+        public Hyperdrive GetHyperdrive() {
+            return _hyperdrive;
+        }
 
         public List<StationModule> GetModules() {
             return _stationModules;
         }
+
     }
 }
