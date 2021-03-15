@@ -1,5 +1,4 @@
-﻿using Statics;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace PlayGame.Speech {

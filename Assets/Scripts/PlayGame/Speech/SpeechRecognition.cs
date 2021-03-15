@@ -83,7 +83,7 @@ namespace PlayGame.Speech {
                     
                     if (command.IsValid()) { // If command is valid perform it
                         if (DebugSettings.Debug) _actionController.PerformActions(command);
-                        else photonView.RPC("RPC_PerformActions", RpcTarget.AllBuffered, player.GetComponent<PhotonView>().ViewID, _myResponse);
+                        else photonView.RPC("RPC_PerformActions", RpcTarget.AllBuffered, player.GetComponent<PhotonView>().ViewID, suggestedCommandFromData.Item1);
                         eventMessage = "'" + phrase + "' is an invalid command. We think you meant '" + suggestedCommandFromData + "' and have performed the action.";
                     } else { // If suggested command is invalid ask the user
                         eventMessage = "'" + phrase + "' is an invalid command. Did you mean '" + suggestedCommandFromData + "' ? (confidence = " + suggestedCommandFromData.Item2 + ")";
