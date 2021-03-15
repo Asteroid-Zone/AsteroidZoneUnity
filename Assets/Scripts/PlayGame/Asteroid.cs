@@ -6,6 +6,7 @@ using PlayGame.Stats;
 using PlayGame.UI;
 using Statics;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace PlayGame {
     public class Asteroid : MonoBehaviour {
@@ -27,7 +28,7 @@ namespace PlayGame {
         private int _resourcesRemaining;
         private int _totalResources;
 
-        private bool _asteroidDestroyed = false;
+        private bool _asteroidDestroyed;
         
         private const float MaxScale = 7f;
         private const float MinScale = 2f;
@@ -48,14 +49,23 @@ namespace PlayGame {
             GetComponent<MeshCollider>().sharedMesh = AsteroidMeshes[asteroidMeshIndex].mesh;
             _modelScale = AsteroidMeshes[asteroidMeshIndex].scale;
             transform.rotation = Random.rotation;
+            CreateNavMeshObstacle();
 
             _totalResources = Random.Range(MinResources, MaxResources);
             _resourcesRemaining = _totalResources;
             _initialScale = MaxScale * ((float) _totalResources / MaxResources); // Initial size of the asteroid
             transform.localScale = _initialScale * _modelScale;
         }
+
+        private void CreateNavMeshObstacle()
+        {
+            NavMeshObstacle navMeshObstacle = gameObject.AddComponent<NavMeshObstacle>();
+            navMeshObstacle.radius = 0.6f;
+            navMeshObstacle.shape = NavMeshObstacleShape.Capsule;
+            navMeshObstacle.carving = true;
+        }
         
-        private AsteroidModel GetAsteroidModel(string path) {
+        private static AsteroidModel GetAsteroidModel(string path) {
             Vector3 scale = Resources.Load<GameObject>(path).transform.localScale;
             Mesh mesh = Resources.Load<Mesh>(path);
             
