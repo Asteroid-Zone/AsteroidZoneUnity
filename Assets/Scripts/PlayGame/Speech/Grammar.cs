@@ -94,8 +94,8 @@ namespace PlayGame.Speech {
             return commandWords;
         }
 
-        // Returns the command which was most likely intended by the player
-        public static string GetSuggestedCommand(string phrase) {
+        // Returns the command which was most likely intended by the player and a measure of how confident we are that its the correct command
+        public static Tuple<string, float> GetSuggestedCommandFromData(string phrase) {
             // Find commands that have some of the required data in the phrase
             List<Tuple<string, float>> partiallyCompleteCommands = GetPartiallyCompleteCommands(phrase); 
             Tuple<string, float> mostCompleteCommand = new Tuple<string, float>("", 0);
@@ -106,14 +106,17 @@ namespace PlayGame.Speech {
                 }
             }
             
-            if (mostCompleteCommand.Item2 > 0) return mostCompleteCommand.Item1;
-            
-            // If no partially complete commands are found search for the closest command word using levenshtein distance
+            return mostCompleteCommand;
+        }
+
+        // Returns the closest command word using levenshtein distance and how confident we are that its the correct command
+        public static Tuple<string, float> GetSuggestedCommandFromDistance(string phrase) {
             Tuple<string, int> closestCommandWord = GetClosestCommand(phrase);
             
-            int thresholdDistance = closestCommandWord.Item1.Length / 2; // More than half of the letters in the command must be correct
-            if (closestCommandWord.Item1 != "" && closestCommandWord.Item2 < thresholdDistance) return closestCommandWord.Item1;
-            return Strings.NoCommand;
+            float charactersCorrectPercentage = closestCommandWord.Item2 / (float) closestCommandWord.Item1.Length;
+            float confidence = 1 - charactersCorrectPercentage;
+            if (closestCommandWord.Item1 != "") return new Tuple<string, float>(closestCommandWord.Item1, confidence);
+            return new Tuple<string, float>(Strings.NoCommand, 0);
         }
 
         private static List<Tuple<string, float>> GetPartiallyCompleteCommands(string phrase) {

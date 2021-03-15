@@ -1,3 +1,4 @@
+using System;
 using PlayGame.Pings;
 using PlayGame.Player;
 using PlayGame.Player.Movement;
@@ -70,10 +71,29 @@ namespace PlayGame.Speech {
             }
         }
 
+        // Displays the suggested command, if we are confident its correct perform the command
         private void DisplaySuggestedCommand(string phrase) {
-            string suggestedCommand = Grammar.GetSuggestedCommand(phrase);
-            if (suggestedCommand.Equals(Strings.NoCommand)) EventsManager.AddMessage("'" + phrase + "' is an invalid command. We're not sure what you meant.");
-            else EventsManager.AddMessage("'" + phrase + "' is an invalid command. Did you mean '" + suggestedCommand + "' ?");
+            Tuple<string, float> suggestedCommandFromData = Grammar.GetSuggestedCommandFromData(phrase);
+            Tuple<string, float> suggestedCommandFromDistance = Grammar.GetSuggestedCommandFromDistance(phrase);
+
+            if (suggestedCommandFromData.Item2 > 0) { // If confidence is greater than 0 for fromdata use that command
+                if (suggestedCommandFromData.Item2 > 0.7) { // If confidence is greater than 0.7 try to perform the command
+                    Command command = Grammar.GetCommand(suggestedCommandFromData.Item1, _playerData, player.transform);
+                    if (command.IsValid()) { // If command is valid perform it
+                        if (DebugSettings.Debug) _actionController.PerformActions(command);
+                        else photonView.RPC("RPC_PerformActions", RpcTarget.AllBuffered, player.GetComponent<PhotonView>().ViewID, _myResponse);
+                        EventsManager.AddMessage("'" + phrase + "' is an invalid command. We think you meant '" + suggestedCommandFromData + "' and have performed the action.");
+                    } else { // If suggested command is invalid ask the user
+                        EventsManager.AddMessage("'" + phrase + "' is an invalid command. Did you mean '" + suggestedCommandFromData + "' ? (confidence = " + suggestedCommandFromData.Item2 + ")");
+                    }
+                } else { // If confidence is less than 0.7 ask the user
+                    EventsManager.AddMessage("'" + phrase + "' is an invalid command. Did you mean '" + suggestedCommandFromData + "' ? (confidence = " + suggestedCommandFromData.Item2 + ")");
+                }
+            } else if (suggestedCommandFromDistance.Item2 > 0.5) { // If confidence is greater than 0.5 for fromdistance ask the user
+                EventsManager.AddMessage("'" + phrase + "' is an invalid command. Did you mean '" + suggestedCommandFromDistance + "' ? (confidence = " + suggestedCommandFromDistance.Item2 + ")");
+            } else { // If we're not confident in either command tell the user we didnt understand
+                EventsManager.AddMessage("'" + phrase + "' is an invalid command. We're not sure what you meant.");
+            }
         }
 
         [PunRPC]
