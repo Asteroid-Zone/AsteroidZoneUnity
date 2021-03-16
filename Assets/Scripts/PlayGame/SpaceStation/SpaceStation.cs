@@ -23,7 +23,7 @@ namespace PlayGame.SpaceStation {
         // todo add turrets
 
         public int resources = 0;
-
+        
         private void Start() {
             transform.position = gridManager.GetGridCentre();
             

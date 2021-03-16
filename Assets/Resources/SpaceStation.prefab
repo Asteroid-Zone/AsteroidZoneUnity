@@ -742,8 +742,9 @@ GameObject:
   - component: {fileID: -4911170428036438812}
   - component: {fileID: -2236420986272106422}
   - component: {fileID: -2124284183426369033}
+  - component: {fileID: 2481110178737642558}
   m_Layer: 0
-  m_Name: spacestation 1
+  m_Name: SpaceStation
   m_TagString: Station
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -810,6 +811,22 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0, z: 0}
   m_TimeToStationary: 0.5
+--- !u!111 &2481110178737642558
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7876248986299615427}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 7400000, guid: 78a6bb7d5a781fd47bf37dfa88153a4e, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: 78a6bb7d5a781fd47bf37dfa88153a4e, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_CullingType: 0
 --- !u!1 &8730237035202265824
 GameObject:
   m_ObjectHideFlags: 0
