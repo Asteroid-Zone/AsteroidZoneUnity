@@ -29,6 +29,7 @@ namespace PlayGame.Pirates
         
         public GameObject gridManager;
         public GameObject pirate;
+        public GameObject spaceStation;
         
         private GridManager _gridManager;
         // Will be used as the size of the checked space when spawning (checked space should be empty)
@@ -73,7 +74,7 @@ namespace PlayGame.Pirates
         {
             if (!PhotonNetwork.IsMasterClient && !DebugSettings.Debug) return;
             // Initialise some random grid coordinates on the map
-            var randomGridCoord = new Vector2(Random.Range(0, _gridManager.width), Random.Range(0, _gridManager.height));
+            var randomGridCoord = new Vector2(Random.Range(0, GridManager.Width), Random.Range(0, GridManager.Height));
             
             // Transform the grid coordinates to global coordinates
             var randomGlobalCoord = _gridManager.GridToGlobalCoord(randomGridCoord);
@@ -91,6 +92,7 @@ namespace PlayGame.Pirates
             if (!DebugSettings.Debug) newPirate = PhotonNetwork.InstantiateRoomObject(Prefabs.PirateShip, randomGlobalCoord, Quaternion.identity);
             else newPirate = Instantiate(pirate, randomGlobalCoord, Quaternion.identity);
             newPirate.transform.parent = gameObject.transform;
+            newPirate.GetComponent<PirateController>().spaceStation = spaceStation.GetComponent<SpaceStation.SpaceStation>();
         }
     }
 }

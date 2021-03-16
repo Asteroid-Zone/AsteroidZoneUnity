@@ -16,7 +16,7 @@ namespace PlayGame {
             _z = z;
         }
 
-        private GridCoord(int x, int z) {
+        public GridCoord(int x, int z) {
             _x = x;
             _z = z;
         }

@@ -6,8 +6,8 @@ namespace PlayGame
     public class GridManager : MonoBehaviour
     {
         public GameObject gridSquarePrefab;
-        public int width;
-        public int height;
+        public const int Width = 11;
+        public const int Height = 11;
         public int totalCells;
 
         private const int CellSize = 10;
@@ -17,9 +17,9 @@ namespace PlayGame
             // X/Y of the first grid square (top left)
             var startX = CellSize / 2;
             var startY = CellSize / 2;
-            for (int y = 0; y < height; y++)
+            for (int y = 0; y < Height; y++)
             {
-                for (int x = 0; x < width; x++)
+                for (int x = 0; x < Width; x++)
                 {
                     // Instantiate a grid square prefab with `this` as parent
                     // Also sets the canvas text to the sector coords
@@ -55,15 +55,15 @@ namespace PlayGame
 
         public Vector3 GetGridCentre()
         {
-            float x = (width / 2f) * CellSize;
-            float z = (height / 2f) * CellSize;
+            float x = (Width / 2f) * CellSize;
+            float z = (Height / 2f) * CellSize;
             return new Vector3(x, 0, z);
         }
 
         // Gets the total number of cells in the grid
         public int GetTotalCells()
         {
-            return height * width;
+            return Height * Width;
         }
     }
 }
