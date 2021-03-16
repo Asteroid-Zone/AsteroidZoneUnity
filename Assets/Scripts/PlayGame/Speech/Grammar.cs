@@ -29,14 +29,14 @@ namespace PlayGame.Speech {
         private static readonly List<string> SmoothTurn = new List<string>{"turn", "rotate"};
         private static readonly List<string> TurnCommands = new List<string>(); // Initialised at startup, Needs direction/destination/grid
         private static readonly List<string> SpeedCommands = new List<string>{Strings.Stop, Strings.Go};
-        private static readonly List<string> TransferCommands = new List<string>{"transfer", "deposit", "unload"}; // Needs resources
+        private static readonly List<string> TransferCommands = new List<string>{"transfer", "deposit", "unload", "drop", "shift"}; // Needs resources
         
-        private static readonly List<string> GenericOnCommands = new List<string>{"activate", "engage", "turn on", "switch on", "start"}; // Can be used to activate anything
+        private static readonly List<string> GenericOnCommands = new List<string>{"activate", "engage", "turn on", "switch on", "start", "enable", "initiate"}; // Can be used to activate anything
         private static readonly List<string> LockCommands = new List<string>{"lock", "aim", "target", "focus"}; // Can only be used to activate a lock
         private static readonly List<string> ShootCommands = new List<string>{"shoot", "fire"}; // Can only be used to activate laser gun or mining laser
         //private static readonly List<string> OnCommands = new List<string>{GenericOnCommands, LockCommands, ShootCommands};
         private static readonly List<string> OnCommands = new List<string>(); // Is initialised to the above line at startup
-        private static readonly List<string> OffCommands = new List<string>{"deactivate", "disengage", "turn off", "switch off", "stop"};
+        private static readonly List<string> OffCommands = new List<string>{"deactivate", "disengage", "turn off", "switch off", "stop", "disable"};
         private static readonly List<string> RepairCommands = new List<string>{"repair", "fix", "mend"};
 
         // Lists containing synonyms for objects
@@ -46,7 +46,7 @@ namespace PlayGame.Speech {
         private static readonly List<string> SpaceStation = new List<string>{Strings.SpaceStation, "space station", "base"};
         private static readonly List<string> Ping = new List<string>{Strings.Ping, "pin", "mark", "flag"};
         private static readonly List<string> Resources = new List<string>{Strings.Resources, "materials", "rock", "supplies"};
-        private static readonly List<string> LaserGun = new List<string> {Strings.LaserGun, "gun", "shoot", "laser beam", "ray gun"};
+        private static readonly List<string> LaserGun = new List<string> {Strings.LaserGun, "gun", "shoot", "attack", "laser beam", "ray gun"};
         
         private static readonly List<string> Hyperdrive = new List<string> {Strings.Hyperdrive, "warp drive", "hyper drive"};
         private static readonly List<string> Hull = new List<string> {Strings.Hull, "body", "frame", "structure", "armour", "exterior"};
