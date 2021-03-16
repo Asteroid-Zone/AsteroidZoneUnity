@@ -5,7 +5,7 @@ namespace PlayGame.SpaceStation {
 
         private const int MaxHealth = 100;
 
-        public Hyperdrive(SpaceStation station) : base("Hyperdrive", MaxHealth, station) {
+        public Hyperdrive(SpaceStation station) : base("Hyperdrive", MaxHealth, station, "station/hyperdrive") {
         }
 
         // Activate the hyperdrive and win the game

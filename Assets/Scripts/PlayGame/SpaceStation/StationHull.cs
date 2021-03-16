@@ -3,7 +3,7 @@
 
         private const int MaxHealth = 100;
         
-        public StationHull(SpaceStation station) : base("Station Hull", MaxHealth, station) {
+        public StationHull(SpaceStation station) : base("Station Hull", MaxHealth, station, "station") {
             moduleHealth += MaxHealth / 2; // Increase the minimum starting health to half
         }
 
