@@ -331,7 +331,7 @@ GameObject:
   - component: {fileID: 952291875397618668}
   - component: {fileID: -4504725476085364784}
   m_Layer: 0
-  m_Name: PirateShip
+  m_Name: PirateScout
   m_TagString: Pirate
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -401,7 +401,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 5561349426305759274, guid: 0cb1aacf5d7ac9f4a8d966e1b3beac15, type: 3}
+  - {fileID: 2100000, guid: f5974b93455428442a9d8cb5f0fc8ef6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -464,6 +464,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b00f00c941941c2a782ce9b4a28b4b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pirateType: 0
   healthBar: {fileID: 2190548073130229317}
   healthBarGradient:
     serializedVersion: 2
@@ -507,6 +508,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca1b2c2cc861bce44b3d5226e7b3407d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spaceStation: {fileID: 0}
+  pirateSpawner: {fileID: 0}
 --- !u!114 &4042055750342500726
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -619,7 +622,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: f5974b93455428442a9d8cb5f0fc8ef6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

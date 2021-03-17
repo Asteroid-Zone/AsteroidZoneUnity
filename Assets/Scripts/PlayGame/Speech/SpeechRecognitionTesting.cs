@@ -13,8 +13,12 @@ namespace PlayGame.Speech {
         // Used letters:
         // Q W E R T Y U I
         // A S D F G H J K L
-        // Z X C V B M
+        // Z X C V B N M
         void Update() {
+            if (Input.GetKeyDown(KeyCode.N)) { // Move station to random location
+                speechRecognition.MoveStation();
+            }
+            
             if (Input.GetKeyDown(KeyCode.W)) { // Move forward
                 speechRecognition.GetResponse("move forward");
             }

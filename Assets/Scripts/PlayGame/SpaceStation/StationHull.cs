@@ -1,7 +1,7 @@
 ﻿namespace PlayGame.SpaceStation {
     public class StationHull : StationModule {
 
-        private const int MaxHealth = 100;
+        private const int MaxHealth = 1000;
         
         public StationHull(SpaceStation station) : base("Station Hull", MaxHealth, station, "station") {
             moduleHealth += MaxHealth / 2; // Increase the minimum starting health to half

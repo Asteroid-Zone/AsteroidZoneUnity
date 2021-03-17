@@ -73,10 +73,10 @@ namespace PlayGame
         {
             if (!PhotonNetwork.IsMasterClient && !DebugSettings.Debug) return;
             // Initialise some random grid coordinates on the map
-            var randomGridCoord = new Vector2(Random.Range(0, _gridManager.width), Random.Range(0, _gridManager.height));
+            var randomGridCoord = new Vector2(Random.Range(0, GridManager.Width), Random.Range(0, GridManager.Height));
             
             // Transform the grid coordinates to global coordinates
-            var randomGlobalCoord = _gridManager.GridToGlobalCoord(randomGridCoord);
+            var randomGlobalCoord = GridManager.GridToGlobalCoord(randomGridCoord);
 
             // Half of the dimensions of the checked space
             var checkedSpaceHalfDims = new Vector3(_spawnRangeCheck, _spawnRangeCheck, _spawnRangeCheck);
