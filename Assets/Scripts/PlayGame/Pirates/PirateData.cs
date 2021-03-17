@@ -15,6 +15,7 @@ namespace PlayGame.Pirates
         private const float Speed = 2;
         public const float LookRadius = 15;
         public const float LaserSpeed = 1000;
+        public const int LaserRange = 10;
         private const int LaserDamageRange = 5; // Makes the amount of damage the laser does vary a bit
 
         private float _health;
@@ -68,6 +69,10 @@ namespace PlayGame.Pirates
         public int GetLaserDamage() {
             // Make the amount of damage vary a bit
             return _laserDamage + Random.Range(-LaserDamageRange, LaserDamageRange + 1);
+        }
+
+        public int GetLaserRange() {
+            return LaserRange;
         }
     }
 }

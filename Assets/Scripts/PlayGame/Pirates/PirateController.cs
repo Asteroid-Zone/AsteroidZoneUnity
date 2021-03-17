@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using PlayGame.Player;
 using UnityEngine;
 using UnityEngine.AI;
@@ -16,10 +15,12 @@ namespace PlayGame.Pirates {
         private const float StoppingDistGoingRand = 1f;
         private const float StoppingDistChasingPlayer = 4f;
         private const float StoppingDistSearchingForStation = 1f;
+        private const float NewAlertDistance = 9f;
 
         private Vector3 _destination;
-        private bool _alert = false; // todo unalert when not found
-        
+        private bool _searching = true;
+        private static bool _alert = false;
+
         // todo pirates attack station
 
         private NavMeshAgent _agent;
@@ -37,23 +38,41 @@ namespace PlayGame.Pirates {
             GameObject closestPlayer = closestPlayerTuple.Item1;
             float closestPlayerDist = closestPlayerTuple.Item2;
 
-            GridCoord currentGridCoord = GridCoord.GetCoordFromVector(transform.position);
-            
-            if (closestPlayer != null && closestPlayerDist <= PirateData.LookRadius) {
+            if (closestPlayer != null && closestPlayerDist <= PirateData.LookRadius) { // If pirate is close to a player chase them
                 ChasePlayer(closestPlayer.transform, closestPlayerDist);
-            } else if (Vector3.Distance(transform.position, spaceStation.transform.position) < PirateData.LookRadius) {
-                // If pirate can see the station, alert other pirates
-                if (!_alert) AlertPirates(spaceStation.transform.position);
-            } else if (currentGridCoord.Equals(GridCoord.GetCoordFromVector(_destination))) { // If pirate has reached the search grid coord check if station is there
-                SearchGridSquare();
+            } else {
+                if (_searching) { // Search for station
+                    if (Vector3.Distance(transform.position, spaceStation.transform.position) < PirateData.LookRadius) {
+                        // If pirate can see the station
+                        // Alert the pirates if pirates aren't already alert or if the station is a certain distance from the known location
+                        if (!_alert || Vector3.Distance(spaceStation.transform.position, _destination) > NewAlertDistance) AlertPirates(spaceStation.transform.position);
+                        _searching = false;
+                    } else if (Vector3.Distance(transform.position, _destination) < PirateData.LookRadius) {
+                        // If pirate has reached the search area check if station is there
+                        SearchGridSquare();
+                    }
+                } else {
+                    if (Vector3.Distance(transform.position, spaceStation.transform.position) < PirateData.LaserRange) ShootStation();
+                }
             }
         }
 
+        private void ShootStation() {
+            FaceTarget(spaceStation.transform);
+            _laserGun.StartShooting();
+        }
+
+        // Go to the stations known location
         private void Alert(Vector3 position) {
             _destination = position;
             _agent.stoppingDistance = StoppingDistSearchingForStation;
             _laserGun.StopShooting();
             _agent.SetDestination(_destination);
+        }
+        
+        // Search randomly
+        private void Unalert() {
+            RandomSearch();
         }
 
         private PirateController[] GetOtherPirates() {
@@ -64,22 +83,39 @@ namespace PlayGame.Pirates {
 
         private void AlertPirates(Vector3 position) {
             PirateController[] pirateControllers = GetOtherPirates();
+            _alert = true;
 
             foreach (PirateController pirateController in pirateControllers) {
-                if (!pirateController.Equals(this)) pirateController.Alert(position);
+                pirateController.Alert(position);
             }
+        }
+        
+        private void UnalertPirates() {
+            PirateController[] pirateControllers = GetOtherPirates();
+            _alert = false;
+
+            foreach (PirateController pirateController in pirateControllers) {
+                pirateController.Unalert();
+            }
+        }
+
+        // Search a random grid coordinate
+        private void RandomSearch() {
+            GridCoord newDestination = new GridCoord(Random.Range(0, GridManager.Width), Random.Range(0, GridManager.Height));
+            _destination = newDestination.GetWorldVector();
+            _agent.stoppingDistance = StoppingDistSearchingForStation;
+            _laserGun.StopShooting();
+            _agent.SetDestination(_destination);
         }
 
         private void SearchGridSquare() {
             if (GridCoord.GetCoordFromVector(spaceStation.transform.position).Equals(GridCoord.GetCoordFromVector(_destination))) { // If found station
                 if (!_alert) AlertPirates(spaceStation.transform.position);
+                _searching = false;
             } else {
-                // If station not found look somewhere else
-                GridCoord newDestination = new GridCoord(Random.Range(0, GridManager.Width), Random.Range(0, GridManager.Height));
-                _destination = newDestination.GetWorldVector();
-                _agent.stoppingDistance = StoppingDistSearchingForStation;
-                _laserGun.StopShooting();
-                _agent.SetDestination(_destination);
+                _searching = true;
+                // If station not found tell the other pirates and search somewhere else
+                UnalertPirates();
             }
         }
         

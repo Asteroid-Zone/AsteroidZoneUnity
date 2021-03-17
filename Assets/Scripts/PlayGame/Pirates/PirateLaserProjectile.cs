@@ -7,7 +7,6 @@ namespace PlayGame.Pirates {
     public class PirateLaserProjectile : MonoBehaviour {
         
         private const int MiningRate = 4; // Amount of resources gathered every mining tick
-        private const int MaxRange = 10;
         
         private Vector3 _startPosition;
 
@@ -18,7 +17,7 @@ namespace PlayGame.Pirates {
         }
 
         private void Update() {
-            if (Vector3.Distance(transform.position, _startPosition) > MaxRange) Destroy(gameObject); // Limit the lasers range
+            if (Vector3.Distance(transform.position, _startPosition) > _shootingPirateData.GetLaserRange()) Destroy(gameObject); // Limit the lasers range
         }
 
         private void OnCollisionEnter(Collision collision) {
