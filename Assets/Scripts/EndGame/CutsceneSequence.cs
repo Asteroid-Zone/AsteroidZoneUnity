@@ -12,31 +12,25 @@ namespace EndGame
         public new Camera camera;
 
         private bool _trackingSpaceStation = true;
-    
+        private Animator _animator;
+
         private void Start()
         {
-            StartCoroutine(StatsManager.GameStats.victory ? VictorySequence() : DefeatSequence());
+            _animator = gameObject.GetComponent<Animator>();
+            StartCoroutine(PlaySequence());
         }
 
-        private IEnumerator VictorySequence()
+        private IEnumerator PlaySequence()
         {
-            gameObject.GetComponent<Animator>().Play("StationFlyby");
+            _animator.Play("Camera.FadeIn");
+            _animator.Play("Station.Flyby");
             yield return new WaitForSeconds(5);
             _trackingSpaceStation = false;
-            gameObject.GetComponent<Animator>().Play("StationHyperspace");
+            _animator.Play(StatsManager.GameStats.victory ? "Station.Hyperspace" : "Station.Explode");
             yield return new WaitForSeconds(0.5f);
             spaceStation.gameObject.SetActive(false);
-            SceneManager.LoadScene(Scenes.VictoryScene);
-        }
-
-        private IEnumerator DefeatSequence()
-        {
-            gameObject.GetComponent<Animator>().Play("StationFlyby");
-            yield return new WaitForSeconds(5);
-            _trackingSpaceStation = false;
-            gameObject.GetComponent<Animator>().Play("StationExplode");
+            _animator.Play("Camera.FadeOut");
             yield return new WaitForSeconds(0.5f);
-            spaceStation.gameObject.SetActive(false);
             SceneManager.LoadScene(Scenes.VictoryScene);
         }
 
