@@ -5,6 +5,7 @@ namespace PlayGame.Player {
     public class MiningLaser : MonoBehaviour {
 
         private PlayerData _playerData;
+        private AudioSource _miningLaserSfx;
         
         public LineRenderer laser;
 
@@ -18,12 +19,20 @@ namespace PlayGame.Player {
             _playerData = GetComponent<PlayerData>();
             laser.positionCount = 2;
             laser.enabled = false;
-
+            
+            // 2nd child is SFX, 1st child is mining laser SFX
+            _miningLaserSfx = gameObject.transform.GetChild(2).GetChild(1).GetComponent<AudioSource>();
+            _miningLaserSfx.loop = true;
             if (DebugSettings.InfiniteMiningRange) MiningRange = 10000;
         }
         
         private void Update() {
-            if (laser.enabled) {
+            if (laser.enabled)
+            {
+                if (!_miningLaserSfx.isPlaying)
+                {
+                    _miningLaserSfx.Play();
+                }
                 RaycastHit hit;
                 Physics.Raycast(transform.position, transform.forward, out hit, MiningRange); // Get the game object that the laser is hitting
 
@@ -35,6 +44,10 @@ namespace PlayGame.Player {
                 } else {
                     UpdateLaser(MiningRange);
                 }
+            }
+            else
+            {
+                _miningLaserSfx.Stop();
             }
         }
 
