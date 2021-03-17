@@ -26,9 +26,15 @@ namespace EndGame
             _animator.Play("Station.Flyby");
             yield return new WaitForSeconds(5);
             _trackingSpaceStation = false;
-            _animator.Play(StatsManager.GameStats.victory ? "Station.Hyperspace" : "Station.Explode");
-            yield return new WaitForSeconds(0.5f);
-            spaceStation.gameObject.SetActive(false);
+            if (StatsManager.GameStats.victory)
+            {
+                _animator.Play("Station.Hyperspace");
+            }
+            else
+            {
+                spaceStation.gameObject.GetComponent<Animation>().Play("Explode");
+            }
+            yield return new WaitForSeconds(1.5f);
             _animator.Play("Camera.FadeOut");
             yield return new WaitForSeconds(0.5f);
             SceneManager.LoadScene(Scenes.VictoryScene);
