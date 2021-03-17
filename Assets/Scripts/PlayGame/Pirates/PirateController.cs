@@ -1,5 +1,6 @@
 ﻿using System;
 using PlayGame.Player;
+using Statics;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
@@ -21,6 +22,8 @@ namespace PlayGame.Pirates {
         private bool _searching = true;
         private static bool _alert = false;
 
+        private static GameObject _minimapAlert = null;
+        
         // todo pirates attack station
 
         private NavMeshAgent _agent;
@@ -31,6 +34,12 @@ namespace PlayGame.Pirates {
             _laserGun = GetComponent<PirateLaserGun>();
             _randomDestination = transform.position;
             _destination = transform.position;
+
+            if (_minimapAlert == null) {
+                GameObject prefab = Resources.Load<GameObject>(Prefabs.PirateMinimapAlert);
+                _minimapAlert = Instantiate(prefab, transform.position, Quaternion.identity);
+                _minimapAlert.SetActive(false);
+            }
         }
         
         private void Update() {
@@ -42,8 +51,7 @@ namespace PlayGame.Pirates {
                 ChasePlayer(closestPlayer.transform, closestPlayerDist);
             } else {
                 if (_searching) { // Search for station
-                    if (Vector3.Distance(transform.position, spaceStation.transform.position) < PirateData.LookRadius) {
-                        // If pirate can see the station
+                    if (Vector3.Distance(transform.position, spaceStation.transform.position) < PirateData.LookRadius) { // If pirate can see the station
                         // Alert the pirates if pirates aren't already alert or if the station is a certain distance from the known location
                         if (!_alert || Vector3.Distance(spaceStation.transform.position, _destination) > NewAlertDistance) AlertPirates(spaceStation.transform.position);
                         _searching = false;
@@ -84,6 +92,9 @@ namespace PlayGame.Pirates {
         private void AlertPirates(Vector3 position) {
             PirateController[] pirateControllers = GetOtherPirates();
             _alert = true;
+            _minimapAlert.transform.localScale = new Vector3(PirateData.LookRadius, PirateData.LookRadius, PirateData.LookRadius);
+            _minimapAlert.transform.position = position;
+            _minimapAlert.SetActive(true);
 
             foreach (PirateController pirateController in pirateControllers) {
                 pirateController.Alert(position);
@@ -93,6 +104,7 @@ namespace PlayGame.Pirates {
         private void UnalertPirates() {
             PirateController[] pirateControllers = GetOtherPirates();
             _alert = false;
+            _minimapAlert.SetActive(false);
 
             foreach (PirateController pirateController in pirateControllers) {
                 pirateController.Unalert();
