@@ -109,7 +109,7 @@ namespace PlayGame.Pirates {
             _knownStationLocation = position;
             
             // Display minimap area
-            float size = _pirateData.GetLookRadius();
+            float size = _pirateData.GetLookRadius() * 2;
             _minimapAlert.transform.localScale = new Vector3(size, size, size);
             _minimapAlert.transform.position = position;
             _minimapAlert.SetActive(true);
