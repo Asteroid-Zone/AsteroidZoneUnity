@@ -508,6 +508,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spaceStation: {fileID: 0}
+  pirateSpawner: {fileID: 0}
 --- !u!114 &4042055750342500726
 MonoBehaviour:
   m_ObjectHideFlags: 0

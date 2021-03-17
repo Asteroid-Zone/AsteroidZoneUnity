@@ -8,6 +8,7 @@ using Random = UnityEngine.Random;
 namespace PlayGame.Pirates {
     public class PirateController : MonoBehaviour {
         public SpaceStation.SpaceStation spaceStation;
+        public PirateSpawner pirateSpawner;
         
         private int _lastFrameWentRandom;
         private const int GoRandomTimer = 600;
@@ -21,17 +22,18 @@ namespace PlayGame.Pirates {
         private Vector3 _destination;
         private bool _searching = true;
         private static bool _alert = false;
+        private static Vector3 _knownStationLocation;
 
         private static GameObject _minimapAlert = null;
-        
-        // todo pirates attack station
 
         private NavMeshAgent _agent;
         private PirateLaserGun _laserGun;
+        private PirateData _pirateData;
 
         private void Start() {
             _agent = GetComponent<NavMeshAgent>();
             _laserGun = GetComponent<PirateLaserGun>();
+            _pirateData = GetComponent<PirateData>();
             _randomDestination = transform.position;
             _destination = transform.position;
 
@@ -40,27 +42,28 @@ namespace PlayGame.Pirates {
                 _minimapAlert = Instantiate(prefab, transform.position, Quaternion.identity);
                 _minimapAlert.SetActive(false);
             }
+
+            if (_alert) Alert();
         }
         
         private void Update() {
-            Tuple<GameObject, float> closestPlayerTuple = GetClosestPlayer();
-            GameObject closestPlayer = closestPlayerTuple.Item1;
-            float closestPlayerDist = closestPlayerTuple.Item2;
+            (GameObject closestPlayer, float closestPlayerDist) = GetClosestPlayer();
+            float lookRadius = _pirateData.GetLookRadius();
 
-            if (closestPlayer != null && closestPlayerDist <= PirateData.LookRadius) { // If pirate is close to a player chase them
+            if (closestPlayer != null && closestPlayerDist <= lookRadius) { // If pirate is close to a player chase them
                 ChasePlayer(closestPlayer.transform, closestPlayerDist);
             } else {
                 if (_searching) { // Search for station
-                    if (Vector3.Distance(transform.position, spaceStation.transform.position) < PirateData.LookRadius) { // If pirate can see the station
+                    if (Vector3.Distance(transform.position, spaceStation.transform.position) < lookRadius) { // If pirate can see the station
                         // Alert the pirates if pirates aren't already alert or if the station is a certain distance from the known location
                         if (!_alert || Vector3.Distance(spaceStation.transform.position, _destination) > NewAlertDistance) AlertPirates(spaceStation.transform.position);
                         _searching = false;
-                    } else if (Vector3.Distance(transform.position, _destination) < PirateData.LookRadius) {
+                    } else if (Vector3.Distance(transform.position, _destination) < lookRadius) {
                         // If pirate has reached the search area check if station is there
                         SearchGridSquare();
                     }
                 } else {
-                    if (Vector3.Distance(transform.position, spaceStation.transform.position) < PirateData.LaserRange) ShootStation();
+                    if (Vector3.Distance(transform.position, spaceStation.transform.position) < lookRadius) ShootStation();
                 }
             }
         }
@@ -70,17 +73,22 @@ namespace PlayGame.Pirates {
             _laserGun.StartShooting();
         }
 
+        private void LeaveMap() {
+            throw new NotImplementedException();
+        }
+
         // Go to the stations known location
-        private void Alert(Vector3 position) {
-            _destination = position;
+        private void Alert() {
+            _destination = _knownStationLocation;
             _agent.stoppingDistance = StoppingDistSearchingForStation;
             _laserGun.StopShooting();
             _agent.SetDestination(_destination);
         }
         
-        // Search randomly
+        // Scouts start searching again, other pirates leave
         private void Unalert() {
-            RandomSearch();
+            if (_pirateData.GetPirateType() == PirateData.PirateType.Scout) RandomSearch();
+            else LeaveMap();
         }
 
         private PirateController[] GetOtherPirates() {
@@ -92,13 +100,19 @@ namespace PlayGame.Pirates {
         private void AlertPirates(Vector3 position) {
             PirateController[] pirateControllers = GetOtherPirates();
             _alert = true;
-            _minimapAlert.transform.localScale = new Vector3(PirateData.LookRadius, PirateData.LookRadius, PirateData.LookRadius);
+            _knownStationLocation = position;
+            
+            // Display minimap area
+            float size = _pirateData.GetLookRadius();
+            _minimapAlert.transform.localScale = new Vector3(size, size, size);
             _minimapAlert.transform.position = position;
             _minimapAlert.SetActive(true);
 
             foreach (PirateController pirateController in pirateControllers) {
-                pirateController.Alert(position);
+                pirateController.Alert();
             }
+
+            pirateSpawner.SpawnReinforcements();
         }
         
         private void UnalertPirates() {
@@ -178,7 +192,7 @@ namespace PlayGame.Pirates {
 
         private void OnDrawGizmosSelected() {
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(transform.position, PirateData.LookRadius);
+            Gizmos.DrawWireSphere(transform.position, _pirateData.GetLookRadius());
         }
     }
 }

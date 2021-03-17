@@ -24,7 +24,7 @@ namespace PlayGame.Pirates {
             GameObject laser = Instantiate(laserPrefab, spawnPosition, transform.rotation);
             laser.GetComponent<PirateLaserProjectile>().SetShootingPirateData(_pirateData); // Provide a reference to the pirate who shot the laser to the projectile
             laser.transform.Rotate(new Vector3(90, 0, 0)); // Rotate the laser so its not facing up
-            laser.GetComponent<Rigidbody>().AddForce(transform.forward * PirateData.LaserSpeed);
+            laser.GetComponent<Rigidbody>().AddForce(transform.forward * _pirateData.GetLaserSpeed());
             _lastFrameFired = Time.frameCount;
         }
 

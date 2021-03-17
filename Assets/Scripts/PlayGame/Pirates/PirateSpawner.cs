@@ -4,10 +4,8 @@ using Statics;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace PlayGame.Pirates
-{
-    public class PirateSpawner : MonoBehaviour
-    {
+namespace PlayGame.Pirates {
+    public class PirateSpawner : MonoBehaviour {
         #region Singleton
         private static PirateSpawner _instance;
 
@@ -40,11 +38,8 @@ namespace PlayGame.Pirates
         public float probability;
         public float everyXSeconds;
 
-    
         // Start is called before the first frame update
-    
-        private void Start()
-        {
+        private void Start() {
             if (!PhotonNetwork.IsMasterClient && !DebugSettings.Debug) return;
             _gridManager = gridManager.GetComponent<GridManager>();
             InvokeRepeating(nameof(PirateRNG), 0, everyXSeconds);
@@ -54,24 +49,28 @@ namespace PlayGame.Pirates
             _maxPirates = (int) Math.Floor(2 * Math.Sqrt(_gridManager.GetTotalCells()));
         }
 
-        private void PirateRNG()
-        {
+        private void PirateRNG() {
             if (!PhotonNetwork.IsMasterClient && !DebugSettings.Debug) return;
             // Don't spawn pirates if the maximum count is reached.
-            if (transform.childCount >= _maxPirates)
-            {
+            if (transform.childCount >= _maxPirates) {
                 return;
             }
             
             var generatedProb = Random.Range(0, 1.0f);
-            if (generatedProb < probability)
-            {
-                if (DebugSettings.SpawnPirates) SpawnPirate();
+            if (generatedProb < probability) {
+                if (DebugSettings.SpawnPirates) SpawnPirate(PirateData.PirateType.Scout);
             }
         }
 
-        private void SpawnPirate()
-        {
+        public void SpawnReinforcements() {
+            int reinforcements = Random.Range(2, 4);
+
+            for (int i = 0; i < reinforcements; i++) {
+                SpawnPirate(PirateData.PirateType.Elite);
+            }
+        }
+
+        private void SpawnPirate(PirateData.PirateType type) {
             if (!PhotonNetwork.IsMasterClient && !DebugSettings.Debug) return;
             // Initialise some random grid coordinates on the map
             var randomGridCoord = new Vector2(Random.Range(0, GridManager.Width), Random.Range(0, GridManager.Height));
@@ -92,7 +91,9 @@ namespace PlayGame.Pirates
             if (!DebugSettings.Debug) newPirate = PhotonNetwork.InstantiateRoomObject(Prefabs.PirateShip, randomGlobalCoord, Quaternion.identity);
             else newPirate = Instantiate(pirate, randomGlobalCoord, Quaternion.identity);
             newPirate.transform.parent = gameObject.transform;
+            newPirate.GetComponent<PirateData>().SetPirateType(type);
             newPirate.GetComponent<PirateController>().spaceStation = spaceStation.GetComponent<SpaceStation.SpaceStation>();
+            newPirate.GetComponent<PirateController>().pirateSpawner = this;
         }
     }
 }
