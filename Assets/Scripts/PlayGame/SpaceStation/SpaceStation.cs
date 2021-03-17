@@ -49,9 +49,10 @@ namespace PlayGame.SpaceStation {
                 EventsManager.AddMessage(eventMessage);
                 StatsManager.GameStats.victory = victory;
                 StatsManager.GameStats.endTime = Time.time;
-                gameManager.exitScene = Scenes.VictoryScene;
+                gameManager.exitScene = Scenes.EndCutsceneScene;
                 gameManager.LeaveRoom();
                 _complete = true;
+                Debug.Log("LEFT ROOM");
             }
         }
 
