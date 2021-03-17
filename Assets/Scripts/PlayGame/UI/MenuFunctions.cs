@@ -7,15 +7,10 @@ namespace PlayGame.UI
         public GameObject menuPanel;
         public GameObject tipsPanel;
         
-        public void ShowMenuPanel()
+        public void ShowOrHideMenuPanel()
         {
-            menuPanel.SetActive(true);
+            menuPanel.SetActive(!menuPanel.activeSelf);
         }
-
-        public void HideMenuPanel()
-        {
-            menuPanel.SetActive(false);
-        } 
 
         public void ShowTipsPanel()
         {
