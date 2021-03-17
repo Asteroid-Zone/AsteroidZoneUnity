@@ -10,6 +10,7 @@ using Photon.Pun;
 using PlayGame.UI;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 namespace PlayGame.Speech {
     public class SpeechRecognition : MonoBehaviourPun {
@@ -54,6 +55,10 @@ namespace PlayGame.Speech {
 
         private void OnDestroy() {
             StopSpeechRecognitionInTheBrowser();
+        }
+
+        public void MoveStation() {
+            spaceStation.transform.position = new GridCoord(Random.Range(0, 11), Random.Range(0, 11)).GetWorldVector();
         }
 
         // Called by javascript when speech is detected

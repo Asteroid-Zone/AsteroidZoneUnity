@@ -18,9 +18,9 @@ namespace PlayGame.Pirates {
         private const float StoppingDistChasingPlayer = 4f;
         private const float StoppingDistSearchingForStation = 1f;
         private const float NewAlertDistance = 9f;
+        private const float DespawnDistance = 2f;
 
         private Vector3 _destination;
-        private bool _searching = true;
         private static bool _alert = false;
         private static Vector3 _knownStationLocation;
 
@@ -50,22 +50,25 @@ namespace PlayGame.Pirates {
             (GameObject closestPlayer, float closestPlayerDist) = GetClosestPlayer();
             float lookRadius = _pirateData.GetLookRadius();
 
-            if (closestPlayer != null && closestPlayerDist <= lookRadius) { // If pirate is close to a player chase them
+            // If pirate is close to a player chase them
+            if (closestPlayer != null && closestPlayerDist <= lookRadius) {
                 ChasePlayer(closestPlayer.transform, closestPlayerDist);
-            } else {
-                if (_searching) { // Search for station
-                    if (Vector3.Distance(transform.position, spaceStation.transform.position) < lookRadius) { // If pirate can see the station
-                        // Alert the pirates if pirates aren't already alert or if the station is a certain distance from the known location
-                        if (!_alert || Vector3.Distance(spaceStation.transform.position, _destination) > NewAlertDistance) AlertPirates(spaceStation.transform.position);
-                        _searching = false;
-                    } else if (Vector3.Distance(transform.position, _destination) < lookRadius) {
-                        // If pirate has reached the search area check if station is there
-                        SearchGridSquare();
-                    }
-                } else {
-                    if (Vector3.Distance(transform.position, spaceStation.transform.position) < lookRadius) ShootStation();
-                }
+                return;
             }
+            
+            // If pirate can see the station
+            if (Vector3.Distance(transform.position, spaceStation.transform.position) < lookRadius) {
+                // Alert the pirates if pirates aren't already alert or if the station is a certain distance from the known location
+                if (!_alert || Vector3.Distance(spaceStation.transform.position, _destination) > NewAlertDistance) AlertPirates(spaceStation.transform.position);
+            }
+            
+            // If pirate is at the search area check if station is there
+            if (Vector3.Distance(transform.position, _destination) < lookRadius) {
+                SearchGridSquare();
+            }
+            
+            if (_alert && Vector3.Distance(transform.position, spaceStation.transform.position) < _pirateData.GetLaserRange()) ShootStation();
+            if (!_alert && _pirateData.pirateType != PirateData.PirateType.Scout && Vector3.Distance(transform.position, _destination) < DespawnDistance) _pirateData.Leave();
         }
 
         private void ShootStation() {
@@ -74,7 +77,10 @@ namespace PlayGame.Pirates {
         }
 
         private void LeaveMap() {
-            throw new NotImplementedException();
+            _destination = GridManager.GetNearestEdgePoint(transform.position);
+            _agent.stoppingDistance = 0;
+            _laserGun.StopShooting();
+            _agent.SetDestination(_destination);
         }
 
         // Go to the stations known location
@@ -87,7 +93,7 @@ namespace PlayGame.Pirates {
         
         // Scouts start searching again, other pirates leave
         private void Unalert() {
-            if (_pirateData.GetPirateType() == PirateData.PirateType.Scout) RandomSearch();
+            if (_pirateData.pirateType == PirateData.PirateType.Scout) RandomSearch();
             else LeaveMap();
         }
 
@@ -137,11 +143,10 @@ namespace PlayGame.Pirates {
         private void SearchGridSquare() {
             if (GridCoord.GetCoordFromVector(spaceStation.transform.position).Equals(GridCoord.GetCoordFromVector(_destination))) { // If found station
                 if (!_alert) AlertPirates(spaceStation.transform.position);
-                _searching = false;
             } else {
-                _searching = true;
                 // If station not found tell the other pirates and search somewhere else
-                UnalertPirates();
+                if (_alert) UnalertPirates();
+                else RandomSearch();
             }
         }
         

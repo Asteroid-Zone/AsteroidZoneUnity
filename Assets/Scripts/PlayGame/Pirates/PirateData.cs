@@ -17,7 +17,7 @@ namespace PlayGame.Pirates {
             Elite
         }
 
-        private PirateType _pirateType;
+        public PirateType pirateType;
 
         private float _maxHealth = 50;
         private float _speed = 2;
@@ -35,15 +35,9 @@ namespace PlayGame.Pirates {
         public Image healthBarFill;
 
         public void Start() {
+            SetStats();
             _pirateAgent = GetComponent<NavMeshAgent>();
             _pirateAgent.speed = _speed;
-        }
-
-        public void SetPirateType(PirateType type) {
-            _pirateType = type;
-            SetStats();
-            
-            if (_pirateAgent != null) _pirateAgent.speed = _speed;
             
             _health = _maxHealth;
             
@@ -53,7 +47,7 @@ namespace PlayGame.Pirates {
         }
 
         private void SetStats() {
-            switch (_pirateType) {
+            switch (pirateType) {
                 case PirateType.Scout:
                     _maxHealth = 50;
                     _speed = 2;
@@ -77,11 +71,20 @@ namespace PlayGame.Pirates {
             }
         }
 
+        public void Leave() {
+            // Todo play hyperdrive animation
+            Despawn();
+        }
+        
         private void Die() {
-            // TODO Play some animation
+            // TODO Play death animation
+            Despawn();
+            EventsManager.AddMessage("Pirate destroyed at " + GridCoord.GetCoordFromVector(gameObject.transform.position));
+        }
+
+        private void Despawn() {
             if (!DebugSettings.Debug && PhotonNetwork.IsMasterClient) PhotonNetwork.Destroy(gameObject);
             else if (DebugSettings.Debug) Destroy(gameObject);
-            EventsManager.AddMessage("Pirate destroyed at " + GridCoord.GetCoordFromVector(gameObject.transform.position));
         }
 
         private void SetHealthBar() {
@@ -116,10 +119,6 @@ namespace PlayGame.Pirates {
 
         public float GetLaserSpeed() {
             return _laserSpeed;
-        }
-
-        public PirateType GetPirateType() {
-            return _pirateType;
         }
     }
 }

@@ -26,7 +26,8 @@ namespace PlayGame.Pirates {
         #endregion
         
         public GameObject gridManager;
-        public GameObject pirate;
+        public GameObject scout;
+        public GameObject elite;
         public GameObject spaceStation;
         
         private GridManager _gridManager;
@@ -76,22 +77,34 @@ namespace PlayGame.Pirates {
             var randomGridCoord = new Vector2(Random.Range(0, GridManager.Width), Random.Range(0, GridManager.Height));
             
             // Transform the grid coordinates to global coordinates
-            var randomGlobalCoord = _gridManager.GridToGlobalCoord(randomGridCoord);
+            var randomGlobalCoord = GridManager.GridToGlobalCoord(randomGridCoord);
 
             // Half of the dimensions of the checked space
             var checkedSpaceHalfDims = new Vector3(_spawnRangeCheck, _spawnRangeCheck, _spawnRangeCheck);
-            if (Physics.OverlapBoxNonAlloc(randomGlobalCoord, checkedSpaceHalfDims, new Collider[16]) > 0)
-            {
-                // Collisions were found for the current spawn, therefore, stop spawning
-                return;
+            // If collisions were found for the current spawn, stop spawning
+            if (Physics.OverlapBoxNonAlloc(randomGlobalCoord, checkedSpaceHalfDims, new Collider[16]) > 0) return;
+
+            // Get the correct prefab
+            GameObject pirate;
+            string prefab;
+            switch (type) {
+                case PirateData.PirateType.Scout:
+                    pirate = scout;
+                    prefab = Prefabs.PirateScout;
+                    break;
+                case PirateData.PirateType.Elite:
+                    pirate = elite;
+                    prefab = Prefabs.PirateElite;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
             
             // Spawn the new pirate
             GameObject newPirate;
-            if (!DebugSettings.Debug) newPirate = PhotonNetwork.InstantiateRoomObject(Prefabs.PirateShip, randomGlobalCoord, Quaternion.identity);
+            if (!DebugSettings.Debug) newPirate = PhotonNetwork.InstantiateRoomObject(prefab, randomGlobalCoord, Quaternion.identity);
             else newPirate = Instantiate(pirate, randomGlobalCoord, Quaternion.identity);
             newPirate.transform.parent = gameObject.transform;
-            newPirate.GetComponent<PirateData>().SetPirateType(type);
             newPirate.GetComponent<PirateController>().spaceStation = spaceStation.GetComponent<SpaceStation.SpaceStation>();
             newPirate.GetComponent<PirateController>().pirateSpawner = this;
         }

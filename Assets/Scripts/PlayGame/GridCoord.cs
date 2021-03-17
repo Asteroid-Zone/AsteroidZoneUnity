@@ -38,6 +38,14 @@ namespace PlayGame {
             return new GridCoord(x, z);
         }
 
+        public int GetX() {
+            return _x;
+        }
+
+        public int GetZ() {
+            return _z;
+        }
+
         private int getWorldX() {
             return (_x * GridSize) + (GridSize / 2);
         }
