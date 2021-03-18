@@ -1,4 +1,5 @@
-﻿using Statics;
+﻿using PlayGame.UI;
+using Statics;
 using UnityEngine;
 
 namespace PlayGame.Player {
@@ -22,7 +23,8 @@ namespace PlayGame.Player {
             
             // 2nd child is SFX, 1st child is mining laser SFX
             _miningLaserSfx = gameObject.transform.GetChild(2).GetChild(1).GetComponent<AudioSource>();
-            _miningLaserSfx.loop = true;
+            VolumeControl.AddSfxCSource(_miningLaserSfx);
+            
             if (DebugSettings.InfiniteMiningRange) MiningRange = 10000;
         }
         
@@ -38,7 +40,7 @@ namespace PlayGame.Player {
 
                 if (hit.collider) { // If the laser is hitting a game object
                     UpdateLaser((int) hit.distance);
-                    if (hit.collider.gameObject.CompareTag("Asteroid")) {
+                    if (hit.collider.gameObject.CompareTag(Tags.AsteroidTag)) {
                         MineAsteroid(hit.collider.gameObject);
                     }
                 } else {
