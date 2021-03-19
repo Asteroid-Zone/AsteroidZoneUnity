@@ -20,9 +20,9 @@ namespace PlayGame.SpaceStation {
         private Hyperdrive _hyperdrive;
         private ShieldGenerator _shieldGenerator;
         private StationHull _stationHull;
+        private SolarPanels _solarPanels; // todo make solar panels do something
+        private Engines _engines; // todo make engines do something
         // todo add turrets
-        // todo add engines
-        // todo add solar panels
 
         public int resources = 0;
         
@@ -32,10 +32,14 @@ namespace PlayGame.SpaceStation {
             _hyperdrive = new Hyperdrive(this);
             _shieldGenerator = new ShieldGenerator(this);
             _stationHull = new StationHull(this);
+            _solarPanels = new SolarPanels(this);
+            _engines = new Engines(this);
             
             _stationModules.Add(_hyperdrive);
             _stationModules.Add(_shieldGenerator);
             _stationModules.Add(_stationHull);
+            _stationModules.Add(_solarPanels);
+            _stationModules.Add(_engines);
         }
 
         private void Update() {

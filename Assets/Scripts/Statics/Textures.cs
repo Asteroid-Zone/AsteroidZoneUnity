@@ -13,6 +13,15 @@
 
         public const string ShieldGeneratorDamaged = "Textures/station/damaged/shieldgenerator_damaged";
         public const string ShieldGenerator = "Textures/station/functional/shieldgenerator";
+        
+        public const string SolarPanelsDamaged = "Textures/station/damaged/solarpanels_damaged";
+        public const string SolarPanels = "Textures/station/functional/solarpanels";
 
+        public const string Engine1Damaged = "Textures/station/damaged/engine1_damaged";
+        public const string Engine1 = "Textures/station/functional/engine1";
+        
+        public const string Engine2Damaged = "Textures/station/damaged/engine2_damaged";
+        public const string Engine2 = "Textures/station/functional/engine2";
+        
     }
 }
