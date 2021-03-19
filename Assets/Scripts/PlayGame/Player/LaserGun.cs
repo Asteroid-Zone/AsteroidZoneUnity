@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using PlayGame.UI;
+using UnityEngine;
 
 namespace PlayGame.Player {
     public class LaserGun : MonoBehaviour {
@@ -11,13 +12,13 @@ namespace PlayGame.Player {
         private const int ShotDelay = 50; // Number of frames to wait between shooting
 
         private bool _shooting;
-        
 
         private void Start() {
             _playerData = GetComponent<PlayerData>();
             
             // 2nd child is SFX, 0th child is laser SFX
             _laserSfx = gameObject.transform.GetChild(2).GetChild(0).GetComponent<AudioSource>();
+            VolumeControl.AddSfxCSource(_laserSfx);
         }
 
         private void Update() {

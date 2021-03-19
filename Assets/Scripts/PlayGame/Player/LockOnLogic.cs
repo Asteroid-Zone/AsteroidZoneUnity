@@ -1,14 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Photon.GameControllers;
+﻿using Photon.GameControllers;
 using PlayGame.Camera;
-using PlayGame.Player;
 using PlayGame.Player.Movement;
 using Statics;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace PlayGame.UI
+namespace PlayGame.Player
 {
     public class LockOnLogic : MonoBehaviour
     {
@@ -18,14 +15,15 @@ namespace PlayGame.UI
         public CameraManager cameraMan;
 
         // Start is called before the first frame update
-        void Start()
+        private void Start()
         {
             _moveObject = !DebugSettings.Debug ? PhotonPlayer.Instance.myAvatar.GetComponent<MoveObject>() : TestPlayer.GetPlayerShip().GetComponent<MoveObject>();
             image = GetComponent<Image>();
+            image.enabled = true;
         }
 
         // Update is called once per frame
-        void Update()
+        private void Update()
         {
             _lockTarget = _moveObject.GetLockTarget();
             if (_lockTarget)

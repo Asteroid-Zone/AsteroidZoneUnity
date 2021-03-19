@@ -1,37 +1,100 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace PlayGame.UI
 {
     public class VolumeControl : MonoBehaviour
     {
-        // Store the VolumePref Key to avoid typos
-        private const string VolumePrefKey = "VolumePreference";
+        // Make the class a singleton
+        #region Singleton
+        private static VolumeControl _instance;
+
+        private void Awake()
+        {
+            if (_instance != null && _instance != this)
+            {
+                Destroy(gameObject);
+            } else {
+                _instance = this;
+            }
+            
+            // Add the default value for the background volume
+            if (!PlayerPrefs.HasKey(BackVolumePrefKey))
+            {
+                PlayerPrefs.SetFloat(BackVolumePrefKey, BackVolumeDefault);
+            }
+            
+            // Add the default value for the SFX volume
+            if (!PlayerPrefs.HasKey(SfxVolumePrefKey))
+            {
+                PlayerPrefs.SetFloat(SfxVolumePrefKey, SfxVolumeDefault);
+            }
+            
+            _sfxSources = new List<AudioSource>();
+        }
+        #endregion
         
-        public Slider volumeSlider;
-        private AudioSource _audioSource;
+        // Store the VolumePref Keys to avoid typos
+        private const string BackVolumePrefKey = "BackgroundVolumePreference";
+        private const string SfxVolumePrefKey = "SfxVolumePreference";
+
+        // Default values for the different volumes
+        private const float BackVolumeDefault = 0.1f;
+        private const float SfxVolumeDefault = 0.1f;
+        
+        // Volume sliders
+        public Slider backVolumeSlider;
+        public Slider sfxVolumeSlider;
+        
+        // Background audio source
+        private AudioSource _backAudioSource;
+
+        // List of all the SFX audio sources
+        private List<AudioSource> _sfxSources;
         
         private void Start()
         {
-            _audioSource = GetComponent<AudioSource>();
+            // Get the background audio source
+            _backAudioSource = GetComponent<AudioSource>();
 
-            // Get the volume from the prefs
-            if (PlayerPrefs.HasKey(VolumePrefKey))
-            {
-                _audioSource.volume = PlayerPrefs.GetFloat(VolumePrefKey);
-            }
+            // Set the background volume
+            backVolumeSlider.value =_backAudioSource.volume = PlayerPrefs.GetFloat(BackVolumePrefKey);
+
+            // Set the value for the sfx volume slider and set the value for all SFX audio sources
+            sfxVolumeSlider.value = PlayerPrefs.GetFloat(SfxVolumePrefKey);
+            ChangeSfxVolume();
             
-            // Set the volume and register the listener to the slider changed event
-            volumeSlider.value = _audioSource.volume;
-            volumeSlider.onValueChanged.AddListener(delegate { ChangeVolume(); });
+            // Register the listeners to the slider changed events
+            backVolumeSlider.onValueChanged.AddListener(delegate { ChangeBackVolume(); });
+            sfxVolumeSlider.onValueChanged.AddListener(delegate { ChangeSfxVolume(); });
         }
 
-        private void ChangeVolume()
+        private void ChangeBackVolume()
         {
-            _audioSource.volume = volumeSlider.value;
+            _backAudioSource.volume = backVolumeSlider.value;
             
             // Save the volume in the prefs
-            PlayerPrefs.SetFloat(VolumePrefKey, volumeSlider.value);
+            PlayerPrefs.SetFloat(BackVolumePrefKey, backVolumeSlider.value);
+        }
+
+        private void ChangeSfxVolume()
+        {
+            // Set the new value in the prefs and set the volume of each source
+            PlayerPrefs.SetFloat(SfxVolumePrefKey, sfxVolumeSlider.value);
+            _sfxSources.ForEach(source => source.volume = sfxVolumeSlider.value);
+        }
+
+        public static void AddSfxCSource(AudioSource sfxSource)
+        {
+            if (sfxSource == null)
+            {
+                return;
+            }
+            
+            // Add the source to the list and set its volume
+            _instance._sfxSources.Add(sfxSource);
+            sfxSource.volume = PlayerPrefs.GetFloat(SfxVolumePrefKey);
         }
     }
 }
