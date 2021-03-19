@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Statics;
+using UnityEngine;
 
 namespace PlayGame.SpaceStation {
     public class ShieldGenerator : StationModule {
@@ -11,7 +12,9 @@ namespace PlayGame.SpaceStation {
         private float _timeSinceLastCharge = 1; // Seconds since last charge
 
         public ShieldGenerator(SpaceStation station) : base("Shield Generator", MaxHealth, station, "station/shield_generator") {
-            
+            _damagedTexture = Resources.Load<Texture>(Textures.ShieldGeneratorDamaged);
+            _functionalTexture = Resources.Load<Texture>(Textures.ShieldGenerator);
+            UpdateMesh();
         }
         
         public void Update() {

@@ -108,7 +108,7 @@ namespace PlayGame.Speech {
             }
             
             if (Input.GetKeyDown(KeyCode.V)) {
-                speechRecognition.GetResponse("repair hyperdrive");
+                speechRecognition.GetResponse("repair hull");
             }
         }
 

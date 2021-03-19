@@ -21,6 +21,8 @@ namespace PlayGame.SpaceStation {
         private ShieldGenerator _shieldGenerator;
         private StationHull _stationHull;
         // todo add turrets
+        // todo add engines
+        // todo add solar panels
 
         public int resources = 0;
         

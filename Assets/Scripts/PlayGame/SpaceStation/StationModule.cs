@@ -8,9 +8,9 @@ namespace PlayGame.SpaceStation {
         
         protected readonly SpaceStation spaceStation;
 
-        private readonly Renderer _renderer;
-        private readonly Material _damagedMaterial;
-        private readonly Material _functionalMaterial;
+        protected Material _material;
+        protected Texture _damagedTexture;
+        protected Texture _functionalTexture;
         
         public readonly string name;
         public readonly int maxHealth;
@@ -21,14 +21,21 @@ namespace PlayGame.SpaceStation {
             this.maxHealth = maxHealth;
             spaceStation = station;
             moduleHealth = Random.Range(0, maxHealth / 2); // Set initial health to be less than half
-            _renderer = station.transform.Find(path).gameObject.GetComponent<Renderer>();
-            _damagedMaterial = Resources.Load<Material>("Materials/DamagedStationMaterial");
-            _functionalMaterial = Resources.Load<Material>("Materials/StationMaterial");
+            _material = station.transform.Find(path).gameObject.GetComponent<Renderer>().material;
+            _damagedTexture = Texture2D.redTexture;
+            _functionalTexture = Texture2D.whiteTexture;
             UpdateMesh();
         }
+        
+        protected StationModule(string name, int maxHealth, SpaceStation station) {
+            this.name = name;
+            this.maxHealth = maxHealth;
+            spaceStation = station;
+            moduleHealth = Random.Range(0, maxHealth / 2); // Set initial health to be less than half
+        }
 
-        private void UpdateMesh() {
-            _renderer.material = IsFunctional() ? _functionalMaterial : _damagedMaterial;
+        protected virtual void UpdateMesh() {
+            _material.mainTexture = IsFunctional() ? _functionalTexture : _damagedTexture;
         }
 
         public void Repair(int resources) {
