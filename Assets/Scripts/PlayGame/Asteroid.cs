@@ -83,9 +83,16 @@ namespace PlayGame {
                 material.color = c;
                 yield return null;
             }
-            
-            if(!DebugSettings.Debug && PhotonNetwork.IsMasterClient) PhotonNetwork.Destroy(gameObject); // Delete the game object when its faded
+
+            if (!DebugSettings.Debug && gameObject != null) GetComponent<PhotonView>().RPC("DestroyOnNetwork", RpcTarget.MasterClient, gameObject.GetComponent<PhotonView>().ViewID);
             else if (DebugSettings.Debug) Destroy(gameObject);
+        }
+
+        [PunRPC]
+        public void DestroyOnNetwork(int pvID)
+        {
+            if ((PhotonView.Find(pvID) == null)) return;
+            PhotonNetwork.Destroy(PhotonView.Find(pvID));
         }
 
         public void MineAsteroid(int miningRate, PlayerData playerData) {

@@ -31,7 +31,9 @@ namespace PlayGame.Speech {
             player = !DebugSettings.Debug ? PhotonPlayer.Instance.myAvatar : TestPlayer.GetPlayerShip();
 
             _playerData = player.GetComponent<PlayerData>();
-
+            text = GameObject.Find("Speech").GetComponent<Text>();
+            ping = GameObject.Find("PingManager");
+            spaceStation = GameObject.Find("SpaceStation");
             _actionController = CreateActionController(player);
         }
 
@@ -50,6 +52,7 @@ namespace PlayGame.Speech {
         }
 
         private void Update() {
+            if (!DebugSettings.Debug && !this.photonView.IsMine) return;
             text.text = _myResponse;
         }
 
@@ -63,7 +66,7 @@ namespace PlayGame.Speech {
 
         // Called by javascript when speech is detected
         public void GetResponse(string result) {
-            if (!DebugSettings.Debug && !PhotonPlayer.Instance.photonView.IsMine) return;
+             if (!DebugSettings.Debug && !this.photonView.IsMine) return;
 
             _myResponse = result.ToLower();
             Command command = Grammar.GetCommand(_myResponse, _playerData, player.transform);
@@ -74,6 +77,26 @@ namespace PlayGame.Speech {
             } else {
                 DisplaySuggestedCommand(_myResponse);
             }
+        }
+
+        [PunRPC]
+        public void RPC_PerformActions(int viewID, string phrase)
+        {
+            if (player == null) return;
+            GameObject prevPlayer = player;
+            /*
+            List<GameObject> playerList = player.GetComponent<PlayerData>().GetList();
+            foreach (GameObject p in playerList) {
+                if (p != null && viewID == p.GetComponent<PhotonView>().ViewID) player = p;
+            }*/
+
+            player = PhotonView.Find(viewID).gameObject;
+
+            Command command = Grammar.GetCommand(phrase, player.GetComponent<PlayerData>(), player.transform);
+
+            _actionController = CreateActionController(player);
+            _actionController.PerformActions(command);
+            player = prevPlayer;
         }
 
         // Displays the suggested command, if we are confident its correct perform the command
@@ -106,21 +129,6 @@ namespace PlayGame.Speech {
             ReadTextToSpeech(eventMessage); // Read the message using tts in the browser
         }
 
-        [PunRPC]
-        public void RPC_PerformActions(int viewID, string phrase) {
-            if (player == null) return;
-            GameObject prevPlayer = player;
-            List<GameObject> playerList = player.GetComponent<PlayerData>().GetList();
-            foreach (GameObject p in playerList) {
-                if (p != null && viewID == p.GetComponent<PhotonView>().ViewID) player = p;
-            }
-            
-            Command command = Grammar.GetCommand(phrase, player.GetComponent<PlayerData>(), player.transform);
-
-            _actionController = CreateActionController(player);
-            _actionController.PerformActions(command);
-            player = prevPlayer;
-        }
         
         private static void ReadTextToSpeech(string phrase) {
             Application.ExternalCall("readTextToSpeech", phrase);

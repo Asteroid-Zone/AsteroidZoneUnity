@@ -121,7 +121,8 @@ namespace PlayGame.Speech {
             // Check player is in the same grid square as the station
             if (GridCoord.GetCoordFromVector(player.transform.position).Equals(GridCoord.GetCoordFromVector(spaceStationObject.transform.position))) {
                 spaceStation.AddResources(command.transferAmount); // Add the resources into the space station
-                if (player.GetComponent<PhotonView>().IsMine) player.GetComponent<PlayerData>().RemoveResources(command.transferAmount); // Remove them from the player
+                // EventsManager.AddMessage("Resources at " + spaceStation.resources.ToString());
+                player.GetComponent<PlayerData>().RemoveResources(command.transferAmount); // Remove them from the player
             } else {
                 EventsManager.AddMessage("You must be next to the space station to transfer resources");
             }

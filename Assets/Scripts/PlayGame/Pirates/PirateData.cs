@@ -83,8 +83,15 @@ namespace PlayGame.Pirates {
         }
 
         private void Despawn() {
-            if (!DebugSettings.Debug && PhotonNetwork.IsMasterClient) PhotonNetwork.Destroy(gameObject);
+            if (!DebugSettings.Debug && gameObject != null) GetComponent<PhotonView>().RPC("DestroyOnNetwork", RpcTarget.MasterClient, gameObject.GetComponent<PhotonView>().ViewID);
             else if (DebugSettings.Debug) Destroy(gameObject);
+        }
+
+        [PunRPC]
+        public void DestroyOnNetwork(int pvID)
+        {
+            if ((PhotonView.Find(pvID) == null)) return;
+            PhotonNetwork.Destroy(PhotonView.Find(pvID));
         }
 
         private void SetHealthBar() {
