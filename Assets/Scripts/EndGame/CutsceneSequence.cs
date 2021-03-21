@@ -10,6 +10,7 @@ namespace EndGame
     {
         public Transform spaceStation;
         public new Camera camera;
+        public GameObject explosionPrefab;
 
         private bool _trackingSpaceStation = true;
         private Animator _animator;
@@ -32,6 +33,7 @@ namespace EndGame
             }
             else
             {
+                Instantiate(explosionPrefab, spaceStation, false);
                 spaceStation.gameObject.GetComponent<Animation>().Play("Explode");
             }
             yield return new WaitForSeconds(1.5f);
