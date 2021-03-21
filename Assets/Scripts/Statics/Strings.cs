@@ -15,6 +15,8 @@
         public const string Hyperdrive = "hyperdrive";
         public const string Hull = "hull";
         public const string ShieldGenerator = "shield generator";
+        public const string Engines = "engine";
+        public const string SolarPanels = "solar panel";
 
         public const string North = "north";
         public const string East = "east";

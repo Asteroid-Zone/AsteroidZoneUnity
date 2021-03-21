@@ -51,7 +51,9 @@ namespace PlayGame.Speech {
         private static readonly List<string> Hyperdrive = new List<string> {Strings.Hyperdrive, "warp drive", "hyper drive"};
         private static readonly List<string> Hull = new List<string> {Strings.Hull, "body", "frame", "structure", "armour", "exterior"};
         private static readonly List<string> ShieldGenerator = new List<string> {Strings.ShieldGenerator, "shield"};
-        
+        private static readonly List<string> Engines = new List<string> {Strings.Engines, "thrusters"};
+        private static readonly List<string> SolarPanels = new List<string> {Strings.SolarPanels, "panels", "solar"};
+
         private static readonly List<string> CompassDirections = new List<string>{Strings.North, Strings.East, Strings.South, Strings.West};
         private static readonly List<string> RelativeDirections = new List<string>{Strings.Forward, Strings.Back, Strings.Left, Strings.Right};
         private static readonly List<List<string>> Directions = new List<List<string>>{CompassDirections, RelativeDirections};
@@ -61,7 +63,7 @@ namespace PlayGame.Speech {
         private static readonly List<List<string>> LockTargets = new List<List<string>>{Pirate, Asteroid};
         private static readonly List<List<string>> Activatable = new List<List<string>>{MiningLaser, LockCommands, LaserGun, Hyperdrive};
         private static readonly List<List<string>> GenericActivatableObjects = new List<List<string>>{Hyperdrive}; // Objects that are only activated using the generic on commands and don't need any extra data
-        private static readonly List<List<string>> StationModules = new List<List<string>>{Hyperdrive, Hull, ShieldGenerator};
+        private static readonly List<List<string>> StationModules = new List<List<string>>{Hyperdrive, Hull, ShieldGenerator, Engines, SolarPanels};
         
         private static readonly List<List<string>> SingleCommands = new List<List<string>>{SpeedCommands, ShootCommands};
         private static readonly List<List<string>> CompoundCommands = new List<List<string>>{MovementCommands, TurnCommands, Ping, TransferCommands, OffCommands, OnCommands, RepairCommands};

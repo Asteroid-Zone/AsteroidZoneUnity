@@ -96,6 +96,10 @@ namespace PlayGame.SpaceStation {
                     return _stationHull;
                 case RepairCommand.StationModule.ShieldGenerator:
                     return _shieldGenerator;
+                case RepairCommand.StationModule.Engines:
+                    return _engines;
+                case RepairCommand.StationModule.SolarPanels:
+                    return _solarPanels;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(module), module, null);
             }
