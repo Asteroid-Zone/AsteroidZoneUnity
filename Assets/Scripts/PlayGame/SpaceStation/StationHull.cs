@@ -15,15 +15,15 @@ namespace PlayGame.SpaceStation {
         private Texture _functionalTextureLowerRing;
         
         public StationHull(SpaceStation station) : base("Station Hull", MaxHealth, station) {
-            _material = station.transform.Find("station/hull/centre_hull").gameObject.GetComponent<Renderer>().material;
+            _material = station.transform.Find("SpaceStation/station/hull/centre_hull").gameObject.GetComponent<Renderer>().material;
             _damagedTexture = Resources.Load<Texture>(Textures.CentreHullDamaged);
             _functionalTexture = Resources.Load<Texture>(Textures.CentreHull);
             
-            _materialUpperRing = station.transform.Find("station/hull/upper_ring").gameObject.GetComponent<Renderer>().material;
+            _materialUpperRing = station.transform.Find("SpaceStation/station/hull/upper_ring").gameObject.GetComponent<Renderer>().material;
             _damagedTextureUpperRing = Resources.Load<Texture>(Textures.UpperRingDamaged);
             _functionalTextureUpperRing = Resources.Load<Texture>(Textures.UpperRing);
 
-            _materialLowerRing = station.transform.Find("station/hull/lower_ring").gameObject.GetComponent<Renderer>().material;
+            _materialLowerRing = station.transform.Find("SpaceStation/station/hull/lower_ring").gameObject.GetComponent<Renderer>().material;
             _damagedTextureLowerRing = Resources.Load<Texture>(Textures.LowerRingDamaged);
             _functionalTextureLowerRing = Resources.Load<Texture>(Textures.LowerRing);
             
