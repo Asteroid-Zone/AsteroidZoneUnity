@@ -6,7 +6,7 @@ namespace PlayGame.SpaceStation {
 
         private const int MaxHealth = 100;
 
-        public SolarPanels(SpaceStation station) : base("Solar Panels", MaxHealth, station, "station/solar_panels") {
+        public SolarPanels(SpaceStation station) : base("Solar Panels", MaxHealth, station, "SpaceStation/station/solar_panels") {
             _damagedTexture = Resources.Load<Texture>(Textures.SolarPanelsDamaged);
             _functionalTexture = Resources.Load<Texture>(Textures.SolarPanels);
             UpdateMesh();

@@ -21,6 +21,7 @@ namespace PlayGame.SpaceStation {
             this.maxHealth = maxHealth;
             spaceStation = station;
             moduleHealth = Random.Range(0, maxHealth / 2); // Set initial health to be less than half
+            Debug.Log(path);
             _material = station.transform.Find(path).gameObject.GetComponent<Renderer>().material;
             _damagedTexture = Texture2D.redTexture;
             _functionalTexture = Texture2D.whiteTexture;

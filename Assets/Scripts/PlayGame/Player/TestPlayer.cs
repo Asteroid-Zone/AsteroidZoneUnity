@@ -22,7 +22,8 @@ namespace PlayGame.Player
             // Enable the test player ship if Debug mode.
             if (DebugSettings.Debug)
             {
-                _playerShipInstance = Instantiate(playerShipPrefab, new Vector3(5, 0, 5), Quaternion.identity);
+                Vector3 testPlayerSpawnPosition = GameObject.FindGameObjectWithTag(Tags.TestPlayerShipSpawnLoc).transform.position;
+                _playerShipInstance = Instantiate(playerShipPrefab, testPlayerSpawnPosition, Quaternion.identity);
             }
         }
 

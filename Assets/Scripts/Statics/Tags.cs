@@ -6,5 +6,6 @@
         public const string PirateTag = "Pirate";
         public const string AsteroidTag = "Asteroid";
         public const string StationTag = "Station";
+        public const string TestPlayerShipSpawnLoc = "TestPlayerShipSpawnLoc";
     }
 }

@@ -7,7 +7,7 @@ namespace PlayGame.SpaceStation {
 
         private const int MaxHealth = 100;
 
-        public Hyperdrive(SpaceStation station) : base("Hyperdrive", MaxHealth, station, "station/hyperdrive") {
+        public Hyperdrive(SpaceStation station) : base("Hyperdrive", MaxHealth, station, "SpaceStation/station/hyperdrive") {
             _damagedTexture = Resources.Load<Texture>(Textures.HyperdriveDamaged);
             _functionalTexture = Resources.Load<Texture>(Textures.Hyperdrive);
             UpdateMesh();

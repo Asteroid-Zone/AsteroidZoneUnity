@@ -6,6 +6,6 @@
         public const string PirateScout = "PirateScout";
         public const string PirateElite = "PirateElite";
         public const string Asteroid = "Asteroid";
-        public const string PirateMinimapAlert = "PirateAlertMinimap";
+        public const string PirateAlertMinimap = "PirateAlertMinimap";
     }
 }
