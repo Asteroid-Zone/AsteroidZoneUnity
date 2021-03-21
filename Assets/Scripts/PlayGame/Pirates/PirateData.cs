@@ -78,8 +78,15 @@ namespace PlayGame.Pirates {
         
         private void Die() {
             // TODO Play death animation
-            Despawn();
             EventsManager.AddMessage("Pirate destroyed at " + GridCoord.GetCoordFromVector(gameObject.transform.position));
+
+            // Unalert pirates if all of them were destroyed (this one is the last one)
+            if (PirateSpawner.GetAllPirateControllers().Length == 1)
+            {
+                PirateController.UnalertPirates();
+            }
+            
+            Despawn();
         }
 
         private void Despawn() {

@@ -108,5 +108,9 @@ namespace PlayGame.Pirates {
             newPirate.GetComponent<PirateController>().spaceStation = spaceStation.GetComponent<SpaceStation.SpaceStation>();
             newPirate.GetComponent<PirateController>().pirateSpawner = this;
         }
+        
+        public static PirateController[] GetAllPirateControllers() {
+            return _instance.gameObject.GetComponentsInChildren<PirateController>();
+        }
     }
 }

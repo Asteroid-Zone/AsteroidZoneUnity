@@ -96,14 +96,8 @@ namespace PlayGame.Pirates {
             else LeaveMap();
         }
 
-        private PirateController[] GetOtherPirates() {
-            GameObject parent = transform.parent.gameObject;
-            PirateController[] pirateControllers = parent.GetComponentsInChildren<PirateController>();
-            return pirateControllers;
-        }
-
         private void AlertPirates(Vector3 position) {
-            PirateController[] pirateControllers = GetOtherPirates();
+            PirateController[] pirateControllers = PirateSpawner.GetAllPirateControllers();
             _alert = true;
             _knownStationLocation = position;
             
@@ -120,8 +114,14 @@ namespace PlayGame.Pirates {
             pirateSpawner.SpawnReinforcements();
         }
         
-        private void UnalertPirates() {
-            PirateController[] pirateControllers = GetOtherPirates();
+        public static void UnalertPirates() {
+            // Check if the pirates were alerted at all initially
+            if (!_alert)
+            {
+                return;
+            }
+            
+            PirateController[] pirateControllers = PirateSpawner.GetAllPirateControllers();
             _alert = false;
             _minimapAlert.SetActive(false);
 
