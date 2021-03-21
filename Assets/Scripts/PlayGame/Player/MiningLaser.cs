@@ -1,4 +1,5 @@
-﻿using PlayGame.UI;
+﻿using System.Linq;
+using PlayGame.UI;
 using Statics;
 using UnityEngine;
 
@@ -21,7 +22,16 @@ namespace PlayGame.Player {
             laser.positionCount = 2;
             laser.enabled = false;
             
-            _miningLaserSfx = GameObject.FindGameObjectWithTag(Tags.MiningLaserSFXTag).GetComponent<AudioSource>();
+            // Get the mining laser SFX that has the necessary tag and is a child of the current player's game object
+            // Note: it should be a child of the current player, because in multiplayer it wouldn't work otherwise
+            GameObject.FindGameObjectsWithTag(Tags.MiningLaserSFXTag).ToList().ForEach(miningSfx =>
+                {
+                    if (miningSfx.transform.parent.parent == gameObject.transform)
+                    {
+                        _miningLaserSfx = miningSfx.GetComponent<AudioSource>();
+                    }
+                });
+            
             VolumeControl.AddSfxCSource(_miningLaserSfx);
             
             if (DebugSettings.InfiniteMiningRange) MiningRange = 10000;
