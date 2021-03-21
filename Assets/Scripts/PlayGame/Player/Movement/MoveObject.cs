@@ -65,7 +65,6 @@ namespace PlayGame.Player.Movement
 
             if (_lockTarget)
             {
-                
                 FaceTarget(_lockTarget);
             }
         }
@@ -101,7 +100,7 @@ namespace PlayGame.Player.Movement
                 Vector3 closestPointPlayer = _playerCollider.ClosestPoint(closestPointTarget);
                 
                 // The colliders are very close, stop the player ship
-                if (Vector3.Distance(closestPointPlayer, closestPointTarget) < 0.1) 
+                if (Vector3.Distance(closestPointPlayer, closestPointTarget) < 2) 
                 {
                     SetSpeed(0f);
                     return true;

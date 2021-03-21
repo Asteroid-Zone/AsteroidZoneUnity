@@ -30,7 +30,7 @@ namespace PlayGame {
 
         private bool _asteroidDestroyed;
         
-        private const float MaxScale = 7f;
+        private const float MaxScale = 6f;
         private const float MinScale = 2f;
 
         private const int MinResources = 25;

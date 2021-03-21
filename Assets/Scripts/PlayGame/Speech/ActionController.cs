@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Photon.Pun;
-using PlayGame.Camera;
 using PlayGame.Pings;
 using PlayGame.Player;
 using PlayGame.Player.Movement;
