@@ -1,4 +1,5 @@
 ﻿using PlayGame.UI;
+using Statics;
 using UnityEngine;
 
 namespace PlayGame.Player {
@@ -16,8 +17,7 @@ namespace PlayGame.Player {
         private void Start() {
             _playerData = GetComponent<PlayerData>();
             
-            // 2nd child is SFX, 0th child is laser SFX
-            _laserSfx = gameObject.transform.GetChild(2).GetChild(0).GetComponent<AudioSource>();
+            _laserSfx = GameObject.FindGameObjectWithTag(Tags.CombatLaserSFXTag).GetComponent<AudioSource>();
             VolumeControl.AddSfxCSource(_laserSfx);
         }
 
