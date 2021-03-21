@@ -8,6 +8,9 @@ TagManager:
   - Pirate
   - Station
   - TestPlayerShipSpawnLoc
+  - Fire
+  - MiningLaserSFX
+  - CombatLaserSFX
   layers:
   - Default
   - TransparentFX
