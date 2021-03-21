@@ -7,7 +7,9 @@ namespace PlayGame.Speech.Commands {
         public enum StationModule {
             Hyperdrive,
             Hull,
-            ShieldGenerator
+            ShieldGenerator,
+            Engines,
+            SolarPanels
         }
 
         public readonly StationModule stationModule;
@@ -26,6 +28,10 @@ namespace PlayGame.Speech.Commands {
                     return StationModule.Hull;
                 case Strings.ShieldGenerator:
                     return StationModule.ShieldGenerator;
+                case Strings.Engines:
+                    return StationModule.Engines;
+                case Strings.SolarPanels:
+                    return StationModule.SolarPanels;
                 default:
                     throw new ArgumentException("Invalid Station Module");
             }

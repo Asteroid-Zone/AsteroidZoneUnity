@@ -6,10 +6,6 @@ namespace PlayGame.Speech {
 
         public SpeechRecognition speechRecognition;
 
-        void Start() {
-            TestSuggestedCommands();
-        }
-        
         // Used letters:
         // Q W E R T Y U I
         // A S D F G H J K L
@@ -108,16 +104,10 @@ namespace PlayGame.Speech {
             }
             
             if (Input.GetKeyDown(KeyCode.V)) {
-                speechRecognition.GetResponse("repair hull");
+                speechRecognition.GetResponse("repair hyperdrive");
             }
         }
 
-        private void TestSuggestedCommands() {
-            Assert.AreEqual("move north", Grammar.GetSuggestedCommandFromData("travel north").Item1);
-            Assert.AreEqual("move (direction)", Grammar.GetSuggestedCommandFromData("move").Item1);
-            Assert.AreEqual("move (direction)", Grammar.GetSuggestedCommandFromData("move up").Item1);
-        }
-        
     }
     
 }
