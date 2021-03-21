@@ -7,5 +7,6 @@
         public const string AsteroidTag = "Asteroid";
         public const string StationTag = "Station";
         public const string TestPlayerShipSpawnLoc = "TestPlayerShipSpawnLoc";
+        public const string MiningLaserSFXTag = "MiningLaserSFX";
     }
 }

@@ -21,8 +21,7 @@ namespace PlayGame.Player {
             laser.positionCount = 2;
             laser.enabled = false;
             
-            // 2nd child is SFX, 1st child is mining laser SFX
-            _miningLaserSfx = gameObject.transform.GetChild(2).GetChild(1).GetComponent<AudioSource>();
+            _miningLaserSfx = GameObject.FindGameObjectWithTag(Tags.MiningLaserSFXTag).GetComponent<AudioSource>();
             VolumeControl.AddSfxCSource(_miningLaserSfx);
             
             if (DebugSettings.InfiniteMiningRange) MiningRange = 10000;

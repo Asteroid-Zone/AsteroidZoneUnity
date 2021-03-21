@@ -481,7 +481,7 @@ GameObject:
   - component: {fileID: 3961590641574376048}
   m_Layer: 0
   m_Name: Mining Laser
-  m_TagString: Untagged
+  m_TagString: MiningLaserSFX
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -510,7 +510,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: ec803b1327a2593418f7f8bdbb394ac8, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 6d72ea4f13b8e3f4bbbdc59f182e10f2, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 0.03
   m_Pitch: 1
