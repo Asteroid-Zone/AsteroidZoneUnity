@@ -21,10 +21,10 @@ namespace PlayGame.Pirates {
         private const float DespawnDistance = 2f;
 
         private Vector3 _destination;
-        private static bool _alert = false;
+        private static bool _alert;
         private static Vector3 _knownStationLocation;
 
-        private static GameObject _minimapAlert = null;
+        private static GameObject _minimapAlert;
 
         private NavMeshAgent _agent;
         private PirateLaserGun _laserGun;
@@ -34,11 +34,10 @@ namespace PlayGame.Pirates {
             _agent = GetComponent<NavMeshAgent>();
             _laserGun = GetComponent<PirateLaserGun>();
             _pirateData = GetComponent<PirateData>();
-            _randomDestination = transform.position;
-            _destination = transform.position;
+            _destination = _randomDestination = transform.position;
 
             if (_minimapAlert == null) {
-                GameObject prefab = Resources.Load<GameObject>(Prefabs.PirateMinimapAlert);
+                GameObject prefab = Resources.Load<GameObject>(Prefabs.PirateAlertMinimap);
                 _minimapAlert = Instantiate(prefab, transform.position, Quaternion.identity);
                 _minimapAlert.SetActive(false);
             }
