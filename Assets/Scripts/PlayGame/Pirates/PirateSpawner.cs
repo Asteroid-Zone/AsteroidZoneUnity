@@ -5,7 +5,7 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace PlayGame.Pirates {
-    public class PirateSpawner : MonoBehaviour {
+    public class PirateSpawner : MonoBehaviourPun {
         #region Singleton
         private static PirateSpawner _instance;
 
@@ -41,7 +41,7 @@ namespace PlayGame.Pirates {
 
         // Start is called before the first frame update
         private void Start() {
-            if (!PhotonNetwork.IsMasterClient && !DebugSettings.Debug) return;
+            if (!DebugSettings.Debug && !PhotonNetwork.IsMasterClient) return;
             _gridManager = gridManager.GetComponent<GridManager>();
             InvokeRepeating(nameof(PirateRNG), 0, everyXSeconds);
             
@@ -51,7 +51,7 @@ namespace PlayGame.Pirates {
         }
 
         private void PirateRNG() {
-            if (!PhotonNetwork.IsMasterClient && !DebugSettings.Debug) return;
+            if (!DebugSettings.Debug && !PhotonNetwork.IsMasterClient) return;
             // Don't spawn pirates if the maximum count is reached.
             if (transform.childCount >= _maxPirates) {
                 return;
@@ -64,6 +64,7 @@ namespace PlayGame.Pirates {
         }
 
         public void SpawnReinforcements() {
+            if (!DebugSettings.Debug && !PhotonNetwork.IsMasterClient) return;
             int reinforcements = Random.Range(2, 4);
 
             for (int i = 0; i < reinforcements; i++) {
@@ -72,7 +73,8 @@ namespace PlayGame.Pirates {
         }
 
         private void SpawnPirate(PirateData.PirateType type) {
-            if (!PhotonNetwork.IsMasterClient && !DebugSettings.Debug) return;
+            if (!DebugSettings.Debug && !PhotonNetwork.IsMasterClient) return;
+
             // Initialise some random grid coordinates on the map
             var randomGridCoord = new Vector2(Random.Range(0, GridManager.Width), Random.Range(0, GridManager.Height));
             
@@ -99,17 +101,33 @@ namespace PlayGame.Pirates {
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
-            
+
             // Spawn the new pirate
             GameObject newPirate;
             if (!DebugSettings.Debug) newPirate = PhotonNetwork.InstantiateRoomObject(prefab, randomGlobalCoord, Quaternion.identity);
             else newPirate = Instantiate(pirate, randomGlobalCoord, Quaternion.identity);
+            if (!DebugSettings.Debug) this.photonView.RPC("RPC_SetPirateParam", RpcTarget.AllBuffered, newPirate.GetComponent<PhotonView>().ViewID);
+            else
+            {
+                newPirate.transform.parent = gameObject.transform;
+                newPirate.GetComponent<PirateController>().spaceStation = spaceStation.GetComponent<SpaceStation.SpaceStation>();
+                newPirate.GetComponent<PirateController>().pirateSpawner = this;
+            }
+
+
+        }
+
+        [PunRPC]
+        public void RPC_SetPirateParam(int viewID)
+        {
+            GameObject newPirate = PhotonView.Find(viewID).gameObject;
             newPirate.transform.parent = gameObject.transform;
             newPirate.GetComponent<PirateController>().spaceStation = spaceStation.GetComponent<SpaceStation.SpaceStation>();
             newPirate.GetComponent<PirateController>().pirateSpawner = this;
         }
-        
-        public static PirateController[] GetAllPirateControllers() {
+
+        public static PirateController[] GetAllPirateControllers()
+        {
             return _instance.gameObject.GetComponentsInChildren<PirateController>();
         }
     }
