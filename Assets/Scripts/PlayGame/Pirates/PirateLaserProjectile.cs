@@ -1,4 +1,5 @@
-﻿using PlayGame.Player;
+﻿using Photon.Pun;
+using PlayGame.Player;
 using Statics;
 using UnityEngine;
 
@@ -37,8 +38,13 @@ namespace PlayGame.Pirates {
             }
 
             if (collision.gameObject.CompareTag(Tags.StationTag)) {
-                SpaceStation.SpaceStation station = collision.gameObject.GetComponent<SpaceStation.SpaceStation>();
-                station.TakeDamage(_shootingPirateData.GetLaserDamage());
+                if ((!DebugSettings.Debug && PhotonNetwork.IsMasterClient) || DebugSettings.Debug)
+                {
+                    SpaceStation.SpaceStation station = collision.gameObject.GetComponent<SpaceStation.SpaceStation>();
+                    station.TakeDamage(_shootingPirateData.GetLaserDamage());
+                }
+             
+
             }
 
             Destroy(gameObject);

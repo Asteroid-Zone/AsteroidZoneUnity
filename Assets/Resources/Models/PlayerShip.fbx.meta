@@ -32,7 +32,7 @@ ModelImporter:
   materials:
     materialImportMode: 1
     materialName: 0
-    materialSearch: 0
+    materialSearch: 2
     materialLocation: 1
   animations:
     legacyGenerateAnimations: 4

@@ -84,14 +84,32 @@ namespace PlayGame.SpaceStation {
 
         public void TakeDamage(int damage) {
             int damageRemaining = _shieldGenerator.AbsorbDamage(damage); // Shields take as much of the damage as they can
+            int moduleDamage = Random.Range(0, damageRemaining); // Random module takes a random amount of damage
+            int index = Random.Range(0, _stationModules.Count);
 
-            // Random module takes a random amount of damage
-            int moduleDamage = Random.Range(0, damageRemaining);
-            _stationModules[Random.Range(0, _stationModules.Count)].TakeDamage(moduleDamage);
-            damageRemaining -= moduleDamage;
-            
-            _stationHull.TakeDamage(damageRemaining); // Hull takes the rest of the damage
+            if (!DebugSettings.Debug)
+            {
+                this.photonView.RPC("RPC_TakeDamage", RpcTarget.AllBuffered, moduleDamage, index, damageRemaining);
+            }
+
+            else
+            { 
+
+                _stationModules[index].TakeDamage(moduleDamage);
+                damageRemaining -= moduleDamage;
+
+                _stationHull.TakeDamage(damageRemaining); // Hull takes the rest of the damage
+            }
         }
+
+        [PunRPC]
+        public void RPC_TakeDamage(int moduleDamage, int index, int damageRemaining)
+        {  
+            _stationModules[index].TakeDamage(moduleDamage);
+            damageRemaining -= moduleDamage;
+
+            _stationHull.TakeDamage(damageRemaining); // Hull takes the rest of the damage
+        } 
 
         public StationModule GetStationHull() {
             return _stationHull;
