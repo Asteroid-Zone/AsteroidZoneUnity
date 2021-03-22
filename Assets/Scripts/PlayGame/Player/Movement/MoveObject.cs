@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using PlayGame.Pirates;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -22,6 +23,8 @@ namespace PlayGame.Player.Movement
 
         public bool rotating;
         private bool _turnRight; // false = turn left, true = turn right
+
+        //private bool? _movingForward = null; // true = forward, false = back
 
         // Needed to reference enemies in order to rotate towards them
         private GameObject _enemySpawner;
@@ -63,8 +66,7 @@ namespace PlayGame.Player.Movement
             // Rotate slowly
             if (rotating) Rotate();
 
-            if (_lockTarget)
-            {
+            if (_lockTarget) {
                 FaceTarget(_lockTarget);
             }
         }
@@ -148,14 +150,18 @@ namespace PlayGame.Player.Movement
             return transforms[closestEnemyIndex].transform;
         }
         
-        public void FaceTarget(Transform target)
-        {
+        public void FaceTarget(Transform target) {
             if (target == null) return; // If the target is destroyed just return.
 
+            bool forward = transform.forward == _direction;
+            
             rotating = false;
             Vector3 direction = (target.position - transform.position).normalized;
             Quaternion lookRotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5);
+
+            if (forward) _direction = transform.forward;
+            else _direction = -transform.forward;
         }
 
         // Turn to face the direction the player is moving
@@ -212,8 +218,7 @@ namespace PlayGame.Player.Movement
             _playerData.SetSpeed(fraction);
         }
 
-        public void SetLockTarget(Transform lockTarget)
-        {
+        public void SetLockTarget(Transform lockTarget) {
             _lockTarget = lockTarget;
         }
         
