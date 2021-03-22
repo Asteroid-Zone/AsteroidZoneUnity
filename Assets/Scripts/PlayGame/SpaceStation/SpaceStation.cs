@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Photon.Pun;
 using PlayGame.Speech.Commands;
 using PlayGame.Stats;
 using PlayGame.UI;
@@ -8,7 +9,7 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace PlayGame.SpaceStation {
-    public class SpaceStation : MonoBehaviour {
+    public class SpaceStation : MonoBehaviourPun {
 
         public GridManager gridManager;
         public GameManager gameManager;
@@ -40,6 +41,21 @@ namespace PlayGame.SpaceStation {
             _stationModules.Add(_stationHull);
             _stationModules.Add(_solarPanels);
             _stationModules.Add(_engines);
+
+            if (!DebugSettings.Debug && PhotonNetwork.IsMasterClient)
+            {
+                for (int i = 0; i < _stationModules.Count; i++)
+                {
+                    this.photonView.RPC("RPC_SyncStationHealth", RpcTarget.AllBuffered, _stationModules[i].moduleHealth, i);
+                }
+
+            }
+        }
+
+        [PunRPC]
+        public void RPC_SyncStationHealth(int health, int index)
+        {
+            _stationModules[index].moduleHealth = health;
         }
 
         private void Update() {
