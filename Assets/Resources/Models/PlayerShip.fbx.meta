@@ -3,11 +3,36 @@ guid: 4980bf21972c4b14e976da1f2f663784
 ModelImporter:
   serializedVersion: 19301
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Ship_MAT
+    second: {fileID: 2100000, guid: 239adaf5dbfce924ca8b05d5c4e86153, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: player_ship_lambert2_BaseColor
+    second: {fileID: 2800000, guid: b465cbad87b9545418217824740e3138, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: player_ship_lambert2_Metallic
+    second: {fileID: 2800000, guid: 33439b5115a949c458b6e6128febecbc, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: player_ship_lambert2_Normal
+    second: {fileID: 2800000, guid: 2a37ce87a42b1fd48b716600a40af243, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: player_ship_lambert2_Roughness
+    second: {fileID: 2800000, guid: 2456da8828ee4f54188b24848915b7dd, type: 3}
   materials:
     materialImportMode: 1
     materialName: 0
-    materialSearch: 1
+    materialSearch: 0
     materialLocation: 1
   animations:
     legacyGenerateAnimations: 4
@@ -81,7 +106,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 0.049999997
+    globalScale: 5
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
