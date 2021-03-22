@@ -22,6 +22,7 @@ namespace PlayGame.Pirates {
 
         private void OnCollisionEnter(Collision collision) {
             if (collision.gameObject.CompareTag(Tags.PirateTag)) return;
+            if (collision.gameObject.CompareTag(Tags.CombatLaserTag)) return;
             
             // todo play animation (explosion)
             

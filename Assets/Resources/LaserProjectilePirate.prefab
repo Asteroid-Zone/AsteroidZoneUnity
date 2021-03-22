@@ -15,8 +15,8 @@ GameObject:
   - component: {fileID: 7710162271274896742}
   - component: {fileID: 4404117524572333699}
   m_Layer: 0
-  m_Name: LaserProjectile 1Pirate
-  m_TagString: Untagged
+  m_Name: LaserProjectilePirate
+  m_TagString: CombatLaser
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

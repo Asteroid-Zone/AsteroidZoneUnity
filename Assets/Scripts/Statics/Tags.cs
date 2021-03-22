@@ -9,5 +9,6 @@
         public const string TestPlayerShipSpawnLoc = "TestPlayerShipSpawnLoc";
         public const string MiningLaserSFXTag = "MiningLaserSFX";
         public const string CombatLaserSFXTag = "CombatLaserSFX";
+        public const string CombatLaserTag = "CombatLaser";
     }
 }
