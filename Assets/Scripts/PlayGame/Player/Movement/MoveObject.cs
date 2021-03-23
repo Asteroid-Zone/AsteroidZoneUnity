@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using PlayGame.Pirates;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace PlayGame.Player.Movement 
 {
-    public class MoveObject : MonoBehaviour 
-    {
-        // TODO change to Vector2?
+    public class MoveObject : MonoBehaviour {
+        
         private Vector3 _direction;
         private Vector3 _destination = Vector3.positiveInfinity;
 
@@ -21,11 +20,23 @@ namespace PlayGame.Player.Movement
         // Whether the ship is headed to a specific object
         private bool _hasTargetObject;
 
-        // Needed to reference enemies in order to rotate towards them
-        public GameObject EnemySpawner;
+        public bool rotating;
+        private bool _turnRight; // false = turn left, true = turn right
 
-        private void Start() 
+        // Needed to reference enemies in order to rotate towards them
+        private GameObject _enemySpawner;
+
+        // Needed to reference asteroids in order to rotate towards them
+        private GameObject _asteroidSpawner;
+        
+        private Transform _lockTarget;
+        
+        private void Start()
         {
+            // fetch the objects of the spawners
+            _enemySpawner = PirateSpawner.GetInstance().gameObject;
+            _asteroidSpawner = AsteroidSpawner.GetInstance().gameObject;
+            
             // Get the initial components
             _direction = transform.rotation.eulerAngles;
             _playerData = GetComponent<PlayerData>();
@@ -34,8 +45,7 @@ namespace PlayGame.Player.Movement
             UpdateRotation();
         }
 
-        private void Update()
-        {
+        private void Update() {
             // Get the speed of the player's ship
             var speed = _playerData.GetSpeed();
             
@@ -49,6 +59,23 @@ namespace PlayGame.Player.Movement
                 // The speed is not 0, so the ship should be moving
                 transform.Translate((Time.deltaTime * speed) * _direction, Space.World);
             }
+            
+            // Rotate slowly
+            if (rotating) Rotate();
+
+            if (_lockTarget)
+            {
+                FaceTarget(_lockTarget);
+            }
+        }
+
+        private void Rotate() {
+            float rotateSpeed = _playerData.GetRotateSpeed();
+            Vector3 newDirection;
+            if (_turnRight) newDirection = Vector3.Slerp(transform.forward, transform.right, rotateSpeed);
+            else newDirection = Vector3.Slerp(transform.forward, -transform.right, rotateSpeed);
+            transform.localRotation = Quaternion.LookRotation(newDirection);
+            _direction = newDirection;
         }
 
         private bool HasReachedDestination() 
@@ -73,7 +100,7 @@ namespace PlayGame.Player.Movement
                 Vector3 closestPointPlayer = _playerCollider.ClosestPoint(closestPointTarget);
                 
                 // The colliders are very close, stop the player ship
-                if (Vector3.Distance(closestPointPlayer, closestPointTarget) < 0.1) 
+                if (Vector3.Distance(closestPointPlayer, closestPointTarget) < 2) 
                 {
                     SetSpeed(0f);
                     return true;
@@ -84,24 +111,33 @@ namespace PlayGame.Player.Movement
         }
 
         // Enemy target needed for lock-on
-        public Transform GetNearestEnemyTransform()
-        {
-            // Probably a better way to do this
-            List<Transform> enemyTransforms = new List<Transform>();
-            foreach (Transform child in EnemySpawner.transform)
-            {
-                enemyTransforms.Add(child);
+        public Transform GetNearestEnemyTransform() {
+            return GetNearestTransform(GetChildren(_enemySpawner.transform));
+        }
+
+        public Transform GetNearestAsteroidTransform() {
+            return GetNearestTransform(GetChildren(_asteroidSpawner.transform));
+        }
+
+        // Returns a list of all child transforms
+        private static List<Transform> GetChildren(Transform parent) {
+            List<Transform> children = new List<Transform>();
+            
+            foreach (Transform child in parent) {
+                children.Add(child);
             }
 
-            float bestDistance = Single.PositiveInfinity;
+            return children;
+        }
+
+        // Returns the nearest transform from a list
+        private Transform GetNearestTransform(List<Transform> transforms) {
+            float bestDistance = float.PositiveInfinity;
             int closestEnemyIndex = -1;
             
-            for (int i = 0; i < enemyTransforms.Count; i++)
-            {
-                float calculatedDistance =
-                    Vector3.SqrMagnitude(enemyTransforms[i].transform.position - transform.position);
-                if (calculatedDistance < bestDistance)
-                {
+            for (int i = 0; i < transforms.Count; i++) {
+                float calculatedDistance = Vector3.SqrMagnitude(transforms[i].transform.position - transform.position);
+                if (calculatedDistance < bestDistance) {
                     bestDistance = calculatedDistance;
                     closestEnemyIndex = i;
                 }
@@ -109,25 +145,35 @@ namespace PlayGame.Player.Movement
 
             if (closestEnemyIndex == -1) return null;
             
-            Transform closestEnemyTransform = enemyTransforms[closestEnemyIndex].transform;
-            return closestEnemyTransform;
+            return transforms[closestEnemyIndex].transform;
         }
         
         public void FaceTarget(Transform target)
         {
+            if (target == null) return; // If the target is destroyed just return.
+
+            rotating = false;
             Vector3 direction = (target.position - transform.position).normalized;
-            Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+            Quaternion lookRotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5);
         }
 
         // Turn to face the direction the player is moving
-        private void UpdateRotation() 
-        {
+        private void UpdateRotation() {
             transform.localRotation = Quaternion.LookRotation(_direction);
         }
+
+        public void StartRotating(Vector3 targetDirection) {
+            rotating = true;
+            _turnRight = targetDirection == transform.right;
+        }
+
+        public void StopRotating() {
+            rotating = false;
+        }
     
-        public void SetDirection(Vector3 newDirection) 
-        {
+        public void SetDirection(Vector3 newDirection, bool rotate) {
+            StopRotating();
             // Set the direction to be the new direction
             _direction = newDirection;
             
@@ -136,13 +182,16 @@ namespace PlayGame.Player.Movement
             _playerAgent.enabled = false;
             
             // Update the rotation of the player
-            UpdateRotation();
+            if (rotate) UpdateRotation();
         }
 
-        public void SetDestination(Vector3 destination) 
-        {
+        public void SetDestination(Vector3 destination) {
             // Set the destination
             _destination = destination;
+            
+            // Set the direction to destination
+            Vector3 direction = (destination - transform.position).normalized;
+            SetDirection(direction, true);
             
             // Set the flags specifying that the player is not headed to a specific object and enable the AI
             _hasTargetObject = false;
@@ -159,9 +208,18 @@ namespace PlayGame.Player.Movement
         }
 
         // Sets the current speed to a percentage of the players maximum speed
-        public void SetSpeed(float fraction) 
-        {
+        public void SetSpeed(float fraction) {
             _playerData.SetSpeed(fraction);
+        }
+
+        public void SetLockTarget(Transform lockTarget)
+        {
+            _lockTarget = lockTarget;
+        }
+        
+        public Transform GetLockTarget()
+        {
+            return _lockTarget;
         }
     }
 }

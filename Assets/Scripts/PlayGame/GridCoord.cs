@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Text.RegularExpressions;
+using UnityEngine;
 
 namespace PlayGame {
     using System;
@@ -15,7 +16,7 @@ namespace PlayGame {
             _z = z;
         }
 
-        private GridCoord(int x, int z) {
+        public GridCoord(int x, int z) {
             _x = x;
             _z = z;
         }
@@ -28,6 +29,23 @@ namespace PlayGame {
             return new GridCoord(x, z);
         }
 
+        // Use regex to get a grid coordinate from a string
+        public static GridCoord GetCoordFromString(string coord) {
+            Match number = Regex.Match(coord, @"(\d+)"); // One or more numbers
+            char x = coord[0];
+            int z = int.Parse(number.Value);
+
+            return new GridCoord(x, z);
+        }
+
+        public int GetX() {
+            return _x;
+        }
+
+        public int GetZ() {
+            return _z;
+        }
+
         private int getWorldX() {
             return (_x * GridSize) + (GridSize / 2);
         }
@@ -37,7 +55,6 @@ namespace PlayGame {
         }
 
         // Returns the grid coordinate with a y value of 0
-        // TODO change to Vector2?
         public Vector3 GetWorldVector() {
             return new Vector3(getWorldX(), 0, getWorldZ());
         }

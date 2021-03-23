@@ -1,82 +1,113 @@
 ﻿using UnityEngine;
+using UnityEngine.Assertions;
 
-namespace PlayGame.Speech
-{
-    public class SpeechRecognitionTesting : MonoBehaviour
-    {
+namespace PlayGame.Speech {
+    public class SpeechRecognitionTesting : MonoBehaviour {
 
         public SpeechRecognition speechRecognition;
 
-        void Update()
-        {
-            if (Input.GetKey(KeyCode.W)) { // Face north and start moving
-                speechRecognition.GetResponse("move north");
+        // Used letters:
+        // Q W E R T Y U I
+        // A S D F G H J K L
+        // Z X C V B N M
+        void Update() {
+            if (Input.GetKeyDown(KeyCode.N)) { // Move station to random location
+                speechRecognition.MoveStation();
             }
-            if (Input.GetKey(KeyCode.S)) { // Face south and start moving
-                speechRecognition.GetResponse("go south");
+            
+            if (Input.GetKeyDown(KeyCode.W)) { // Move forward
+                speechRecognition.GetResponse("move forward");
             }
-            if (Input.GetKey(KeyCode.A)) { // Face west but dont change speed
-                speechRecognition.GetResponse("face west");
+            
+            if (Input.GetKeyDown(KeyCode.S)) { // Move backwards
+                speechRecognition.GetResponse("move back");
             }
-            if (Input.GetKey(KeyCode.D)) { // Face east and start moving
-                speechRecognition.GetResponse("move east");
+            
+            if (Input.GetKeyDown(KeyCode.A)) { // Start turning left
+                speechRecognition.GetResponse("turn left");
+            }
+            
+            if (Input.GetKeyDown(KeyCode.D)) { // Start turning right
+                speechRecognition.GetResponse("turn right");
             }
 
-            if (Input.GetKey(KeyCode.Q)) { // Stop Moving
+            if (Input.GetKeyDown(KeyCode.U)) {
+                speechRecognition.GetResponse("move left");
+            }
+            
+            if (Input.GetKeyDown(KeyCode.I)) {
+                speechRecognition.GetResponse("move right");
+            }
+
+            if (Input.GetKeyDown(KeyCode.Q)) { // Stop Moving and turning
                 speechRecognition.GetResponse("stop");
             }
 
-            if (Input.GetKey(KeyCode.E)) { // Start Moving
+            if (Input.GetKeyDown(KeyCode.E)) { // Start Moving
                 speechRecognition.GetResponse("go");
             }
 
-            if (Input.GetKey(KeyCode.R)) { // Move towards Grid(C, 6)
-                speechRecognition.GetResponse("go to C6");
+            if (Input.GetKeyDown(KeyCode.R)) { // Move towards Grid(C, 6)
+                speechRecognition.GetResponse("move to c6");
             }
         
-            if (Input.GetKey(KeyCode.F)) { // Move towards ping
+            if (Input.GetKeyDown(KeyCode.F)) { // Move towards ping
                 speechRecognition.GetResponse("go to ping");
             }
         
-            if (Input.GetKey(KeyCode.T)) { // Create ping at Grid(C, 4)
+            if (Input.GetKeyDown(KeyCode.T)) { // Create ping at Grid(C, 4)
                 speechRecognition.GetResponse("ping asteroid at C4");
             }
             
-            if (Input.GetKey(KeyCode.Y)) { // Create ping at Grid(C, 4)
-                speechRecognition.GetResponse("ping pirate at C4");
+            if (Input.GetKeyDown(KeyCode.Y)) { // Create ping at Grid(G, 6)
+                speechRecognition.GetResponse("ping pirate at G6");
             }
             
-            if (Input.GetKey(KeyCode.G)) { // Move towards the space station
+            if (Input.GetKeyDown(KeyCode.G)) { // Move towards the space station
                 speechRecognition.GetResponse("go to the space station");
             }
 
-            if (Input.GetKey(KeyCode.H)) {
+            if (Input.GetKeyDown(KeyCode.H)) {
                 speechRecognition.GetResponse("activate mining laser");
             }
             
-            if (Input.GetKey(KeyCode.J)) {
+            if (Input.GetKeyDown(KeyCode.J)) {
                 speechRecognition.GetResponse("deactivate mining laser");
             }
             
-            if (Input.GetKey(KeyCode.Z)) {
+            if (Input.GetKeyDown(KeyCode.Z)) {
                 speechRecognition.GetResponse("transfer resources");
             }
             
-            if (Input.GetKey(KeyCode.X)) {
+            if (Input.GetKeyDown(KeyCode.X)) {
                 speechRecognition.GetResponse("stop shooting");
             }
-            
-            if (Input.GetKey(KeyCode.C)) {
+
+            if (Input.GetKeyDown(KeyCode.C)) {
                 speechRecognition.GetResponse("shoot");
             }
 
-            if (Input.GetKey(KeyCode.L)) {
+            if (Input.GetKeyDown(KeyCode.L)) {
                 speechRecognition.GetResponse("lock on nearest enemy");
             }
             
-            if (Input.GetKey(KeyCode.M)) {
+            if (Input.GetKeyDown(KeyCode.K)) {
+                speechRecognition.GetResponse("target nearest asteroid");
+            }
+            
+            if (Input.GetKeyDown(KeyCode.M)) {
                 speechRecognition.GetResponse("disengage lock on");
             }
+            
+            if (Input.GetKeyDown(KeyCode.B)) {
+                speechRecognition.GetResponse("activate hyperdrive");
+            }
+            
+            if (Input.GetKeyDown(KeyCode.V)) {
+                speechRecognition.GetResponse("repair hyperdrive");
+            }
         }
+
     }
+    
 }

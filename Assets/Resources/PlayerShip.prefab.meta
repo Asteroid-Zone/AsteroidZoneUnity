@@ -1,5 +1,9 @@
 fileFormatVersion: 2
-guid: 6d8b7ab4c3a25cb489154631a0d5ece5
+<<<<<<<< HEAD:Assets/Resources/PlayerShip.prefab.meta
+guid: 20a549e2fc42473469054ece63b4dda5
+========
+guid: 37a65065b8ec8e649bc7fb8ce1641f58
+>>>>>>>> 1f340d3bba3eb176d31e36eb3d0431a5e352887e:Assets/Prefabs/PlayerShip.prefab.meta
 PrefabImporter:
   externalObjects: {}
   userData: 

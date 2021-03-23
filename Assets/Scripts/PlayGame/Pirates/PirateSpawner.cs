@@ -1,14 +1,34 @@
 ﻿using Photon.Pun;
 using System;
+using Statics;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace PlayGame.Pirates
-{
-    public class PirateSpawner : MonoBehaviour
-    {
+namespace PlayGame.Pirates {
+    public class PirateSpawner : MonoBehaviourPun {
+        #region Singleton
+        private static PirateSpawner _instance;
+
+        private void Awake()
+        {
+            if (_instance != null && _instance != this)
+            {
+                Destroy(gameObject);
+            } else {
+                _instance = this;
+            }
+        }
+        
+        public static PirateSpawner GetInstance()
+        {
+            return _instance;
+        }
+        #endregion
+        
         public GameObject gridManager;
-        public GameObject pirate;
+        public GameObject scout;
+        public GameObject elite;
+        public GameObject spaceStation;
         
         private GridManager _gridManager;
         // Will be used as the size of the checked space when spawning (checked space should be empty)
@@ -19,12 +39,9 @@ namespace PlayGame.Pirates
         public float probability;
         public float everyXSeconds;
 
-    
         // Start is called before the first frame update
-    
-        private void Start()
-        {
-            if (!PhotonNetwork.IsMasterClient) return;
+        private void Start() {
+            if (!DebugSettings.Debug && !PhotonNetwork.IsMasterClient) return;
             _gridManager = gridManager.GetComponent<GridManager>();
             InvokeRepeating(nameof(PirateRNG), 0, everyXSeconds);
             
@@ -33,42 +50,85 @@ namespace PlayGame.Pirates
             _maxPirates = (int) Math.Floor(2 * Math.Sqrt(_gridManager.GetTotalCells()));
         }
 
-        private void PirateRNG()
-        {
-            if (!PhotonNetwork.IsMasterClient) return;
+        private void PirateRNG() {
+            if (!DebugSettings.Debug && !PhotonNetwork.IsMasterClient) return;
             // Don't spawn pirates if the maximum count is reached.
-            if (transform.childCount >= _maxPirates)
-            {
+            if (transform.childCount >= _maxPirates) {
                 return;
             }
             
             var generatedProb = Random.Range(0, 1.0f);
-            if (generatedProb < probability)
-            {
-                SpawnPirate();
+            if (generatedProb < probability) {
+                if (DebugSettings.SpawnPirates) SpawnPirate(PirateData.PirateType.Scout);
             }
         }
 
-        private void SpawnPirate()
-        {
-            if (!PhotonNetwork.IsMasterClient) return;
+        public void SpawnReinforcements() {
+            if (!DebugSettings.Debug && !PhotonNetwork.IsMasterClient) return;
+            int reinforcements = Random.Range(2, 4);
+
+            for (int i = 0; i < reinforcements; i++) {
+                SpawnPirate(PirateData.PirateType.Elite);
+            }
+        }
+
+        private void SpawnPirate(PirateData.PirateType type) {
+            if (!DebugSettings.Debug && !PhotonNetwork.IsMasterClient) return;
+
             // Initialise some random grid coordinates on the map
-            var randomGridCoord = new Vector2(Random.Range(0, _gridManager.width), Random.Range(0, _gridManager.height));
+            var randomGridCoord = new Vector2(Random.Range(0, GridManager.Width), Random.Range(0, GridManager.Height));
             
             // Transform the grid coordinates to global coordinates
-            var randomGlobalCoord = _gridManager.GridToGlobalCoord(randomGridCoord);
+            var randomGlobalCoord = GridManager.GridToGlobalCoord(randomGridCoord);
 
             // Half of the dimensions of the checked space
             var checkedSpaceHalfDims = new Vector3(_spawnRangeCheck, _spawnRangeCheck, _spawnRangeCheck);
-            if (Physics.OverlapBoxNonAlloc(randomGlobalCoord, checkedSpaceHalfDims, new Collider[16]) > 0)
-            {
-                // Collisions were found for the current spawn, therefore, stop spawning
-                return;
+            // If collisions were found for the current spawn, stop spawning
+            if (Physics.OverlapBoxNonAlloc(randomGlobalCoord, checkedSpaceHalfDims, new Collider[16]) > 0) return;
+
+            // Get the correct prefab
+            GameObject pirate;
+            string prefab;
+            switch (type) {
+                case PirateData.PirateType.Scout:
+                    pirate = scout;
+                    prefab = Prefabs.PirateScout;
+                    break;
+                case PirateData.PirateType.Elite:
+                    pirate = elite;
+                    prefab = Prefabs.PirateElite;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
-            
+
             // Spawn the new pirate
-            var newPirate = PhotonNetwork.Instantiate("PirateShip", randomGlobalCoord, Quaternion.identity);
+            GameObject newPirate;
+            if (!DebugSettings.Debug) newPirate = PhotonNetwork.InstantiateRoomObject(prefab, randomGlobalCoord, Quaternion.identity);
+            else newPirate = Instantiate(pirate, randomGlobalCoord, Quaternion.identity);
+            if (!DebugSettings.Debug) this.photonView.RPC("RPC_SetPirateParam", RpcTarget.AllBuffered, newPirate.GetComponent<PhotonView>().ViewID);
+            else
+            {
+                newPirate.transform.parent = gameObject.transform;
+                newPirate.GetComponent<PirateController>().spaceStation = spaceStation.GetComponent<SpaceStation.SpaceStation>();
+                newPirate.GetComponent<PirateController>().pirateSpawner = this;
+            }
+
+
+        }
+
+        [PunRPC]
+        public void RPC_SetPirateParam(int viewID)
+        {
+            GameObject newPirate = PhotonView.Find(viewID).gameObject;
             newPirate.transform.parent = gameObject.transform;
+            newPirate.GetComponent<PirateController>().spaceStation = spaceStation.GetComponent<SpaceStation.SpaceStation>();
+            newPirate.GetComponent<PirateController>().pirateSpawner = this;
+        }
+
+        public static PirateController[] GetAllPirateControllers()
+        {
+            return _instance.gameObject.GetComponentsInChildren<PirateController>();
         }
     }
 }

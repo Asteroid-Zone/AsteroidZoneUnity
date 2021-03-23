@@ -1,10 +1,10 @@
-﻿using PhotonClass.GameController;
+﻿using Photon.GameControllers;
+using PlayGame.Player;
+using Statics;
 using UnityEngine;
 
-namespace PlayGame.Camera
-{
-    public class CameraFollow : MonoBehaviour
-    {
+namespace PlayGame.Camera {
+    public class CameraFollow : MonoBehaviour {
         public Transform target;
 
         // Distance from the target
@@ -17,18 +17,16 @@ namespace PlayGame.Camera
         public bool followBehind = true;
         public float rotationDamping = 10.0f;
 
-        private void Start()
-        {
-             target = PhotonPlayer.PP.myAvatar.transform;
+        private void Start() {
+            target = !DebugSettings.Debug ? PhotonPlayer.Instance.myAvatar.transform : TestPlayer.GetPlayerShip().transform;
         }
 
-        private void LateUpdate()
-        {
+        private void LateUpdate() {
+            // Follow the player from behind
             var  wantedPosition = target.TransformPoint(0, height, followBehind ? -distance : distance);
             transform.position = Vector3.Lerp(transform.position, wantedPosition, Time.deltaTime * damping);
-
-            if (smoothRotation)
-            {
+        
+            if (smoothRotation) {
                 var wantedRotation = Quaternion.LookRotation(target.position - transform.position, target.up);
                 transform.rotation = Quaternion.Slerp(transform.rotation, wantedRotation, Time.deltaTime * rotationDamping);
             }
@@ -36,4 +34,3 @@ namespace PlayGame.Camera
         }
     }
 }
-

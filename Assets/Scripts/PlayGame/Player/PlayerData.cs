@@ -1,7 +1,11 @@
 ﻿using System.Collections.Generic;
+using Photon.Pun;
+using PlayGame.Stats;
+using PlayGame.UI;
 using Statics;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
 namespace PlayGame.Player
 {
@@ -12,8 +16,7 @@ namespace PlayGame.Player
         Researcher
     }
 
-    public class PlayerData : MonoBehaviour
-    {
+    public class PlayerData : MonoBehaviourPun {
         public static List<GameObject> Players;
 
         private const int LaserDamageRange = 10; // Makes the amount of damage the laser does vary a bit
@@ -27,6 +30,8 @@ namespace PlayGame.Player
     
         private float _maxSpeed;
 
+        private float _rotateSpeed;
+
         private int _laserSpeed;
 
         private int _resources;
@@ -35,18 +40,28 @@ namespace PlayGame.Player
 
         private NavMeshAgent _playerAgent;
 
+        private Transform _lockTarget;
+
+        public PlayerStats playerStats;
+
         private void Start() {
             _playerAgent = GetComponent<NavMeshAgent>();
-            
+            playerStats = new PlayerStats();
+            StatsManager.PlayerStatsList.Add(playerStats);
+            playerStats.playerName = PhotonNetwork.NickName;
+
             // Initialise the players list
             Players = new List<GameObject>();
             Players.AddRange(GameObject.FindGameObjectsWithTag(Tags.PlayerTag));
+            if (!DebugSettings.Debug) this.photonView.RPC("RPC_UpdatePlayerLists", RpcTarget.Others);
             // TODO add other players to list
             
             _role = Role.StationCommander; // TODO assign roles in the menu
         
             _maxHealth = 100; // TODO different stats for different roles
             _maxSpeed = 2.5f;
+
+            _rotateSpeed = 0.005f;
 
             _laserSpeed = 1000;
             
@@ -60,26 +75,44 @@ namespace PlayGame.Player
             _laserDamage = 20;
         }
 
+        [PunRPC]
+        public void RPC_UpdatePlayerLists()
+        {
+            Players.Clear();
+            Players.AddRange(GameObject.FindGameObjectsWithTag(Tags.PlayerTag));
+        }
+
+        public static void UpdatePlayerLists()
+        {
+            Players.Clear();
+            Players.AddRange(GameObject.FindGameObjectsWithTag(Tags.PlayerTag));
+        }
+
         private void Update()
         {
             if (!_youDiedWrittenOnScreen &&_health <= 0)
             {
-                EventsManager.AddMessageToQueue("YOU DIED");
+                EventsManager.AddMessage("YOU DIED");
                 _youDiedWrittenOnScreen = true;
             }
         }
 
+        public List<GameObject> GetList()
+        {
+            return Players;
+        }
         public int GetResources() {
             return _resources;
         }
 
         public void AddResources(int resources) {
             _resources += resources;
+            playerStats.resourcesHarvested += resources;
+            StatsManager.GameStats.resourcesHarvested += resources;
         }
 
-        public void RemoveResources()
-        {
-            _resources = 0;
+        public void RemoveResources(int amount) {
+            _resources -= amount;
         }
 
         public Role GetRole() {
@@ -92,6 +125,10 @@ namespace PlayGame.Player
 
         public float GetSpeed() {
             return _playerAgent.speed;
+        }
+
+        public float GetRotateSpeed() {
+            return _rotateSpeed;
         }
 
         public void SetSpeed(float fraction) {
@@ -129,5 +166,11 @@ namespace PlayGame.Player
                 _health = 0;
             }
         }
+
+        public void SetLockTarget(Transform lockTarget)
+        {
+            _lockTarget = lockTarget;
+        }
+
     }
 }

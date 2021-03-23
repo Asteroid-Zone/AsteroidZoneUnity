@@ -1,5 +1,6 @@
-﻿using PhotonClass.GameController;
+﻿using Photon.GameControllers;
 using PlayGame.Player;
+using Statics;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,7 +14,7 @@ namespace PlayGame.UI
         private Text _text;
 
         private void Start() {
-            player = PhotonPlayer.PP.myAvatar;
+            player = !DebugSettings.Debug ? PhotonPlayer.Instance.myAvatar : TestPlayer.GetPlayerShip();
             _text = GetComponent<Text>();
             _playerData = player.GetComponent<PlayerData>();
         }

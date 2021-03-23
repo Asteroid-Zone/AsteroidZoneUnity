@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using PlayGame.UI;
 using UnityEngine;
 
 namespace PlayGame.Pings {
@@ -28,7 +29,7 @@ namespace PlayGame.Pings {
             GameObject pingObject = CreateObjectForPing(ping);
             _pings[ping] = pingObject;
             
-            EventsManager.AddMessageToQueue($"Added ping at {ping.GetGridCoord().ToString()} of type {ping.GetPingType().ToString()}");
+            EventsManager.AddMessage($"Added ping at {ping.GetGridCoord().ToString()} of type {ping.GetPingType().ToString()}");
 
             // Remove the new ping after a specific amount of time
             StartCoroutine(RemovePingAfterTime(ping));

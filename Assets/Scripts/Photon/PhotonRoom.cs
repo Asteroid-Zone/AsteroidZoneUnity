@@ -1,36 +1,35 @@
 ﻿using Photon.Pun;
 using Photon.Realtime;
-using System.Collections;
-using System.Collections.Generic;
+using PlayGame.Stats;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace PhotonClass
+namespace Photon
 {
     public class PhotonRoom : MonoBehaviourPunCallbacks, IInRoomCallbacks
     {
-        public static PhotonRoom room;
+        public static PhotonRoom Instance;
         private PhotonView PV;
         
         public int multiplayerScene;
-        private int currentScene;
+        private int _currentScene;
 
-        void Awake()
+        private void Awake()
         {
             //Set up Singleton
-            if (PhotonRoom.room == null)
+            if (Instance == null)
             {
-                PhotonRoom.room = this;
+                Instance = this;
             }
             else
             {
-                if (PhotonRoom.room != this)
+                if (Instance != this)
                 {
-                    Destroy(PhotonRoom.room.gameObject);
-                    PhotonRoom.room = this;
+                    Destroy(Instance.gameObject);
+                    Instance = this;
                 }
             }
-            DontDestroyOnLoad(this.gameObject);
+            DontDestroyOnLoad(gameObject);
             PV = GetComponent<PhotonView>();
         }
 
@@ -59,36 +58,26 @@ namespace PhotonClass
             StartGame();
         }
 
-        void StartGame()
+        private void StartGame()
         {
             Debug.Log("Loading Level");
             PhotonNetwork.LoadLevel(multiplayerScene);
+            StatsManager.GameStats.startTime = Time.time;
         }
 
-        void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
+        private void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
         {
-            currentScene = scene.buildIndex;
-            if (currentScene == multiplayerScene)
+            _currentScene = scene.buildIndex;
+            if (_currentScene == multiplayerScene)
             {
                 CreatePlayer();
             }
         }
 
-        private void CreatePlayer()
+        private static void CreatePlayer()
         {
 
-            PhotonNetwork.Instantiate("PhotonNetworkPlayer", new Vector3(5f,0f,10f) , Quaternion.identity, 0);
-        }
-        // Start is called before the first frame update
-        void Start()
-        {
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
+            PhotonNetwork.Instantiate("PhotonNetworkPlayer", new Vector3(5f,0f,10f) , Quaternion.identity);
         }
     }
 }

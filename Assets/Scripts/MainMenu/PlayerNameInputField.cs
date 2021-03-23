@@ -1,34 +1,27 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
-using Photon.Realtime;
-using System.Collections;
 
-
-namespace MainMenu
-{
+namespace MainMenu {
     /// Player name input field. Let the user input their name, will appear above the player in the game.
     [RequireComponent(typeof(InputField))]
     public class PlayerNameInputField : MonoBehaviour
     {
         // Store the PlayerPref Key to avoid typos
-        const string playerNamePrefKey = "PlayerName";
+        private const string PlayerNamePrefKey = "PlayerName";
 
-
-        void Start()
+        private void Start()
         {
-
             string defaultName = string.Empty;
-            InputField _inputField = this.GetComponent<InputField>();
-            if (_inputField != null)
+            InputField inputField = GetComponent<InputField>();
+            if (inputField != null)
             {
-                if (PlayerPrefs.HasKey(playerNamePrefKey))
+                if (PlayerPrefs.HasKey(PlayerNamePrefKey))
                 {
-                    defaultName = PlayerPrefs.GetString(playerNamePrefKey);
-                    _inputField.text = defaultName;
+                    defaultName = PlayerPrefs.GetString(PlayerNamePrefKey);
+                    inputField.text = defaultName;
                 }
             }
-
 
             PhotonNetwork.NickName = defaultName;
         }
@@ -43,11 +36,8 @@ namespace MainMenu
                 return;
             }
             PhotonNetwork.NickName = value;
-
-
-            PlayerPrefs.SetString(playerNamePrefKey, value);
+            
+            PlayerPrefs.SetString(PlayerNamePrefKey, value);
         }
-
-
     }
 }

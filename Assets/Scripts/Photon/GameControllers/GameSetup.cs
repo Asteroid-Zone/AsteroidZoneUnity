@@ -1,20 +1,18 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace PhotonClass.GameController
+namespace Photon.GameControllers
 {
     public class GameSetup : MonoBehaviour
     {
-        public static GameSetup GS;
+        public static GameSetup Instance;
 
         public Transform[] spawnPoints;
 
         private void OnEnable()
         {
-            if (GameSetup.GS == null)
+            if (Instance == null)
             {
-                GameSetup.GS = this;
+                Instance = this;
             }
         }
     }
