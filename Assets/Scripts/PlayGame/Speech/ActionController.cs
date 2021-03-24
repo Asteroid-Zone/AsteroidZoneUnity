@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Linq;
+using Photon.Pun;
 using PlayGame.Pings;
 using PlayGame.Player;
 using PlayGame.Player.Movement;
 using PlayGame.Speech.Commands;
 using PlayGame.UI;
+using Statics;
 using UnityEngine;
 using Ping = PlayGame.Pings.Ping;
 
@@ -115,13 +117,20 @@ namespace PlayGame.Speech {
             pingManager.AddPing(newPing);
         }
 
-        private void PerformTransferCommand(TransferCommand command) {
+        private void PerformTransferCommand(TransferCommand command)
+        {
             // Check player is in the same grid square as the station
-            if (GridCoord.GetCoordFromVector(player.transform.position).Equals(GridCoord.GetCoordFromVector(spaceStationObject.transform.position))) {
-                spaceStation.AddResources(command.transferAmount); // Add the resources into the space station
-                // EventsManager.AddMessage("Resources at " + spaceStation.resources.ToString());
-                player.GetComponent<PlayerData>().RemoveResources(command.transferAmount); // Remove them from the player
-            } else {
+            if (GridCoord.GetCoordFromVector(player.transform.position).Equals(GridCoord.GetCoordFromVector(spaceStationObject.transform.position)))
+            {
+                if ((!DebugSettings.Debug && player.GetPhotonView().IsMine) || DebugSettings.Debug)
+                {
+                    spaceStation.AddResources(playerData.GetResources()); // Add the resources into the space station
+                    playerData.RemoveResources(playerData.GetResources()); // Remove them from the player
+                }
+
+            }
+            else
+            {
                 EventsManager.AddMessage("You must be next to the space station to transfer resources");
             }
         }

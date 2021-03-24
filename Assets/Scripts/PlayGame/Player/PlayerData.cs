@@ -112,6 +112,16 @@ namespace PlayGame.Player
         }
 
         public void RemoveResources(int amount) {
+            if (!DebugSettings.Debug)
+            {
+                this.photonView.RPC("RPC_RemoveResources", RpcTarget.AllBuffered, amount);
+            }
+            else if (DebugSettings.Debug) _resources -= amount;
+        }
+
+        [PunRPC]
+        public void RPC_RemoveResources(int amount)
+        {
             _resources -= amount;
         }
 
