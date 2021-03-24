@@ -46,7 +46,7 @@ namespace PlayGame.Speech {
         private static readonly List<string> SpaceStation = new List<string>{Strings.SpaceStation, "space station", "base"};
         private static readonly List<string> Ping = new List<string>{Strings.Ping, "pin", "mark", "flag"};
         private static readonly List<string> Resources = new List<string>{Strings.Resources, "materials", "rock", "supplies"};
-        private static readonly List<string> LaserGun = new List<string> {Strings.LaserGun, "gun", "shoot", "attack", "laser beam", "ray gun"};
+        private static readonly List<string> LaserGun = new List<string> {Strings.LaserGun, "gun", "shoot", "attack", "laser beam", "ray gun", "laser"};
         
         private static readonly List<string> Hyperdrive = new List<string> {Strings.Hyperdrive, "warp drive", "hyper drive"};
         private static readonly List<string> Hull = new List<string> {Strings.Hull, "body", "frame", "structure", "armour", "exterior"};
@@ -55,13 +55,14 @@ namespace PlayGame.Speech {
         private static readonly List<string> SolarPanels = new List<string> {Strings.SolarPanels, "panels", "solar"};
 
         private static readonly List<string> CompassDirections = new List<string>{Strings.North, Strings.East, Strings.South, Strings.West};
-        private static readonly List<string> RelativeDirections = new List<string>{Strings.Forward, Strings.Back, Strings.Left, Strings.Right};
+        private static readonly List<string> Forward = new List<string>{Strings.Forward, "ahead"};
+        private static readonly List<string> RelativeDirections = new List<string>{Strings.Back, Strings.Left, Strings.Right};
         private static readonly List<List<string>> Directions = new List<List<string>>{CompassDirections, RelativeDirections};
         
         private static readonly List<List<string>> Destinations = new List<List<string>>{SpaceStation, Ping, Pirate, Asteroid};
         private static readonly List<List<string>> PingTypes = new List<List<string>>{Asteroid, Pirate};
         private static readonly List<List<string>> LockTargets = new List<List<string>>{Pirate, Asteroid};
-        private static readonly List<List<string>> Activatable = new List<List<string>>{MiningLaser, LockCommands, LaserGun, Hyperdrive};
+        private static readonly List<List<string>> Activatable = new List<List<string>>{MiningLaser, LockCommands, LaserGun, Hyperdrive}; // Mining laser must be before laser gun
         private static readonly List<List<string>> GenericActivatableObjects = new List<List<string>>{Hyperdrive}; // Objects that are only activated using the generic on commands and don't need any extra data
         private static readonly List<List<string>> StationModules = new List<List<string>>{Hyperdrive, Hull, ShieldGenerator, Engines, SolarPanels};
         
@@ -71,6 +72,8 @@ namespace PlayGame.Speech {
         private static readonly List<string> CommandWords;
         
         static Grammar() {
+            RelativeDirections.AddRange(Forward);
+            
             TurnCommands.AddRange(InstantTurn);
             TurnCommands.AddRange(SmoothTurn);
             
@@ -639,7 +642,10 @@ namespace PlayGame.Speech {
         private static string GetDirection(string phrase) {
             foreach (List<string> commandList in Directions) {
                 foreach (string command in commandList) {
-                    if (phrase.Contains(command)) return command;
+                    if (phrase.Contains(command)) {
+                        if (Forward.Contains(command)) return Forward[0];
+                        return command;
+                    }
                 }
             }
     
