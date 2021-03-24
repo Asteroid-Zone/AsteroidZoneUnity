@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using PlayGame.Pirates;
+using PlayGame.Speech.Commands;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
@@ -33,6 +34,7 @@ namespace PlayGame.Player.Movement
         private GameObject _asteroidSpawner;
         
         private Transform _lockTarget;
+        private ToggleCommand.LockTargetType _lockType = ToggleCommand.LockTargetType.None;
         
         private void Start()
         {
@@ -66,8 +68,11 @@ namespace PlayGame.Player.Movement
             // Rotate slowly
             if (rotating) Rotate();
 
-            if (_lockTarget) {
-                FaceTarget(_lockTarget);
+            if (_lockType != ToggleCommand.LockTargetType.None) {
+                if (_lockTarget == null) _lockTarget = GetLockTarget(_lockType);
+                if (_lockTarget != null) FaceTarget(_lockTarget);
+            } else {
+                _lockTarget = null;
             }
         }
 
@@ -218,10 +223,17 @@ namespace PlayGame.Player.Movement
             _playerData.SetSpeed(fraction);
         }
 
-        public void SetLockTarget(Transform lockTarget) {
-            _lockTarget = lockTarget;
+        public void SetLockTargetType(ToggleCommand.LockTargetType type) {
+            _lockType = type;
+            _lockTarget = null;
         }
         
+        private Transform GetLockTarget(ToggleCommand.LockTargetType lockTargetType) {
+            if (lockTargetType == ToggleCommand.LockTargetType.Pirate) return GetNearestEnemyTransform();
+            if (lockTargetType == ToggleCommand.LockTargetType.Asteroid) return GetNearestAsteroidTransform();
+            return null;
+        }
+
         public Transform GetLockTarget()
         {
             return _lockTarget;

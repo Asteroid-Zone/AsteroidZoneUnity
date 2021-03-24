@@ -12,6 +12,7 @@ namespace PlayGame.Speech.Commands {
         }
 
         public enum LockTargetType {
+            None,
             Pirate,
             Asteroid
         }
@@ -38,7 +39,7 @@ namespace PlayGame.Speech.Commands {
                 case Strings.Asteroid:
                     return LockTargetType.Asteroid;
                 default:
-                    throw new ArgumentException("Invalid Lock Target Type: " + lockTargetType);
+                    return LockTargetType.None;
             }
         }
     }

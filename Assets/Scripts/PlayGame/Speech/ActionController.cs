@@ -133,7 +133,7 @@ namespace PlayGame.Speech {
                     else miningLaser.DisableMiningLaser();
                     break;
                 case ToggleCommand.ObjectType.Lock:
-                    moveObject.SetLockTarget(command.@on ? GetLockTarget(command.lockTargetType) : null);
+                    moveObject.SetLockTargetType(command.lockTargetType);
                     break;
                 case ToggleCommand.ObjectType.LaserGun:
                     if (command.on) laserGun.StartShooting();
@@ -145,12 +145,6 @@ namespace PlayGame.Speech {
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-        }
-
-        private Transform GetLockTarget(ToggleCommand.LockTargetType lockTargetType) {
-            if (lockTargetType == ToggleCommand.LockTargetType.Pirate) return GetNearestPirate();
-            if (lockTargetType == ToggleCommand.LockTargetType.Asteroid) return GetNearestAsteroid();
-            return null;
         }
 
         private Transform GetNearestAsteroid() {
