@@ -12,9 +12,6 @@ namespace PlayGame.VoiceChat
             if (!DebugSettings.Debug && PhotonRoom.Instance != null)
             {
                 JoinVoiceChat(PhotonRoom.Instance.name);
-                
-                // Initially mute the voice chat
-                MuteUnmuteMyselfInVoiceChat();
                 _chatRunning = true;
             }
         }
