@@ -135,11 +135,11 @@ namespace PlayGame.Speech {
             Application.ExternalCall("readTextToSpeech", phrase);
         }
 
-        private static void StartSpeechRecognitionInTheBrowser() {
+        public static void StartSpeechRecognitionInTheBrowser() {
             Application.ExternalCall("startVoiceRecognition");
         }
 
-        private static void StopSpeechRecognitionInTheBrowser() {
+        public static void StopSpeechRecognitionInTheBrowser() {
             Application.ExternalCall("stopVoiceRecognition");
         }
 

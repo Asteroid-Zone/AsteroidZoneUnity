@@ -10,7 +10,7 @@ namespace PlayGame.Speech {
         // Q W E R T Y U I
         // A S D F G H J K L
         // Z X C V B N M
-        void Update() {
+        private void Update() {
             if (Input.GetKeyDown(KeyCode.N)) { // Move station to random location
                 speechRecognition.MoveStation();
             }
