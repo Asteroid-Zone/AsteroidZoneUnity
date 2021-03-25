@@ -4,7 +4,7 @@
         public bool victory;
         
         public float startTime;
-        public float endTime;
+        public float gameTime;
         
         public int resourcesHarvested;
         public int asteroidsDestroyed;

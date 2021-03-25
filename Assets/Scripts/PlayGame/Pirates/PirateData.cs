@@ -90,7 +90,7 @@ namespace PlayGame.Pirates {
         }
 
         private void Despawn() {
-            if (!DebugSettings.Debug && gameObject != null) GetComponent<PhotonView>().RPC("DestroyOnNetwork", RpcTarget.MasterClient, gameObject.GetComponent<PhotonView>().ViewID);
+            if (!DebugSettings.Debug && gameObject != null && PhotonNetwork.IsMasterClient) GetComponent<PhotonView>().RPC("DestroyOnNetwork", RpcTarget.MasterClient, gameObject.GetComponent<PhotonView>().ViewID);
             else if (DebugSettings.Debug) Destroy(gameObject);
         }
 
@@ -107,16 +107,23 @@ namespace PlayGame.Pirates {
         }
 
         public void TakeDamage(PlayerData playerData) {
-            _health -= playerData.GetLaserDamage();
+            int damage = playerData.GetLaserDamage();
+            int photonID = playerData.photonView.ViewID;
+            gameObject.GetPhotonView().RPC("RPC_TakeDamage", RpcTarget.AllBuffered, damage, photonID);
+        }
+        
+        [PunRPC]
+        public void RPC_TakeDamage(int damage, int photonID) {
+            _health -= damage;
             if (_health <= 0) {
-                playerData.playerStats.piratesDestroyed++;
+                StatsManager.GetPlayerStats(photonID).piratesDestroyed++;
                 StatsManager.GameStats.piratesDestroyed++;
                 Die();
             }
 
             // Display the damage on the health bar
             SetHealthBar();
-        }
+        } 
 
         public int GetLaserDamage() {
             // Make the amount of damage vary a bit

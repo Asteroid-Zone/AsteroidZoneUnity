@@ -74,9 +74,7 @@ namespace Photon
             }
         }
 
-        private static void CreatePlayer()
-        {
-
+        private static void CreatePlayer() {
             PhotonNetwork.Instantiate("PhotonNetworkPlayer", new Vector3(5f,0f,10f) , Quaternion.identity);
         }
     }

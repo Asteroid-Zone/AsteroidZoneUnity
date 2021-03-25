@@ -42,13 +42,18 @@ namespace PlayGame.Player
 
         private Transform _lockTarget;
 
-        public PlayerStats playerStats;
+        public PlayerStats PlayerStats;
 
         private void Start() {
             _playerAgent = GetComponent<NavMeshAgent>();
-            playerStats = new PlayerStats();
-            StatsManager.PlayerStatsList.Add(playerStats);
-            playerStats.playerName = PhotonNetwork.NickName;
+            DontDestroyOnLoad(gameObject);
+
+            //if (photonView.IsMine) {
+                PlayerStats = new PlayerStats();
+                PlayerStats.photonID = photonView.ViewID;
+                PlayerStats.playerName = PhotonNetwork.NickName;
+                StatsManager.PlayerStatsList.Add(PlayerStats);
+            //}
 
             // Initialise the players list
             Players = new List<GameObject>();
@@ -88,8 +93,7 @@ namespace PlayGame.Player
             Players.AddRange(GameObject.FindGameObjectsWithTag(Tags.PlayerTag));
         }
 
-        private void Update()
-        {
+        private void Update() {
             if (!_youDiedWrittenOnScreen &&_health <= 0)
             {
                 EventsManager.AddMessage("YOU DIED");
@@ -97,20 +101,20 @@ namespace PlayGame.Player
             }
         }
 
-        public List<GameObject> GetList()
-        {
+        public static List<GameObject> GetList() {
             return Players;
         }
+        
         public int GetResources() {
             return _resources;
         }
 
         public void AddResources(int resources) {
-            _resources += resources;
-            playerStats.resourcesHarvested += resources;
             StatsManager.GameStats.resourcesHarvested += resources;
+            _resources += resources;
+            PlayerStats.resourcesHarvested += resources;
         }
-
+        
         public void RemoveResources(int amount) {
             _resources -= amount;
         }

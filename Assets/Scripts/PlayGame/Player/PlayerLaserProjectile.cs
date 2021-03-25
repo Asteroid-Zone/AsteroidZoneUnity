@@ -1,4 +1,5 @@
-﻿using PlayGame.Pirates;
+﻿using Photon.Pun;
+using PlayGame.Pirates;
 using Statics;
 using UnityEngine;
 
@@ -27,8 +28,10 @@ namespace PlayGame.Player {
             // todo play animation (explosion)
 
             if (collision.gameObject.CompareTag(Tags.PirateTag)) {
-                PirateData pirateData = collision.gameObject.GetComponent<PirateData>();
-                pirateData.TakeDamage(_shootingPlayerData);
+                if (PhotonNetwork.IsMasterClient) {
+                    PirateData pirateData = collision.gameObject.GetComponent<PirateData>();
+                    pirateData.TakeDamage(_shootingPlayerData);
+                }
             }
             
             if (collision.gameObject.CompareTag(Tags.AsteroidTag)) {

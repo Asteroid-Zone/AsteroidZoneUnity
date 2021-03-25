@@ -7,15 +7,14 @@ using PlayGame.Player;
 namespace PlayGame.UI {
     public class GameManager : MonoBehaviourPunCallbacks {
 
-        public string exitScene = Scenes.MainMenuScene;
+        public static bool gameOver = false;
 
         /// Called when the local player left the room. We need to load the launcher scene.
         public override void OnLeftRoom() {
-            SceneManager.LoadScene(exitScene);
+            SceneManager.LoadScene(Scenes.MainMenuScene);
         }
 
-        public void LeaveRoom()
-        {
+        public static void LeaveRoom() {
             PhotonNetwork.LeaveRoom();
         }
 
