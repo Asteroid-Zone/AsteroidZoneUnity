@@ -83,7 +83,15 @@ namespace PlayGame.SpaceStation {
         }
 
         public void AddResources(int resources) {
+            if (!DebugSettings.Debug) photonView.RPC("RPC_AddResources", RpcTarget.AllBuffered, resources);
+            else this.resources += resources;
+        }
+
+        [PunRPC]
+        public void RPC_AddResources(int resources)
+        {
             this.resources += resources;
+            EventsManager.AddMessage("Resources at " + this.resources.ToString());
         }
 
         public void TakeDamage(int damage) {
