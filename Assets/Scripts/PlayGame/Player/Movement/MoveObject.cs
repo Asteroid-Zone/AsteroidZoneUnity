@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using PlayGame.Pirates;
 using PlayGame.Speech.Commands;
+using PlayGame.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
@@ -36,8 +37,7 @@ namespace PlayGame.Player.Movement
         private Transform _lockTarget;
         private ToggleCommand.LockTargetType _lockType = ToggleCommand.LockTargetType.None;
         
-        private void Start()
-        {
+        private void Start() {
             // fetch the objects of the spawners
             _enemySpawner = PirateSpawner.GetInstance().gameObject;
             _asteroidSpawner = AsteroidSpawner.GetInstance().gameObject;
@@ -51,6 +51,7 @@ namespace PlayGame.Player.Movement
         }
 
         private void Update() {
+            if (GameManager.gameOver) return;
             // Get the speed of the player's ship
             var speed = _playerData.GetSpeed();
             

@@ -52,6 +52,7 @@ namespace PlayGame.Speech {
         }
 
         private void Update() {
+            if (GameManager.gameOver) return;
             if (!DebugSettings.Debug && !this.photonView.IsMine) return;
             text.text = _myResponse;
         }

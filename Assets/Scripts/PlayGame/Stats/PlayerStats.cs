@@ -1,5 +1,8 @@
 ﻿namespace PlayGame.Stats {
-    public class PlayerStats {
+    public class PlayerStats
+    {
+
+        public int photonID;
 
         public string playerName;
 

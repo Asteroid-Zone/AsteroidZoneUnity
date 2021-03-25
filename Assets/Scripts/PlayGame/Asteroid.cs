@@ -106,7 +106,7 @@ namespace PlayGame {
             if (_resourcesRemaining <= 0 && !_asteroidDestroyed) {
                 _asteroidDestroyed = true;
                 if (playerData != null) { // If asteroid was destroyed by a player
-                    playerData.playerStats.asteroidsDestroyed++;
+                    playerData.PlayerStats.asteroidsDestroyed++;
                     StatsManager.GameStats.asteroidsDestroyed++;
                 }
                 EventsManager.AddMessage("Asteroid destroyed at " + GridCoord.GetCoordFromVector(transform.position));

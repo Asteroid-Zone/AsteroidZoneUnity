@@ -6,6 +6,7 @@ using PlayGame.Stats;
 using PlayGame.UI;
 using Statics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 namespace PlayGame.SpaceStation {
@@ -65,14 +66,14 @@ namespace PlayGame.SpaceStation {
         public void GameOver(bool victory) {
             // Ensures LeaveRoom is only called once
             if (!_complete) {
+                GameManager.gameOver = true;
                 // todo play animation (station exploding/hyperdrive activating)
                 string eventMessage = "Game over";
                 if (victory) eventMessage = "Game completed";
                 EventsManager.AddMessage(eventMessage);
                 StatsManager.GameStats.victory = victory;
                 StatsManager.GameStats.endTime = Time.time;
-                gameManager.exitScene = Scenes.EndCutsceneScene;
-                gameManager.LeaveRoom();
+                SceneManager.LoadScene(Scenes.EndCutsceneScene);
                 _complete = true;
                 Debug.Log("LEFT ROOM");
             }
@@ -87,14 +88,9 @@ namespace PlayGame.SpaceStation {
             int moduleDamage = Random.Range(0, damageRemaining); // Random module takes a random amount of damage
             int index = Random.Range(0, _stationModules.Count);
 
-            if (!DebugSettings.Debug)
-            {
+            if (!DebugSettings.Debug) {
                 this.photonView.RPC("RPC_TakeDamage", RpcTarget.AllBuffered, moduleDamage, index, damageRemaining);
-            }
-
-            else
-            { 
-
+            } else {
                 _stationModules[index].TakeDamage(moduleDamage);
                 damageRemaining -= moduleDamage;
 

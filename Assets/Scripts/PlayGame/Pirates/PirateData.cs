@@ -109,7 +109,7 @@ namespace PlayGame.Pirates {
         public void TakeDamage(PlayerData playerData) {
             _health -= playerData.GetLaserDamage();
             if (_health <= 0) {
-                playerData.playerStats.piratesDestroyed++;
+                playerData.PlayerStats.piratesDestroyed++;
                 StatsManager.GameStats.piratesDestroyed++;
                 Die();
             }
