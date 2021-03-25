@@ -79,7 +79,6 @@ namespace PlayGame.Pirates {
         private void Die() {
             // TODO Play death animation
             EventsManager.AddMessage("Pirate destroyed at " + GridCoord.GetCoordFromVector(gameObject.transform.position));
-            StatsManager.GameStats.piratesDestroyed++;
 
             // Unalert pirates if all of them were destroyed (this one is the last one)
             if (PirateSpawner.GetAllPirateControllers().Length == 1)
@@ -108,15 +107,23 @@ namespace PlayGame.Pirates {
         }
 
         public void TakeDamage(PlayerData playerData) {
-            _health -= playerData.GetLaserDamage();
+            int damage = playerData.GetLaserDamage();
+            int photonID = playerData.photonView.ViewID;
+            gameObject.GetPhotonView().RPC("RPC_TakeDamage", RpcTarget.AllBuffered, damage, photonID);
+        }
+        
+        [PunRPC]
+        public void RPC_TakeDamage(int damage, int photonID) {
+            _health -= damage;
             if (_health <= 0) {
-                playerData.PlayerStats.piratesDestroyed++;
+                StatsManager.GetPlayerStats(photonID).piratesDestroyed++;
+                StatsManager.GameStats.piratesDestroyed++;
                 Die();
             }
 
             // Display the damage on the health bar
             SetHealthBar();
-        }
+        } 
 
         public int GetLaserDamage() {
             // Make the amount of damage vary a bit
