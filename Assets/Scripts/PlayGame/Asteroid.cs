@@ -103,16 +103,30 @@ namespace PlayGame {
             if (scale < MinScale) scale = MinScale; // Asteroid is always bigger than minimum scale
             transform.localScale = _modelScale * scale;
 
-            if (_resourcesRemaining <= 0 && !_asteroidDestroyed) {
-                _asteroidDestroyed = true;
-                if (playerData != null) { // If asteroid was destroyed by a player
-                    playerData.PlayerStats.asteroidsDestroyed++;
+            bool destroyed = _resourcesRemaining <= 0;
+
+            int photonID;
+            if (playerData == null) photonID = -1;
+            else photonID = playerData.photonView.ViewID;
+            gameObject.GetPhotonView().RPC("RPC_MineAsteroid", RpcTarget.AllBuffered, _resourcesRemaining, transform.localScale, destroyed, photonID);
+        }
+        
+        [PunRPC]
+        public void RPC_MineAsteroid(int resourcesRemaining, Vector3 scale, bool destroyed, int photonID) {
+            _resourcesRemaining = resourcesRemaining;
+            transform.localScale = scale;
+
+            if (destroyed && !_asteroidDestroyed) {
+                _asteroidDestroyed = destroyed;
+                if (photonID != -1) {
+                    StatsManager.GetPlayerStats(photonID).asteroidsDestroyed++;
                     StatsManager.GameStats.asteroidsDestroyed++;
+                    Debug.Log(StatsManager.GameStats.asteroidsDestroyed);
+                    EventsManager.AddMessage("Asteroid destroyed at " + GridCoord.GetCoordFromVector(transform.position));
                 }
-                EventsManager.AddMessage("Asteroid destroyed at " + GridCoord.GetCoordFromVector(transform.position));
                 StartCoroutine(FadeOutAsteroid());
             }
-        }
+        } 
 
         public int GetResources(int miningRate) {
             if (_resourcesRemaining > miningRate) return miningRate;

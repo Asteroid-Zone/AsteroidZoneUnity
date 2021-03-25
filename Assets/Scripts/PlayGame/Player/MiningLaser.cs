@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Photon.Pun;
 using PlayGame.UI;
 using Statics;
 using UnityEngine;
@@ -50,7 +51,7 @@ namespace PlayGame.Player {
                 if (hit.collider) { // If the laser is hitting a game object
                     UpdateLaser((int) hit.distance);
                     if (hit.collider.gameObject.CompareTag(Tags.AsteroidTag)) {
-                        MineAsteroid(hit.collider.gameObject);
+                        if (PhotonNetwork.IsMasterClient) MineAsteroid(hit.collider.gameObject);
                     }
                 } else {
                     UpdateLaser(MiningRange);
@@ -66,10 +67,17 @@ namespace PlayGame.Player {
             if (Time.frameCount - _lastFrameMined > MiningDelay) { // Only mine the asteroid every x frames
                 Asteroid asteroidScript = asteroid.GetComponent<Asteroid>();
                 asteroidScript.MineAsteroid(MiningRate, _playerData);
-                _playerData.AddResources(asteroidScript.GetResources(MiningRate));
                 _lastFrameMined = Time.frameCount;
+
+                int resources = asteroidScript.GetResources(MiningRate);
+                gameObject.GetPhotonView().RPC("RPC_AddResources", RpcTarget.AllBuffered, resources);
             }
         }
+        
+        [PunRPC]
+        public void RPC_AddResources(int resources) {  
+            _playerData.AddResources(resources);
+        } 
         
         private void UpdateLaser(int distance) {
             laser.SetPosition(1, new Vector3(0, 0, distance)); // Sets the end position of the laser

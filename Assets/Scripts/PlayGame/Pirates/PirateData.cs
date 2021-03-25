@@ -79,6 +79,7 @@ namespace PlayGame.Pirates {
         private void Die() {
             // TODO Play death animation
             EventsManager.AddMessage("Pirate destroyed at " + GridCoord.GetCoordFromVector(gameObject.transform.position));
+            StatsManager.GameStats.piratesDestroyed++;
 
             // Unalert pirates if all of them were destroyed (this one is the last one)
             if (PirateSpawner.GetAllPirateControllers().Length == 1)
@@ -110,7 +111,6 @@ namespace PlayGame.Pirates {
             _health -= playerData.GetLaserDamage();
             if (_health <= 0) {
                 playerData.PlayerStats.piratesDestroyed++;
-                StatsManager.GameStats.piratesDestroyed++;
                 Die();
             }
 
