@@ -142,6 +142,5 @@ namespace PlayGame.Speech {
         public static void StopSpeechRecognitionInTheBrowser() {
             Application.ExternalCall("stopVoiceRecognition");
         }
-
     }
 }
