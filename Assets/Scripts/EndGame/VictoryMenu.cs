@@ -44,7 +44,7 @@ namespace EndGame {
             playerAsteroidsDestroyed.text += _playerStats.asteroidsDestroyed;
             playerPiratesDestroyed.text += _playerStats.piratesDestroyed;
 
-            gameTime.text += FormatTime(StatsManager.GameStats.endTime - StatsManager.GameStats.startTime);
+            gameTime.text += FormatTime(StatsManager.GameStats.gameTime);
             gameResourcesHarvested.text += StatsManager.GameStats.resourcesHarvested;
             gameAsteroidsDestroyed.text += StatsManager.GameStats.asteroidsDestroyed;
             gamePiratesDestroyed.text += StatsManager.GameStats.piratesDestroyed;

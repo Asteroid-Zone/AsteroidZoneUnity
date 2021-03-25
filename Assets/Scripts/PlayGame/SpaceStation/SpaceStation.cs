@@ -65,18 +65,21 @@ namespace PlayGame.SpaceStation {
 
         public void GameOver(bool victory) {
             // Ensures LeaveRoom is only called once
-            if (!_complete) {
-                GameManager.gameOver = true;
-                // todo play animation (station exploding/hyperdrive activating)
-                string eventMessage = "Game over";
-                if (victory) eventMessage = "Game completed";
-                EventsManager.AddMessage(eventMessage);
-                StatsManager.GameStats.victory = victory;
-                StatsManager.GameStats.endTime = Time.time;
-                SceneManager.LoadScene(Scenes.EndCutsceneScene);
-                _complete = true;
-                Debug.Log("LEFT ROOM");
+            if (!_complete && PhotonNetwork.IsMasterClient) {
+                photonView.RPC("RPC_GameOver", RpcTarget.AllBuffered, victory, Time.time - StatsManager.GameStats.startTime);
             }
+        }
+        
+        [PunRPC]
+        public void RPC_GameOver(bool victory, float time) {
+            GameManager.gameOver = true;
+            string eventMessage = "Game over";
+            if (victory) eventMessage = "Game completed";
+            EventsManager.AddMessage(eventMessage);
+            StatsManager.GameStats.victory = victory;
+            StatsManager.GameStats.gameTime = time;
+            SceneManager.LoadScene(Scenes.EndCutsceneScene);
+            _complete = true;
         }
 
         public void AddResources(int resources) {
@@ -89,7 +92,7 @@ namespace PlayGame.SpaceStation {
             int index = Random.Range(0, _stationModules.Count);
 
             if (!DebugSettings.Debug) {
-                this.photonView.RPC("RPC_TakeDamage", RpcTarget.AllBuffered, moduleDamage, index, damageRemaining);
+                photonView.RPC("RPC_TakeDamage", RpcTarget.AllBuffered, moduleDamage, index, damageRemaining);
             } else {
                 _stationModules[index].TakeDamage(moduleDamage);
                 damageRemaining -= moduleDamage;
@@ -105,7 +108,7 @@ namespace PlayGame.SpaceStation {
             damageRemaining -= moduleDamage;
 
             _stationHull.TakeDamage(damageRemaining); // Hull takes the rest of the damage
-        } 
+        }
 
         public StationModule GetStationHull() {
             return _stationHull;

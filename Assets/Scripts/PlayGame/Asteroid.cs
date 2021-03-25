@@ -84,7 +84,7 @@ namespace PlayGame {
                 yield return null;
             }
 
-            if (!DebugSettings.Debug && gameObject != null) GetComponent<PhotonView>().RPC("DestroyOnNetwork", RpcTarget.MasterClient, gameObject.GetComponent<PhotonView>().ViewID);
+            if (!DebugSettings.Debug && gameObject != null && PhotonNetwork.IsMasterClient) GetComponent<PhotonView>().RPC("DestroyOnNetwork", RpcTarget.MasterClient, gameObject.GetComponent<PhotonView>().ViewID);
             else if (DebugSettings.Debug) Destroy(gameObject);
         }
 
@@ -121,7 +121,6 @@ namespace PlayGame {
                 if (photonID != -1) {
                     StatsManager.GetPlayerStats(photonID).asteroidsDestroyed++;
                     StatsManager.GameStats.asteroidsDestroyed++;
-                    Debug.Log(StatsManager.GameStats.asteroidsDestroyed);
                     EventsManager.AddMessage("Asteroid destroyed at " + GridCoord.GetCoordFromVector(transform.position));
                 }
                 StartCoroutine(FadeOutAsteroid());

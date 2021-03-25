@@ -90,7 +90,7 @@ namespace PlayGame.Pirates {
         }
 
         private void Despawn() {
-            if (!DebugSettings.Debug && gameObject != null) GetComponent<PhotonView>().RPC("DestroyOnNetwork", RpcTarget.MasterClient, gameObject.GetComponent<PhotonView>().ViewID);
+            if (!DebugSettings.Debug && gameObject != null && PhotonNetwork.IsMasterClient) GetComponent<PhotonView>().RPC("DestroyOnNetwork", RpcTarget.MasterClient, gameObject.GetComponent<PhotonView>().ViewID);
             else if (DebugSettings.Debug) Destroy(gameObject);
         }
 
