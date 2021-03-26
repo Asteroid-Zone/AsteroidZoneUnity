@@ -18,6 +18,11 @@ namespace EndGame
         private void Start()
         {
             _animator = gameObject.GetComponent<Animator>();
+            var players = GameObject.FindGameObjectsWithTag(Tags.PlayerTag);
+            foreach (var player in players)
+            {
+                player.SetActive(false);
+            }
             StartCoroutine(PlaySequence());
         }
 
