@@ -57,7 +57,7 @@ namespace EndGame {
         
         public void BackToMenu() {
             buttonPress.Play();
-            GameManager.LeaveRoom();
+            PhotonNetwork.LeaveRoom();
             SceneManager.LoadScene(Scenes.MainMenuScene);
         }
     }

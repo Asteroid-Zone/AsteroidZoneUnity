@@ -14,7 +14,7 @@ namespace PlayGame.UI {
             SceneManager.LoadScene(Scenes.MainMenuScene);
         }
 
-        public static void LeaveRoom() {
+        public void LeaveRoom() {
             PhotonNetwork.LeaveRoom();
         }
 
