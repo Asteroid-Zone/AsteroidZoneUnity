@@ -51,7 +51,7 @@ namespace PlayGame.Player {
                 if (hit.collider) { // If the laser is hitting a game object
                     UpdateLaser((int) hit.distance);
                     if (hit.collider.gameObject.CompareTag(Tags.AsteroidTag)) {
-                        if (PhotonNetwork.IsMasterClient) MineAsteroid(hit.collider.gameObject);
+                        if ((!DebugSettings.Debug && PhotonNetwork.IsMasterClient) || DebugSettings.Debug) MineAsteroid(hit.collider.gameObject);
                     }
                 } else {
                     UpdateLaser(MiningRange);
@@ -70,7 +70,8 @@ namespace PlayGame.Player {
                 _lastFrameMined = Time.frameCount;
 
                 int resources = asteroidScript.GetResources(MiningRate);
-                gameObject.GetPhotonView().RPC("RPC_AddResources", RpcTarget.AllBuffered, resources);
+                if (!DebugSettings.Debug) gameObject.GetPhotonView().RPC("RPC_AddResources", RpcTarget.AllBuffered, resources);
+                else _playerData.AddResources(resources);
             }
         }
         

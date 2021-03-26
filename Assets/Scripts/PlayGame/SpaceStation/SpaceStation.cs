@@ -65,8 +65,9 @@ namespace PlayGame.SpaceStation {
 
         public void GameOver(bool victory) {
             // Ensures LeaveRoom is only called once
-            if (!_complete && PhotonNetwork.IsMasterClient) {
-                photonView.RPC("RPC_GameOver", RpcTarget.AllBuffered, victory, Time.time - StatsManager.GameStats.startTime);
+            if (!_complete) {
+                if (!DebugSettings.Debug && PhotonNetwork.IsMasterClient) photonView.RPC("RPC_GameOver", RpcTarget.AllBuffered, victory, Time.time - StatsManager.GameStats.startTime);
+                else if (DebugSettings.Debug) RPC_GameOver(victory, Time.time - StatsManager.GameStats.startTime);
             }
         }
         

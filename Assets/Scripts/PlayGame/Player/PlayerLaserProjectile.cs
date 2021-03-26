@@ -28,7 +28,7 @@ namespace PlayGame.Player {
             // todo play animation (explosion)
 
             if (collision.gameObject.CompareTag(Tags.PirateTag)) {
-                if (PhotonNetwork.IsMasterClient) {
+                if ((!DebugSettings.Debug && PhotonNetwork.IsMasterClient) || DebugSettings.Debug) {
                     PirateData pirateData = collision.gameObject.GetComponent<PirateData>();
                     pirateData.TakeDamage(_shootingPlayerData);
                 }

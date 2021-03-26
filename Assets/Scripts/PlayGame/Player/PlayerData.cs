@@ -48,12 +48,10 @@ namespace PlayGame.Player
             _playerAgent = GetComponent<NavMeshAgent>();
             DontDestroyOnLoad(gameObject);
 
-            //if (photonView.IsMine) {
-                PlayerStats = new PlayerStats();
-                PlayerStats.photonID = photonView.ViewID;
-                PlayerStats.playerName = PhotonNetwork.NickName;
-                StatsManager.PlayerStatsList.Add(PlayerStats);
-            //}
+            PlayerStats = new PlayerStats();
+            if (!DebugSettings.Debug) PlayerStats.photonID = photonView.ViewID;
+            PlayerStats.playerName = PhotonNetwork.NickName;
+            StatsManager.PlayerStatsList.Add(PlayerStats);
 
             // Initialise the players list
             Players = new List<GameObject>();

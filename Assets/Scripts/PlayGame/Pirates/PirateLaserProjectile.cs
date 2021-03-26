@@ -38,13 +38,10 @@ namespace PlayGame.Pirates {
             }
 
             if (collision.gameObject.CompareTag(Tags.StationTag)) {
-                if ((!DebugSettings.Debug && PhotonNetwork.IsMasterClient) || DebugSettings.Debug)
-                {
+                if ((!DebugSettings.Debug && PhotonNetwork.IsMasterClient) || DebugSettings.Debug) {
                     SpaceStation.SpaceStation station = collision.gameObject.GetComponent<SpaceStation.SpaceStation>();
                     station.TakeDamage(_shootingPirateData.GetLaserDamage());
                 }
-             
-
             }
 
             Destroy(gameObject);

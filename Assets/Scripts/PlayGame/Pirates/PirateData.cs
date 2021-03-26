@@ -108,8 +108,20 @@ namespace PlayGame.Pirates {
 
         public void TakeDamage(PlayerData playerData) {
             int damage = playerData.GetLaserDamage();
-            int photonID = playerData.photonView.ViewID;
-            gameObject.GetPhotonView().RPC("RPC_TakeDamage", RpcTarget.AllBuffered, damage, photonID);
+            if (!DebugSettings.Debug) {
+                int photonID = playerData.photonView.ViewID;
+                gameObject.GetPhotonView().RPC("RPC_TakeDamage", RpcTarget.AllBuffered, damage, photonID);
+            } else {
+                _health -= damage;
+                if (_health <= 0) {
+                    StatsManager.PlayerStatsList[0].piratesDestroyed++;
+                    StatsManager.GameStats.piratesDestroyed++;
+                    Die();
+                }
+
+                // Display the damage on the health bar
+                SetHealthBar();
+            }
         }
         
         [PunRPC]

@@ -30,15 +30,15 @@ namespace EndGame {
         private void Start() {
             winText.text = StatsManager.GameStats.victory ? "You Win!" : "You lose!";
 
-            foreach (GameObject player in PlayerData.Players) {
-                if (player.GetPhotonView().IsMine) {
-                    _playerStats = StatsManager.GetPlayerStats(player.GetPhotonView().ViewID);
-                    Destroy(player);
+            if (!DebugSettings.Debug) {
+                foreach (GameObject player in PlayerData.Players) {
+                    if (player.GetPhotonView().IsMine) {
+                        _playerStats = StatsManager.GetPlayerStats(player.GetPhotonView().ViewID);
+                        Destroy(player);
+                    }
                 }
-            }
+            } else _playerStats = StatsManager.PlayerStatsList[0];
             
-            if (_playerStats == null) Debug.Log("null stats");
-
             playerName.text += _playerStats.playerName;
             playerResourcesHarvested.text += _playerStats.resourcesHarvested;
             playerAsteroidsDestroyed.text += _playerStats.asteroidsDestroyed;
