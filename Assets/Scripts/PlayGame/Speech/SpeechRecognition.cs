@@ -9,6 +9,7 @@ using Photon.GameControllers;
 using Photon.Pun;
 using PlayGame.UI;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -25,6 +26,9 @@ namespace PlayGame.Speech {
         private PlayerData _playerData;
 
         private ActionController _actionController;
+
+        private bool _foundCommand = false;
+        private List<string> _detectedPhrases = new List<string>();
 
         private void Start() {
             StartSpeechRecognitionInTheBrowser();
@@ -67,17 +71,48 @@ namespace PlayGame.Speech {
 
         // Called by javascript when speech is detected
         public void GetResponse(string result) {
-             if (!DebugSettings.Debug && !this.photonView.IsMine) return;
+            if ((!DebugSettings.Debug && !photonView.IsMine) || _foundCommand) return; // If a command has already been found for the speech return
 
             _myResponse = result.ToLower();
+            
+            _detectedPhrases.Add(_myResponse);
             Command command = Grammar.GetCommand(_myResponse, _playerData, player.transform);
 
             if (command.IsValid()) {
+                _foundCommand = true;
+                if (DebugSettings.Debug) _actionController.PerformActions(command);
+                else photonView.RPC("RPC_PerformActions", RpcTarget.AllBuffered, player.GetComponent<PhotonView>().ViewID, _myResponse);
+            }
+        }
+
+        // Called by javascript when the final speech is detected
+        public void GetFinalResponse(string result) {
+            if ((!DebugSettings.Debug && !photonView.IsMine) || _foundCommand) { // If a command has already been found for the speech reset and return
+                ResetSpeechRecognition();
+                return;
+            }
+            
+            _myResponse = result.ToLower();
+            
+            _detectedPhrases.Add(_myResponse);
+            Command command = Grammar.GetCommand(_myResponse, _playerData, player.transform);
+            
+            if (command.IsValid()) {
+                _foundCommand = true;
                 if (DebugSettings.Debug) _actionController.PerformActions(command);
                 else photonView.RPC("RPC_PerformActions", RpcTarget.AllBuffered, player.GetComponent<PhotonView>().ViewID, _myResponse);
             } else {
-                DisplaySuggestedCommand(_myResponse);
+                List<Tuple<string, float, bool>> suggestedCommands = FindSuggestedCommands(); // Tuple(command, confidence, fromData)
+                //PerformSuggestedCommand();
+                //DisplaySuggestedCommand();
             }
+            
+            ResetSpeechRecognition();
+        }
+
+        private void ResetSpeechRecognition() {
+            _foundCommand = false;
+            _detectedPhrases.Clear();
         }
 
         [PunRPC]
@@ -99,9 +134,36 @@ namespace PlayGame.Speech {
             _actionController.PerformActions(command);
             player = prevPlayer;
         }
+        
+        // Returns a list of suggested commands for all the detected phrases
+        // Tuple(command, confidence, fromData)
+        private List<Tuple<string, float, bool>> FindSuggestedCommands() {
+            List<Tuple<string, float, bool>> suggestedCommands = new List<Tuple<string, float, bool>>();
+            
+            foreach (string phrase in _detectedPhrases) {
+                suggestedCommands.Add(FindSuggestedCommand(phrase));
+            }
+
+            return suggestedCommands;
+        }
+        
+        // Returns the suggested command for a given phrase
+        // Tuple(command, confidence, fromData)
+        private Tuple<string, float, bool> FindSuggestedCommand(string phrase) {
+            Tuple<string, float> suggestedCommandFromData = Grammar.GetSuggestedCommandFromData(phrase);
+            Tuple<string, float> suggestedCommandFromDistance = Grammar.GetSuggestedCommandFromDistance(phrase);
+
+            // If confidence is greater than 0 for fromdata use that command
+            if (suggestedCommandFromData.Item2 > 0) return new Tuple<string, float, bool>(suggestedCommandFromData.Item1, suggestedCommandFromData.Item2, true);
+            
+            // If confidence is greater than 0.5 for fromdistance ask the user
+            if (suggestedCommandFromDistance.Item2 > 0.5) return new Tuple<string, float, bool>(suggestedCommandFromDistance.Item1, suggestedCommandFromDistance.Item2, false);
+            
+            return null; // Otherwise no command was found
+        }
 
         // Displays the suggested command, if we are confident its correct perform the command
-        private void DisplaySuggestedCommand(string phrase) {
+        private void FindAndDisplaySuggestedCommand(string phrase) {
             Tuple<string, float> suggestedCommandFromData = Grammar.GetSuggestedCommandFromData(phrase);
             Tuple<string, float> suggestedCommandFromDistance = Grammar.GetSuggestedCommandFromDistance(phrase);
             string eventMessage = "";
@@ -129,7 +191,6 @@ namespace PlayGame.Speech {
             EventsManager.AddMessage(eventMessage);
             ReadTextToSpeech(eventMessage); // Read the message using tts in the browser
         }
-
         
         private static void ReadTextToSpeech(string phrase) {
             Application.ExternalCall("readTextToSpeech", phrase);
