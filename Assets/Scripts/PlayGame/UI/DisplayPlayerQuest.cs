@@ -6,23 +6,27 @@ using UnityEngine.UI;
 
 namespace PlayGame.UI
 {
-    public class QuestManager : MonoBehaviour {
+    public class DisplayPlayerQuest : MonoBehaviour {
     
         public GameObject player;
 
         private PlayerData _playerData;
-        
+        private QuestType _currentQuest;
+
         private Text _text;
+        
 
         private void Start() {
             player = !DebugSettings.Debug ? PhotonPlayer.Instance.myAvatar : TestPlayer.GetPlayerShip();
             _text = GetComponent<Text>();
             _playerData = player.GetComponent<PlayerData>();
+
         }
 
         private void Update()
         {
-            string questStr = questToString(_playerData.currentQuest);
+            _currentQuest = _playerData.GetQuest();
+            string questStr = questToString(_currentQuest);
             _text.text = questStr;
         }
 

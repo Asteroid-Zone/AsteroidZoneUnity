@@ -171,6 +171,16 @@ namespace PlayGame.Player
             return _health;
         }
 
+        public QuestType GetQuest()
+        {
+            return currentQuest;
+        }
+
+        public void SetQuest(QuestType quest)
+        {
+            currentQuest = quest;
+        }
+
         public int GetLaserDamage()
         {
             // Make the amount of damage vary a bit.

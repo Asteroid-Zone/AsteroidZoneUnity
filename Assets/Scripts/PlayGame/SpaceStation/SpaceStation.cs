@@ -6,6 +6,7 @@ using PlayGame.Stats;
 using PlayGame.UI;
 using Statics;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
@@ -14,9 +15,10 @@ namespace PlayGame.SpaceStation {
 
         public GridManager gridManager;
         public GameManager gameManager;
+        public UnityEvent stationAttacked;
         
         private bool _complete = false;
-
+        
         private readonly List<StationModule> _stationModules = new List<StationModule>();
 
         private Hyperdrive _hyperdrive;
@@ -27,7 +29,7 @@ namespace PlayGame.SpaceStation {
         // todo add turrets
 
         public int resources = 0;
-        
+
         private void Start() {
             transform.position = gridManager.GetGridCentre();
             
@@ -99,6 +101,8 @@ namespace PlayGame.SpaceStation {
             int damageRemaining = _shieldGenerator.AbsorbDamage(damage); // Shields take as much of the damage as they can
             int moduleDamage = Random.Range(0, damageRemaining); // Random module takes a random amount of damage
             int index = Random.Range(0, _stationModules.Count);
+            stationAttacked.Invoke();
+            
 
             if (!DebugSettings.Debug) {
                 photonView.RPC("RPC_TakeDamage", RpcTarget.AllBuffered, moduleDamage, index, damageRemaining);
