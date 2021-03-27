@@ -16,6 +16,13 @@ namespace PlayGame.Player
         Researcher
     }
 
+    public enum QuestType {
+        MineAsteroids,
+        ReturnToStation,
+        PirateWarning,
+        DefendStation
+    }
+
     public class PlayerData : MonoBehaviourPun {
         public static List<GameObject> Players;
 
@@ -43,6 +50,8 @@ namespace PlayGame.Player
         private Transform _lockTarget;
 
         public PlayerStats PlayerStats;
+
+        public QuestType currentQuest;
 
         private void Start() {
             _playerAgent = GetComponent<NavMeshAgent>();
@@ -76,6 +85,8 @@ namespace PlayGame.Player
             _resources = 0;
 
             _laserDamage = 20;
+
+            currentQuest = QuestType.MineAsteroids;
         }
 
         [PunRPC]
