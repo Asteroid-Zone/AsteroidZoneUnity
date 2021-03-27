@@ -21,6 +21,7 @@ namespace PlayGame.Player
         ReturnToStation,
         PirateWarning,
         DefendStation
+        // Escape to hyperspace, not sure because they get more points for staying longer
     }
 
     public class PlayerData : MonoBehaviourPun {

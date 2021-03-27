@@ -9,7 +9,6 @@ using Photon.GameControllers;
 using Photon.Pun;
 using PlayGame.UI;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -109,7 +108,7 @@ namespace PlayGame.Speech {
                 else photonView.RPC("RPC_PerformActions", RpcTarget.AllBuffered, player.GetComponent<PhotonView>().ViewID, _myResponse);
             }
         }
-
+        
         // Called by javascript when the final speech is detected
         public void GetFinalResponse(string result) {
             if ((!DebugSettings.Debug && !photonView.IsMine) || _foundCommand) { // If a command has already been found for the speech reset and return
@@ -201,7 +200,7 @@ namespace PlayGame.Speech {
         // Returns the suggested command for a given phrase
         // Tuple(command, confidence, fromData, phrase)
         private Tuple<string, float, bool, string> FindSuggestedCommand(string phrase) {
-            Tuple<string, float> suggestedCommandFromData = Grammar.GetSuggestedCommandFromData(phrase);
+            Tuple<string, float> suggestedCommandFromData = Grammar.GetSuggestedCommandFromData(phrase, _playerData);
             Tuple<string, float> suggestedCommandFromDistance = Grammar.GetSuggestedCommandFromDistance(phrase);
 
             // If confidence is greater than 0 for fromdata use that command

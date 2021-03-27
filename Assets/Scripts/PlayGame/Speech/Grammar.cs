@@ -9,7 +9,7 @@ using UnityEngine;
 namespace PlayGame.Speech {
     public static class Grammar {
 
-        // Stores information about the data in the phrase
+        // Stores information about the data in the phrase and data about the players current situation
         private struct DataProvided {
             public string direction;
             public string destination;
@@ -19,6 +19,7 @@ namespace PlayGame.Speech {
             public string activatableObject;
             public string lockTarget;
             public string stationModule;
+            public QuestType questType;
         }
         
         private const string GridCoordRegex = @"[a-z]( )?(\d+)";
@@ -100,9 +101,9 @@ namespace PlayGame.Speech {
         }
 
         // Returns the command which was most likely intended by the player and a measure of how confident we are that its the correct command
-        public static Tuple<string, float> GetSuggestedCommandFromData(string phrase) {
+        public static Tuple<string, float> GetSuggestedCommandFromData(string phrase, PlayerData playerData) {
             // Find commands that have some of the required data in the phrase
-            List<Tuple<string, float>> partiallyCompleteCommands = GetPartiallyCompleteCommands(phrase); 
+            List<Tuple<string, float>> partiallyCompleteCommands = GetPartiallyCompleteCommands(phrase, playerData); 
             Tuple<string, float> mostCompleteCommand = new Tuple<string, float>("", 0);
             
             if (partiallyCompleteCommands.Count != 0) {
@@ -124,8 +125,8 @@ namespace PlayGame.Speech {
             return new Tuple<string, float>(Strings.NoCommand, 0);
         }
 
-        private static List<Tuple<string, float>> GetPartiallyCompleteCommands(string phrase) {
-            DataProvided dataProvided = GetDataProvided(phrase);
+        private static List<Tuple<string, float>> GetPartiallyCompleteCommands(string phrase, PlayerData playerData) {
+            DataProvided dataProvided = GetDataProvided(phrase, playerData);
             List<Tuple<string, float>> commands = new List<Tuple<string, float>>(); // List of (command, dataRequiredPercentage)
 
             commands.AddRange(GetPartiallyCompleteMovementCommands(phrase, dataProvided, MovementCommands));
@@ -189,7 +190,8 @@ namespace PlayGame.Speech {
             return commands;
         }
 
-        private static Tuple<string, float> GetPartiallyCompleteLockCommand(string phrase, DataProvided dataProvided) {
+        private static List<Tuple<string, float>> GetPartiallyCompleteLockCommands(string phrase, DataProvided dataProvided) {
+            List<Tuple<string, float>> commands = new List<Tuple<string, float>>();
             float completeness = 0;
 
             string c = "";
@@ -207,11 +209,18 @@ namespace PlayGame.Speech {
             if (dataProvided.lockTarget != null) {
                 completeness += 0.5f;
                 c += " " + dataProvided.lockTarget;
+                commands.Add(new Tuple<string, float>(c, completeness));
             } else {
-                c += " (lock target)";
+                commands.Add(new Tuple<string, float>(c + " (lock target)", completeness));
+                
+                // Commands influenced by quest type
+                // 0.2f so its not enough for it to be automatically done but should ask the user
+                if (dataProvided.questType == QuestType.MineAsteroids) commands.Add(new Tuple<string, float>(c + " " + Asteroid[0], completeness + 0.2f));
+                if (dataProvided.questType == QuestType.DefendStation) commands.Add(new Tuple<string, float>(c + " " + Pirate[0], completeness + 0.2f));
+                if (dataProvided.questType == QuestType.PirateWarning) commands.Add(new Tuple<string, float>(c + " " + Pirate[0], completeness + 0.2f));
             }
-
-            return new Tuple<string, float>(c, completeness);
+            
+            return commands;
         }
         
         private static List<Tuple<string, float>> GetPartiallyCompleteLaserCommands(string phrase, DataProvided dataProvided) {
@@ -241,17 +250,21 @@ namespace PlayGame.Speech {
             if (dataProvided.activatableObject != null) {
                 // If they have tried to use a laser/mining laser they must be trying to turn it on/off
                 // We assume they want to turn it on because nothing bad can happen by not being able to stop them but they could die if they cant shoot
-                if (MiningLaser.Contains(dataProvided.activatableObject)) {
-                    commands.Add(new Tuple<string, float>(c + " " + dataProvided.activatableObject, 0.9f));
-                }
-                
-                if (LaserGun.Contains(dataProvided.activatableObject)) {
-                    commands.Add(new Tuple<string, float>(c + " " + dataProvided.activatableObject, 0.9f));
-                }
+                if (MiningLaser.Contains(dataProvided.activatableObject)) commands.Add(new Tuple<string, float>(c + " " + dataProvided.activatableObject, 0.9f));
+                if (LaserGun.Contains(dataProvided.activatableObject)) commands.Add(new Tuple<string, float>(c + " " + dataProvided.activatableObject, 0.9f));
             } else {
                 if (completeness != 0) {
-                    commands.Add(new Tuple<string, float>(c + " " + MiningLaser[0], completeness));
-                    commands.Add(new Tuple<string, float>(c + " " + LaserGun[0], completeness));
+                    if (dataProvided.questType == QuestType.MineAsteroids) { // If mining quest they are more likely to turn on the mining laser
+                        commands.Add(new Tuple<string, float>(c + " " + MiningLaser[0], completeness + 0.2f)); // Prompt the user, not enough to perform the command
+                        commands.Add(new Tuple<string, float>(c + " " + LaserGun[0], completeness));
+                    } else if (dataProvided.questType == QuestType.DefendStation || dataProvided.questType == QuestType.PirateWarning) {  // If pirate quest they are more likely to turn on the combat laser
+                        commands.Add(new Tuple<string, float>(c + " " + MiningLaser[0], completeness));
+                        // Dont want them to be under attack and not be able to shoot so we are confident enough to just turn it on
+                        commands.Add(new Tuple<string, float>(c + " " + LaserGun[0], completeness + 0.4f));
+                    } else {
+                        commands.Add(new Tuple<string, float>(c + " " + MiningLaser[0], completeness));
+                        commands.Add(new Tuple<string, float>(c + " " + LaserGun[0], completeness));
+                    }
                 }
             }
             
@@ -294,14 +307,15 @@ namespace PlayGame.Speech {
         private static List<Tuple<string, float>> GetPartiallyCompleteOnCommands(string phrase, DataProvided dataProvided) {
             List<Tuple<string, float>> commands = new List<Tuple<string, float>>(); // List of (command, dataRequiredPercentage)
 
-            commands.Add(GetPartiallyCompleteLockCommand(phrase, dataProvided));
+            commands.AddRange(GetPartiallyCompleteLockCommands(phrase, dataProvided));
             commands.AddRange(GetPartiallyCompleteLaserCommands(phrase, dataProvided));
             commands.AddRange(GetPartiallyCompleteGenericOnCommands(phrase, dataProvided));
 
             return commands;
         }
         
-        // Returns a transfer command with the percentage of data provided
+        // Returns an off command with the percentage of data provided
+        // todo make things which are already on more likely
         private static Tuple<string, float> GetPartiallyCompleteOffCommand(string phrase, DataProvided dataProvided) {
             float completeness = 0;
 
@@ -349,7 +363,8 @@ namespace PlayGame.Speech {
             } else {
                 c += " " + Resources[0];
             }
-
+            
+            if (completeness < 1f && dataProvided.questType == QuestType.ReturnToStation) return new Tuple<string, float>(c, 0.4f); // 0.4 because if any other command words are used they are more likely
             // If either the transfer command or resources is in the phrase we know they are trying to transfer resources
             return new Tuple<string, float>(c, completeness);
         }
@@ -417,6 +432,9 @@ namespace PlayGame.Speech {
             if (dataProvided.destination != null) {
                 commands.Add(new Tuple<string, float>(c + " " + dataProvided.destination, completeness + 0.5f));
             } else {
+                if (dataProvided.questType == QuestType.ReturnToStation || dataProvided.questType == QuestType.DefendStation) commands.Add(new Tuple<string, float>(c + " " + SpaceStation[0], completeness + 0.2f)); // 0.2f so it prompts the player
+                if (dataProvided.questType == QuestType.MineAsteroids) commands.Add(new Tuple<string, float>(c + " " + Asteroid[0], completeness + 0.2f)); // 0.2f so it prompts the player
+                if (dataProvided.questType == QuestType.PirateWarning) commands.Add(new Tuple<string, float>(c + " " + Pirate[0], completeness + 0.2f)); // 0.2f so it prompts the player
                 if (completeness != 0) commands.Add(new Tuple<string, float>(c + " (destination)", completeness));
             }
             
@@ -442,8 +460,8 @@ namespace PlayGame.Speech {
             return closestCommandWord;
         }
 
-        // Finds out what data is provided in the phrase
-        private static DataProvided GetDataProvided(string phrase) {
+        // Finds out what data is provided in the phrase and from PlayerData
+        private static DataProvided GetDataProvided(string phrase, PlayerData playerData) {
             DataProvided dataProvided = new DataProvided();
             dataProvided.direction = GetDirection(phrase);
             dataProvided.destination = GetCommandListIdentifier(phrase, Destinations);
@@ -453,6 +471,8 @@ namespace PlayGame.Speech {
             dataProvided.activatableObject = GetCommandListIdentifier(phrase, Activatable);
             dataProvided.lockTarget = GetCommandListIdentifier(phrase, LockTargets);
             dataProvided.stationModule = GetCommandListIdentifier(phrase, StationModules);
+
+            dataProvided.questType = playerData.currentQuest;
 
             return dataProvided;
         }
