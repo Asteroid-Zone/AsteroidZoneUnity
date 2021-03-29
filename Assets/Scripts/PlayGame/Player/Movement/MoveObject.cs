@@ -239,5 +239,10 @@ namespace PlayGame.Player.Movement
         {
             return _lockTarget;
         }
+
+        public ToggleCommand.LockTargetType GetLockType()
+        {
+            return _lockType;
+        }
     }
 }

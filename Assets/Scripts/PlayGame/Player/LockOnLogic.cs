@@ -1,6 +1,7 @@
 ﻿using Photon.GameControllers;
 using PlayGame.Camera;
 using PlayGame.Player.Movement;
+using PlayGame.Speech.Commands;
 using Statics;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,6 +13,8 @@ namespace PlayGame.Player
         private MoveObject _moveObject;
         private Transform _lockTarget;
         private Image image;
+        public Sprite asteroidReticle;
+        public Sprite enemyReticle;
         public CameraManager cameraMan;
 
         // Start is called before the first frame update
@@ -28,8 +31,17 @@ namespace PlayGame.Player
             _lockTarget = _moveObject.GetLockTarget();
             if (_lockTarget)
             {
+                ToggleCommand.LockTargetType _lockType = _moveObject.GetLockType();
                 Vector3 screenPos = cameraMan.GetCurrentCamera().WorldToScreenPoint(_lockTarget.position);
                 image.transform.position = screenPos;
+                if (_lockType == ToggleCommand.LockTargetType.Asteroid)
+                {
+                    image.sprite = asteroidReticle;
+                }
+                else
+                {
+                    image.sprite = enemyReticle;
+                }
                 image.enabled = true;
             }
             else
