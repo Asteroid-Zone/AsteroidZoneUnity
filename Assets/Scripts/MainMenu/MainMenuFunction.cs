@@ -6,13 +6,36 @@ using Statics;
 
 namespace MainMenu {
     public class MainMenuFunction : MonoBehaviour {
-        
+
+        [Tooltip("The UI Panel with Main Menu Options")]
+        [SerializeField]
+        private GameObject controlPanel;
+        [Tooltip("The UI Panel with Lobby Options")]
+        [SerializeField]
+        private GameObject lobbyControlPanel;
+        [SerializeField]
+        private GameObject roomControlPanel;
+
         public AudioSource buttonPress;
-        
+
+        void Start()
+        {
+          controlPanel.SetActive(true);
+          lobbyControlPanel.SetActive(false);
+          roomControlPanel.SetActive(false);
+        }
+
         public void PlayGame()
         {
             buttonPress.Play();
-            PhotonLobby.getInstance().Connect();
+            controlPanel.SetActive(false);
+            lobbyControlPanel.SetActive(true);
+        }
+
+        public void JoinLobby()
+        {
+          buttonPress.Play();
+          lobbyControlPanel.SetActive(false);
         }
 
         public void QuitGame()

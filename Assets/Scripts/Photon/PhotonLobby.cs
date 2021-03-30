@@ -1,10 +1,12 @@
 ﻿using Photon.Pun;
 using Photon.Realtime;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Photon
 {
-    public class PhotonLobby : MonoBehaviourPunCallbacks 
+    public class PhotonLobby : MonoBehaviourPunCallbacks, ILobbyCallbacks
     {
         [Tooltip("The maximum number of players per room. When a room is full, it can't be joined by new players, and so new room will be created")]
         [SerializeField]
@@ -13,12 +15,25 @@ namespace Photon
         [Tooltip("The UI Panel with Main Menu Options")]
         [SerializeField]
         private GameObject controlPanel;
+        [Tooltip("The UI Panel with Lobby Options")]
+        [SerializeField]
+        private GameObject lobbyControlPanel;
+        [Tooltip("The UI Panel with Room Options")]
+        [SerializeField]
+        private GameObject roomControlPanel;
         [Tooltip("The UI Label to inform the user that the connection is in progress")]
         [SerializeField]
         private GameObject progressLabel;
 
+        public string RoomName;
+
         private static PhotonLobby _instance;
 
+        public GameObject roomListPrefab;
+        public GameObject playerListPrefab;
+
+        public Transform roomPanel;
+        public Transform playerPanel;
 
         /// This client's version number. Users are separated from each other by gameVersion.
         private const string GameVersion = "1";
@@ -29,7 +44,7 @@ namespace Photon
         private bool _isConnecting;
 
         /// MonoBehaviour methods called on GameObject by Unity during early initialization phase.
-        
+
         private void Awake()
         {
             _instance = this;
@@ -39,11 +54,18 @@ namespace Photon
         {
             progressLabel.SetActive(false);
             controlPanel.SetActive(true);
+            PhotonNetwork.ConnectUsingSettings();
+            PhotonNetwork.GameVersion = GameVersion;
         }
 
         public static PhotonLobby getInstance()
         {
             return _instance;
+        }
+
+        public void Test()
+        {
+            PhotonLobby.getInstance().Connect();
         }
 
         /// Start the connection process.
@@ -53,10 +75,11 @@ namespace Photon
         {
             progressLabel.SetActive(true);
             controlPanel.SetActive(false);
+            lobbyControlPanel.SetActive(false);
 
             if (PhotonNetwork.IsConnected)
             {
-                PhotonNetwork.JoinRandomRoom();
+                CreateRoom();
             }
             else
             {
@@ -64,6 +87,8 @@ namespace Photon
                 _isConnecting = PhotonNetwork.ConnectUsingSettings();
                 PhotonNetwork.GameVersion = GameVersion;
             }
+            progressLabel.SetActive(false);
+            roomControlPanel.SetActive(true);
         }
 
         //Methods overriding MonoBehaviourPunCallbacks Callbacks
@@ -77,10 +102,17 @@ namespace Photon
             if (_isConnecting)
             {
                 // The first we try to do is to join a potential existing room. If there is, good, else, we'll be called back with OnJoinRandomFailed()
-                PhotonNetwork.JoinRandomRoom();
+                CreateRoom();
                 _isConnecting = false;
             }
 
+        }
+
+        void CreateRoom()
+        {
+          Debug.Log("creating a room");
+          RoomOptions roomOps = new RoomOptions() {IsVisible = true, IsOpen = true, MaxPlayers = maxPlayersPerRoom};
+          PhotonNetwork.CreateRoom(RoomName, roomOps);
         }
 
 
@@ -92,11 +124,43 @@ namespace Photon
             Debug.LogWarningFormat("Asteroid Zone/MainMenuFunction: OnDisconnected() was called by PUN with reason {0}", cause);
         }
 
-        public override void OnJoinRandomFailed(short returnCode, string message)
+        public override void OnRoomListUpdate(List<RoomInfo> roomList)
         {
-            Debug.Log("Asteroid Zone/MainMenuFunction: OnJoinRandomFailed() was called by PUN. No random room available, so we create one.\nCalling: PhotonNetwork.CreateRoom");
+          ClearList();
+          foreach(RoomInfo room in roomList)
+          {
+            ListRoom(room);
+          }
+        }
 
-            PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = maxPlayersPerRoom });
+        public void ClearList()
+        {
+          for (int i = roomPanel.childCount - 1; i >=0; i--)
+          {
+            Destroy(roomPanel.GetChild(i).gameObject);
+          }
+        }
+
+        public void ListRoom(RoomInfo room)
+        {
+          if(room.IsOpen && room.IsVisible)
+          {
+            GameObject tempListing = Instantiate(roomListPrefab, roomPanel);
+            RoomButton tempButton = tempListing.GetComponent<RoomButton>();
+            tempButton.roomName = room.Name;
+            tempButton.SetRoom();
+          }
+        }
+
+
+        public void RoomNameGrab(string roomNameInput)
+        {
+          RoomName = roomNameInput;
+        }
+
+        public void JoinLobby()
+        {
+          PhotonNetwork.JoinLobby();
         }
 
     }

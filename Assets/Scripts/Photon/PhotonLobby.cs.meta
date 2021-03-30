@@ -3,7 +3,12 @@ guid: aa56db99cd4be5548950a1521c51b690
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - controlPanel: {instanceID: 0}
+  - lobbyControlPanel: {instanceID: 0}
+  - progressLabel: {instanceID: 0}
+  - roomListPrefab: {instanceID: 0}
+  - roomPanel: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
