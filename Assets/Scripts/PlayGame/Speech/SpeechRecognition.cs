@@ -24,6 +24,8 @@ namespace PlayGame.Speech {
 
         private PlayerData _playerData;
         private MoveObject _moveObject;
+        private MiningLaser _miningLaser;
+        private LaserGun _laserGun;
 
         private ActionController _actionController;
 
@@ -36,6 +38,8 @@ namespace PlayGame.Speech {
 
             _playerData = player.GetComponent<PlayerData>();
             _moveObject = player.GetComponent<MoveObject>();
+            _miningLaser = player.GetComponent<MiningLaser>();
+            _laserGun = player.GetComponent<LaserGun>();
             text = GameObject.Find("Speech").GetComponent<Text>();
             ping = GameObject.Find("PingManager");
             spaceStation = GameObject.Find("SpaceStation");
@@ -202,7 +206,7 @@ namespace PlayGame.Speech {
         // Returns the suggested command for a given phrase
         // Tuple(command, confidence, fromData, phrase)
         private Tuple<string, float, bool, string> FindSuggestedCommand(string phrase) {
-            Tuple<string, float> suggestedCommandFromData = Grammar.GetSuggestedCommandFromData(phrase, _playerData, _moveObject);
+            Tuple<string, float> suggestedCommandFromData = Grammar.GetSuggestedCommandFromData(phrase, _playerData, _moveObject, _miningLaser.enabled, _laserGun.IsShooting());
             Tuple<string, float> suggestedCommandFromDistance = Grammar.GetSuggestedCommandFromDistance(phrase);
 
             // If confidence is greater than 0 for fromdata use that command

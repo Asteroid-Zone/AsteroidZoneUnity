@@ -22,6 +22,8 @@ namespace PlayGame.Speech {
             public string stationModule;
             public QuestType playerQuestType;
             public ToggleCommand.LockTargetType playerLockType;
+            public bool miningLaser;
+            public bool combatLaser;
         }
         
         private const string GridCoordRegex = @"[a-z]( )?(\d+)";
@@ -103,7 +105,7 @@ namespace PlayGame.Speech {
         }
         
         // Finds out what data is provided in the phrase and from PlayerData
-        private static DataProvided GetDataProvided(string phrase, PlayerData playerData, MoveObject moveObject) {
+        private static DataProvided GetDataProvided(string phrase, PlayerData playerData, MoveObject moveObject, bool miningLaser, bool combatLaser) {
             DataProvided dataProvided = new DataProvided();
             dataProvided.direction = GetDirection(phrase);
             dataProvided.destination = GetCommandListIdentifier(phrase, Destinations);
@@ -116,14 +118,16 @@ namespace PlayGame.Speech {
 
             dataProvided.playerQuestType = playerData.currentQuest;
             dataProvided.playerLockType = moveObject.lockType;
+            dataProvided.miningLaser = miningLaser;
+            dataProvided.combatLaser = combatLaser;
 
             return dataProvided;
         }
 
         // Returns the command which was most likely intended by the player and a measure of how confident we are that its the correct command
-        public static Tuple<string, float> GetSuggestedCommandFromData(string phrase, PlayerData playerData, MoveObject moveObject) {
+        public static Tuple<string, float> GetSuggestedCommandFromData(string phrase, PlayerData playerData, MoveObject moveObject, bool miningLaser, bool combatLaser) {
             // Find commands that have some of the required data in the phrase
-            List<Tuple<string, float>> partiallyCompleteCommands = GetPartiallyCompleteCommands(phrase, playerData, moveObject);
+            List<Tuple<string, float>> partiallyCompleteCommands = GetPartiallyCompleteCommands(phrase, playerData, moveObject, miningLaser, combatLaser);
             Tuple<string, float> mostCompleteCommand = new Tuple<string, float>("", 0);
             
             if (partiallyCompleteCommands.Count != 0) {
@@ -145,8 +149,8 @@ namespace PlayGame.Speech {
             return new Tuple<string, float>(Strings.NoCommand, 0);
         }
 
-        private static List<Tuple<string, float>> GetPartiallyCompleteCommands(string phrase, PlayerData playerData, MoveObject moveObject) {
-            DataProvided dataProvided = GetDataProvided(phrase, playerData, moveObject);
+        private static List<Tuple<string, float>> GetPartiallyCompleteCommands(string phrase, PlayerData playerData, MoveObject moveObject, bool miningLaser, bool combatLaser) {
+            DataProvided dataProvided = GetDataProvided(phrase, playerData, moveObject, miningLaser, combatLaser);
             List<Tuple<string, float>> commands = new List<Tuple<string, float>>(); // List of (command, dataRequiredPercentage)
 
             commands.AddRange(GetPartiallyCompleteMovementCommands(phrase, dataProvided, MovementCommands));
@@ -154,7 +158,7 @@ namespace PlayGame.Speech {
             
             commands.Add(GetPartiallyCompletePingCommand(phrase, dataProvided));
             commands.Add(GetPartiallyCompleteTransferCommand(phrase, dataProvided));
-            commands.Add(GetPartiallyCompleteOffCommand(phrase, dataProvided));
+            commands.AddRange(GetPartiallyCompleteOffCommand(phrase, dataProvided));
             commands.AddRange(GetPartiallyCompleteRepairCommands(phrase, dataProvided));
             
             commands.AddRange(GetPartiallyCompleteOnCommands(phrase, dataProvided));
@@ -351,8 +355,8 @@ namespace PlayGame.Speech {
         }
         
         // Returns an off command with the percentage of data provided
-        // todo make things which are already on more likely
-        private static Tuple<string, float> GetPartiallyCompleteOffCommand(string phrase, DataProvided dataProvided) {
+        private static List<Tuple<string, float>> GetPartiallyCompleteOffCommand(string phrase, DataProvided dataProvided) {
+            List<Tuple<string, float>> commands = new List<Tuple<string, float>>();
             float completeness = 0;
 
             string c = "";
@@ -370,11 +374,18 @@ namespace PlayGame.Speech {
             if (dataProvided.activatableObject != null) {
                 completeness += 0.5f;
                 c += " " + dataProvided.activatableObject;
+                commands.Add(new Tuple<string, float>(c, completeness));
             } else {
+                // More likely to turn something off if its already on
+                if (dataProvided.playerLockType != ToggleCommand.LockTargetType.None) commands.Add(new Tuple<string, float>(c + " " + LockCommands[0], completeness + 0.2f));
+                if (dataProvided.miningLaser) commands.Add(new Tuple<string, float>(c + " " + MiningLaser[0], completeness + 0.2f));
+                if (dataProvided.combatLaser) commands.Add(new Tuple<string, float>(c + " " + LaserGun[0], completeness + 0.2f));
+                
                 c += " (activatable object)";
+                commands.Add(new Tuple<string, float>(c, completeness));
             }
 
-            return new Tuple<string, float>(c, completeness);
+            return commands;
         }
         
         // Returns a transfer command with the percentage of data provided

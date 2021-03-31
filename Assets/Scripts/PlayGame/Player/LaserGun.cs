@@ -2,6 +2,7 @@
 using Statics;
 using UnityEngine;
 using System.Linq;
+using Photon.Pun;
 
 namespace PlayGame.Player {
     public class LaserGun : MonoBehaviour {
@@ -50,6 +51,10 @@ namespace PlayGame.Player {
         
         public void StopShooting() {
             _shooting = false;
+        }
+
+        public bool IsShooting() {
+            return _shooting;
         }
     }
 }
