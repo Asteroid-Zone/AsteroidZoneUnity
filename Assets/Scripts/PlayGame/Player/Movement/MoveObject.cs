@@ -35,7 +35,7 @@ namespace PlayGame.Player.Movement
         private GameObject _asteroidSpawner;
         
         private Transform _lockTarget;
-        private ToggleCommand.LockTargetType _lockType = ToggleCommand.LockTargetType.None;
+        public ToggleCommand.LockTargetType lockType = ToggleCommand.LockTargetType.None;
         
         private void Start() {
             // fetch the objects of the spawners
@@ -69,8 +69,8 @@ namespace PlayGame.Player.Movement
             // Rotate slowly
             if (rotating) Rotate();
 
-            if (_lockType != ToggleCommand.LockTargetType.None) {
-                if (_lockTarget == null) _lockTarget = GetLockTarget(_lockType);
+            if (lockType != ToggleCommand.LockTargetType.None) {
+                if (_lockTarget == null) _lockTarget = GetLockTarget(lockType);
                 if (_lockTarget != null) FaceTarget(_lockTarget);
             } else {
                 _lockTarget = null;
@@ -225,7 +225,7 @@ namespace PlayGame.Player.Movement
         }
 
         public void SetLockTargetType(ToggleCommand.LockTargetType type) {
-            _lockType = type;
+            lockType = type;
             _lockTarget = null;
         }
         

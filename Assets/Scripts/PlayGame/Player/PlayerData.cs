@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Photon.Pun;
+using PlayGame.Speech.Commands;
 using PlayGame.Stats;
 using PlayGame.UI;
 using Statics;

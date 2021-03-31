@@ -23,6 +23,7 @@ namespace PlayGame.Speech {
         public GameObject ping;
 
         private PlayerData _playerData;
+        private MoveObject _moveObject;
 
         private ActionController _actionController;
 
@@ -34,6 +35,7 @@ namespace PlayGame.Speech {
             player = !DebugSettings.Debug ? PhotonPlayer.Instance.myAvatar : TestPlayer.GetPlayerShip();
 
             _playerData = player.GetComponent<PlayerData>();
+            _moveObject = player.GetComponent<MoveObject>();
             text = GameObject.Find("Speech").GetComponent<Text>();
             ping = GameObject.Find("PingManager");
             spaceStation = GameObject.Find("SpaceStation");
@@ -200,7 +202,7 @@ namespace PlayGame.Speech {
         // Returns the suggested command for a given phrase
         // Tuple(command, confidence, fromData, phrase)
         private Tuple<string, float, bool, string> FindSuggestedCommand(string phrase) {
-            Tuple<string, float> suggestedCommandFromData = Grammar.GetSuggestedCommandFromData(phrase, _playerData);
+            Tuple<string, float> suggestedCommandFromData = Grammar.GetSuggestedCommandFromData(phrase, _playerData, _moveObject);
             Tuple<string, float> suggestedCommandFromDistance = Grammar.GetSuggestedCommandFromDistance(phrase);
 
             // If confidence is greater than 0 for fromdata use that command
