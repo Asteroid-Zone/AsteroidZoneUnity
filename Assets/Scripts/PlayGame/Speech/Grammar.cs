@@ -24,6 +24,7 @@ namespace PlayGame.Speech {
             public ToggleCommand.LockTargetType playerLockType;
             public bool miningLaser;
             public bool combatLaser;
+            public bool nearStation;
         }
         
         private const string GridCoordRegex = @"[a-z]( )?(\d+)";
@@ -120,6 +121,7 @@ namespace PlayGame.Speech {
             dataProvided.playerLockType = moveObject.lockType;
             dataProvided.miningLaser = miningLaser;
             dataProvided.combatLaser = combatLaser;
+            dataProvided.nearStation = moveObject.NearStation();
 
             return dataProvided;
         }
@@ -410,10 +412,16 @@ namespace PlayGame.Speech {
             } else {
                 c += " " + Resources[0];
             }
-            
-            if (completeness < 1f && dataProvided.playerQuestType == QuestType.ReturnToStation) return new Tuple<string, float>(c, 0.4f); // 0.4 because if any other command words are used they are more likely
-            // If either the transfer command or resources is in the phrase we know they are trying to transfer resources
-            return new Tuple<string, float>(c, completeness);
+
+            if (completeness < 1f) {
+                float confidence = completeness;
+                if (dataProvided.playerQuestType == QuestType.ReturnToStation) confidence += 0.3f;
+                if (dataProvided.nearStation) confidence += 0.2f;
+                return new Tuple<string, float>(c, confidence);
+            } else {
+                // If either the transfer command or resources is in the phrase we know they are trying to transfer resources
+                return new Tuple<string, float>(c, completeness);
+            }
         }
 
         // Returns a ping command with the percentage of data provided

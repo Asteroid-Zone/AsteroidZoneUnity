@@ -2,6 +2,7 @@
 using PlayGame.Pirates;
 using PlayGame.Speech.Commands;
 using PlayGame.UI;
+using Statics;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
@@ -36,11 +37,14 @@ namespace PlayGame.Player.Movement
         
         private Transform _lockTarget;
         public ToggleCommand.LockTargetType lockType = ToggleCommand.LockTargetType.None;
+
+        private Transform _spaceStation;
         
         private void Start() {
             // fetch the objects of the spawners
             _enemySpawner = PirateSpawner.GetInstance().gameObject;
             _asteroidSpawner = AsteroidSpawner.GetInstance().gameObject;
+            _spaceStation = GameObject.FindWithTag(Tags.StationTag).transform;
             
             // Get the initial components
             _direction = transform.rotation.eulerAngles;
@@ -238,6 +242,10 @@ namespace PlayGame.Player.Movement
         public Transform GetLockTarget()
         {
             return _lockTarget;
+        }
+
+        public bool NearStation() {
+            return GridCoord.GetCoordFromVector(transform.position).Equals(GridCoord.GetCoordFromVector(_spaceStation.position));
         }
     }
 }
