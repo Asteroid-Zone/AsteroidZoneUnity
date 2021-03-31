@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using PlayGame.Player;
+using PlayGame.Player.Movement;
 using PlayGame.Speech.Commands;
 using Statics;
 using UnityEngine;
@@ -9,7 +10,7 @@ using UnityEngine;
 namespace PlayGame.Speech {
     public static class Grammar {
 
-        // Stores information about the data in the phrase
+        // Stores information about the data in the phrase and data about the players current situation
         private struct DataProvided {
             public string direction;
             public string destination;
@@ -19,6 +20,11 @@ namespace PlayGame.Speech {
             public string activatableObject;
             public string lockTarget;
             public string stationModule;
+            public QuestType playerQuestType;
+            public ToggleCommand.LockTargetType playerLockType;
+            public bool miningLaser;
+            public bool combatLaser;
+            public bool nearStation;
         }
         
         private const string GridCoordRegex = @"[a-z]( )?(\d+)";
@@ -98,11 +104,32 @@ namespace PlayGame.Speech {
 
             return commandWords;
         }
+        
+        // Finds out what data is provided in the phrase and from PlayerData
+        private static DataProvided GetDataProvided(string phrase, PlayerData playerData, MoveObject moveObject, bool miningLaser, bool combatLaser) {
+            DataProvided dataProvided = new DataProvided();
+            dataProvided.direction = GetDirection(phrase);
+            dataProvided.destination = GetCommandListIdentifier(phrase, Destinations);
+            dataProvided.grid = GetGridCoord(phrase);
+            dataProvided.pingType = GetCommandListIdentifier(phrase, PingTypes);
+            dataProvided.resource = GetCommandFromList(phrase, Resources);
+            dataProvided.activatableObject = GetCommandListIdentifier(phrase, Activatable);
+            dataProvided.lockTarget = GetCommandListIdentifier(phrase, LockTargets);
+            dataProvided.stationModule = GetCommandListIdentifier(phrase, StationModules);
+
+            dataProvided.playerQuestType = playerData.currentQuest;
+            dataProvided.playerLockType = moveObject.GetLockType();
+            dataProvided.miningLaser = miningLaser;
+            dataProvided.combatLaser = combatLaser;
+            dataProvided.nearStation = moveObject.NearStation();
+
+            return dataProvided;
+        }
 
         // Returns the command which was most likely intended by the player and a measure of how confident we are that its the correct command
-        public static Tuple<string, float> GetSuggestedCommandFromData(string phrase) {
+        public static Tuple<string, float> GetSuggestedCommandFromData(string phrase, PlayerData playerData, MoveObject moveObject, bool miningLaser, bool combatLaser) {
             // Find commands that have some of the required data in the phrase
-            List<Tuple<string, float>> partiallyCompleteCommands = GetPartiallyCompleteCommands(phrase); 
+            List<Tuple<string, float>> partiallyCompleteCommands = GetPartiallyCompleteCommands(phrase, playerData, moveObject, miningLaser, combatLaser);
             Tuple<string, float> mostCompleteCommand = new Tuple<string, float>("", 0);
             
             if (partiallyCompleteCommands.Count != 0) {
@@ -124,8 +151,8 @@ namespace PlayGame.Speech {
             return new Tuple<string, float>(Strings.NoCommand, 0);
         }
 
-        private static List<Tuple<string, float>> GetPartiallyCompleteCommands(string phrase) {
-            DataProvided dataProvided = GetDataProvided(phrase);
+        private static List<Tuple<string, float>> GetPartiallyCompleteCommands(string phrase, PlayerData playerData, MoveObject moveObject, bool miningLaser, bool combatLaser) {
+            DataProvided dataProvided = GetDataProvided(phrase, playerData, moveObject, miningLaser, combatLaser);
             List<Tuple<string, float>> commands = new List<Tuple<string, float>>(); // List of (command, dataRequiredPercentage)
 
             commands.AddRange(GetPartiallyCompleteMovementCommands(phrase, dataProvided, MovementCommands));
@@ -133,7 +160,7 @@ namespace PlayGame.Speech {
             
             commands.Add(GetPartiallyCompletePingCommand(phrase, dataProvided));
             commands.Add(GetPartiallyCompleteTransferCommand(phrase, dataProvided));
-            commands.Add(GetPartiallyCompleteOffCommand(phrase, dataProvided));
+            commands.AddRange(GetPartiallyCompleteOffCommand(phrase, dataProvided));
             commands.AddRange(GetPartiallyCompleteRepairCommands(phrase, dataProvided));
             
             commands.AddRange(GetPartiallyCompleteOnCommands(phrase, dataProvided));
@@ -189,7 +216,8 @@ namespace PlayGame.Speech {
             return commands;
         }
 
-        private static Tuple<string, float> GetPartiallyCompleteLockCommand(string phrase, DataProvided dataProvided) {
+        private static List<Tuple<string, float>> GetPartiallyCompleteLockCommands(string phrase, DataProvided dataProvided) {
+            List<Tuple<string, float>> commands = new List<Tuple<string, float>>();
             float completeness = 0;
 
             string c = "";
@@ -207,11 +235,28 @@ namespace PlayGame.Speech {
             if (dataProvided.lockTarget != null) {
                 completeness += 0.5f;
                 c += " " + dataProvided.lockTarget;
+                commands.Add(new Tuple<string, float>(c, completeness));
             } else {
-                c += " (lock target)";
-            }
+                commands.Add(new Tuple<string, float>(c + " (lock target)", completeness));
 
-            return new Tuple<string, float>(c, completeness);
+                float asteroidConfidence = completeness;
+                float pirateConfidence = completeness;
+                
+                // Commands influenced by quest type
+                // 0.2f so its not enough for it to be automatically done but should ask the user
+                if (dataProvided.playerQuestType == QuestType.MineAsteroids) asteroidConfidence += 0.2f;
+                if (dataProvided.playerQuestType == QuestType.DefendStation) pirateConfidence += 0.2f;
+                if (dataProvided.playerQuestType == QuestType.PirateWarning) pirateConfidence += 0.2f;
+                
+                // Less likely to try and lock onto something you're already locked onto
+                if (dataProvided.playerLockType == ToggleCommand.LockTargetType.Asteroid) asteroidConfidence += 0.1f;
+                if (dataProvided.playerLockType == ToggleCommand.LockTargetType.Pirate) pirateConfidence += 0.1f;
+                
+                commands.Add(new Tuple<string, float>(c + " " + Asteroid[0], asteroidConfidence));
+                commands.Add(new Tuple<string, float>(c + " " + Pirate[0], pirateConfidence));
+            }
+            
+            return commands;
         }
         
         private static List<Tuple<string, float>> GetPartiallyCompleteLaserCommands(string phrase, DataProvided dataProvided) {
@@ -241,17 +286,27 @@ namespace PlayGame.Speech {
             if (dataProvided.activatableObject != null) {
                 // If they have tried to use a laser/mining laser they must be trying to turn it on/off
                 // We assume they want to turn it on because nothing bad can happen by not being able to stop them but they could die if they cant shoot
-                if (MiningLaser.Contains(dataProvided.activatableObject)) {
-                    commands.Add(new Tuple<string, float>(c + " " + dataProvided.activatableObject, 0.9f));
-                }
-                
-                if (LaserGun.Contains(dataProvided.activatableObject)) {
-                    commands.Add(new Tuple<string, float>(c + " " + dataProvided.activatableObject, 0.9f));
-                }
+                if (MiningLaser.Contains(dataProvided.activatableObject)) commands.Add(new Tuple<string, float>(c + " " + dataProvided.activatableObject, 0.9f));
+                if (LaserGun.Contains(dataProvided.activatableObject)) commands.Add(new Tuple<string, float>(c + " " + dataProvided.activatableObject, 0.9f));
             } else {
                 if (completeness != 0) {
-                    commands.Add(new Tuple<string, float>(c + " " + MiningLaser[0], completeness));
-                    commands.Add(new Tuple<string, float>(c + " " + LaserGun[0], completeness));
+                    float miningConfidence = completeness;
+                    float combatConfidence = completeness;
+                    
+                    // Confidence adjustments for quest type
+                    if (dataProvided.playerQuestType == QuestType.MineAsteroids) { // If mining quest they are more likely to turn on the mining laser
+                        miningConfidence += 0.2f; // Prompt the user, not enough to perform the command
+                    } else if (dataProvided.playerQuestType == QuestType.DefendStation || dataProvided.playerQuestType == QuestType.PirateWarning) {  // If pirate quest they are more likely to turn on the combat laser
+                        // Dont want them to be under attack and not be able to shoot so we are confident enough to just turn it on
+                        combatConfidence += 0.4f;
+                    }
+
+                    // Confidence adjustments for lock type
+                    if (dataProvided.playerLockType == ToggleCommand.LockTargetType.Asteroid) miningConfidence += 0.2f;
+                    if (dataProvided.playerLockType == ToggleCommand.LockTargetType.Pirate) combatConfidence += 0.2f;
+                    
+                    commands.Add(new Tuple<string, float>(c + " " + MiningLaser[0], miningConfidence));
+                    commands.Add(new Tuple<string, float>(c + " " + LaserGun[0], combatConfidence));
                 }
             }
             
@@ -294,15 +349,16 @@ namespace PlayGame.Speech {
         private static List<Tuple<string, float>> GetPartiallyCompleteOnCommands(string phrase, DataProvided dataProvided) {
             List<Tuple<string, float>> commands = new List<Tuple<string, float>>(); // List of (command, dataRequiredPercentage)
 
-            commands.Add(GetPartiallyCompleteLockCommand(phrase, dataProvided));
+            commands.AddRange(GetPartiallyCompleteLockCommands(phrase, dataProvided));
             commands.AddRange(GetPartiallyCompleteLaserCommands(phrase, dataProvided));
             commands.AddRange(GetPartiallyCompleteGenericOnCommands(phrase, dataProvided));
 
             return commands;
         }
         
-        // Returns a transfer command with the percentage of data provided
-        private static Tuple<string, float> GetPartiallyCompleteOffCommand(string phrase, DataProvided dataProvided) {
+        // Returns an off command with the percentage of data provided
+        private static List<Tuple<string, float>> GetPartiallyCompleteOffCommand(string phrase, DataProvided dataProvided) {
+            List<Tuple<string, float>> commands = new List<Tuple<string, float>>();
             float completeness = 0;
 
             string c = "";
@@ -320,11 +376,18 @@ namespace PlayGame.Speech {
             if (dataProvided.activatableObject != null) {
                 completeness += 0.5f;
                 c += " " + dataProvided.activatableObject;
+                commands.Add(new Tuple<string, float>(c, completeness));
             } else {
+                // More likely to turn something off if its already on
+                if (dataProvided.playerLockType != ToggleCommand.LockTargetType.None) commands.Add(new Tuple<string, float>(c + " " + LockCommands[0], completeness + 0.2f));
+                if (dataProvided.miningLaser) commands.Add(new Tuple<string, float>(c + " " + MiningLaser[0], completeness + 0.2f));
+                if (dataProvided.combatLaser) commands.Add(new Tuple<string, float>(c + " " + LaserGun[0], completeness + 0.2f));
+                
                 c += " (activatable object)";
+                commands.Add(new Tuple<string, float>(c, completeness));
             }
 
-            return new Tuple<string, float>(c, completeness);
+            return commands;
         }
         
         // Returns a transfer command with the percentage of data provided
@@ -350,8 +413,15 @@ namespace PlayGame.Speech {
                 c += " " + Resources[0];
             }
 
-            // If either the transfer command or resources is in the phrase we know they are trying to transfer resources
-            return new Tuple<string, float>(c, completeness);
+            if (completeness < 1f) {
+                float confidence = completeness;
+                if (dataProvided.playerQuestType == QuestType.ReturnToStation) confidence += 0.3f;
+                if (dataProvided.nearStation) confidence += 0.2f;
+                return new Tuple<string, float>(c, confidence);
+            } else {
+                // If either the transfer command or resources is in the phrase we know they are trying to transfer resources
+                return new Tuple<string, float>(c, completeness);
+            }
         }
 
         // Returns a ping command with the percentage of data provided
@@ -417,6 +487,20 @@ namespace PlayGame.Speech {
             if (dataProvided.destination != null) {
                 commands.Add(new Tuple<string, float>(c + " " + dataProvided.destination, completeness + 0.5f));
             } else {
+                float asteroidConfidence = completeness;
+                float pirateConfidence = completeness;
+                
+                // Confidence adjustments for quest type
+                if (dataProvided.playerQuestType == QuestType.ReturnToStation || dataProvided.playerQuestType == QuestType.DefendStation) commands.Add(new Tuple<string, float>(c + " " + SpaceStation[0], completeness + 0.2f)); // 0.2f so it prompts the player
+                if (dataProvided.playerQuestType == QuestType.MineAsteroids) asteroidConfidence += 0.2f; // 0.2f so it prompts the player
+                if (dataProvided.playerQuestType == QuestType.PirateWarning) pirateConfidence += 0.2f; // 0.2f so it prompts the player
+                
+                // Confidence adjustments for lock type
+                if (dataProvided.playerLockType == ToggleCommand.LockTargetType.Asteroid) asteroidConfidence += 0.2f;
+                if (dataProvided.playerLockType == ToggleCommand.LockTargetType.Pirate) pirateConfidence += 0.2f;
+                
+                commands.Add(new Tuple<string, float>(c + " " + Asteroid[0], asteroidConfidence));
+                commands.Add(new Tuple<string, float>(c + " " + Pirate[0], pirateConfidence));
                 if (completeness != 0) commands.Add(new Tuple<string, float>(c + " (destination)", completeness));
             }
             
@@ -440,21 +524,6 @@ namespace PlayGame.Speech {
             }
 
             return closestCommandWord;
-        }
-
-        // Finds out what data is provided in the phrase
-        private static DataProvided GetDataProvided(string phrase) {
-            DataProvided dataProvided = new DataProvided();
-            dataProvided.direction = GetDirection(phrase);
-            dataProvided.destination = GetCommandListIdentifier(phrase, Destinations);
-            dataProvided.grid = GetGridCoord(phrase);
-            dataProvided.pingType = GetCommandListIdentifier(phrase, PingTypes);
-            dataProvided.resource = GetCommandFromList(phrase, Resources);
-            dataProvided.activatableObject = GetCommandListIdentifier(phrase, Activatable);
-            dataProvided.lockTarget = GetCommandListIdentifier(phrase, LockTargets);
-            dataProvided.stationModule = GetCommandListIdentifier(phrase, StationModules);
-
-            return dataProvided;
         }
 
         // Returns the word which has the smallest levenshtein distance in the list and its distance

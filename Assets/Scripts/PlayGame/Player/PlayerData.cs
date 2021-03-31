@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Photon.Pun;
+using PlayGame.Speech.Commands;
 using PlayGame.Stats;
 using PlayGame.UI;
 using Statics;
@@ -21,6 +22,7 @@ namespace PlayGame.Player
         ReturnToStation,
         PirateWarning,
         DefendStation
+        // Escape to hyperspace, not sure because they get more points for staying longer
     }
 
     public class PlayerData : MonoBehaviourPun {

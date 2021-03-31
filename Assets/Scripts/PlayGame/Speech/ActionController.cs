@@ -119,7 +119,7 @@ namespace PlayGame.Speech {
 
         private void PerformTransferCommand(TransferCommand command) {
             // Check player is in the same grid square as the station
-            if (GridCoord.GetCoordFromVector(player.transform.position).Equals(GridCoord.GetCoordFromVector(spaceStationObject.transform.position))) {
+            if (moveObject.NearStation()) {
                 if ((!DebugSettings.Debug && player.GetPhotonView().IsMine) || DebugSettings.Debug) {
                     spaceStation.AddResources(playerData.GetResources()); // Add the resources into the space station
                     playerData.RemoveResources(playerData.GetResources()); // Remove them from the player
