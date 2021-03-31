@@ -44,14 +44,23 @@ namespace PlayGame {
                 AsteroidMeshes.Add(GetAsteroidModel("Models/asteroid_2"));
             }
 
+            if (!PhotonNetwork.IsMasterClient) return;
+
             int asteroidMeshIndex = Random.Range(0, AsteroidMeshes.Count);
+            Quaternion rotation = Random.rotation;
+            int totalResources = Random.Range(MinResources, MaxResources);
+            gameObject.GetPhotonView().RPC("RPC_SyncAsteroid", RpcTarget.AllBuffered, asteroidMeshIndex, rotation, totalResources);
+        }
+        
+        [PunRPC]
+        public void RPC_SyncAsteroid(int asteroidMeshIndex, Quaternion rotation, int resources) {
             GetComponent<MeshFilter>().mesh = AsteroidMeshes[asteroidMeshIndex].mesh;
             GetComponent<MeshCollider>().sharedMesh = AsteroidMeshes[asteroidMeshIndex].mesh;
             _modelScale = AsteroidMeshes[asteroidMeshIndex].scale;
-            transform.rotation = Random.rotation;
+            transform.rotation = rotation;
             CreateNavMeshObstacle();
 
-            _totalResources = Random.Range(MinResources, MaxResources);
+            _totalResources = resources;
             _resourcesRemaining = _totalResources;
             _initialScale = MaxScale * ((float) _totalResources / MaxResources); // Initial size of the asteroid
             transform.localScale = _initialScale * _modelScale;
@@ -134,7 +143,7 @@ namespace PlayGame {
                 }
                 StartCoroutine(FadeOutAsteroid());
             }
-        } 
+        }
 
         public int GetResources(int miningRate) {
             if (_resourcesRemaining > miningRate) return miningRate;
