@@ -10,6 +10,7 @@ namespace PlayGame
         public const int Width = 11;
         public const int Height = 11;
         public int totalCells;
+        private GameObject[,] _grid;
 
         private const int CellSize = 10;
 
@@ -17,6 +18,7 @@ namespace PlayGame
             // X/Y of the first grid square (top left)
             var startX = CellSize / 2;
             var startY = CellSize / 2;
+            _grid = new GameObject[Height, Width];
             for (int y = 0; y < Height; y++)
             {
                 for (int x = 0; x < Width; x++)
@@ -27,7 +29,9 @@ namespace PlayGame
                     var position = new Vector3(startX + (x * CellSize), 0, startY + (y * CellSize));
                     var newGridSquare = Instantiate(gridSquarePrefab, position, Quaternion.identity);
                     newGridSquare.transform.parent = gameObject.transform;
-                    newGridSquare.transform.GetChild(0).GetChild(0).GetComponent<Text>().text = $"({NumberToLetterCoord(x)}, {y})";
+                    newGridSquare.transform.GetChild(0).GetChild(0).GetComponent<Text>().text =
+                        $"({NumberToLetterCoord(x)}, {y})";
+                    _grid[y, x] = newGridSquare;
                 }
             }
         }
@@ -68,6 +72,14 @@ namespace PlayGame
             return globalCoord;
         }
 
+        public Vector2 GlobalToGridCoord(Vector3 globalCoord)
+        {
+            Vector2 gridCoord;
+            gridCoord.x = (int) globalCoord.x / CellSize % CellSize;
+            gridCoord.y = (int) globalCoord.z / CellSize % CellSize;
+            return gridCoord;
+        }
+
         public Vector3 GetGridCentre() {
             float x = (Width / 2f) * CellSize;
             float z = (Height / 2f) * CellSize;
@@ -77,6 +89,11 @@ namespace PlayGame
         // Gets the total number of cells in the grid
         public int GetTotalCells() {
             return Height * Width;
+        }
+
+        public GameObject [,] GetGrid()
+        {
+            return _grid;
         }
     }
 }
