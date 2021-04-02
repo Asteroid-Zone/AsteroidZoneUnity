@@ -62,6 +62,7 @@ public class FogOfWarTiles : MonoBehaviour
         // Actually fix this so each player calculates their own
         Vector2 position = _gridManager.GlobalToGridCoord(_player.transform.position);
         (List<Vector2>, List<Vector2>) tileLists = calcVisibleTiles(position);
+        _visibleTiles = tileLists.Item1;
         // Visible case
         foreach (Vector2 tile in tileLists.Item1)
         {
