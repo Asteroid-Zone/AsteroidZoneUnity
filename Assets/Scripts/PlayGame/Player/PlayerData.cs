@@ -27,6 +27,7 @@ namespace PlayGame.Player
 
     public class PlayerData : MonoBehaviourPun {
         public static List<GameObject> Players;
+        private int _playerID;
 
         private const int LaserDamageRange = 10; // Makes the amount of damage the laser does vary a bit
 
@@ -61,6 +62,7 @@ namespace PlayGame.Player
 
             PlayerStats = new PlayerStats();
             if (!DebugSettings.Debug) PlayerStats.photonID = photonView.ViewID;
+            Debug.Log(PlayerStats.photonID);
             PlayerStats.playerName = PhotonNetwork.NickName;
             StatsManager.PlayerStatsList.Add(PlayerStats);
 
@@ -89,6 +91,9 @@ namespace PlayGame.Player
             _laserDamage = 20;
 
             currentQuest = QuestType.MineAsteroids;
+            _playerID = (PlayerStats.photonID / 1000) - 1;
+         //   _playerID = _playerID > 3 ? 3 : _playerID;
+        //    _playerID = _playerID < 0 ? 0 : _playerID;
         }
 
         [PunRPC]
@@ -196,6 +201,11 @@ namespace PlayGame.Player
             {
                 _health = 0;
             }
+        }
+
+        public int GetPlayerID()
+        {
+            return _playerID;
         }
 
         public void SetLockTarget(Transform lockTarget)

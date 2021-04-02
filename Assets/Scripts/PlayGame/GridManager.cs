@@ -95,5 +95,15 @@ namespace PlayGame
         {
             return _grid;
         }
+
+        public int GetWidth()
+        {
+            return Width;
+        }
+
+        public int GetHeight()
+        {
+            return Height;
+        }
     }
 }
