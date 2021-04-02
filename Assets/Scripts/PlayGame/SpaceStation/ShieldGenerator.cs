@@ -4,7 +4,7 @@ using UnityEngine;
 namespace PlayGame.SpaceStation {
     public class ShieldGenerator : StationModule {
         
-        private const int MaxHealth = 100;
+        private const int MaxHealth = 150;
 
         private int _maxShields = 100;
         private int _shields = 0;
