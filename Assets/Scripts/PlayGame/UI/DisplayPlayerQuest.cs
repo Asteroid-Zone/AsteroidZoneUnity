@@ -35,13 +35,13 @@ namespace PlayGame.UI
             switch (quest)
             {   
                 case QuestType.DefendStation:
-                    return "Defend the station.";
+                    return "Defend the station";
                 case QuestType.MineAsteroids:
-                    return "Mine asteroids.";
+                    return "Mine asteroids";
                 case QuestType.PirateWarning:
-                    return "Deal with pirates in the area.";
-                case QuestType.ReturnToStation:
-                    return "Return to the space station.";
+                    return "Deal with pirates in the area";
+                case QuestType.ResourcesToStation:
+                    return "Deliver resources to the space station";
             }
 
             return "";
