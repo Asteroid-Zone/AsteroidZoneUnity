@@ -20,7 +20,7 @@ namespace Photon
         private GameObject progressLabel;
         public GameObject startButton;
 
-        public GameObject roomListPrefab;
+        public GameObject playerListPrefab;
         public Transform playerPanel;
 
         public static PhotonRoom Instance;
@@ -129,7 +129,7 @@ namespace Photon
           {
             foreach(Player player in PhotonNetwork.PlayerList)
             {
-                GameObject tempListing = Instantiate(roomListPrefab, playerPanel);
+                GameObject tempListing = Instantiate(playerListPrefab, playerPanel);
                 Text tempText = tempListing.transform.GetChild(0).GetComponent<Text>();
                 tempText.text = player.NickName;
             }
