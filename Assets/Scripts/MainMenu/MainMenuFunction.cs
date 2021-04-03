@@ -25,6 +25,16 @@ namespace MainMenu {
           roomControlPanel.SetActive(false);
         }
 
+		void Update() 
+		{
+			if (lobbyControlPanel.activeSelf && Input.GetButtonDown("Cancel")) 
+			{
+				lobbyControlPanel.SetActive(false);
+				controlPanel.SetActive(true);
+			}
+		
+		}
+
         public void PlayGame()
         {
             buttonPress.Play();
