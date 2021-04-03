@@ -4,7 +4,7 @@ using UnityEngine;
 namespace PlayGame.SpaceStation {
     public class StationHull : StationModule {
 
-        private const int MaxHealth = 1000;
+        private const int MaxHealth = 1500;
         
         private readonly Material _materialUpperRing;
         private Texture _damagedTextureUpperRing;

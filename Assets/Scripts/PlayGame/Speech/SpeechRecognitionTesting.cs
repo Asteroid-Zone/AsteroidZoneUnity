@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Statics;
+using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace PlayGame.Speech {
@@ -11,6 +12,7 @@ namespace PlayGame.Speech {
         // A S D F G H J K L
         // Z X C V B N M
         private void Update() {
+            if (!DebugSettings.DebugKeys) return;
             if (Input.GetKeyDown(KeyCode.N)) { // Move station to random location
                 speechRecognition.MoveStation();
             }

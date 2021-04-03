@@ -415,7 +415,7 @@ namespace PlayGame.Speech {
 
             if (completeness < 1f) {
                 float confidence = completeness;
-                if (dataProvided.playerQuestType == QuestType.ReturnToStation) confidence += 0.3f;
+                if (dataProvided.playerQuestType == QuestType.ResourcesToStation) confidence += 0.3f;
                 if (dataProvided.nearStation) confidence += 0.2f;
                 return new Tuple<string, float>(c, confidence);
             } else {
@@ -491,7 +491,7 @@ namespace PlayGame.Speech {
                 float pirateConfidence = completeness;
                 
                 // Confidence adjustments for quest type
-                if (dataProvided.playerQuestType == QuestType.ReturnToStation || dataProvided.playerQuestType == QuestType.DefendStation) commands.Add(new Tuple<string, float>(c + " " + SpaceStation[0], completeness + 0.2f)); // 0.2f so it prompts the player
+                if (dataProvided.playerQuestType == QuestType.ResourcesToStation || dataProvided.playerQuestType == QuestType.DefendStation) commands.Add(new Tuple<string, float>(c + " " + SpaceStation[0], completeness + 0.2f)); // 0.2f so it prompts the player
                 if (dataProvided.playerQuestType == QuestType.MineAsteroids) asteroidConfidence += 0.2f; // 0.2f so it prompts the player
                 if (dataProvided.playerQuestType == QuestType.PirateWarning) pirateConfidence += 0.2f; // 0.2f so it prompts the player
                 
