@@ -44,18 +44,24 @@ namespace PlayGame {
                 AsteroidMeshes.Add(GetAsteroidModel("Models/asteroid_2"));
             }
 
-            if (!PhotonNetwork.IsMasterClient) return;
-
             int asteroidMeshIndex = Random.Range(0, AsteroidMeshes.Count);
             Quaternion rotation = Random.rotation;
             int totalResources = Random.Range(MinResources, MaxResources);
-            gameObject.GetPhotonView().RPC("RPC_SyncAsteroid", RpcTarget.AllBuffered, asteroidMeshIndex, rotation, totalResources);
+
+            if (!DebugSettings.Debug && PhotonNetwork.IsMasterClient)
+                gameObject.GetPhotonView().RPC(nameof(RPC_SyncAsteroid), RpcTarget.AllBuffered, asteroidMeshIndex, rotation, totalResources);
+            else
+                SetAsteroidProperties(asteroidMeshIndex, rotation, totalResources);
         }
         
         [PunRPC]
         public void RPC_SyncAsteroid(int asteroidMeshIndex, Quaternion rotation, int resources) {
-            GetComponent<MeshFilter>().mesh = AsteroidMeshes[asteroidMeshIndex].mesh;
-            GetComponent<MeshCollider>().sharedMesh = AsteroidMeshes[asteroidMeshIndex].mesh;
+            SetAsteroidProperties(asteroidMeshIndex, rotation, resources);
+        }
+
+        private void SetAsteroidProperties(int asteroidMeshIndex, Quaternion rotation, int resources)
+        {
+            GetComponent<MeshCollider>().sharedMesh = GetComponent<MeshFilter>().mesh = AsteroidMeshes[asteroidMeshIndex].mesh;
             _modelScale = AsteroidMeshes[asteroidMeshIndex].scale;
             transform.rotation = rotation;
             CreateNavMeshObstacle();
@@ -93,8 +99,10 @@ namespace PlayGame {
                 yield return null;
             }
 
-            if (!DebugSettings.Debug && gameObject != null && PhotonNetwork.IsMasterClient) GetComponent<PhotonView>().RPC("DestroyOnNetwork", RpcTarget.MasterClient, gameObject.GetComponent<PhotonView>().ViewID);
-            if (DebugSettings.Debug) Destroy(gameObject);
+            if (!DebugSettings.Debug && gameObject != null && PhotonNetwork.IsMasterClient) 
+                GetComponent<PhotonView>().RPC(nameof(DestroyOnNetwork), RpcTarget.MasterClient, gameObject.GetComponent<PhotonView>().ViewID);
+            else if (DebugSettings.Debug) 
+                Destroy(gameObject);
         }
 
         [PunRPC]
@@ -117,7 +125,7 @@ namespace PlayGame {
             int photonID;
             if (playerData == null) photonID = -1;
             else photonID = playerData.photonView.ViewID;
-            if (!DebugSettings.Debug) gameObject.GetPhotonView().RPC("RPC_MineAsteroid", RpcTarget.AllBuffered, _resourcesRemaining, transform.localScale, destroyed, photonID);
+            if (!DebugSettings.Debug) gameObject.GetPhotonView().RPC(nameof(RPC_MineAsteroid), RpcTarget.AllBuffered, _resourcesRemaining, transform.localScale, destroyed, photonID);
             else {
                 if (destroyed && !_asteroidDestroyed) {
                     _asteroidDestroyed = destroyed;
