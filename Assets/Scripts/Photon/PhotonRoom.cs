@@ -67,13 +67,17 @@ namespace Photon
         public override void OnJoinedRoom()
         {
             //sets player data when we join the room
+            base.OnJoinedRoom();
             lobbyControlPanel.SetActive(false);
             roomControlPanel.SetActive(true);
-            base.OnJoinedRoom();
             Debug.Log("Asteroid Zone/MainMenuFunction: OnJoinedRoom() called by PUN. Now this client is in a room.");
             if(PhotonNetwork.IsMasterClient)
             {
               startButton.SetActive(true);
+            }
+            else
+            {
+              startButton.SetActive(false);
             }
             ClearList();
             ListLobby();
