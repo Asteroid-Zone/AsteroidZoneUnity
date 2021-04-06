@@ -67,7 +67,7 @@ namespace PlayGame.Player
             // Initialise the players list
             Players = new List<GameObject>();
             Players.AddRange(GameObject.FindGameObjectsWithTag(Tags.PlayerTag));
-            if (!DebugSettings.Debug) this.photonView.RPC("RPC_UpdatePlayerLists", RpcTarget.Others);
+            if (!DebugSettings.Debug) this.photonView.RPC(nameof(RPC_UpdatePlayerLists), RpcTarget.Others);
             
             _role = Role.StationCommander; // TODO assign roles in the menu
         
@@ -126,7 +126,7 @@ namespace PlayGame.Player
         }
         
         public void RemoveResources(int amount) {
-            if (!DebugSettings.Debug) photonView.RPC("RPC_RemoveResources", RpcTarget.AllBuffered, amount);
+            if (!DebugSettings.Debug) photonView.RPC(nameof(RPC_RemoveResources), RpcTarget.AllBuffered, amount);
             else _resources -= amount;
         }
 

@@ -90,7 +90,8 @@ namespace PlayGame.Pirates {
         }
 
         private void Despawn() {
-            if (!DebugSettings.Debug && gameObject != null && PhotonNetwork.IsMasterClient) GetComponent<PhotonView>().RPC("DestroyOnNetwork", RpcTarget.MasterClient, gameObject.GetComponent<PhotonView>().ViewID);
+            if (!DebugSettings.Debug && gameObject != null && PhotonNetwork.IsMasterClient) 
+                GetComponent<PhotonView>().RPC(nameof(DestroyOnNetwork), RpcTarget.MasterClient, gameObject.GetComponent<PhotonView>().ViewID);
             else if (DebugSettings.Debug) Destroy(gameObject);
         }
 
@@ -110,7 +111,7 @@ namespace PlayGame.Pirates {
             int damage = playerData.GetLaserDamage();
             if (!DebugSettings.Debug) {
                 int photonID = playerData.photonView.ViewID;
-                gameObject.GetPhotonView().RPC("RPC_TakeDamage", RpcTarget.AllBuffered, damage, photonID);
+                gameObject.GetPhotonView().RPC(nameof(RPC_TakeDamage), RpcTarget.AllBuffered, damage, photonID);
             } else {
                 _health -= damage;
                 if (_health <= 0) {

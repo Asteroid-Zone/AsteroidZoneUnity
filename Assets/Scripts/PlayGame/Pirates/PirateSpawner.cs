@@ -106,7 +106,7 @@ namespace PlayGame.Pirates {
             GameObject newPirate;
             if (!DebugSettings.Debug) newPirate = PhotonNetwork.InstantiateRoomObject(prefab, randomGlobalCoord, Quaternion.identity);
             else newPirate = Instantiate(pirate, randomGlobalCoord, Quaternion.identity);
-            if (!DebugSettings.Debug) this.photonView.RPC("RPC_SetPirateParam", RpcTarget.AllBuffered, newPirate.GetComponent<PhotonView>().ViewID);
+            if (!DebugSettings.Debug) this.photonView.RPC(nameof(RPC_SetPirateParam), RpcTarget.AllBuffered, newPirate.GetComponent<PhotonView>().ViewID);
             else
             {
                 newPirate.transform.parent = gameObject.transform;

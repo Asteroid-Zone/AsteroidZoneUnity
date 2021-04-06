@@ -49,7 +49,7 @@ namespace PlayGame.SpaceStation {
             {
                 for (int i = 0; i < _stationModules.Count; i++)
                 {
-                    this.photonView.RPC("RPC_SyncStationHealth", RpcTarget.AllBuffered, _stationModules[i].moduleHealth, i);
+                    this.photonView.RPC(nameof(RPC_SyncStationHealth), RpcTarget.AllBuffered, _stationModules[i].moduleHealth, i);
                 }
 
             }
@@ -68,7 +68,7 @@ namespace PlayGame.SpaceStation {
         public void GameOver(bool victory) {
             // Ensures LeaveRoom is only called once
             if (!_complete) {
-                if (!DebugSettings.Debug && PhotonNetwork.IsMasterClient) photonView.RPC("RPC_GameOver", RpcTarget.AllBuffered, victory, Time.time - StatsManager.GameStats.startTime);
+                if (!DebugSettings.Debug && PhotonNetwork.IsMasterClient) photonView.RPC(nameof(RPC_GameOver), RpcTarget.AllBuffered, victory, Time.time - StatsManager.GameStats.startTime);
                 else if (DebugSettings.Debug) RPC_GameOver(victory, Time.time - StatsManager.GameStats.startTime);
             }
         }
@@ -86,7 +86,7 @@ namespace PlayGame.SpaceStation {
         }
 
         public void AddResources(int resources) {
-            if (!DebugSettings.Debug) photonView.RPC("RPC_AddResources", RpcTarget.AllBuffered, resources);
+            if (!DebugSettings.Debug) photonView.RPC(nameof(RPC_AddResources), RpcTarget.AllBuffered, resources);
             else this.resources += resources;
         }
 
@@ -105,7 +105,7 @@ namespace PlayGame.SpaceStation {
             
 
             if (!DebugSettings.Debug) {
-                photonView.RPC("RPC_TakeDamage", RpcTarget.AllBuffered, moduleDamage, index, damageRemaining);
+                photonView.RPC(nameof(RPC_TakeDamage), RpcTarget.AllBuffered, moduleDamage, index, damageRemaining);
             } else {
                 _stationModules[index].TakeDamage(moduleDamage);
                 damageRemaining -= moduleDamage;

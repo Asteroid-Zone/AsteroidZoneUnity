@@ -111,7 +111,7 @@ namespace PlayGame.Speech {
             if (command.IsValid()) {
                 _foundCommand = true;
                 if (DebugSettings.Debug) _actionController.PerformActions(command);
-                else photonView.RPC("RPC_PerformActions", RpcTarget.AllBuffered, player.GetComponent<PhotonView>().ViewID, _myResponse);
+                else photonView.RPC(nameof(RPC_PerformActions), RpcTarget.AllBuffered, player.GetComponent<PhotonView>().ViewID, _myResponse);
             }
         }
         
@@ -130,7 +130,7 @@ namespace PlayGame.Speech {
             if (command.IsValid()) {
                 _foundCommand = true;
                 if (DebugSettings.Debug) _actionController.PerformActions(command);
-                else photonView.RPC("RPC_PerformActions", RpcTarget.AllBuffered, player.GetComponent<PhotonView>().ViewID, _myResponse);
+                else photonView.RPC(nameof(RPC_PerformActions), RpcTarget.AllBuffered, player.GetComponent<PhotonView>().ViewID, _myResponse);
             } else {
                 List<Tuple<string, float, bool, string>> suggestedCommands = FindSuggestedCommands(); // Tuple(command, confidence, fromData, phrase)
                 Tuple<string, float, bool, string> suggestedCommand = FindBestSuggestedCommand(suggestedCommands);
@@ -154,7 +154,7 @@ namespace PlayGame.Speech {
                     
                     if (command.IsValid()) { // If command is valid perform it
                         if (DebugSettings.Debug) _actionController.PerformActions(command);
-                        else photonView.RPC("RPC_PerformActions", RpcTarget.AllBuffered, player.GetComponent<PhotonView>().ViewID, suggestedPhrase);
+                        else photonView.RPC(nameof(RPC_PerformActions), RpcTarget.AllBuffered, player.GetComponent<PhotonView>().ViewID, suggestedPhrase);
                         eventMessage = "'" + originalPhrase + "' is an invalid command. We think you meant '" + suggestedPhrase + "' and have performed the action.";
                     } else { // If suggested command is invalid ask the user
                         eventMessage = "'" + originalPhrase + "' is an invalid command. Did you mean '" + suggestedPhrase + "' ? (confidence = " + confidence + ")";

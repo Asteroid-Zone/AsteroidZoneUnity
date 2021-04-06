@@ -70,7 +70,7 @@ namespace PlayGame.Player {
                 _lastFrameMined = Time.frameCount;
 
                 int resources = asteroidScript.GetResources(MiningRate);
-                if (!DebugSettings.Debug) gameObject.GetPhotonView().RPC("RPC_AddResources", RpcTarget.AllBuffered, resources);
+                if (!DebugSettings.Debug) gameObject.GetPhotonView().RPC(nameof(RPC_AddResources), RpcTarget.AllBuffered, resources);
                 else _playerData.AddResources(resources);
             }
         }
