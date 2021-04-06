@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Statics;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace PlayGame.UI
 {
@@ -6,6 +8,11 @@ namespace PlayGame.UI
     {
         public GameObject menuPanel;
         public GameObject tipsPanel;
+        public Toggle debugToggle;
+
+        public void Start() {
+            debugToggle.isOn = DebugSettings.DebugKeys || DebugSettings.ArrowKeys;
+        }
         
         public void ShowOrHideMenuPanel()
         {
@@ -21,5 +28,11 @@ namespace PlayGame.UI
         {
             tipsPanel.SetActive(false);
         }
+
+        public void ToggleDebugMode() {
+            DebugSettings.ArrowKeys = debugToggle.isOn;
+            DebugSettings.DebugKeys = debugToggle.isOn;
+        }
+        
     }
 }

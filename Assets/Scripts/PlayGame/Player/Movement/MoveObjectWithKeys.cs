@@ -20,7 +20,7 @@ namespace PlayGame.Player.Movement {
         // Update is called once per frame
         private void Update() {
             if (!DebugSettings.Debug && !this.photonView.IsMine) return;
-            if (!DebugSettings.DebugKeys) return;
+            if (!DebugSettings.ArrowKeys) return;
             if (Input.GetKey(KeyCode.UpArrow))
             {
                 // Move the target forward with the necessary speed smoothed by the delta time
