@@ -74,7 +74,7 @@ namespace PlayGame.Player
             _maxHealth = 100; // TODO different stats for different roles
             _maxSpeed = 2.5f;
 
-            _rotateSpeed = 0.005f;
+            _rotateSpeed = 0.5f;
 
             _laserSpeed = 1000;
             

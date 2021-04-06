@@ -83,8 +83,10 @@ namespace PlayGame.Player.Movement
         private void Rotate() {
             float rotateSpeed = _playerData.GetRotateSpeed();
             Vector3 newDirection;
-            if (_turnRight) newDirection = Vector3.Slerp(transform.forward, transform.right, rotateSpeed);
-            else newDirection = Vector3.Slerp(transform.forward, -transform.right, rotateSpeed);
+            
+            if (_turnRight) newDirection = Vector3.Slerp(transform.forward, transform.right, rotateSpeed * Time.deltaTime);
+            else newDirection = Vector3.Slerp(transform.forward, -transform.right, rotateSpeed * Time.deltaTime);
+            
             transform.localRotation = Quaternion.LookRotation(newDirection);
             _direction = newDirection;
         }
