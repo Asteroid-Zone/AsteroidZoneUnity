@@ -35,15 +35,16 @@ public class QuestDeterminer : MonoBehaviour
         _stationDamaged = true;
     }
     
-
     private IEnumerator DetermineQuest() {
-        while (true) {
+        while (true)
+        {
+            Transform nearestEnemy = _moveObject.GetNearestEnemyTransform();
             if (_stationDamaged) {
                 _playerData.SetQuest(QuestType.DefendStation);
                 yield return new WaitForSeconds(4);
                 _stationDamaged = false;
                 // TODO: Add flag for station commander saying pirates around 
-            } else if (Vector3.Distance(_moveObject.GetNearestEnemyTransform().position, transform.position) < 20) {
+            } else if (nearestEnemy != null && Vector3.Distance(nearestEnemy.position, transform.position) < 20) {
                 _playerData.SetQuest(QuestType.PirateWarning);
             } else if (_playerData.GetResources() > 75) {
                 _playerData.SetQuest(QuestType.ResourcesToStation);
@@ -51,8 +52,7 @@ public class QuestDeterminer : MonoBehaviour
                 _playerData.SetQuest(QuestType.MineAsteroids);
             }
 
-            yield return null;
+            yield return new WaitForSeconds(0.25f);
         }
-
     }
 }

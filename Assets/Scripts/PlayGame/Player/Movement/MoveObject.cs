@@ -3,7 +3,6 @@ using PlayGame.Pirates;
 using PlayGame.Speech.Commands;
 using PlayGame.UI;
 using Statics;
-using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -155,12 +154,10 @@ namespace PlayGame.Player.Movement
                 }
             }
 
-            if (closestEnemyIndex == -1) return null;
-            
-            return transforms[closestEnemyIndex].transform;
+            return closestEnemyIndex == -1 ? null : transforms[closestEnemyIndex].transform;
         }
-        
-        public void FaceTarget(Transform target) {
+
+        private void FaceTarget(Transform target) {
             if (target == null) return; // If the target is destroyed just return.
 
             bool forward = transform.forward == _direction;
