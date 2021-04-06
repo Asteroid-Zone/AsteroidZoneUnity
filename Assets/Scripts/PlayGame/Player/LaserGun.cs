@@ -2,7 +2,6 @@
 using Statics;
 using UnityEngine;
 using System.Linq;
-using Photon.Pun;
 
 namespace PlayGame.Player {
     public class LaserGun : MonoBehaviour {

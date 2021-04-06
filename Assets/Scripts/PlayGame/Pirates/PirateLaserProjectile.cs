@@ -26,25 +26,35 @@ namespace PlayGame.Pirates {
             if (collision.gameObject.CompareTag(Tags.CombatLaserTag)) return;
             
             // todo play animation (explosion)
-            
-            if (collision.gameObject.CompareTag(Tags.PlayerTag)) {
-                PlayerData playerData = collision.gameObject.GetComponent<PlayerData>();
-                playerData.TakeDamage(_shootingPirateData.GetLaserDamage());
-            }
-            
-            if (collision.gameObject.CompareTag(Tags.AsteroidTag)) {
-                Asteroid asteroid = collision.gameObject.GetComponent<Asteroid>();
-                asteroid.MineAsteroid(MiningRate, null);
-            }
+            try
+            {
+                if (collision.gameObject.CompareTag(Tags.PlayerTag))
+                {
+                    PlayerData playerData = collision.gameObject.GetComponent<PlayerData>();
+                    playerData.TakeDamage(_shootingPirateData.GetLaserDamage());
+                }
 
-            if (collision.gameObject.CompareTag(Tags.StationTag)) {
-                if ((!DebugSettings.Debug && PhotonNetwork.IsMasterClient) || DebugSettings.Debug) {
-                    SpaceStation.SpaceStation station = collision.gameObject.GetComponent<SpaceStation.SpaceStation>();
-                    station.TakeDamage(_shootingPirateData.GetLaserDamage());
+                if (collision.gameObject.CompareTag(Tags.AsteroidTag))
+                {
+                    Asteroid asteroid = collision.gameObject.GetComponent<Asteroid>();
+                    asteroid.MineAsteroid(MiningRate, null);
+                }
+
+                if (collision.gameObject.CompareTag(Tags.StationTag))
+                {
+                    if ((!DebugSettings.Debug && PhotonNetwork.IsMasterClient) || DebugSettings.Debug)
+                    {
+                        SpaceStation.SpaceStation station =
+                            collision.gameObject.GetComponent<SpaceStation.SpaceStation>();
+                        station.TakeDamage(_shootingPirateData.GetLaserDamage());
+                    }
                 }
             }
-
-            Destroy(gameObject);
+            finally
+            {
+                // Always destroy the laser in the end
+                Destroy(gameObject);
+            }
         }
 
         public void SetShootingPirateData(PirateData shootingPirateData)

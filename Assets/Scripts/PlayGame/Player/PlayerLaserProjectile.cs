@@ -1,4 +1,5 @@
-﻿using Photon.Pun;
+﻿using System;
+using Photon.Pun;
 using PlayGame.Pirates;
 using Statics;
 using UnityEngine;
@@ -25,21 +26,27 @@ namespace PlayGame.Player {
             if (collision.gameObject == _shootingPlayerData.gameObject) return;
             if (collision.gameObject.CompareTag(Tags.CombatLaserTag)) return;
             
-            // todo play animation (explosion)
+            try
+            {
+                // todo play animation (explosion)
 
-            if (collision.gameObject.CompareTag(Tags.PirateTag)) {
-                if ((!DebugSettings.Debug && PhotonNetwork.IsMasterClient) || DebugSettings.Debug) {
-                    PirateData pirateData = collision.gameObject.GetComponent<PirateData>();
-                    pirateData.TakeDamage(_shootingPlayerData);
+                if (collision.gameObject.CompareTag(Tags.PirateTag)) {
+                    if ((!DebugSettings.Debug && PhotonNetwork.IsMasterClient) || DebugSettings.Debug) {
+                        PirateData pirateData = collision.gameObject.GetComponent<PirateData>();
+                        pirateData.TakeDamage(_shootingPlayerData);
+                    }
+                }
+                
+                if (collision.gameObject.CompareTag(Tags.AsteroidTag)) {
+                    Asteroid asteroid = collision.gameObject.GetComponent<Asteroid>();
+                    asteroid.MineAsteroid(MiningRate, _shootingPlayerData);
                 }
             }
-            
-            if (collision.gameObject.CompareTag(Tags.AsteroidTag)) {
-                Asteroid asteroid = collision.gameObject.GetComponent<Asteroid>();
-                asteroid.MineAsteroid(MiningRate, _shootingPlayerData);
+            finally
+            {
+                // Always destroy the laser in the end
+                Destroy(gameObject);
             }
-
-            Destroy(gameObject);
         }
 
         public void SetShootingPlayerData(PlayerData shootingPlayerData) {

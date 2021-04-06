@@ -196,7 +196,13 @@ namespace PlayGame.Pirates {
 
         private void OnDrawGizmosSelected() {
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(transform.position, _pirateData.GetLookRadius());
+            float gizmosRadius = 15f;
+            if (_pirateData != null)
+            {
+                gizmosRadius = _pirateData.GetLookRadius();
+            }
+            
+            Gizmos.DrawWireSphere(transform.position, gizmosRadius);
         }
     }
 }
