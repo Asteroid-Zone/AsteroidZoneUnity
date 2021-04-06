@@ -1,5 +1,4 @@
-﻿using System;
-using Photon.Pun;
+﻿using Photon.Pun;
 using PlayGame.Pirates;
 using Statics;
 using UnityEngine;
@@ -23,9 +22,6 @@ namespace PlayGame.Player {
         }
 
         private void OnCollisionEnter(Collision collision) {
-            if (collision.gameObject == _shootingPlayerData.gameObject) return;
-            if (collision.gameObject.CompareTag(Tags.CombatLaserTag)) return;
-            
             try
             {
                 // todo play animation (explosion)
