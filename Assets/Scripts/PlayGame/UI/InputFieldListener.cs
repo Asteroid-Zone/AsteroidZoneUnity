@@ -93,6 +93,26 @@ namespace PlayGame.UI {
                     if (initial) _inputField.text = GameConstants.StationShieldsRechargeRate.ToString();
                     else GameConstants.StationShieldsRechargeRate = int.Parse(value);
                     break;
+                case "AsteroidMinResourcesInput":
+                    if (initial) _inputField.text = GameConstants.AsteroidMinResources.ToString();
+                    else GameConstants.AsteroidMinResources = int.Parse(value);
+                    break;
+                case "AsteroidMaxResourcesInput":
+                    if (initial) _inputField.text = GameConstants.AsteroidMaxResources.ToString();
+                    else GameConstants.AsteroidMaxResources = int.Parse(value);
+                    break;
+                case "AsteroidProbabilityInput":
+                    if (initial) _inputField.text = GameConstants.AsteroidProbability.ToString();
+                    else GameConstants.AsteroidProbability = float.Parse(value);
+                    break;
+                case "AsteroidEveryXSecondsInput":
+                    if (initial) _inputField.text = GameConstants.AsteroidEveryXSeconds.ToString();
+                    else GameConstants.AsteroidEveryXSeconds = float.Parse(value);
+                    break;
+                case "MaxAsteroidsMultiplierInput":
+                    if (initial) _inputField.text = GameConstants.MaxAsteroidsMultiplier.ToString();
+                    else GameConstants.MaxAsteroidsMultiplier = float.Parse(value);
+                    break;
             }
         }
 
