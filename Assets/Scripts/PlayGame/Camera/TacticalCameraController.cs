@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Statics;
+using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
 
 namespace PlayGame.Camera
@@ -21,6 +22,9 @@ namespace PlayGame.Camera
         private void Start()
         {
             _focusPoint = GameObject.Find("FocusPoint");
+            _trackingObject = GameObject.FindGameObjectWithTag(Tags.StationTag);
+            FocusTrackedObject();
+            
             _camera = GetComponent<UnityEngine.Camera>();
             transform.LookAt(_focusPoint.transform.position);
             CorrectCameraDistance();

@@ -10,17 +10,13 @@ namespace PlayGame.Camera
         public GameObject tacticalPanel;
 
         private bool _cockpitMode;
-        
-        private void Start() {
-            SetMode(true);
-        }
 
         private void Update() {
             if (!Input.GetKeyDown(KeyCode.P)) return;
             SetMode(!_cockpitMode); // Switch mode
         }
 
-        private void SetMode(bool cockpit) {
+        public void SetMode(bool cockpit) {
             _cockpitMode = cockpit;
             
             followCamera.enabled = cockpit;

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Photon.Pun;
+using PlayGame.Camera;
 using PlayGame.Speech.Commands;
 using PlayGame.Stats;
 using PlayGame.UI;
@@ -12,11 +13,10 @@ namespace PlayGame.Player
 {
     public enum Role {
         StationCommander,
-        MilitaryTactician,
-        MiningCaptain,
-        Researcher
+        Miner,
     }
 
+    // todo station commander quests
     public enum QuestType {
         MineAsteroids,
         ReturnToStationResources,
@@ -24,7 +24,6 @@ namespace PlayGame.Player
         PirateWarning,
         ReturnToStationDefend,
         DefendStation
-        // Escape to hyperspace, not sure because they get more points for staying longer
     }
 
     public class PlayerData : MonoBehaviourPun {
@@ -67,8 +66,14 @@ namespace PlayGame.Player
             Players = new List<GameObject>();
             Players.AddRange(GameObject.FindGameObjectsWithTag(Tags.PlayerTag));
             if (!DebugSettings.Debug) this.photonView.RPC(nameof(RPC_UpdatePlayerLists), RpcTarget.Others);
-            
-            _role = Role.StationCommander; // TODO assign roles in the menu
+
+            // Master client is station commander
+            if (!DebugSettings.Debug && !PhotonNetwork.IsMasterClient) {
+                _role = Role.Miner;
+            } else _role = Role.StationCommander;
+
+            // Set camera to cockpit for miners and tactical for station commander
+            GameObject.FindGameObjectWithTag(Tags.CameraManager).GetComponent<CameraManager>().SetMode(_role == Role.Miner);
 
             _maxHealth = GameConstants.PlayerMaxHealth;
             _maxSpeed = GameConstants.PlayerMaxSpeed;

@@ -10,5 +10,6 @@
         public const string MiningLaserSFXTag = "MiningLaserSFX";
         public const string CombatLaserSFXTag = "CombatLaserSFX";
         public const string CombatLaserTag = "CombatLaser";
+        public const string CameraManager = "CameraManager";
     }
 }

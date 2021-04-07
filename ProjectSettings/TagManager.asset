@@ -12,6 +12,7 @@ TagManager:
   - MiningLaserSFX
   - CombatLaserSFX
   - CombatLaser
+  - CameraManager
   layers:
   - Default
   - TransparentFX
