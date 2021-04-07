@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Photon.Pun;
 using PlayGame.Camera;
+using PlayGame.Player.Movement;
 using PlayGame.Speech.Commands;
 using PlayGame.Stats;
 using PlayGame.UI;
@@ -68,13 +69,19 @@ namespace PlayGame.Player
             if (!DebugSettings.Debug) this.photonView.RPC(nameof(RPC_UpdatePlayerLists), RpcTarget.Others);
 
             // Master client is station commander
-            if (!DebugSettings.Debug && !PhotonNetwork.IsMasterClient) {
+            if (!DebugSettings.Debug && !PhotonNetwork.IsMasterClient && !DebugSettings.SinglePlayer) {
                 _role = Role.Miner;
             } else _role = Role.StationCommander;
+            
+            // Set camera to cockpit for miners and tactical for station commander, if single player play in cockpit mode
+            bool cockpitMode = _role == Role.Miner || DebugSettings.SinglePlayer;
+            GameObject.FindGameObjectWithTag(Tags.CameraManager).GetComponent<CameraManager>().SetMode(cockpitMode);
 
-            // Set camera to cockpit for miners and tactical for station commander
-            GameObject.FindGameObjectWithTag(Tags.CameraManager).GetComponent<CameraManager>().SetMode(_role == Role.Miner);
+            if (_role == Role.StationCommander && !DebugSettings.SinglePlayer) SetUpStationCommander();
+            else SetUpMiner();
+        }
 
+        private void SetUpMiner() {
             _maxHealth = GameConstants.PlayerMaxHealth;
             _maxSpeed = GameConstants.PlayerMaxSpeed;
             _rotateSpeed = GameConstants.PlayerRotateSpeed;
@@ -87,8 +94,12 @@ namespace PlayGame.Player
             _playerAgent.speed = 0;
             _resources = 0;
             _health = _maxHealth;
-
+            
             currentQuest = QuestType.MineAsteroids;
+        }
+
+        private void SetUpStationCommander() {
+            currentQuest = QuestType.DefendStation; // todo initial quest
         }
 
         [PunRPC]
