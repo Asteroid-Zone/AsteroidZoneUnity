@@ -113,6 +113,42 @@ namespace PlayGame.UI {
                     if (initial) _inputField.text = GameConstants.MaxAsteroidsMultiplier.ToString();
                     else GameConstants.MaxAsteroidsMultiplier = float.Parse(value);
                     break;
+                case "GridCellSizeInput":
+                    if (initial) _inputField.text = GameConstants.GridCellSize.ToString();
+                    else GameConstants.GridCellSize = int.Parse(value);
+                    break;
+                case "GridWidthInput":
+                    if (initial) _inputField.text = GameConstants.GridWidth.ToString();
+                    else GameConstants.GridWidth = int.Parse(value);
+                    break;
+                case "GridHeightInput":
+                    if (initial) _inputField.text = GameConstants.GridHeight.ToString();
+                    else GameConstants.GridHeight = int.Parse(value);
+                    break;
+                case "PirateLaserMiningRateInput":
+                    if (initial) _inputField.text = GameConstants.PirateLaserMiningRate.ToString();
+                    else GameConstants.PirateLaserMiningRate = int.Parse(value);
+                    break;
+                case "MaxPiratesMultiplierInput":
+                    if (initial) _inputField.text = GameConstants.MaxPiratesMultiplier.ToString();
+                    else GameConstants.MaxPiratesMultiplier = float.Parse(value);
+                    break;
+                case "PirateProbabilityInput":
+                    if (initial) _inputField.text = GameConstants.PirateProbability.ToString();
+                    else GameConstants.PirateProbability = float.Parse(value);
+                    break;
+                case "PirateEveryXSecondsInput":
+                    if (initial) _inputField.text = GameConstants.PirateEveryXSeconds.ToString();
+                    else GameConstants.PirateEveryXSeconds = float.Parse(value);
+                    break;
+                case "PirateMinReinforcementsInput":
+                    if (initial) _inputField.text = GameConstants.PirateMinReinforcements.ToString();
+                    else GameConstants.PirateMinReinforcements = int.Parse(value);
+                    break;
+                case "PirateMaxReinforcementsInput":
+                    if (initial) _inputField.text = GameConstants.PirateMaxReinforcements.ToString();
+                    else GameConstants.PirateMaxReinforcements = int.Parse(value);
+                    break;
             }
         }
 
