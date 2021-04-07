@@ -65,6 +65,34 @@ namespace PlayGame.UI {
                     if (initial) _inputField.text = GameConstants.PlayerLaserRange.ToString();
                     else GameConstants.PlayerLaserRange = int.Parse(value);
                     break;
+                case "EnginesMaxHealthInput":
+                    if (initial) _inputField.text = GameConstants.EnginesMaxHealth.ToString();
+                    else GameConstants.EnginesMaxHealth = int.Parse(value);
+                    break;
+                case "HyperdriveMaxHealthInput":
+                    if (initial) _inputField.text = GameConstants.HyperdriveMaxHealth.ToString();
+                    else GameConstants.HyperdriveMaxHealth = int.Parse(value);
+                    break;
+                case "HullMaxHealthInput":
+                    if (initial) _inputField.text = GameConstants.StationHullMaxHealth.ToString();
+                    else GameConstants.StationHullMaxHealth = int.Parse(value);
+                    break;
+                case "SolarPanelsMaxHealthInput":
+                    if (initial) _inputField.text = GameConstants.SolarPanelsMaxHealth.ToString();
+                    else GameConstants.SolarPanelsMaxHealth = int.Parse(value);
+                    break;
+                case "ShieldGeneratorMaxHealthInput":
+                    if (initial) _inputField.text = GameConstants.ShieldGeneratorMaxHealth.ToString();
+                    else GameConstants.ShieldGeneratorMaxHealth = int.Parse(value);
+                    break;
+                case "MaxShieldsInput":
+                    if (initial) _inputField.text = GameConstants.StationMaxShields.ToString();
+                    else GameConstants.StationMaxShields = int.Parse(value);
+                    break;
+                case "ShieldRechargeRateInput":
+                    if (initial) _inputField.text = GameConstants.StationShieldsRechargeRate.ToString();
+                    else GameConstants.StationShieldsRechargeRate = int.Parse(value);
+                    break;
             }
         }
 
