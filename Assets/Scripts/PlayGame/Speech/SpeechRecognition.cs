@@ -30,6 +30,8 @@ namespace PlayGame.Speech {
         private ActionController _actionController;
 
         private bool _foundCommand = false;
+        private Command _command = null; // Holds latest valid command
+        private string _phrase = null; // Latest valid phrase
         private List<string> _detectedPhrases = new List<string>();
 
         private void Start() {
@@ -96,12 +98,15 @@ namespace PlayGame.Speech {
         
         private void ResetSpeechRecognition() {
             _foundCommand = false;
+            _command = null;
+            _phrase = null;
             _detectedPhrases.Clear();
         }
         
         // Called by javascript when speech is detected
         public void GetResponse(string result) {
-            if ((!DebugSettings.Debug && !photonView.IsMine) || _foundCommand) return; // If a command has already been found for the speech return
+            //if ((!DebugSettings.Debug && !photonView.IsMine) || _foundCommand) return; // If a command has already been found for the speech return
+            if (!DebugSettings.Debug && !photonView.IsMine) return;
 
             _myResponse = result.ToLower();
             
@@ -110,17 +115,20 @@ namespace PlayGame.Speech {
 
             if (command.IsValid()) {
                 _foundCommand = true;
-                if (DebugSettings.Debug) _actionController.PerformActions(command);
-                else photonView.RPC(nameof(RPC_PerformActions), RpcTarget.AllBuffered, player.GetComponent<PhotonView>().ViewID, _myResponse);
+                _command = command;
+                _phrase = _myResponse;
+                //if (DebugSettings.Debug) _actionController.PerformActions(command);
+                //else photonView.RPC(nameof(RPC_PerformActions), RpcTarget.AllBuffered, player.GetComponent<PhotonView>().ViewID, _myResponse);
             }
         }
         
         // Called by javascript when the final speech is detected
         public void GetFinalResponse(string result) {
-            if ((!DebugSettings.Debug && !photonView.IsMine) || _foundCommand) { // If a command has already been found for the speech reset and return
+            /*if ((!DebugSettings.Debug && !photonView.IsMine) || _foundCommand) { // If a command has already been found for the speech reset and return
                 ResetSpeechRecognition();
                 return;
-            }
+            }*/
+            if (!DebugSettings.Debug && !photonView.IsMine) return;
             
             _myResponse = result.ToLower();
             
@@ -129,14 +137,25 @@ namespace PlayGame.Speech {
             
             if (command.IsValid()) {
                 _foundCommand = true;
-                if (DebugSettings.Debug) _actionController.PerformActions(command);
-                else photonView.RPC(nameof(RPC_PerformActions), RpcTarget.AllBuffered, player.GetComponent<PhotonView>().ViewID, _myResponse);
+                _command = command;
+                _phrase = _myResponse;
+                //if (DebugSettings.Debug) _actionController.PerformActions(command);
+                //else photonView.RPC(nameof(RPC_PerformActions), RpcTarget.AllBuffered, player.GetComponent<PhotonView>().ViewID, _myResponse);
+            }/* else {
+                List<Tuple<string, float, bool, string>> suggestedCommands = FindSuggestedCommands(); // Tuple(command, confidence, fromData, phrase)
+                Tuple<string, float, bool, string> suggestedCommand = FindBestSuggestedCommand(suggestedCommands);
+                DisplaySuggestedCommand(suggestedCommand);
+            }*/
+
+            if (_foundCommand) {
+                if (DebugSettings.Debug) _actionController.PerformActions(_command);
+                else photonView.RPC(nameof(RPC_PerformActions), RpcTarget.AllBuffered, player.GetComponent<PhotonView>().ViewID, _phrase);
             } else {
                 List<Tuple<string, float, bool, string>> suggestedCommands = FindSuggestedCommands(); // Tuple(command, confidence, fromData, phrase)
                 Tuple<string, float, bool, string> suggestedCommand = FindBestSuggestedCommand(suggestedCommands);
                 DisplaySuggestedCommand(suggestedCommand);
             }
-            
+
             ResetSpeechRecognition();
         }
 
