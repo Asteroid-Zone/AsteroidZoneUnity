@@ -11,11 +11,7 @@ namespace PlayGame.Player {
         private AudioSource _miningLaserSfx;
         
         public LineRenderer laser;
-
-        private static int MiningRange = 20;
-        private const int MiningRate = 8; // Amount of resources gathered every mining tick
-        private const int MiningDelay = 20; // Number of frames to wait between mining
-
+        
         private int _lastFrameMined = 0;
 
         private void Start() {
@@ -35,7 +31,7 @@ namespace PlayGame.Player {
             
             VolumeControl.AddSfxCSource(_miningLaserSfx);
             
-            if (DebugSettings.InfiniteMiningRange) MiningRange = 10000;
+            if (DebugSettings.InfiniteMiningRange) GameConstants.PlayerMiningRange = 10000;
         }
         
         private void Update() {
@@ -46,7 +42,7 @@ namespace PlayGame.Player {
                     _miningLaserSfx.Play();
                 }
                 RaycastHit hit;
-                Physics.Raycast(transform.position, transform.forward, out hit, MiningRange); // Get the game object that the laser is hitting
+                Physics.Raycast(transform.position, transform.forward, out hit, GameConstants.PlayerMiningRange); // Get the game object that the laser is hitting
 
                 if (hit.collider) { // If the laser is hitting a game object
                     UpdateLaser((int) hit.distance);
@@ -54,7 +50,7 @@ namespace PlayGame.Player {
                         if ((!DebugSettings.Debug && PhotonNetwork.IsMasterClient) || DebugSettings.Debug) MineAsteroid(hit.collider.gameObject);
                     }
                 } else {
-                    UpdateLaser(MiningRange);
+                    UpdateLaser(GameConstants.PlayerMiningRange);
                 }
             }
             else
@@ -64,12 +60,12 @@ namespace PlayGame.Player {
         }
 
         private void MineAsteroid(GameObject asteroid) {
-            if (Time.frameCount - _lastFrameMined > MiningDelay) { // Only mine the asteroid every x frames
+            if (Time.frameCount - _lastFrameMined > GameConstants.PlayerMiningDelay) { // Only mine the asteroid every x frames
                 Asteroid asteroidScript = asteroid.GetComponent<Asteroid>();
-                asteroidScript.MineAsteroid(MiningRate, _playerData);
+                asteroidScript.MineAsteroid(GameConstants.PlayerMiningRate, _playerData);
                 _lastFrameMined = Time.frameCount;
 
-                int resources = asteroidScript.GetResources(MiningRate);
+                int resources = asteroidScript.GetResources(GameConstants.PlayerMiningRate);
                 if (!DebugSettings.Debug) gameObject.GetPhotonView().RPC(nameof(RPC_AddResources), RpcTarget.AllBuffered, resources);
                 else _playerData.AddResources(resources);
             }

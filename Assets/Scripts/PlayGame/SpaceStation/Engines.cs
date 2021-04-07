@@ -3,8 +3,6 @@ using UnityEngine;
 
 namespace PlayGame.SpaceStation {
     public class Engines : StationModule {
-
-        private const int MaxHealth = 200;
         
         private readonly Material _materialEngine1;
         private Texture _damagedTextureEngine1;
@@ -15,7 +13,7 @@ namespace PlayGame.SpaceStation {
         private Texture _damagedTextureEngine2;
         private Texture _functionalTextureEngine2;
         private Texture _activeTextureEngine2;
-        public Engines(SpaceStation station) : base("Engines", MaxHealth, station) {
+        public Engines(SpaceStation station) : base("Engines", GameConstants.EnginesMaxHealth, station) {
             _materialEngine1 = station.transform.Find("SpaceStation/station/engines/engine1").gameObject.GetComponent<Renderer>().material;
             _damagedTextureEngine1 = Resources.Load<Texture>(Textures.Engine1Damaged);
             _functionalTextureEngine1 = Resources.Load<Texture>(Textures.Engine1);

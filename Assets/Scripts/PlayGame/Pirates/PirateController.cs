@@ -132,7 +132,7 @@ namespace PlayGame.Pirates {
 
         // Search a random grid coordinate
         private void RandomSearch() {
-            GridCoord newDestination = new GridCoord(Random.Range(0, GridManager.Width), Random.Range(0, GridManager.Height));
+            GridCoord newDestination = new GridCoord(Random.Range(0, GameConstants.GridWidth), Random.Range(0, GameConstants.GridHeight));
             _destination = newDestination.GetWorldVector();
             _agent.stoppingDistance = StoppingDistSearchingForStation;
             _laserGun.StopShooting();

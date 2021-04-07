@@ -12,7 +12,6 @@ namespace PlayGame.Player {
         private AudioSource _laserSfx;
         
         private int _lastFrameFired;
-        private const int ShotDelay = 50; // Number of frames to wait between shooting
 
         private bool _shooting;
 
@@ -32,7 +31,7 @@ namespace PlayGame.Player {
         }
 
         private void Update() {
-            if (_shooting && Time.frameCount - _lastFrameFired > ShotDelay) Shoot(); // Only fire every x frames
+            if (_shooting && Time.frameCount - _lastFrameFired > GameConstants.PlayerShotDelay) Shoot(); // Only fire every x frames
         }
 
         private void Shoot() {

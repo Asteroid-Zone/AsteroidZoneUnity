@@ -7,7 +7,6 @@ namespace PlayGame.Pirates {
         private PirateData _pirateData;
 
         private int _lastFrameFired;
-        private const int ShotDelay = 100; // Number of frames to wait between shooting
 
         private bool _shooting;
 
@@ -16,7 +15,7 @@ namespace PlayGame.Pirates {
         }
 
         private void Update() {
-            if (_shooting && Time.frameCount - _lastFrameFired > ShotDelay) Shoot(); // Only fire every x frames
+            if (_shooting && Time.frameCount - _lastFrameFired > _pirateData.GetShotDelay()) Shoot(); // Only fire every x frames
         }
 
         private void Shoot() {

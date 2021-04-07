@@ -34,23 +34,17 @@ namespace PlayGame
         // Will be used as the size of the checked space when spawning (checked space should be empty)
         private float _spawnRangeCheck; 
         private int _maxAsteroids;
-
-        // Every X seconds, there is a chance for an asteroid to spawn on a random grid coordinate 
-        public float probability;
-        public float everyXSeconds;
-
-    
+        
         // Start is called before the first frame update
-    
         private void Start()
         {
             if (!PhotonNetwork.IsMasterClient && !DebugSettings.Debug) return;
             _gridManager = gridManager.GetComponent<GridManager>();
-            InvokeRepeating(nameof(AsteroidRNG), 0, everyXSeconds);
+            InvokeRepeating(nameof(AsteroidRNG), 0, GameConstants.AsteroidEveryXSeconds);
             
             // Checked space is the half size in OverlapBoxNonAlloc
             _spawnRangeCheck = _gridManager.GetCellSize() / 2f;
-            _maxAsteroids = (int) Math.Floor(2 * Math.Sqrt(_gridManager.GetTotalCells()));
+            _maxAsteroids = (int) (GameConstants.MaxAsteroidsMultiplier * Math.Floor(2 * Math.Sqrt(_gridManager.GetTotalCells())));
         }
 
         private void AsteroidRNG()
@@ -63,7 +57,7 @@ namespace PlayGame
             }
             
             var generatedProb = Random.Range(0, 1.0f);
-            if (generatedProb < probability)
+            if (generatedProb < GameConstants.AsteroidProbability)
             {
                 SpawnAsteroid();
             }
@@ -73,7 +67,7 @@ namespace PlayGame
         {
             if (!PhotonNetwork.IsMasterClient && !DebugSettings.Debug) return;
             // Initialise some random grid coordinates on the map
-            var randomGridCoord = new Vector2(Random.Range(0, GridManager.Width), Random.Range(0, GridManager.Height));
+            var randomGridCoord = new Vector2(Random.Range(0, GameConstants.GridWidth), Random.Range(0, GameConstants.GridHeight));
             
             // Transform the grid coordinates to global coordinates
             var randomGlobalCoord = GridManager.GridToGlobalCoord(randomGridCoord);

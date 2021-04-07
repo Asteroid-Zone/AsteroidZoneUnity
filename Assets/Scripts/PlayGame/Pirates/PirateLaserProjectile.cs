@@ -6,9 +6,7 @@ using UnityEngine;
 namespace PlayGame.Pirates {
 
     public class PirateLaserProjectile : MonoBehaviour {
-        
-        private const int MiningRate = 4; // Amount of resources gathered every mining tick
-        
+
         private Vector3 _startPosition;
 
         private PirateData _shootingPirateData;
@@ -35,7 +33,7 @@ namespace PlayGame.Pirates {
                 if (collision.gameObject.CompareTag(Tags.AsteroidTag))
                 {
                     Asteroid asteroid = collision.gameObject.GetComponent<Asteroid>();
-                    asteroid.MineAsteroid(MiningRate, null);
+                    asteroid.MineAsteroid(GameConstants.PirateLaserMiningRate, null);
                 }
 
                 if (collision.gameObject.CompareTag(Tags.StationTag))

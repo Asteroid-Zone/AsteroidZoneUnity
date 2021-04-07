@@ -6,10 +6,8 @@ namespace PlayGame.SpaceStation {
     public class Hyperdrive : StationModule {
         
         private Texture _activeTexture;
-        
-        private const int MaxHealth = 2000;
 
-        public Hyperdrive(SpaceStation station) : base("Hyperdrive", MaxHealth, station, "SpaceStation/station/hyperdrive") {
+        public Hyperdrive(SpaceStation station) : base("Hyperdrive", GameConstants.HyperdriveMaxHealth, station, "SpaceStation/station/hyperdrive") {
             _damagedTexture = Resources.Load<Texture>(Textures.HyperdriveDamaged);
             _functionalTexture = Resources.Load<Texture>(Textures.Hyperdrive);
             _activeTexture = Resources.Load<Texture>(Textures.HyperdriveActive);

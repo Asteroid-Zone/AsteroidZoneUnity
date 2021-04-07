@@ -26,6 +26,7 @@ namespace PlayGame.Pirates {
         private int _laserRange = 10;
         private int _laserDamage = 10;
         private int _laserDamageRange = 5; // Makes the amount of damage the laser does vary a bit
+        private int _shotDelay = 100; // Number of frames to wait between shots
 
         private float _health;
         private NavMeshAgent _pirateAgent;
@@ -49,22 +50,24 @@ namespace PlayGame.Pirates {
         private void SetStats() {
             switch (pirateType) {
                 case PirateType.Scout:
-                    _maxHealth = 50;
-                    _speed = 2;
-                    _lookRadius = 15;
-                    _laserSpeed = 1000;
-                    _laserRange = 10;
-                    _laserDamageRange = 5;
-                    _laserDamage = 10;
+                    _maxHealth = GameConstants.PirateScoutMaxHealth;
+                    _speed = GameConstants.PirateScoutSpeed;
+                    _lookRadius = GameConstants.PirateScoutLookRadius;
+                    _laserSpeed = GameConstants.PirateScoutLaserSpeed;
+                    _laserRange = GameConstants.PirateScoutLaserRange;
+                    _laserDamageRange = GameConstants.PirateScoutLaserDamageRange;
+                    _laserDamage = GameConstants.PirateScoutLaserDamage;
+                    _shotDelay = GameConstants.PirateScoutShotDelay;
                     break;
                 case PirateType.Elite:
-                    _maxHealth = 100;
-                    _speed = 1;
-                    _lookRadius = 10;
-                    _laserSpeed = 1000;
-                    _laserRange = 15;
-                    _laserDamageRange = 5;
-                    _laserDamage = 15;
+                    _maxHealth = GameConstants.PirateEliteMaxHealth;
+                    _speed = GameConstants.PirateEliteSpeed;
+                    _lookRadius = GameConstants.PirateEliteLookRadius;
+                    _laserSpeed = GameConstants.PirateEliteLaserSpeed;
+                    _laserRange = GameConstants.PirateEliteLaserRange;
+                    _laserDamageRange = GameConstants.PirateEliteLaserDamageRange;
+                    _laserDamage = GameConstants.PirateEliteLaserDamage;
+                    _shotDelay = GameConstants.PirateEliteShotDelay;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -153,6 +156,10 @@ namespace PlayGame.Pirates {
 
         public float GetLaserSpeed() {
             return _laserSpeed;
+        }
+
+        public int GetShotDelay() {
+            return _shotDelay;
         }
     }
 }

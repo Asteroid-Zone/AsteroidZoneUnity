@@ -56,7 +56,7 @@ namespace PlayGame.Player.Movement
         private void Update() {
             if (GameManager.gameOver) return;
             // Get the speed of the player's ship
-            var speed = _playerData.GetSpeed();
+            float speed = _playerData.GetSpeed();
             
             // Check if destination has been reached and if not provide it to AI
             if (!HasReachedDestination()) 

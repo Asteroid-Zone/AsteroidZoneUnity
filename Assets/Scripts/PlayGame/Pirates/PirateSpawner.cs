@@ -35,19 +35,15 @@ namespace PlayGame.Pirates {
         private float _spawnRangeCheck; 
         private int _maxPirates;
 
-        // Every X seconds, there is a chance for an pirate to spawn on a random grid coordinate 
-        public float probability;
-        public float everyXSeconds;
-
         // Start is called before the first frame update
         private void Start() {
             if (!DebugSettings.Debug && !PhotonNetwork.IsMasterClient) return;
             _gridManager = gridManager.GetComponent<GridManager>();
-            InvokeRepeating(nameof(PirateRNG), 0, everyXSeconds);
+            InvokeRepeating(nameof(PirateRNG), 0, GameConstants.PirateEveryXSeconds);
             
             // Checked space is the half size in OverlapBoxNonAlloc
             _spawnRangeCheck = _gridManager.GetCellSize() / 2f;
-            _maxPirates = (int) Math.Floor(2 * Math.Sqrt(_gridManager.GetTotalCells()));
+            _maxPirates =  (int) (GameConstants.MaxPiratesMultiplier * Math.Floor(2 * Math.Sqrt(_gridManager.GetTotalCells())));
         }
 
         private void PirateRNG() {
@@ -58,14 +54,14 @@ namespace PlayGame.Pirates {
             }
             
             var generatedProb = Random.Range(0, 1.0f);
-            if (generatedProb < probability) {
+            if (generatedProb < GameConstants.PirateProbability) {
                 if (DebugSettings.SpawnPirates) SpawnPirate(PirateData.PirateType.Scout);
             }
         }
 
         public void SpawnReinforcements() {
             if (!DebugSettings.Debug && !PhotonNetwork.IsMasterClient) return;
-            int reinforcements = Random.Range(2, 4);
+            int reinforcements = Random.Range(GameConstants.PirateMinReinforcements, GameConstants.PirateMaxReinforcements);
 
             for (int i = 0; i < reinforcements; i++) {
                 SpawnPirate(PirateData.PirateType.Elite);
@@ -76,7 +72,7 @@ namespace PlayGame.Pirates {
             if (!DebugSettings.Debug && !PhotonNetwork.IsMasterClient) return;
 
             // Initialise some random grid coordinates on the map
-            var randomGridCoord = new Vector2(Random.Range(0, GridManager.Width), Random.Range(0, GridManager.Height));
+            var randomGridCoord = new Vector2(Random.Range(0, GameConstants.GridWidth), Random.Range(0, GameConstants.GridHeight));
             
             // Transform the grid coordinates to global coordinates
             var randomGlobalCoord = GridManager.GridToGlobalCoord(randomGridCoord);

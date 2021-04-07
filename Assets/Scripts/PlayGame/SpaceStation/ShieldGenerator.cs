@@ -3,15 +3,11 @@ using UnityEngine;
 
 namespace PlayGame.SpaceStation {
     public class ShieldGenerator : StationModule {
-        
-        private const int MaxHealth = 150;
 
-        private int _maxShields = 100;
         private int _shields = 0;
-        private int _rechargeRate = 1; // Amount the shields recharge per second
         private float _timeSinceLastCharge = 1; // Seconds since last charge
 
-        public ShieldGenerator(SpaceStation station) : base("Shield Generator", MaxHealth, station, "SpaceStation/station/shield_generator") {
+        public ShieldGenerator(SpaceStation station) : base("Shield Generator", GameConstants.ShieldGeneratorMaxHealth, station, "SpaceStation/station/shield_generator") {
             _damagedTexture = Resources.Load<Texture>(Textures.ShieldGeneratorDamaged);
             _functionalTexture = Resources.Load<Texture>(Textures.ShieldGenerator);
             UpdateMesh();
@@ -30,19 +26,23 @@ namespace PlayGame.SpaceStation {
         }
 
         private void RechargeShields() {
-            _shields += _rechargeRate; // Charge the shields
-            if (_shields > _maxShields) _shields = _maxShields;
+            _shields += GameConstants.StationShieldsRechargeRate; // Charge the shields
+            if (_shields > GameConstants.StationMaxShields) _shields = GameConstants.StationMaxShields;
         }
 
         // Shields take as much of the damage as they can, return the rest of the damage
         public int AbsorbDamage(int damage) {
             _shields -= damage;
-            if (_shields < 0) return _shields * -1;
+            if (_shields < 0) {
+                int damageRemaining = _shields * -1;
+                _shields = 0;
+                return damageRemaining;
+            }
             return 0;
         }
 
         public override string ToString() {
-            return base.ToString() + "\nShields: " + _shields + "/" + _maxShields;
+            return base.ToString() + "\nShields: " + _shields + "/" + GameConstants.StationMaxShields;
         }
     }
 }

@@ -7,9 +7,6 @@ namespace PlayGame.Player {
   
     public class PlayerLaserProjectile : MonoBehaviour {
         
-        private const int MiningRate = 4; // Amount of resources gathered every mining tick
-        private const int MaxRange = 20;
-        
         private Vector3 _startPosition;
         private PlayerData _shootingPlayerData;
 
@@ -18,7 +15,7 @@ namespace PlayGame.Player {
         }
 
         private void Update() {
-            if (Vector3.Distance(transform.position, _startPosition) > MaxRange) Destroy(gameObject); // Limit the lasers range
+            if (Vector3.Distance(transform.position, _startPosition) > GameConstants.PlayerLaserRange) Destroy(gameObject); // Limit the lasers range
         }
 
         private void OnCollisionEnter(Collision collision) {
@@ -35,7 +32,7 @@ namespace PlayGame.Player {
                 
                 if (collision.gameObject.CompareTag(Tags.AsteroidTag)) {
                     Asteroid asteroid = collision.gameObject.GetComponent<Asteroid>();
-                    asteroid.MineAsteroid(MiningRate, _shootingPlayerData);
+                    asteroid.MineAsteroid(GameConstants.PlayerLaserMiningRate, _shootingPlayerData);
                 }
             }
             finally

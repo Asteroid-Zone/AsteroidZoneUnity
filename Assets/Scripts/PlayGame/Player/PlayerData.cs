@@ -28,8 +28,6 @@ namespace PlayGame.Player
     public class PlayerData : MonoBehaviourPun {
         public static List<GameObject> Players;
 
-        private const int LaserDamageRange = 10; // Makes the amount of damage the laser does vary a bit
-
         private bool _youDiedWrittenOnScreen; // TODO remove this and make something else when player dies
 
         private Role _role;
@@ -70,22 +68,18 @@ namespace PlayGame.Player
             if (!DebugSettings.Debug) this.photonView.RPC(nameof(RPC_UpdatePlayerLists), RpcTarget.Others);
             
             _role = Role.StationCommander; // TODO assign roles in the menu
-        
-            _maxHealth = 100; // TODO different stats for different roles
-            _maxSpeed = 2.5f;
 
-            _rotateSpeed = 0.5f;
+            _maxHealth = GameConstants.PlayerMaxHealth;
+            _maxSpeed = GameConstants.PlayerMaxSpeed;
+            _rotateSpeed = GameConstants.PlayerRotateSpeed;
 
-            _laserSpeed = 1000;
-            
-            _health = _maxHealth;
+            _laserSpeed = GameConstants.PlayerLaserSpeed;
+            _laserDamage = GameConstants.PlayerLaserDamage;
             
             // The current speed of the player is will be stored in the speed of its NavMeshAgent
             _playerAgent.speed = 0;
-
             _resources = 0;
-
-            _laserDamage = 20;
+            _health = _maxHealth;
 
             currentQuest = QuestType.MineAsteroids;
         }
@@ -182,10 +176,9 @@ namespace PlayGame.Player
             currentQuest = quest;
         }
 
-        public int GetLaserDamage()
-        {
+        public int GetLaserDamage() {
             // Make the amount of damage vary a bit.
-            return _laserDamage + Random.Range(-LaserDamageRange, LaserDamageRange + 1);
+            return _laserDamage + Random.Range(-GameConstants.PlayerLaserDamageRange, GameConstants.PlayerLaserDamageRange + 1);
         }
 
         public void TakeDamage(int damage)

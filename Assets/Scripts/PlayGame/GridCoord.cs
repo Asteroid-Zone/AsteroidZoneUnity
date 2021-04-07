@@ -1,13 +1,12 @@
 ﻿using System.Text.RegularExpressions;
+using Statics;
 using UnityEngine;
 
 namespace PlayGame {
     using System;
 
     public readonly struct GridCoord : IEquatable<GridCoord> {
-
-        private const int GridSize = 10;
-
+        
         private readonly int _x;
         private readonly int _z;
 
@@ -23,8 +22,8 @@ namespace PlayGame {
 
         // Get the grid coordinate of a given world position
         public static GridCoord GetCoordFromVector(Vector3 position) {
-            int x = (int) Math.Floor(position.x / GridSize);
-            int z = (int) Math.Floor(position.z / GridSize);
+            int x = (int) Math.Floor(position.x / GameConstants.GridCellSize);
+            int z = (int) Math.Floor(position.z / GameConstants.GridCellSize);
 
             return new GridCoord(x, z);
         }
@@ -47,11 +46,11 @@ namespace PlayGame {
         }
 
         private int getWorldX() {
-            return (_x * GridSize) + (GridSize / 2);
+            return (_x * GameConstants.GridCellSize) + (GameConstants.GridCellSize / 2);
         }
 
         private int getWorldZ() {
-            return (_z * GridSize) + (GridSize / 2);
+            return (_z * GameConstants.GridCellSize) + (GameConstants.GridCellSize / 2);
         }
 
         // Returns the grid coordinate with a y value of 0

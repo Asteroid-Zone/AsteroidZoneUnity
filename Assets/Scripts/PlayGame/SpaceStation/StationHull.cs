@@ -4,8 +4,6 @@ using UnityEngine;
 namespace PlayGame.SpaceStation {
     public class StationHull : StationModule {
 
-        private const int MaxHealth = 1500;
-        
         private readonly Material _materialUpperRing;
         private Texture _damagedTextureUpperRing;
         private Texture _functionalTextureUpperRing;
@@ -14,7 +12,7 @@ namespace PlayGame.SpaceStation {
         private Texture _damagedTextureLowerRing;
         private Texture _functionalTextureLowerRing;
         
-        public StationHull(SpaceStation station) : base("Station Hull", MaxHealth, station) {
+        public StationHull(SpaceStation station) : base("Station Hull", GameConstants.StationHullMaxHealth, station) {
             _material = station.transform.Find("SpaceStation/station/hull/centre_hull").gameObject.GetComponent<Renderer>().material;
             _damagedTexture = Resources.Load<Texture>(Textures.CentreHullDamaged);
             _functionalTexture = Resources.Load<Texture>(Textures.CentreHull);
@@ -28,7 +26,7 @@ namespace PlayGame.SpaceStation {
             _functionalTextureLowerRing = Resources.Load<Texture>(Textures.LowerRing);
             
             UpdateMesh();
-            moduleHealth += MaxHealth / 2; // Increase the minimum starting health to half
+            moduleHealth += GameConstants.StationHullMaxHealth / 2; // Increase the minimum starting health to half
         }
 
         protected override void UpdateMesh() {

@@ -32,9 +32,6 @@ namespace PlayGame {
         
         private const float MaxScale = 6f;
         private const float MinScale = 2f;
-
-        private const int MinResources = 25;
-        private const int MaxResources = 100;
         
         private const float FadeSpeed = 2f;
         
@@ -46,7 +43,7 @@ namespace PlayGame {
 
             int asteroidMeshIndex = Random.Range(0, AsteroidMeshes.Count);
             Quaternion rotation = Random.rotation;
-            int totalResources = Random.Range(MinResources, MaxResources);
+            int totalResources = Random.Range(GameConstants.AsteroidMinResources, GameConstants.AsteroidMaxResources);
 
             if (!DebugSettings.Debug && PhotonNetwork.IsMasterClient)
                 gameObject.GetPhotonView().RPC(nameof(RPC_SyncAsteroid), RpcTarget.AllBuffered, asteroidMeshIndex, rotation, totalResources);
@@ -68,7 +65,7 @@ namespace PlayGame {
 
             _totalResources = resources;
             _resourcesRemaining = _totalResources;
-            _initialScale = MaxScale * ((float) _totalResources / MaxResources); // Initial size of the asteroid
+            _initialScale = MaxScale * ((float) _totalResources / GameConstants.AsteroidMaxResources); // Initial size of the asteroid
             transform.localScale = _initialScale * _modelScale;
         }
 
