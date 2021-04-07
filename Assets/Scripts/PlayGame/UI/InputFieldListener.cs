@@ -1,4 +1,5 @@
-﻿using Statics;
+﻿using System;
+using Statics;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -149,6 +150,72 @@ namespace PlayGame.UI {
                     if (initial) _inputField.text = GameConstants.PirateMaxReinforcements.ToString();
                     else GameConstants.PirateMaxReinforcements = int.Parse(value);
                     break;
+                case "PirateScoutMaxHealthInput":
+                    if (initial) _inputField.text = GameConstants.PirateScoutMaxHealth.ToString();
+                    else GameConstants.PirateScoutMaxHealth = float.Parse(value);
+                    break;
+                case "PirateScoutSpeedInput":
+                    if (initial) _inputField.text = GameConstants.PirateScoutSpeed.ToString();
+                    else GameConstants.PirateScoutSpeed = float.Parse(value);
+                    break;
+                case "PirateScoutLookRadiusInput":
+                    if (initial) _inputField.text = GameConstants.PirateScoutLookRadius.ToString();
+                    else GameConstants.PirateScoutLookRadius = float.Parse(value);
+                    break;
+                case "PirateScoutLaserSpeedInput":
+                    if (initial) _inputField.text = GameConstants.PirateScoutLaserSpeed.ToString();
+                    else GameConstants.PirateScoutLaserSpeed = float.Parse(value);
+                    break;
+                case "PirateScoutLaserRangeInput":
+                    if (initial) _inputField.text = GameConstants.PirateScoutLaserRange.ToString();
+                    else GameConstants.PirateScoutLaserRange = int.Parse(value);
+                    break;
+                case "PirateScoutLaserDamageRangeInput":
+                    if (initial) _inputField.text = GameConstants.PirateScoutLaserDamageRange.ToString();
+                    else GameConstants.PirateScoutLaserDamageRange = int.Parse(value);
+                    break;
+                case "PirateScoutLaserDamageInput":
+                    if (initial) _inputField.text = GameConstants.PirateScoutLaserDamage.ToString();
+                    else GameConstants.PirateScoutLaserDamage = int.Parse(value);
+                    break;
+                case "PirateScoutShotDelayInput":
+                    if (initial) _inputField.text = GameConstants.PirateScoutShotDelay.ToString();
+                    else GameConstants.PirateScoutShotDelay = int.Parse(value);
+                    break;
+                case "PirateEliteMaxHealthInput":
+                    if (initial) _inputField.text = GameConstants.PirateEliteMaxHealth.ToString();
+                    else GameConstants.PirateEliteMaxHealth = float.Parse(value);
+                    break;
+                case "PirateEliteSpeedInput":
+                    if (initial) _inputField.text = GameConstants.PirateEliteSpeed.ToString();
+                    else GameConstants.PirateEliteSpeed = float.Parse(value);
+                    break;
+                case "PirateEliteLookRadiusInput":
+                    if (initial) _inputField.text = GameConstants.PirateEliteLookRadius.ToString();
+                    else GameConstants.PirateEliteLookRadius = float.Parse(value);
+                    break;
+                case "PirateEliteLaserSpeedInput":
+                    if (initial) _inputField.text = GameConstants.PirateEliteLaserSpeed.ToString();
+                    else GameConstants.PirateEliteLaserSpeed = float.Parse(value);
+                    break;
+                case "PirateEliteLaserRangeInput":
+                    if (initial) _inputField.text = GameConstants.PirateEliteLaserRange.ToString();
+                    else GameConstants.PirateEliteLaserRange = int.Parse(value);
+                    break;
+                case "PirateEliteLaserDamageRangeInput":
+                    if (initial) _inputField.text = GameConstants.PirateEliteLaserDamageRange.ToString();
+                    else GameConstants.PirateEliteLaserDamageRange = int.Parse(value);
+                    break;
+                case "PirateEliteLaserDamageInput":
+                    if (initial) _inputField.text = GameConstants.PirateEliteLaserDamage.ToString();
+                    else GameConstants.PirateEliteLaserDamage = int.Parse(value);
+                    break;
+                case "PirateEliteShotDelayInput":
+                    if (initial) _inputField.text = GameConstants.PirateEliteShotDelay.ToString();
+                    else GameConstants.PirateEliteShotDelay = int.Parse(value);
+                    break;
+                default:
+                    throw new ArgumentException("Invalid _inputField.name : " + _inputField.name);
             }
         }
 
