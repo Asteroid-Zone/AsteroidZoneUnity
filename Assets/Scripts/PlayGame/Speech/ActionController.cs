@@ -132,15 +132,23 @@ namespace PlayGame.Speech {
         private void PerformToggleCommand(ToggleCommand command) {
             switch (command.objectType) {
                 case ToggleCommand.ObjectType.MiningLaser:
-                    if (command.on) miningLaser.EnableMiningLaser();
+                    if (command.on) {
+                        miningLaser.EnableMiningLaser();
+                        moveObject.SetLockTargetType(ToggleCommand.LockTargetType.Asteroid); // If mining lock to asteroid
+                    }
                     else miningLaser.DisableMiningLaser();
                     break;
                 case ToggleCommand.ObjectType.Lock:
                     moveObject.SetLockTargetType(command.lockTargetType);
+                    // Enable laser when lock on
+                    if (command.lockTargetType == ToggleCommand.LockTargetType.Asteroid) miningLaser.EnableMiningLaser();
+                    if (command.lockTargetType == ToggleCommand.LockTargetType.Pirate) laserGun.StartShooting();
                     break;
                 case ToggleCommand.ObjectType.LaserGun:
-                    if (command.on) laserGun.StartShooting();
-                    else laserGun.StopShooting();
+                    if (command.on) {
+                        laserGun.StartShooting();
+                        moveObject.SetLockTargetType(ToggleCommand.LockTargetType.Pirate); // If shooting lock to pirate
+                    } else laserGun.StopShooting();
                     break;
                 case ToggleCommand.ObjectType.Hyperdrive:
                     if (command.on) spaceStation.GetHyperdrive().Activate(); // Once activated the game will finish so it cannot be deactivated
