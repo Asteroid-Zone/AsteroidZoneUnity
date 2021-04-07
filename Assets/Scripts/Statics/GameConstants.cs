@@ -1,6 +1,6 @@
 ﻿namespace Statics {
-    public class GameConstants {
-        
+    public static class GameConstants {
+
         // Grid
         public static int GridCellSize = 10;
         public static int GridWidth = 11;

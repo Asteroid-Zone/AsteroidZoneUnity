@@ -1,4 +1,5 @@
-﻿using Statics;
+﻿using System.Xml.Serialization;
+using Statics;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,6 +9,7 @@ namespace PlayGame.UI
     {
         public GameObject menuPanel;
         public GameObject tipsPanel;
+        public GameObject debugPanel;
         public Toggle debugToggle;
 
         public void Start() {
@@ -27,6 +29,14 @@ namespace PlayGame.UI
         public void HideTipsPanel()
         {
             tipsPanel.SetActive(false);
+        }
+
+        public void ShowDebugPanel() {
+            debugPanel.SetActive(true);
+        }
+        
+        public void HideDebugPanel() {
+            debugPanel.SetActive(false);
         }
 
         public void ToggleDebugMode() {
