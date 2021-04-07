@@ -246,7 +246,7 @@ namespace PlayGame.Speech {
                 // Commands influenced by quest type
                 // 0.2f so its not enough for it to be automatically done but should ask the user
                 if (dataProvided.playerQuestType == QuestType.MineAsteroids) asteroidConfidence += 0.2f;
-                if (dataProvided.playerQuestType == QuestType.DefendStation) pirateConfidence += 0.2f;
+                if (dataProvided.playerQuestType == QuestType.ReturnToStationDefend) pirateConfidence += 0.2f;
                 if (dataProvided.playerQuestType == QuestType.PirateWarning) pirateConfidence += 0.2f;
                 
                 // Less likely to try and lock onto something you're already locked onto
@@ -297,7 +297,7 @@ namespace PlayGame.Speech {
                     // Confidence adjustments for quest type
                     if (dataProvided.playerQuestType == QuestType.MineAsteroids) { // If mining quest they are more likely to turn on the mining laser
                         miningConfidence += 0.2f; // Prompt the user, not enough to perform the command
-                    } else if (dataProvided.playerQuestType == QuestType.DefendStation || dataProvided.playerQuestType == QuestType.PirateWarning) {  // If pirate quest they are more likely to turn on the combat laser
+                    } else if (dataProvided.playerQuestType == QuestType.ReturnToStationDefend || dataProvided.playerQuestType == QuestType.PirateWarning) {  // If pirate quest they are more likely to turn on the combat laser
                         // Dont want them to be under attack and not be able to shoot so we are confident enough to just turn it on
                         combatConfidence += 0.4f;
                     }
@@ -416,7 +416,7 @@ namespace PlayGame.Speech {
 
             if (completeness < 1f) {
                 float confidence = completeness;
-                if (dataProvided.playerQuestType == QuestType.ResourcesToStation) confidence += 0.3f;
+                if (dataProvided.playerQuestType == QuestType.ReturnToStationResources) confidence += 0.3f;
                 if (dataProvided.nearStation) confidence += 0.2f;
                 return new Tuple<string, float>(c, confidence);
             } else {
@@ -492,7 +492,7 @@ namespace PlayGame.Speech {
                 float pirateConfidence = completeness;
                 
                 // Confidence adjustments for quest type
-                if (dataProvided.playerQuestType == QuestType.ResourcesToStation || dataProvided.playerQuestType == QuestType.DefendStation) commands.Add(new Tuple<string, float>(c + " " + SpaceStation[0], completeness + 0.2f)); // 0.2f so it prompts the player
+                if (dataProvided.playerQuestType == QuestType.ReturnToStationResources || dataProvided.playerQuestType == QuestType.ReturnToStationDefend) commands.Add(new Tuple<string, float>(c + " " + SpaceStation[0], completeness + 0.2f)); // 0.2f so it prompts the player
                 if (dataProvided.playerQuestType == QuestType.MineAsteroids) asteroidConfidence += 0.2f; // 0.2f so it prompts the player
                 if (dataProvided.playerQuestType == QuestType.PirateWarning) pirateConfidence += 0.2f; // 0.2f so it prompts the player
                 

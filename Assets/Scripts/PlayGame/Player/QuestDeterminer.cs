@@ -35,16 +35,18 @@ namespace PlayGame.Player
             {
                 Transform nearestEnemy = _moveObject.GetNearestEnemyTransform();
                 if (_stationDamaged) {
-                    _playerData.SetQuest(QuestType.DefendStation);
+                    // If within laser range of station hint should be shoot pirates otherwise return to station
+                    if (_moveObject.DistanceToStation() > _playerData.GetLaserRange()) _playerData.SetQuest(QuestType.ReturnToStationDefend);
+                    else _playerData.SetQuest(QuestType.DefendStation);
+                    
                     yield return new WaitForSeconds(4);
                     _stationDamaged = false;
-                    // TODO: Add flag for station commander saying pirates around 
                 } else if (nearestEnemy != null && Vector3.Distance(nearestEnemy.position, transform.position) < 20) {
                     _playerData.SetQuest(QuestType.PirateWarning);
                 } else if (_playerData.GetResources() > 75) {
                     // Choose the hint depending on if player is at station or not
                     if (_moveObject.NearStation()) _playerData.SetQuest(QuestType.TransferResources);
-                    else _playerData.SetQuest(QuestType.ResourcesToStation);
+                    else _playerData.SetQuest(QuestType.ReturnToStationResources);
                 } else {
                     _playerData.SetQuest(QuestType.MineAsteroids);
                 }

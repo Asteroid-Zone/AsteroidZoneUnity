@@ -19,10 +19,11 @@ namespace PlayGame.Player
 
     public enum QuestType {
         MineAsteroids,
-        ResourcesToStation,
+        ReturnToStationResources,
+        TransferResources,
         PirateWarning,
-        DefendStation,
-        TransferResources
+        ReturnToStationDefend,
+        DefendStation
         // Escape to hyperspace, not sure because they get more points for staying longer
     }
 
@@ -37,14 +38,13 @@ namespace PlayGame.Player
         private int _health;
     
         private float _maxSpeed;
-
         private float _rotateSpeed;
 
         private int _laserSpeed;
+        private int _laserDamage;
+        private int _laserRange;
 
         private int _resources;
-
-        private int _laserDamage;
 
         private NavMeshAgent _playerAgent;
 
@@ -76,6 +76,7 @@ namespace PlayGame.Player
 
             _laserSpeed = GameConstants.PlayerLaserSpeed;
             _laserDamage = GameConstants.PlayerLaserDamage;
+            _laserRange = GameConstants.PlayerLaserRange;
             
             // The current speed of the player is will be stored in the speed of its NavMeshAgent
             _playerAgent.speed = 0;
@@ -165,6 +166,10 @@ namespace PlayGame.Player
 
         public int GetHealth() {
             return _health;
+        }
+
+        public int GetLaserRange() {
+            return _laserRange;
         }
 
         public QuestType GetQuest()

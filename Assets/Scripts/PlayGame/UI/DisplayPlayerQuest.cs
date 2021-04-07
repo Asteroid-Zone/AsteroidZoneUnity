@@ -33,13 +33,15 @@ namespace PlayGame.UI
 
         private string questToString(QuestType quest) {
             switch (quest) {
+                case QuestType.ReturnToStationDefend:
+                    return "The station is under attack! Get back and help! (try saying 'Go to space station')";
                 case QuestType.DefendStation:
-                    return "The station is under attack! Get back and help! (try saying 'Go to space station' then 'Shoot pirates')";
+                    return "The station is under attack! Get back and help! (try saying 'Shoot pirates')";
                 case QuestType.MineAsteroids:
                     return "Mine asteroids (try saying 'Mine asteroids')";
                 case QuestType.PirateWarning:
                     return "Be careful there are pirates in the area (try saying 'Shoot pirates')";
-                case QuestType.ResourcesToStation:
+                case QuestType.ReturnToStationResources:
                     return "Deliver resources to the space station (try saying 'Go to space station')";
                 case QuestType.TransferResources:
                     return "Deliver resources to the space station (try saying 'Transfer resources')";

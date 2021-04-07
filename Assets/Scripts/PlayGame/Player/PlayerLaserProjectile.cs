@@ -15,7 +15,7 @@ namespace PlayGame.Player {
         }
 
         private void Update() {
-            if (Vector3.Distance(transform.position, _startPosition) > GameConstants.PlayerLaserRange) Destroy(gameObject); // Limit the lasers range
+            if (Vector3.Distance(transform.position, _startPosition) > _shootingPlayerData.GetLaserRange()) Destroy(gameObject); // Limit the lasers range
         }
 
         private void OnCollisionEnter(Collision collision) {

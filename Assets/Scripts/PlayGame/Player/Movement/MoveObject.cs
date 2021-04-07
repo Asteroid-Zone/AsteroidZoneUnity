@@ -247,6 +247,10 @@ namespace PlayGame.Player.Movement
         {
             return _lockType;
         }
+
+        public float DistanceToStation() {
+            return Vector3.Distance(transform.position, _spaceStation.position);
+        }
         
         public bool NearStation() {
             return GridCoord.GetCoordFromVector(transform.position).Equals(GridCoord.GetCoordFromVector(_spaceStation.position));
