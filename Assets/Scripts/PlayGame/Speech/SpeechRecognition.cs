@@ -117,8 +117,8 @@ namespace PlayGame.Speech {
                 _foundCommand = true;
                 _command = command;
                 _phrase = _myResponse;
-                //if (DebugSettings.Debug) _actionController.PerformActions(command);
-                //else photonView.RPC(nameof(RPC_PerformActions), RpcTarget.AllBuffered, player.GetComponent<PhotonView>().ViewID, _myResponse);
+                if (DebugSettings.Debug) _actionController.PerformActions(command);
+                else photonView.RPC(nameof(RPC_PerformActions), RpcTarget.AllBuffered, player.GetComponent<PhotonView>().ViewID, _myResponse);
             }
         }
         
