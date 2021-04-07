@@ -36,6 +36,7 @@ namespace PlayGame.Speech {
         private static readonly List<string> TurnCommands = new List<string>(); // Initialised at startup, Needs direction/destination/grid
         private static readonly List<string> SpeedCommands = new List<string>{Strings.Stop, Strings.Go};
         private static readonly List<string> TransferCommands = new List<string>{"transfer", "deposit", "unload", "drop", "shift"}; // Needs resources
+        private static readonly List<string> MineCommands = new List<string> {"mine"};
         
         private static readonly List<string> GenericOnCommands = new List<string>{"activate", "engage", "turn on", "switch on", "start", "enable", "initiate"}; // Can be used to activate anything
         private static readonly List<string> LockCommands = new List<string>{"lock", "aim", "target", "focus"}; // Can only be used to activate a lock
@@ -48,7 +49,7 @@ namespace PlayGame.Speech {
         // Lists containing synonyms for objects
         private static readonly List<string> Pirate = new List<string>{Strings.Pirate, "enemy"};
         private static readonly List<string> Asteroid = new List<string>{Strings.Asteroid, "meteor"};
-        private static readonly List<string> MiningLaser = new List<string>{Strings.MiningLaser, "mining beam", "mining ray"};
+        private static readonly List<string> MiningLaser = new List<string>{Strings.MiningLaser, "mining beam", "mining ray", "mining"};
         private static readonly List<string> SpaceStation = new List<string>{Strings.SpaceStation, "space station", "base"};
         private static readonly List<string> Ping = new List<string>{Strings.Ping, "pin", "mark", "flag"};
         private static readonly List<string> Resources = new List<string>{Strings.Resources, "materials", "rock", "supplies"};
@@ -72,7 +73,7 @@ namespace PlayGame.Speech {
         private static readonly List<List<string>> GenericActivatableObjects = new List<List<string>>{Hyperdrive}; // Objects that are only activated using the generic on commands and don't need any extra data
         private static readonly List<List<string>> StationModules = new List<List<string>>{Hyperdrive, Hull, ShieldGenerator, Engines, SolarPanels};
         
-        private static readonly List<List<string>> SingleCommands = new List<List<string>>{SpeedCommands, ShootCommands};
+        private static readonly List<List<string>> SingleCommands = new List<List<string>>{SpeedCommands, ShootCommands, MineCommands};
         private static readonly List<List<string>> CompoundCommands = new List<List<string>>{MovementCommands, TurnCommands, Ping, TransferCommands, OffCommands, OnCommands, RepairCommands};
 
         private static readonly List<string> CommandWords;
@@ -600,6 +601,7 @@ namespace PlayGame.Speech {
                         if (phrase.Contains(command)) {
                             if (commandList == SpeedCommands) return new SpeedCommand(command);
                             if (commandList == ShootCommands) return new ToggleCommand(true, ToggleCommand.ObjectType.LaserGun); // Turn laser gun on
+                            if (commandList == MineCommands) return new ToggleCommand(true, ToggleCommand.ObjectType.MiningLaser); // Turn mining laser on
                         }
                     }
                 }

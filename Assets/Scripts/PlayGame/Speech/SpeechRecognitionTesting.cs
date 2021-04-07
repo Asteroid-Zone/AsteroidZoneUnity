@@ -1,6 +1,5 @@
 ﻿using Statics;
 using UnityEngine;
-using UnityEngine.Assertions;
 
 namespace PlayGame.Speech {
     public class SpeechRecognitionTesting : MonoBehaviour {
@@ -8,11 +7,16 @@ namespace PlayGame.Speech {
         public SpeechRecognition speechRecognition;
 
         // Used letters:
-        // Q W E R T Y U I
+        // Q W E R T Y U I O
         // A S D F G H J K L
         // Z X C V B N M
         private void Update() {
             if (!DebugSettings.DebugKeys) return;
+            
+            if (Input.GetKeyDown(KeyCode.O)) { // Move station to random location
+                speechRecognition.GetFinalResponse("mine asteroids");
+            }
+            
             if (Input.GetKeyDown(KeyCode.N)) { // Move station to random location
                 speechRecognition.MoveStation();
             }

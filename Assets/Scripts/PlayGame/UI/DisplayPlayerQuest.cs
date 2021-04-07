@@ -1,4 +1,5 @@
-﻿using Photon.GameControllers;
+﻿using System;
+using Photon.GameControllers;
 using PlayGame.Player;
 using Statics;
 using UnityEngine;
@@ -30,21 +31,21 @@ namespace PlayGame.UI
             _text.text = questStr;
         }
 
-        private string questToString(QuestType quest)
-        {
-            switch (quest)
-            {   
+        private string questToString(QuestType quest) {
+            switch (quest) {
                 case QuestType.DefendStation:
-                    return "Defend the station";
+                    return "The station is under attack! Get back and help! (try saying 'Go to space station' then 'Shoot pirates')";
                 case QuestType.MineAsteroids:
-                    return "Mine asteroids";
+                    return "Mine asteroids (try saying 'Mine asteroids')";
                 case QuestType.PirateWarning:
-                    return "Deal with pirates in the area";
+                    return "Be careful there are pirates in the area (try saying 'Shoot pirates')";
                 case QuestType.ResourcesToStation:
-                    return "Deliver resources to the space station";
+                    return "Deliver resources to the space station (try saying 'Go to space station')";
+                case QuestType.TransferResources:
+                    return "Deliver resources to the space station (try saying 'Transfer resources')";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(quest), quest, null);
             }
-
-            return "";
         }
         
     }

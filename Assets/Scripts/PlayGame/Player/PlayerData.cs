@@ -21,7 +21,8 @@ namespace PlayGame.Player
         MineAsteroids,
         ResourcesToStation,
         PirateWarning,
-        DefendStation
+        DefendStation,
+        TransferResources
         // Escape to hyperspace, not sure because they get more points for staying longer
     }
 
