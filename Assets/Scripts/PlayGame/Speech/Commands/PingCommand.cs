@@ -8,7 +8,7 @@ namespace PlayGame.Speech.Commands {
         public readonly PingType pingType;
         public readonly GridCoord gridCoord;
 
-        public PingCommand(string type, string coord) : base(CommandType.Ping, true) {
+        public PingCommand(string type, string coord) : base(CommandType.Ping, true, false) {
             pingType = GetPingTypeFromString(type);
             gridCoord = GridCoord.GetCoordFromString(coord);
         }

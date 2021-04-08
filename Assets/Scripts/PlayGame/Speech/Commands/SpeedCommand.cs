@@ -6,7 +6,7 @@ namespace PlayGame.Speech.Commands {
 
         public readonly float speed;
 
-        public SpeedCommand(string speed) : base(CommandType.Speed, false) {
+        public SpeedCommand(string speed) : base(CommandType.Speed, false, true) {
             this.speed = GetSpeedFromString(speed);
         }
 

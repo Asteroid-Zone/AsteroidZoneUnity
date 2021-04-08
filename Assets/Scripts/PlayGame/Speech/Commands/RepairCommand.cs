@@ -15,7 +15,7 @@ namespace PlayGame.Speech.Commands {
         public readonly StationModule stationModule;
         public readonly int? repairAmount;
 
-        public RepairCommand(string stationModule, int? repairAmount) : base(CommandType.Repair, true) {
+        public RepairCommand(string stationModule, int? repairAmount) : base(CommandType.Repair, true, false) {
             this.stationModule = GetStationModuleFromString(stationModule);
             this.repairAmount = repairAmount;
         }

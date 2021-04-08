@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Photon.Pun;
+using PlayGame.Player;
 using PlayGame.Speech.Commands;
 using PlayGame.Stats;
 using PlayGame.UI;
@@ -12,6 +13,8 @@ using Random = UnityEngine.Random;
 
 namespace PlayGame.SpaceStation {
     public class SpaceStation : MonoBehaviourPun {
+
+        public Transform commanderTransform;
 
         public GridManager gridManager;
         public GameManager gameManager;
@@ -31,8 +34,6 @@ namespace PlayGame.SpaceStation {
         public int resources = 0;
 
         private void Start() {
-            transform.position = gridManager.GetGridCentre();
-            
             _hyperdrive = new Hyperdrive(this);
             _shieldGenerator = new ShieldGenerator(this);
             _stationHull = new StationHull(this);
@@ -63,6 +64,7 @@ namespace PlayGame.SpaceStation {
 
         private void Update() {
             _shieldGenerator.Update();
+            transform.position = commanderTransform.position;
         }
 
         public void GameOver(bool victory) {

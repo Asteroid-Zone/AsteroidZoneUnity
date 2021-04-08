@@ -65,7 +65,7 @@ namespace PlayGame
             return globalCoord;
         }
 
-        public Vector3 GetGridCentre() {
+        public static Vector3 GetGridCentre() {
             float x = (GameConstants.GridWidth / 2f) * GameConstants.GridCellSize;
             float z = (GameConstants.GridHeight / 2f) * GameConstants.GridCellSize;
             return new Vector3(x, 0, z);

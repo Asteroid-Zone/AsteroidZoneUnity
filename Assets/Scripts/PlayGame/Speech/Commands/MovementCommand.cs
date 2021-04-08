@@ -36,7 +36,7 @@ namespace PlayGame.Speech.Commands {
         public readonly bool turnOnly;
         public readonly TurnType turn;
 
-        public MovementCommand(MovementType movementType, string data, bool turnOnly, TurnType turn, Transform player) : base(CommandType.Movement, false) {
+        public MovementCommand(MovementType movementType, string data, bool turnOnly, TurnType turn, Transform player) : base(CommandType.Movement, false, true) {
             this.player = player;
             this.turnOnly = turnOnly;
             this.turn = turn;

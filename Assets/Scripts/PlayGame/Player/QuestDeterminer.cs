@@ -13,16 +13,19 @@ namespace PlayGame.Player
         private UnityEvent _stationAttacked;
 
         // Start is called before the first frame update
-        void Start()
-        {
+        void Start() {
             _playerData = GetComponent<PlayerData>();
-            _moveObject = GetComponent<MoveObject>();
-            _stationDamaged = false;
-            // Can't find a better way of doing this
-            SpaceStation.SpaceStation spaceStation = GameObject.Find("SpaceStation").GetComponent<SpaceStation.SpaceStation>();
-            _stationAttacked = spaceStation.stationAttacked;
-            _stationAttacked.AddListener(OnStationDamaged);
-            StartCoroutine(DetermineQuest());
+            if (_playerData.GetRole() != Role.StationCommander) {
+                _moveObject = GetComponent<MoveObject>();
+                _stationDamaged = false;
+                // Can't find a better way of doing this
+                SpaceStation.SpaceStation spaceStation =
+                    GameObject.Find("SpaceStation").GetComponent<SpaceStation.SpaceStation>();
+                _stationAttacked = spaceStation.stationAttacked;
+                _stationAttacked.AddListener(OnStationDamaged);
+
+                StartCoroutine(DetermineQuestMiner());
+            } else StartCoroutine(DetermineQuestCommander());
         }
     
         public void OnStationDamaged()
@@ -30,7 +33,7 @@ namespace PlayGame.Player
             _stationDamaged = true;
         }
     
-        private IEnumerator DetermineQuest() {
+        private IEnumerator DetermineQuestMiner() {
             while (true)
             {
                 Transform nearestEnemy = _moveObject.GetNearestEnemyTransform();
@@ -51,6 +54,15 @@ namespace PlayGame.Player
                     _playerData.SetQuest(QuestType.MineAsteroids);
                 }
 
+                yield return new WaitForSeconds(0.25f);
+            }
+        }
+
+        // todo station commander quests
+        private IEnumerator DetermineQuestCommander() {
+            while (true) {
+                _playerData.SetQuest(QuestType.DefendStation);
+                
                 yield return new WaitForSeconds(0.25f);
             }
         }

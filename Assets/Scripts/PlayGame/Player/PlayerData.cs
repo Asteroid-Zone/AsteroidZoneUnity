@@ -54,7 +54,10 @@ namespace PlayGame.Player
 
         public QuestType currentQuest;
 
+        private SpaceStation.SpaceStation _spaceStation;
+
         private void Start() {
+            _spaceStation = GameObject.FindGameObjectWithTag(Tags.StationTag).GetComponent<SpaceStation.SpaceStation>();
             _playerAgent = GetComponent<NavMeshAgent>();
             DontDestroyOnLoad(gameObject);
 
@@ -99,6 +102,8 @@ namespace PlayGame.Player
         }
 
         private void SetUpStationCommander() {
+            transform.position = GridManager.GetGridCentre();
+            _spaceStation.commanderTransform = transform;
             currentQuest = QuestType.DefendStation; // todo initial quest
         }
 
@@ -116,10 +121,11 @@ namespace PlayGame.Player
         }
 
         private void Update() {
-            if (!_youDiedWrittenOnScreen &&_health <= 0)
-            {
-                EventsManager.AddMessage("YOU DIED");
-                _youDiedWrittenOnScreen = true;
+            if (_role != Role.StationCommander) {
+                if (!_youDiedWrittenOnScreen && _health <= 0) {
+                    EventsManager.AddMessage("YOU DIED");
+                    _youDiedWrittenOnScreen = true;
+                }
             }
         }
 

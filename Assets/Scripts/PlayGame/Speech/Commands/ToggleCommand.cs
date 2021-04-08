@@ -21,12 +21,12 @@ namespace PlayGame.Speech.Commands {
         public readonly ObjectType objectType;
         public readonly LockTargetType lockTargetType;
 
-        public ToggleCommand(bool on, ObjectType objectType) : base(CommandType.Toggle, objectType == ObjectType.Hyperdrive) {
+        public ToggleCommand(bool on, ObjectType objectType) : base(CommandType.Toggle, objectType == ObjectType.Hyperdrive, objectType != ObjectType.Hyperdrive) {
             this.on = on;
             this.objectType = objectType;
         }
         
-        public ToggleCommand(bool on, ObjectType objectType, string lockTargetType) : base(CommandType.Toggle, false) {
+        public ToggleCommand(bool on, ObjectType objectType, string lockTargetType) : base(CommandType.Toggle, false, true) {
             this.on = on;
             this.objectType = objectType;
             if (on) this.lockTargetType = GetLockTargetTypeFromString(lockTargetType);

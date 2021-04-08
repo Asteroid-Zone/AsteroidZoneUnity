@@ -10,6 +10,7 @@ namespace PlayGame.Player
 {
     public class LockOnLogic : MonoBehaviour
     {
+        private PlayerData _playerData;
         private MoveObject _moveObject;
         private Transform _lockTarget;
         private Image image;
@@ -18,8 +19,10 @@ namespace PlayGame.Player
         public CameraManager cameraMan;
 
         // Start is called before the first frame update
-        private void Start()
-        {
+        private void Start() {
+            _playerData = !DebugSettings.Debug ? PhotonPlayer.Instance.myAvatar.GetComponent<PlayerData>() : TestPlayer.GetPlayerShip().GetComponent<PlayerData>();
+            if (_playerData.GetRole() == Role.StationCommander) Destroy(gameObject);
+            
             _moveObject = !DebugSettings.Debug ? PhotonPlayer.Instance.myAvatar.GetComponent<MoveObject>() : TestPlayer.GetPlayerShip().GetComponent<MoveObject>();
             image = GetComponent<Image>();
             image.enabled = true;

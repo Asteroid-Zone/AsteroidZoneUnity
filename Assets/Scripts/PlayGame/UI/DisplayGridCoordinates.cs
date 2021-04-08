@@ -6,15 +6,13 @@ using UnityEngine.UI;
 
 namespace PlayGame.UI
 {
-    public class DisplayGridCoordinates : MonoBehaviour
-    {
+    public class DisplayGridCoordinates : MonoBehaviour {
         public Transform target;
         public GridManager gridManager;
         private Text _text;
         private int _cellSize;
         
-        private void Start()
-        {
+        private void Start() {
             target = !DebugSettings.Debug ? PhotonPlayer.Instance.myAvatar.transform : TestPlayer.GetPlayerShip().transform;
             _text = GetComponent<Text>();
             _cellSize = gridManager.GetCellSize();
