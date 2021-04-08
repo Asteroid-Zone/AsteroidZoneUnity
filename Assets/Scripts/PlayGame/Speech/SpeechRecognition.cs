@@ -81,11 +81,6 @@ namespace PlayGame.Speech {
         {
             if (player == null) return;
             GameObject prevPlayer = player;
-            /*
-            List<GameObject> playerList = player.GetComponent<PlayerData>().GetList();
-            foreach (GameObject p in playerList) {
-                if (p != null && viewID == p.GetComponent<PhotonView>().ViewID) player = p;
-            }*/
 
             player = PhotonView.Find(viewID).gameObject;
 
@@ -105,7 +100,6 @@ namespace PlayGame.Speech {
         
         // Called by javascript when speech is detected
         public void GetResponse(string result) {
-            //if ((!DebugSettings.Debug && !photonView.IsMine) || _foundCommand) return; // If a command has already been found for the speech return
             if (!DebugSettings.Debug && !photonView.IsMine) return;
 
             _myResponse = result.ToLower();
@@ -124,10 +118,6 @@ namespace PlayGame.Speech {
         
         // Called by javascript when the final speech is detected
         public void GetFinalResponse(string result) {
-            /*if ((!DebugSettings.Debug && !photonView.IsMine) || _foundCommand) { // If a command has already been found for the speech reset and return
-                ResetSpeechRecognition();
-                return;
-            }*/
             if (!DebugSettings.Debug && !photonView.IsMine) return;
             
             _myResponse = result.ToLower();
@@ -139,13 +129,7 @@ namespace PlayGame.Speech {
                 _foundCommand = true;
                 _command = command;
                 _phrase = _myResponse;
-                //if (DebugSettings.Debug) _actionController.PerformActions(command);
-                //else photonView.RPC(nameof(RPC_PerformActions), RpcTarget.AllBuffered, player.GetComponent<PhotonView>().ViewID, _myResponse);
-            }/* else {
-                List<Tuple<string, float, bool, string>> suggestedCommands = FindSuggestedCommands(); // Tuple(command, confidence, fromData, phrase)
-                Tuple<string, float, bool, string> suggestedCommand = FindBestSuggestedCommand(suggestedCommands);
-                DisplaySuggestedCommand(suggestedCommand);
-            }*/
+            }
 
             if (_foundCommand) {
                 if (DebugSettings.Debug) _actionController.PerformActions(_command);

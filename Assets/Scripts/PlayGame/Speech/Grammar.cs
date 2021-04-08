@@ -25,6 +25,7 @@ namespace PlayGame.Speech {
             public bool miningLaser;
             public bool combatLaser;
             public bool nearStation;
+            public Role role;
         }
         
         private const string GridCoordRegex = @"[a-z]( )?(\d+)";
@@ -123,6 +124,7 @@ namespace PlayGame.Speech {
             dataProvided.miningLaser = miningLaser;
             dataProvided.combatLaser = combatLaser;
             dataProvided.nearStation = moveObject.NearStation();
+            dataProvided.role = playerData.GetRole();
 
             return dataProvided;
         }
@@ -171,6 +173,7 @@ namespace PlayGame.Speech {
 
         private static List<Tuple<string, float>> GetPartiallyCompleteRepairCommands(string phrase, DataProvided dataProvided) {
             List<Tuple<string, float>> commands = new List<Tuple<string, float>>(); // List of (command, dataRequiredPercentage)
+            if (dataProvided.role != Role.StationCommander) return commands; // Only station commander can perform these commands
             
             float completeness = 0; // Completeness of command
             float completenessAmount = 0; // Completeness of command with repair amount
@@ -219,6 +222,7 @@ namespace PlayGame.Speech {
 
         private static List<Tuple<string, float>> GetPartiallyCompleteLockCommands(string phrase, DataProvided dataProvided) {
             List<Tuple<string, float>> commands = new List<Tuple<string, float>>();
+            if (dataProvided.role == Role.StationCommander) return commands; // Only miners can perform these commands
             float completeness = 0;
 
             string c = "";
@@ -262,6 +266,7 @@ namespace PlayGame.Speech {
         
         private static List<Tuple<string, float>> GetPartiallyCompleteLaserCommands(string phrase, DataProvided dataProvided) {
             List<Tuple<string, float>> commands = new List<Tuple<string, float>>(); // List of (command, dataRequiredPercentage)
+            if (dataProvided.role == Role.StationCommander) return commands; // Only miners can perform these commands
             float completeness = 0;
 
             string c = "";
@@ -333,13 +338,18 @@ namespace PlayGame.Speech {
             if (dataProvided.activatableObject != null) {
                 foreach (List<string> commandList in GenericActivatableObjects) {
                     if (commandList.Contains(dataProvided.activatableObject)) {
-                        commands.Add(new Tuple<string, float>(c + " " + dataProvided.activatableObject, completeness + 0.5f));
+                        if (commandList == Hyperdrive) {
+                            if (dataProvided.role == Role.StationCommander) commands.Add(new Tuple<string, float>(c + " " + dataProvided.activatableObject, Math.Max(completeness + 0.5f, 0.6f)));
+                        } else commands.Add(new Tuple<string, float>(c + " " + dataProvided.activatableObject, completeness + 0.5f));
                     }
                 }
             } else {
                 if (completeness != 0) {
                     foreach (List<string> commandList in GenericActivatableObjects) {
-                        commands.Add(new Tuple<string, float>(c + " " + commandList[0], completeness));
+                        if (commandList == Hyperdrive) {
+                            // Hyperdrive is the only thing that the station commander can activate so if they used an on command this is very likely
+                            if (completeness > 0 && dataProvided.role == Role.StationCommander) commands.Add(new Tuple<string, float>(c + " " + commandList[0], 0.7f));
+                        } else commands.Add(new Tuple<string, float>(c + " " + commandList[0], completeness));
                     }
                 }
             }
@@ -360,6 +370,7 @@ namespace PlayGame.Speech {
         // Returns an off command with the percentage of data provided
         private static List<Tuple<string, float>> GetPartiallyCompleteOffCommand(string phrase, DataProvided dataProvided) {
             List<Tuple<string, float>> commands = new List<Tuple<string, float>>();
+            if (dataProvided.role == Role.StationCommander) return commands; // Only miners can perform these commands
             float completeness = 0;
 
             string c = "";
@@ -394,6 +405,7 @@ namespace PlayGame.Speech {
         // Returns a transfer command with the percentage of data provided
         private static Tuple<string, float> GetPartiallyCompleteTransferCommand(string phrase, DataProvided dataProvided) {
             float completeness = 0;
+            if (dataProvided.role == Role.StationCommander) return new Tuple<string, float>("transfer resources", completeness); // Only miners can perform these commands
 
             string c = "";
             
@@ -427,6 +439,7 @@ namespace PlayGame.Speech {
 
         // Returns a ping command with the percentage of data provided
         private static Tuple<string, float> GetPartiallyCompletePingCommand(string phrase, DataProvided dataProvided) {
+            if (dataProvided.role != Role.StationCommander) return new Tuple<string, float>("ping", 0); // Only station commanders can perform these commands
             float completeness = 0;
             float third = 1f / 3;
 
