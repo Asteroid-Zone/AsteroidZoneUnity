@@ -32,7 +32,7 @@ namespace EndGame {
 
             if (!DebugSettings.Debug) {
                 foreach (GameObject player in PlayerData.Players) {
-                    if (player.GetPhotonView().IsMine) {
+                    if (player != null && player.GetPhotonView().IsMine) {
                         _playerStats = StatsManager.GetPlayerStats(player.GetPhotonView().ViewID);
                         Destroy(player);
                     }
