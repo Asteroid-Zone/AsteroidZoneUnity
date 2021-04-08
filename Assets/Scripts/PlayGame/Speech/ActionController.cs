@@ -136,8 +136,10 @@ namespace PlayGame.Speech {
                     if (command.on) {
                         miningLaser.EnableMiningLaser();
                         moveObject.SetLockTargetType(ToggleCommand.LockTargetType.Asteroid); // If mining lock to asteroid
+                    } else {
+                        miningLaser.DisableMiningLaser();
+                        moveObject.SetLockTargetType(ToggleCommand.LockTargetType.None); // If stopping mining disable lock
                     }
-                    else miningLaser.DisableMiningLaser();
                     break;
                 case ToggleCommand.ObjectType.Lock:
                     moveObject.SetLockTargetType(command.lockTargetType);
@@ -149,7 +151,10 @@ namespace PlayGame.Speech {
                     if (command.on) {
                         laserGun.StartShooting();
                         moveObject.SetLockTargetType(ToggleCommand.LockTargetType.Pirate); // If shooting lock to pirate
-                    } else laserGun.StopShooting();
+                    } else {
+                        laserGun.StopShooting();
+                        moveObject.SetLockTargetType(ToggleCommand.LockTargetType.None); // If stopping shooting disable lock
+                    }
                     break;
                 case ToggleCommand.ObjectType.Hyperdrive:
                     if (command.on) spaceStation.GetHyperdrive().Activate(); // Once activated the game will finish so it cannot be deactivated
@@ -169,7 +174,10 @@ namespace PlayGame.Speech {
 
         private void PerformSpeedCommand(SpeedCommand command) {
             moveObject.SetSpeed(command.speed);
-            if (command.speed == 0) moveObject.StopRotating();
+            if (command.speed == 0) {
+                moveObject.SetLockTargetType(ToggleCommand.LockTargetType.None);
+                moveObject.StopRotating();
+            }
         }
     }
 }

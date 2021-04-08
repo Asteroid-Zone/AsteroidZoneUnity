@@ -57,14 +57,21 @@ namespace PlayGame.Player.Movement
             if (GameManager.gameOver) return;
             // Get the speed of the player's ship
             float speed = _playerData.GetSpeed();
-            
-            // Check if destination has been reached and if not provide it to AI
-            if (!HasReachedDestination()) 
-            {
-                _playerAgent.SetDestination(_destination);
+
+            // If locked on automatically move so player is in range
+            if (_lockType != ToggleCommand.LockTargetType.None && _lockTarget != null) {
+                float lockRange = 0;
+                if (_lockType == ToggleCommand.LockTargetType.Asteroid) lockRange = GameConstants.PlayerMiningRange;
+                if (_lockType == ToggleCommand.LockTargetType.Pirate) lockRange = _playerData.GetLaserRange();
+                // If player not in range move forward
+                if (Vector3.Distance(transform.position, _lockTarget.position) > lockRange) SetSpeed(1);
+                else SetSpeed(0);
             }
-            else if (speed > 0)
-            {
+
+            // Check if destination has been reached and if not provide it to AI
+            if (!HasReachedDestination()) {
+                _playerAgent.SetDestination(_destination);
+            } else if (speed > 0) {
                 // The speed is not 0, so the ship should be moving
                 transform.Translate((Time.deltaTime * speed) * _direction, Space.World);
             }
