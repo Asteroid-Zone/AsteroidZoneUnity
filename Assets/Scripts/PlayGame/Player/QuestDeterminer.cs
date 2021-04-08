@@ -1,5 +1,7 @@
 ﻿using System.Collections;
+using System.Runtime.CompilerServices;
 using PlayGame.Player.Movement;
+using Statics;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -9,12 +11,15 @@ namespace PlayGame.Player
 
         private PlayerData _playerData;
         private MoveObject _moveObject;
+        private SpaceStation.SpaceStation _spaceStation;
         private bool _stationDamaged;
         private UnityEvent _stationAttacked;
 
         // Start is called before the first frame update
         void Start() {
             _playerData = GetComponent<PlayerData>();
+            _spaceStation = GameObject.FindGameObjectWithTag(Tags.StationTag).GetComponent<SpaceStation.SpaceStation>();
+            
             if (_playerData.GetRole() != Role.StationCommander) {
                 _moveObject = GetComponent<MoveObject>();
                 _stationDamaged = false;
@@ -58,11 +63,12 @@ namespace PlayGame.Player
             }
         }
 
-        // todo station commander quests
         private IEnumerator DetermineQuestCommander() {
             while (true) {
-                _playerData.SetQuest(QuestType.DefendStation);
-                
+                if (_spaceStation.GetHyperdrive().IsFunctional()) _playerData.SetQuest(QuestType.ActivateHyperdrive);
+                else if (_spaceStation.resources > 0) _playerData.SetQuest(QuestType.RepairStation);
+                else _playerData.SetQuest(QuestType.HelpPlayers);
+
                 yield return new WaitForSeconds(0.25f);
             }
         }

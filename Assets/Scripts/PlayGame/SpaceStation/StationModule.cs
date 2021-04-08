@@ -52,7 +52,7 @@ namespace PlayGame.SpaceStation {
             return Math.Min(Math.Min(maxHealth - moduleHealth, spaceStation.resources), resources);
         }
 
-        protected bool IsFunctional() {
+        public bool IsFunctional() {
             return moduleHealth >= maxHealth;
         }
 

@@ -21,7 +21,6 @@ namespace PlayGame.UI
             player = !DebugSettings.Debug ? PhotonPlayer.Instance.myAvatar : TestPlayer.GetPlayerShip();
             _text = GetComponent<Text>();
             _playerData = player.GetComponent<PlayerData>();
-
         }
 
         private void Update()
@@ -45,6 +44,12 @@ namespace PlayGame.UI
                     return "Deliver resources to the space station (try saying 'Go to space station')";
                 case QuestType.TransferResources:
                     return "Deliver resources to the space station (try saying 'Transfer resources')";
+                case QuestType.HelpPlayers:
+                    return "Give information to your miners. You can see more than they can. (Make sure you're in chat mode)";
+                case QuestType.RepairStation:
+                    return "Use the resources to repair the station (try saying 'repair [module name]') You can see which modules are damaged in the top left of your screen.";
+                case QuestType.ActivateHyperdrive:
+                    return "Activate the hyperdrive and escape! (try saying 'activate hyperdrive')";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(quest), quest, null);
             }

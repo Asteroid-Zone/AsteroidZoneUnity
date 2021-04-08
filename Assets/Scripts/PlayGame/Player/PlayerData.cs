@@ -17,14 +17,16 @@ namespace PlayGame.Player
         Miner,
     }
 
-    // todo station commander quests
     public enum QuestType {
         MineAsteroids,
         ReturnToStationResources,
         TransferResources,
         PirateWarning,
         ReturnToStationDefend,
-        DefendStation
+        DefendStation,
+        HelpPlayers,
+        RepairStation,
+        ActivateHyperdrive
     }
 
     public class PlayerData : MonoBehaviourPun {
@@ -102,7 +104,7 @@ namespace PlayGame.Player
         private void SetUpStationCommander() {
             transform.position = GridManager.GetGridCentre();
             gameObject.transform.position = _spaceStation.position;
-            currentQuest = QuestType.DefendStation; // todo initial quest
+            currentQuest = QuestType.HelpPlayers;
         }
 
         [PunRPC]
