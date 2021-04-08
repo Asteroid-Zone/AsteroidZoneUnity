@@ -11,7 +11,7 @@ namespace PlayGame.Player {
         private PlayerData _playerData;
         private AudioSource _laserSfx;
         
-        private int _lastFrameFired;
+        private float _timeSinceLastFired = 0;
 
         private bool _shooting;
 
@@ -31,7 +31,8 @@ namespace PlayGame.Player {
         }
 
         private void Update() {
-            if (_shooting && Time.frameCount - _lastFrameFired > GameConstants.PlayerShotDelay) Shoot(); // Only fire every x frames
+            _timeSinceLastFired += (Time.deltaTime * 1000);
+            if (_shooting && _timeSinceLastFired > GameConstants.PlayerShotDelay) Shoot(); // Only fire every x ms
         }
 
         private void Shoot() {
@@ -39,7 +40,7 @@ namespace PlayGame.Player {
             laser.GetComponent<PlayerLaserProjectile>().SetShootingPlayerData(_playerData); // Provide a reference to the player who shot the laser to the projectile
             laser.transform.Rotate(new Vector3(90, 0, 0)); // Rotate the laser so its not facing up
             laser.GetComponent<Rigidbody>().AddForce(transform.forward * _playerData.GetLaserSpeed());
-            _lastFrameFired = Time.frameCount;
+            _timeSinceLastFired = 0;
             _laserSfx.Play();
         }
 

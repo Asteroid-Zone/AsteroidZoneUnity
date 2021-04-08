@@ -20,7 +20,7 @@
         public static int PirateScoutLaserRange = 10;
         public static int PirateScoutLaserDamageRange = 5;
         public static int PirateScoutLaserDamage = 10;
-        public static int PirateScoutShotDelay = 100;
+        public static int PirateScoutShotDelay = 1000;
         
         // Pirate Elite
         public static float PirateEliteMaxHealth = 100;
@@ -30,7 +30,7 @@
         public static int PirateEliteLaserRange = 15;
         public static int PirateEliteLaserDamageRange = 5;
         public static int PirateEliteLaserDamage = 15;
-        public static int PirateEliteShotDelay = 100;
+        public static int PirateEliteShotDelay = 1000;
         
         // Pirate Spawning
         // Every X seconds, there is a chance for an pirate to spawn on a random grid coordinate 
@@ -54,7 +54,7 @@
         public static int PlayerMiningDelay = 20; // Number of frames to wait between mining
         
         // Combat Laser
-        public static int PlayerShotDelay = 50; // Number of frames to wait between shooting
+        public static int PlayerShotDelay = 1000; // Number of ms to wait between shooting
         public static int PlayerLaserSpeed = 1000;
         public static int PlayerLaserDamage = 20;
         public static int PlayerLaserDamageRange = 10; // Makes the amount of damage the laser does vary a bit

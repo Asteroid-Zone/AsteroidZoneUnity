@@ -6,7 +6,7 @@ namespace PlayGame.Pirates {
         public GameObject laserPrefab;
         private PirateData _pirateData;
 
-        private int _lastFrameFired;
+        private float _timeSinceLastFired = 0;
 
         private bool _shooting;
 
@@ -15,7 +15,8 @@ namespace PlayGame.Pirates {
         }
 
         private void Update() {
-            if (_shooting && Time.frameCount - _lastFrameFired > _pirateData.GetShotDelay()) Shoot(); // Only fire every x frames
+            _timeSinceLastFired += (Time.deltaTime * 1000);
+            if (_shooting && _timeSinceLastFired > _pirateData.GetShotDelay()) Shoot(); // Only fire every x frames
         }
 
         private void Shoot() {
@@ -24,7 +25,7 @@ namespace PlayGame.Pirates {
             laser.GetComponent<PirateLaserProjectile>().SetShootingPirateData(_pirateData); // Provide a reference to the pirate who shot the laser to the projectile
             laser.transform.Rotate(new Vector3(90, 0, 0)); // Rotate the laser so its not facing up
             laser.GetComponent<Rigidbody>().AddForce(transform.forward * _pirateData.GetLaserSpeed());
-            _lastFrameFired = Time.frameCount;
+            _timeSinceLastFired = 0;
         }
 
         public void StartShooting() {
