@@ -64,8 +64,10 @@ namespace PlayGame.Player.Movement
                 if (_lockType == ToggleCommand.LockTargetType.Asteroid) lockRange = GameConstants.PlayerMiningRange;
                 if (_lockType == ToggleCommand.LockTargetType.Pirate) lockRange = _playerData.GetLaserRange();
                 // If player not in range move forward
-                if (Vector3.Distance(transform.position, _lockTarget.position) > lockRange) SetSpeed(1);
-                else SetSpeed(0);
+                if (Vector3.Distance(transform.position, _lockTarget.position) > lockRange) {
+                    SetDirection(transform.forward, false);
+                    SetSpeed(1);
+                } else SetSpeed(0);
             }
 
             // Check if destination has been reached and if not provide it to AI
