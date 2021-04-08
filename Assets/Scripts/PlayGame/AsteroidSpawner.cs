@@ -4,10 +4,8 @@ using Statics;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace PlayGame
-{
-    public class AsteroidSpawner : MonoBehaviour
-    {
+namespace PlayGame {
+    public class AsteroidSpawner : MonoBehaviourPun {
         #region Singleton
         private static AsteroidSpawner _instance;
 
@@ -84,7 +82,14 @@ namespace PlayGame
             GameObject newAsteroid;
             if (!DebugSettings.Debug) newAsteroid = PhotonNetwork.InstantiateRoomObject(Prefabs.Asteroid, randomGlobalCoord, Quaternion.identity);
             else newAsteroid = Instantiate(asteroid, randomGlobalCoord, Quaternion.identity);
-            newAsteroid.transform.parent = gameObject.transform;
+
+            if (DebugSettings.Debug) newAsteroid.transform.parent = gameObject.transform;
+            else this.photonView.RPC(nameof(SetParent), RpcTarget.AllBuffered, newAsteroid.GetPhotonView().ViewID);
+        }
+
+        [PunRPC]
+        public void SetParent(int photonViewID) {
+            PhotonView.Find(photonViewID).transform.parent = gameObject.transform;
         }
     }
 }
