@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Statics;
+using UnityEngine;
 
 namespace PlayGame.Camera
 {
@@ -12,6 +13,7 @@ namespace PlayGame.Camera
         private bool _cockpitMode;
 
         private void Update() {
+            if (!DebugSettings.DebugKeys) return;
             if (!Input.GetKeyDown(KeyCode.P)) return;
             SetMode(!_cockpitMode); // Switch mode
         }
