@@ -58,7 +58,14 @@ namespace EndGame {
         public void BackToMenu() {
             buttonPress.Play();
             PhotonNetwork.LeaveRoom();
+            CleanUpGameObjects();
             SceneManager.LoadScene(Scenes.MainMenuScene);
+        }
+
+        private void CleanUpGameObjects() {
+            foreach (GameObject g in FindObjectsOfType<GameObject>()) {
+                Destroy(g);
+            }
         }
     }
 }

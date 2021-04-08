@@ -45,7 +45,7 @@ namespace PlayGame.UI
                 case QuestType.TransferResources:
                     return "Deliver resources to the space station (try saying 'Transfer resources')";
                 case QuestType.HelpPlayers:
-                    return "Give information to your miners. You can see more than they can. (Make sure you're in chat mode)";
+                    return "Give information to your miners. Warn them about nearby pirates or advise them on where to mine. You can see more than they can. (Make sure you're in chat mode)";
                 case QuestType.RepairStation:
                     return "Use the resources to repair the station (try saying 'repair [module name]') You can see which modules are damaged in the top left of your screen.";
                 case QuestType.ActivateHyperdrive:
