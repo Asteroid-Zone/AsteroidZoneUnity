@@ -176,11 +176,13 @@ namespace PlayGame.Pirates {
             float closestPlayerDist = float.MaxValue;
             PlayerData.Players.ForEach(p => {
                 if (p != null) {
-                    Vector3 position = p.transform.position;
-                    float distance = Vector3.Distance(transform.position, position);
-                    if (distance < closestPlayerDist) {
-                        closestPlayer = p;
-                        closestPlayerDist = distance;
+                    if (p.GetComponent<PlayerData>().GetRole() != Role.StationCommander) {
+                        Vector3 position = p.transform.position;
+                        float distance = Vector3.Distance(transform.position, position);
+                        if (distance < closestPlayerDist) {
+                            closestPlayer = p;
+                            closestPlayerDist = distance;
+                        }
                     }
                 }
             });

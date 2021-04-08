@@ -32,7 +32,7 @@ namespace PlayGame.Player
 
         private bool _youDiedWrittenOnScreen; // TODO remove this and make something else when player dies
 
-        private Role _role;
+        public Role role;
 
         private int _maxHealth;
         private int _health;
@@ -54,10 +54,10 @@ namespace PlayGame.Player
 
         public QuestType currentQuest;
 
-        private SpaceStation.SpaceStation _spaceStation;
-
+        private Transform _spaceStation;
+        
         private void Start() {
-            _spaceStation = GameObject.FindGameObjectWithTag(Tags.StationTag).GetComponent<SpaceStation.SpaceStation>();
+            _spaceStation = GameObject.FindGameObjectWithTag(Tags.StationTag).transform;
             _playerAgent = GetComponent<NavMeshAgent>();
             DontDestroyOnLoad(gameObject);
 
@@ -69,22 +69,28 @@ namespace PlayGame.Player
             // Initialise the players list
             Players = new List<GameObject>();
             Players.AddRange(GameObject.FindGameObjectsWithTag(Tags.PlayerTag));
+            Players.Add(GameObject.FindGameObjectWithTag(Tags.StationCommanderTag));
             if (!DebugSettings.Debug) this.photonView.RPC(nameof(RPC_UpdatePlayerLists), RpcTarget.Others);
 
+            /*
             // Master client is station commander
             if (!DebugSettings.Debug && !PhotonNetwork.IsMasterClient && !DebugSettings.SinglePlayer) {
-                _role = Role.Miner;
-            } else _role = Role.StationCommander;
+                role = Role.Miner;
+            } else role = Role.StationCommander;*/
             
             // Set camera to cockpit for miners and tactical for station commander, if single player play in cockpit mode
-            bool cockpitMode = _role == Role.Miner || DebugSettings.SinglePlayer;
-            GameObject.FindGameObjectWithTag(Tags.CameraManager).GetComponent<CameraManager>().SetMode(cockpitMode);
+            if (photonView.IsMine) {
+                bool cockpitMode = role == Role.Miner || DebugSettings.SinglePlayer;
+                GameObject.FindGameObjectWithTag(Tags.CameraManagerTag).GetComponent<CameraManager>()
+                    .SetMode(cockpitMode);
+            }
 
-            if (_role == Role.StationCommander && !DebugSettings.SinglePlayer) SetUpStationCommander();
+            if (role == Role.StationCommander && !DebugSettings.SinglePlayer) SetUpStationCommander();
             else SetUpMiner();
         }
 
         private void SetUpMiner() {
+            Debug.Log("Setup Miner");
             _maxHealth = GameConstants.PlayerMaxHealth;
             _maxSpeed = GameConstants.PlayerMaxSpeed;
             _rotateSpeed = GameConstants.PlayerRotateSpeed;
@@ -102,8 +108,9 @@ namespace PlayGame.Player
         }
 
         private void SetUpStationCommander() {
+            Debug.Log("Setup Commander");
             transform.position = GridManager.GetGridCentre();
-            _spaceStation.commanderTransform = transform;
+            gameObject.transform.position = _spaceStation.position;
             currentQuest = QuestType.DefendStation; // todo initial quest
         }
 
@@ -112,20 +119,24 @@ namespace PlayGame.Player
         {
             Players.Clear();
             Players.AddRange(GameObject.FindGameObjectsWithTag(Tags.PlayerTag));
+            Players.Add(GameObject.FindGameObjectWithTag(Tags.StationCommanderTag));
         }
 
         public static void UpdatePlayerLists()
         {
             Players.Clear();
             Players.AddRange(GameObject.FindGameObjectsWithTag(Tags.PlayerTag));
+            Players.Add(GameObject.FindGameObjectWithTag(Tags.StationCommanderTag));
         }
 
         private void Update() {
-            if (_role != Role.StationCommander) {
+            if (role != Role.StationCommander) {
                 if (!_youDiedWrittenOnScreen && _health <= 0) {
                     EventsManager.AddMessage("YOU DIED");
                     _youDiedWrittenOnScreen = true;
                 }
+            } else {
+                gameObject.transform.position = _spaceStation.position;
             }
         }
 
@@ -154,7 +165,7 @@ namespace PlayGame.Player
         }
 
         public Role GetRole() {
-            return _role;
+            return role;
         }
     
         public float GetMaxSpeed() {

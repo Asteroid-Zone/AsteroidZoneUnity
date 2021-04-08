@@ -13,6 +13,7 @@ TagManager:
   - CombatLaserSFX
   - CombatLaser
   - CameraManager
+  - StationCommander
   layers:
   - Default
   - TransparentFX

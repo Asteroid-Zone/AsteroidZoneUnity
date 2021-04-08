@@ -14,8 +14,6 @@ using Random = UnityEngine.Random;
 namespace PlayGame.SpaceStation {
     public class SpaceStation : MonoBehaviourPun {
 
-        public Transform commanderTransform;
-
         public GridManager gridManager;
         public GameManager gameManager;
         public UnityEvent stationAttacked;
@@ -34,6 +32,8 @@ namespace PlayGame.SpaceStation {
         public int resources = 0;
 
         private void Start() {
+            transform.position = GridManager.GetGridCentre();
+            
             _hyperdrive = new Hyperdrive(this);
             _shieldGenerator = new ShieldGenerator(this);
             _stationHull = new StationHull(this);
@@ -64,7 +64,6 @@ namespace PlayGame.SpaceStation {
 
         private void Update() {
             _shieldGenerator.Update();
-            transform.position = commanderTransform.position;
         }
 
         public void GameOver(bool victory) {

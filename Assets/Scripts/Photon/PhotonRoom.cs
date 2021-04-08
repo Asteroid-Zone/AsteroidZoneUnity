@@ -119,12 +119,12 @@ namespace Photon
             PhotonNetwork.Instantiate("PhotonNetworkPlayer", new Vector3(5f,0f,10f) , Quaternion.identity);
         }
 
-        public void ClearList()
-        {
-          for (int i = playerPanel.childCount - 1; i >=0; i--)
-          {
-            Destroy(playerPanel.GetChild(i).gameObject);
-          }
+        public void ClearList() {
+            if (playerPanel == null) return;
+            
+            for (int i = playerPanel.childCount - 1; i >=0; i--) {
+                Destroy(playerPanel.GetChild(i).gameObject);
+            }
         }
 
         public void ListLobby()
