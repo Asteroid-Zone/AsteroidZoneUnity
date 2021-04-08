@@ -47,6 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef4c257420341c740a973ba8928fd0cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  role: 0
   currentQuest: 0
 --- !u!114 &1092679028797384607
 MonoBehaviour:

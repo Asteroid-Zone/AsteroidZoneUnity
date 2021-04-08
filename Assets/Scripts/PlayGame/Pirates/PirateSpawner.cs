@@ -28,7 +28,6 @@ namespace PlayGame.Pirates {
         public GameObject gridManager;
         public GameObject scout;
         public GameObject elite;
-        public GameObject spaceStation;
         
         private GridManager _gridManager;
         // Will be used as the size of the checked space when spawning (checked space should be empty)
@@ -102,6 +101,7 @@ namespace PlayGame.Pirates {
             GameObject newPirate;
             if (!DebugSettings.Debug) newPirate = PhotonNetwork.InstantiateRoomObject(prefab, randomGlobalCoord, Quaternion.identity);
             else newPirate = Instantiate(pirate, randomGlobalCoord, Quaternion.identity);
+            
             if (!DebugSettings.Debug) this.photonView.RPC(nameof(RPC_SetPirateParam), RpcTarget.AllBuffered, newPirate.GetComponent<PhotonView>().ViewID);
             else {
                 newPirate.transform.parent = gameObject.transform;

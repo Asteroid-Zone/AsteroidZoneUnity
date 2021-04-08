@@ -72,17 +72,10 @@ namespace PlayGame.Player
             Players.Add(GameObject.FindGameObjectWithTag(Tags.StationCommanderTag));
             if (!DebugSettings.Debug) this.photonView.RPC(nameof(RPC_UpdatePlayerLists), RpcTarget.Others);
 
-            /*
-            // Master client is station commander
-            if (!DebugSettings.Debug && !PhotonNetwork.IsMasterClient && !DebugSettings.SinglePlayer) {
-                role = Role.Miner;
-            } else role = Role.StationCommander;*/
-            
             // Set camera to cockpit for miners and tactical for station commander, if single player play in cockpit mode
             if (photonView.IsMine) {
                 bool cockpitMode = role == Role.Miner || DebugSettings.SinglePlayer;
-                GameObject.FindGameObjectWithTag(Tags.CameraManagerTag).GetComponent<CameraManager>()
-                    .SetMode(cockpitMode);
+                GameObject.FindGameObjectWithTag(Tags.CameraManagerTag).GetComponent<CameraManager>().SetMode(cockpitMode);
             }
 
             if (role == Role.StationCommander && !DebugSettings.SinglePlayer) SetUpStationCommander();
@@ -90,7 +83,6 @@ namespace PlayGame.Player
         }
 
         private void SetUpMiner() {
-            Debug.Log("Setup Miner");
             _maxHealth = GameConstants.PlayerMaxHealth;
             _maxSpeed = GameConstants.PlayerMaxSpeed;
             _rotateSpeed = GameConstants.PlayerRotateSpeed;
@@ -108,7 +100,6 @@ namespace PlayGame.Player
         }
 
         private void SetUpStationCommander() {
-            Debug.Log("Setup Commander");
             transform.position = GridManager.GetGridCentre();
             gameObject.transform.position = _spaceStation.position;
             currentQuest = QuestType.DefendStation; // todo initial quest

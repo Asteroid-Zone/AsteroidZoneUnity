@@ -14,8 +14,6 @@ using Random = UnityEngine.Random;
 namespace PlayGame.SpaceStation {
     public class SpaceStation : MonoBehaviourPun {
 
-        public GridManager gridManager;
-        public GameManager gameManager;
         public UnityEvent stationAttacked;
         
         private bool _complete = false;

@@ -508,7 +508,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca1b2c2cc861bce44b3d5226e7b3407d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spaceStation: {fileID: 0}
   pirateSpawner: {fileID: 0}
 --- !u!114 &4042055750342500726
 MonoBehaviour:
