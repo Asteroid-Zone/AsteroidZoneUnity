@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 
 namespace PlayGame.Pirates {
     public class PirateController : MonoBehaviour {
-        public SpaceStation.SpaceStation spaceStation;
+        private Transform _spaceStation;
         public PirateSpawner pirateSpawner;
         
         private int _lastFrameWentRandom;
@@ -31,6 +31,7 @@ namespace PlayGame.Pirates {
         private PirateData _pirateData;
 
         private void Start() {
+            _spaceStation = GameObject.FindGameObjectWithTag(Tags.StationTag).transform;
             _agent = GetComponent<NavMeshAgent>();
             _laserGun = GetComponent<PirateLaserGun>();
             _pirateData = GetComponent<PirateData>();
@@ -56,9 +57,9 @@ namespace PlayGame.Pirates {
             }
             
             // If pirate can see the station
-            if (Vector3.Distance(transform.position, spaceStation.transform.position) < lookRadius) {
+            if (Vector3.Distance(transform.position, _spaceStation.position) < lookRadius) {
                 // Alert the pirates if pirates aren't already alert or if the station is a certain distance from the known location
-                if (!_alert || Vector3.Distance(spaceStation.transform.position, _destination) > NewAlertDistance) AlertPirates(spaceStation.transform.position);
+                if (!_alert || Vector3.Distance(_spaceStation.position, _destination) > NewAlertDistance) AlertPirates(_spaceStation.position);
             }
             
             // If pirate is at the search area check if station is there
@@ -66,12 +67,12 @@ namespace PlayGame.Pirates {
                 SearchGridSquare();
             }
             
-            if (_alert && Vector3.Distance(transform.position, spaceStation.transform.position) < _pirateData.GetLaserRange()) ShootStation();
+            if (_alert && Vector3.Distance(transform.position, _spaceStation.position) < _pirateData.GetLaserRange()) ShootStation();
             if (!_alert && _pirateData.pirateType != PirateData.PirateType.Scout && Vector3.Distance(transform.position, _destination) < DespawnDistance) _pirateData.Leave();
         }
 
         private void ShootStation() {
-            FaceTarget(spaceStation.transform);
+            FaceTarget(_spaceStation);
             _laserGun.StartShooting();
         }
 
@@ -140,8 +141,8 @@ namespace PlayGame.Pirates {
         }
 
         private void SearchGridSquare() {
-            if (GridCoord.GetCoordFromVector(spaceStation.transform.position).Equals(GridCoord.GetCoordFromVector(_destination))) { // If found station
-                if (!_alert) AlertPirates(spaceStation.transform.position);
+            if (GridCoord.GetCoordFromVector(_spaceStation.position).Equals(GridCoord.GetCoordFromVector(_destination))) { // If found station
+                if (!_alert) AlertPirates(_spaceStation.position);
             } else {
                 // If station not found tell the other pirates and search somewhere else
                 if (_alert) UnalertPirates();
