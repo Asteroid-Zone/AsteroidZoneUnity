@@ -45,10 +45,14 @@ namespace PlayGame {
             Quaternion rotation = Random.rotation;
             int totalResources = Random.Range(GameConstants.AsteroidMinResources, GameConstants.AsteroidMaxResources);
 
-            if (!DebugSettings.Debug && PhotonNetwork.IsMasterClient)
+            if (!DebugSettings.Debug) {
+                if (!PhotonNetwork.IsMasterClient) return;
                 gameObject.GetPhotonView().RPC(nameof(RPC_SyncAsteroid), RpcTarget.AllBuffered, asteroidMeshIndex, rotation, totalResources);
-            else
+                CreateNavMeshObstacle();
+            } else {
                 SetAsteroidProperties(asteroidMeshIndex, rotation, totalResources);
+                CreateNavMeshObstacle();
+            }
         }
         
         [PunRPC]
@@ -56,12 +60,10 @@ namespace PlayGame {
             SetAsteroidProperties(asteroidMeshIndex, rotation, resources);
         }
 
-        private void SetAsteroidProperties(int asteroidMeshIndex, Quaternion rotation, int resources)
-        {
+        private void SetAsteroidProperties(int asteroidMeshIndex, Quaternion rotation, int resources) {
             GetComponent<MeshCollider>().sharedMesh = GetComponent<MeshFilter>().mesh = AsteroidMeshes[asteroidMeshIndex].mesh;
             _modelScale = AsteroidMeshes[asteroidMeshIndex].scale;
             transform.rotation = rotation;
-            CreateNavMeshObstacle();
 
             _totalResources = resources;
             _resourcesRemaining = _totalResources;
@@ -69,8 +71,7 @@ namespace PlayGame {
             transform.localScale = _initialScale * _modelScale;
         }
 
-        private void CreateNavMeshObstacle()
-        {
+        private void CreateNavMeshObstacle() {
             NavMeshObstacle navMeshObstacle = gameObject.AddComponent<NavMeshObstacle>();
             navMeshObstacle.radius = 0.6f;
             navMeshObstacle.shape = NavMeshObstacleShape.Capsule;
