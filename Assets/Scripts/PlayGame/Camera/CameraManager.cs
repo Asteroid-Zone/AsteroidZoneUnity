@@ -1,4 +1,5 @@
-﻿using Statics;
+﻿using PlayGame.Player;
+using Statics;
 using UnityEngine;
 
 namespace PlayGame.Camera
@@ -12,10 +13,17 @@ namespace PlayGame.Camera
 
         private bool _cockpitMode;
 
+        private void Start()
+        {
+            // Set an initial mode depending of the role of the player
+            SetMode(PlayerData.GetMyPlayerData().role != Role.StationCommander);
+        }
+
         private void Update() {
-            if (!DebugSettings.DebugKeys) return;
-            if (!Input.GetKeyDown(KeyCode.P)) return;
-            SetMode(!_cockpitMode); // Switch mode
+            if (DebugSettings.DebugKeys && Input.GetKeyDown(KeyCode.P))
+            {
+                SetMode(!_cockpitMode); 
+            }
         }
 
         public void SetMode(bool cockpit) {

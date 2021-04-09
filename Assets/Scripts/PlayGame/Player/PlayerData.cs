@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Photon.GameControllers;
 using Photon.Pun;
 using PlayGame.Camera;
-using PlayGame.Player.Movement;
-using PlayGame.Speech.Commands;
 using PlayGame.Stats;
 using PlayGame.UI;
 using Statics;
@@ -14,7 +14,7 @@ namespace PlayGame.Player
 {
     public enum Role {
         StationCommander,
-        Miner,
+        Miner
     }
 
     public enum QuestType {
@@ -225,6 +225,14 @@ namespace PlayGame.Player
         public void SetLockTarget(Transform lockTarget)
         {
             _lockTarget = lockTarget;
+        }
+
+        public static PlayerData GetMyPlayerData()
+        {
+            // Gets the PlayerData object of the current (mine) player
+            return DebugSettings.Debug
+                ? Players[0].GetComponent<PlayerData>()
+                : PhotonPlayer.Instance.myAvatar.GetComponent<PlayerData>();
         }
 
     }
