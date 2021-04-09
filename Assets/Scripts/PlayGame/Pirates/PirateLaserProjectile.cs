@@ -19,7 +19,7 @@ namespace PlayGame.Pirates {
             if (Vector3.Distance(transform.position, _startPosition) > _shootingPirateData.GetLaserRange()) Destroy(gameObject); // Limit the lasers range
         }
 
-        private void OnCollisionEnter(Collision collision) {
+        private void OnTriggerEnter(Collider collision) {
             try
             {
                 // todo play animation (explosion)
