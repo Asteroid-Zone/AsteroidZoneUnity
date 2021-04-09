@@ -1,4 +1,4 @@
-﻿using Photon.Pun;
+using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
@@ -34,6 +34,7 @@ namespace Photon
 
         public Transform roomPanel;
         public Transform playerPanel;
+        public List<RoomInfo> globalRoomList;
 
         /// This client's version number. Users are separated from each other by gameVersion.
         private const string GameVersion = "1";
@@ -126,10 +127,16 @@ namespace Photon
 
         public override void OnRoomListUpdate(List<RoomInfo> roomList)
         {
-          ClearList();
           foreach(RoomInfo room in roomList)
           {
-            ListRoom(room);
+            if(!room.RemovedFromList)
+            {
+              ListRoom(room);
+            }
+            else
+            {
+              ClearRoom(room);
+            }
           }
         }
 
@@ -138,6 +145,17 @@ namespace Photon
           for (int i = roomPanel.childCount - 1; i >=0; i--)
           {
             Destroy(roomPanel.GetChild(i).gameObject);
+          }
+        }
+
+        public void ClearRoom(RoomInfo room)
+        {
+          for (int i = roomPanel.childCount - 1; i >= 0; i--)
+          {
+            if(roomPanel.GetChild(i).gameObject.GetComponent<RoomButton>().roomName == room.Name)
+            {
+              Destroy(roomPanel.GetChild(i).gameObject);
+            }
           }
         }
 
@@ -160,6 +178,7 @@ namespace Photon
 
         public void JoinLobby()
         {
+          ClearList();
           PhotonNetwork.JoinLobby();
         }
 
