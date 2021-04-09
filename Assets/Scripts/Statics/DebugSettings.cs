@@ -5,8 +5,8 @@
         // Readonly variables are used instead of constants, because when using constants, the code grays out the if statements in which the variables are used
         // as they are always either true or false
         
-        public static readonly bool Debug = true; // true disables photon, allows running in unity editor
-        public static readonly bool SinglePlayer = true; // true makes game playable for 1 player, station commander but spawn with ship
+        public static readonly bool Debug = false; // true disables photon, allows running in unity editor
+        public static readonly bool SinglePlayer = false; // true makes game playable for 1 player, station commander but spawn with ship
         public static bool DebugKeys = false; // disables/enables keyboard controls
         public static bool ArrowKeys = false; // disables/enables arrow key controls
 
