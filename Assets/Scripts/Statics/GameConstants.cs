@@ -16,7 +16,7 @@
         public static float PirateScoutMaxHealth = 50;
         public static float PirateScoutSpeed = 2;
         public static float PirateScoutLookRadius = 15;
-        public static float PirateScoutLaserSpeed = 1000;
+        public static float PirateScoutLaserSpeed = 20;
         public static int PirateScoutLaserRange = 10;
         public static int PirateScoutLaserDamageRange = 5;
         public static int PirateScoutLaserDamage = 10;
@@ -26,7 +26,7 @@
         public static float PirateEliteMaxHealth = 100;
         public static float PirateEliteSpeed = 1;
         public static float PirateEliteLookRadius = 10;
-        public static float PirateEliteLaserSpeed = 1000;
+        public static float PirateEliteLaserSpeed = 20;
         public static int PirateEliteLaserRange = 15;
         public static int PirateEliteLaserDamageRange = 5;
         public static int PirateEliteLaserDamage = 15;
@@ -55,7 +55,7 @@
         
         // Combat Laser
         public static int PlayerShotDelay = 1000; // Number of ms to wait between shooting
-        public static int PlayerLaserSpeed = 1000;
+        public static int PlayerLaserSpeed = 20;
         public static int PlayerLaserDamage = 20;
         public static int PlayerLaserDamageRange = 10; // Makes the amount of damage the laser does vary a bit
         public static int PlayerLaserMiningRate = 4; // Amount of resources gathered every mining tick
