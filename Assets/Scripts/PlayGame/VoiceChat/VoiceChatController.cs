@@ -1,4 +1,4 @@
-﻿using Photon;
+﻿using Photon.Pun;
 using Statics;
 using UnityEngine;
 
@@ -9,20 +9,21 @@ namespace PlayGame.VoiceChat
         private static bool _chatRunning;
         private void Start()
         {
-            if (!DebugSettings.Debug && PhotonRoom.Instance != null)
-            {
-                JoinVoiceChat(PhotonRoom.Instance.name);
-                _chatRunning = true;
-            }
+            // Check if game is played in multiplayer
+            if (DebugSettings.Debug || PhotonNetwork.CurrentRoom == null) return;
+            
+            // Join the voice chat
+            JoinVoiceChat(PhotonNetwork.CurrentRoom.Name);
+            _chatRunning = true;
         }
 
         private void OnDestroy()
         {
-            if (!DebugSettings.Debug && PhotonRoom.Instance != null)
-            {
-                LeaveVoiceChat();
-                _chatRunning = false;
-            }
+            // Check if chat is running at all
+            if (!_chatRunning) return;
+            
+            LeaveVoiceChat();
+            _chatRunning = false;
         }
 
         private static void JoinVoiceChat(string roomId) {
