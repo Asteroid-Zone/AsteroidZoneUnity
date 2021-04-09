@@ -135,6 +135,7 @@ namespace PlayGame.Speech {
                 case ToggleCommand.ObjectType.MiningLaser:
                     if (command.on) {
                         miningLaser.EnableMiningLaser();
+                        laserGun.StopShooting();
                         moveObject.SetLockTargetType(ToggleCommand.LockTargetType.Asteroid); // If mining lock to asteroid
                     } else {
                         miningLaser.DisableMiningLaser();
@@ -150,6 +151,7 @@ namespace PlayGame.Speech {
                 case ToggleCommand.ObjectType.LaserGun:
                     if (command.on) {
                         laserGun.StartShooting();
+                        miningLaser.DisableMiningLaser();
                         moveObject.SetLockTargetType(ToggleCommand.LockTargetType.Pirate); // If shooting lock to pirate
                     } else {
                         laserGun.StopShooting();
