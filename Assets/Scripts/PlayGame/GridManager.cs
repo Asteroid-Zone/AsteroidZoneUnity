@@ -1,4 +1,4 @@
-?¿using System;
+using System;
 using Statics;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,7 +15,7 @@ namespace PlayGame
             // X/Y of the first grid square (top left)
             var startX = GameConstants.GridCellSize / 2;
             var startY = GameConstants.GridCellSize / 2;
-            _grid = new GameObject[Height, Width];
+            _grid = new GameObject[GameConstants.GridHeight, GameConstants.GridWidth];
             for (int y = 0; y < GameConstants.GridHeight; y++)
             {
                 for (int x = 0; x < GameConstants.GridWidth; x++)
