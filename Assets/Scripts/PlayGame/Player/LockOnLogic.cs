@@ -16,6 +16,7 @@ namespace PlayGame.Player
         private Image image;
         public Sprite asteroidReticle;
         public Sprite enemyReticle;
+        public Sprite outOfRangeReticle;
         public CameraManager cameraMan;
 
         // Start is called before the first frame update
@@ -29,26 +30,20 @@ namespace PlayGame.Player
         }
 
         // Update is called once per frame
-        private void Update()
-        {
+        private void Update() {
             _lockTarget = _moveObject.GetLockTarget();
-            if (_lockTarget)
-            {
-                ToggleCommand.LockTargetType _lockType = _moveObject.GetLockType();
+            
+            if (_lockTarget) {
                 Vector3 screenPos = cameraMan.GetCurrentCamera().WorldToScreenPoint(_lockTarget.position);
                 image.transform.position = screenPos;
-                if (_lockType == ToggleCommand.LockTargetType.Asteroid)
-                {
-                    image.sprite = asteroidReticle;
-                }
-                else
-                {
-                    image.sprite = enemyReticle;
-                }
+                
+                ToggleCommand.LockTargetType lockType = _moveObject.GetLockType();
+                if (_moveObject.InLockRange(lockType)) {
+                    image.sprite = lockType == ToggleCommand.LockTargetType.Asteroid ? asteroidReticle : enemyReticle;
+                } else image.sprite = outOfRangeReticle;
+
                 image.enabled = true;
-            }
-            else
-            {
+            } else {
                 image.enabled = false;
             }
         }

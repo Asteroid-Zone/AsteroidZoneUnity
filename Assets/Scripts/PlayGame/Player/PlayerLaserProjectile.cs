@@ -21,9 +21,8 @@ namespace PlayGame.Player {
             }
         }
 
-        private void OnCollisionEnter(Collision collision) {
-            try
-            {
+        private void OnTriggerEnter(Collider collision) {
+            try {
                 // todo play animation (explosion)
 
                 if (collision.gameObject.CompareTag(Tags.PirateTag)) {
