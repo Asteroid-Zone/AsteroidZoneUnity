@@ -12,23 +12,18 @@ namespace PlayGame {
         // Tile FOW Objects
         private GameObject[] _asteroids;
         private GameObject[] _pirates;
-        private GameObject _gridManagerObject;
+        public GameObject gridManagerObject;
         private GridManager _gridManager;
         private FogOfWarTiles _fogOfWarTiles;
 
         // Radius FOW Objects
-        private GameObject _asteroidSpawner;
-        private GameObject _pirateSpawner;
+        public GameObject asteroidSpawner;
+        public GameObject pirateSpawner;
 
-        void Start() {
+        private void Start() {
             _player = !DebugSettings.Debug ? PhotonPlayer.Instance.myAvatar : TestPlayer.GetPlayerShip();
-            
-            _gridManagerObject = GameObject.Find("Grid Manager");
-            _gridManager = _gridManagerObject.GetComponent<GridManager>();
-            _fogOfWarTiles = _gridManagerObject.GetComponent<FogOfWarTiles>();
-            
-            _asteroidSpawner = GameObject.Find("Asteroid Spawner");
-            _pirateSpawner = GameObject.Find("PirateSpawner");
+            _gridManager = gridManagerObject.GetComponent<GridManager>();
+            _fogOfWarTiles = gridManagerObject.GetComponent<FogOfWarTiles>();
         }
 
         private void OnPreCull() {
@@ -37,7 +32,7 @@ namespace PlayGame {
         }
 
         private void RadiusFOW() {
-            foreach (Transform asteroid in _asteroidSpawner.transform) {
+            foreach (Transform asteroid in asteroidSpawner.transform) {
                 if (Vector3.Distance(_player.transform.position, asteroid.transform.position) < GameConstants.PlayerLookRadius) {
                     asteroid.gameObject.layer = 0;
                 } else {
@@ -45,7 +40,7 @@ namespace PlayGame {
                 }
             }
             
-            foreach (Transform pirate in _pirateSpawner.transform) {
+            foreach (Transform pirate in pirateSpawner.transform) {
                 if (Vector3.Distance(_player.transform.position, pirate.transform.position) < GameConstants.PlayerLookRadius) {
                     pirate.gameObject.layer = 0;
                     pirate.GetChild(1).gameObject.layer = 0;
