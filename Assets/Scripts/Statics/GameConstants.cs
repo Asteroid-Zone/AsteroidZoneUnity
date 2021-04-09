@@ -47,6 +47,8 @@
         public static int PlayerMaxHealth = 100;
         public static float PlayerMaxSpeed = 2.5f;
         public static float PlayerRotateSpeed = 0.5f;
+
+        public static float PlayerLookRadius = 20f;
         
         // Mining Laser
         public static int PlayerMiningRange = 20;
