@@ -75,8 +75,8 @@ namespace PlayGame
         public Vector2 GlobalToGridCoord(Vector3 globalCoord)
         {
             Vector2 gridCoord;
-            gridCoord.x = (int) globalCoord.x / CellSize % CellSize;
-            gridCoord.y = (int) globalCoord.z / CellSize % CellSize;
+            gridCoord.x = (int) globalCoord.x / CellSize;
+            gridCoord.y = (int) globalCoord.z / CellSize;
             return gridCoord;
         }
 

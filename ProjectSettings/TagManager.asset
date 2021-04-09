@@ -22,6 +22,18 @@ TagManager:
   - 
   - 
   - Minimap
+  - FoWTile1
+  - FoWTile2
+  - FoWTile3
+  - FoWTile4
+  - ObjectVisible1
+  - ObjectVisible2
+  - ObjectVisible3
+  - ObjectVisible4
+  - ObjectInvisible1
+  - ObjectInvisible2
+  - ObjectInvisible3
+  - ObjectInvisible4
   - 
   - 
   - 
@@ -32,19 +44,7 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - NeverRender
   m_SortingLayers:
   - name: Default
     uniqueID: 0
