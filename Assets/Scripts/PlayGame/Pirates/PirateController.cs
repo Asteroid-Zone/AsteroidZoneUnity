@@ -15,7 +15,7 @@ namespace PlayGame.Pirates {
         private Vector3 _randomDestination;
         
         private const float StoppingDistGoingRand = 1f;
-        private const float StoppingDistChasingPlayer = 4f;
+        private const float StoppingDistChasingPlayer = 6f;
         private const float StoppingDistSearchingForStation = 1f;
         private const float NewAlertDistance = 9f;
         private const float DespawnDistance = 2f;
@@ -67,12 +67,12 @@ namespace PlayGame.Pirates {
                 SearchGridSquare();
             }
             
-            if (_alert && Vector3.Distance(transform.position, _spaceStation.position) < _pirateData.GetLaserRange()) ShootStation();
+            if (_alert && Vector3.Distance(transform.position, _spaceStation.position) < _pirateData.GetLaserRange()) ShootTarget(_spaceStation);
             if (!_alert && _pirateData.pirateType != PirateData.PirateType.Scout && Vector3.Distance(transform.position, _destination) < DespawnDistance) _pirateData.Leave();
         }
 
-        private void ShootStation() {
-            FaceTarget(_spaceStation);
+        private void ShootTarget(Transform target) {
+            FaceTarget(target);
             _laserGun.StartShooting();
         }
 
@@ -166,9 +166,8 @@ namespace PlayGame.Pirates {
             _agent.stoppingDistance = StoppingDistChasingPlayer;
             _agent.SetDestination(closestPlayer.position);
 
-            if (closestPlayerDist <= _agent.stoppingDistance) {
-                FaceTarget(closestPlayer);
-                _laserGun.StartShooting();
+            if (closestPlayerDist <= _pirateData.GetLaserRange()) {
+                ShootTarget(closestPlayer);
             }
         }
         
