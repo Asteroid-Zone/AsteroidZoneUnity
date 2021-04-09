@@ -121,7 +121,7 @@ namespace Photon
 
         public void ClearList() {
             if (playerPanel == null) return;
-            
+
             for (int i = playerPanel.childCount - 1; i >=0; i--) {
                 Destroy(playerPanel.GetChild(i).gameObject);
             }
