@@ -38,8 +38,7 @@ namespace PlayGame.Player {
         private void Shoot() {
             GameObject laser = Instantiate(laserPrefab, spawnTransform.position, transform.rotation);
             laser.GetComponent<PlayerLaserProjectile>().SetShootingPlayerData(_playerData); // Provide a reference to the player who shot the laser to the projectile
-            laser.transform.Rotate(new Vector3(90, 0, 0)); // Rotate the laser so its not facing up
-            laser.GetComponent<Rigidbody>().AddForce(transform.forward * _playerData.GetLaserSpeed());
+            laser.transform.Rotate(new Vector3(-90, 0, 0)); // Rotate the laser so its not facing up
             _timeSinceLastFired = 0;
             _laserSfx.Play();
         }
