@@ -31,6 +31,7 @@ namespace PlayGame.Player
 
     public class PlayerData : MonoBehaviourPun {
         public static List<GameObject> Players;
+        private int _playerID;
 
         private bool _youDiedWrittenOnScreen; // TODO remove this and make something else when player dies
 
@@ -65,6 +66,7 @@ namespace PlayGame.Player
 
             PlayerStats = new PlayerStats();
             if (!DebugSettings.Debug) PlayerStats.photonID = photonView.ViewID;
+            Debug.Log(PlayerStats.photonID);
             PlayerStats.playerName = PhotonNetwork.NickName;
             StatsManager.PlayerStatsList.Add(PlayerStats);
 
@@ -99,6 +101,9 @@ namespace PlayGame.Player
             _health = _maxHealth;
             
             currentQuest = QuestType.MineAsteroids;
+            _playerID = (PlayerStats.photonID / 1000) - 1;
+         //   _playerID = _playerID > 3 ? 3 : _playerID;
+        //    _playerID = _playerID < 0 ? 0 : _playerID;
         }
 
         private void SetUpStationCommander() {
@@ -220,6 +225,11 @@ namespace PlayGame.Player
             {
                 _health = 0;
             }
+        }
+
+        public int GetPlayerID()
+        {
+            return _playerID;
         }
 
         public void SetLockTarget(Transform lockTarget)

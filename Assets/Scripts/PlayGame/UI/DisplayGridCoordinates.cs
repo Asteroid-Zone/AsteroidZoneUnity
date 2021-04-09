@@ -22,9 +22,10 @@ namespace PlayGame.UI
         {
             // Get the coordinates of the target
             var coordinates = target.position;
+            Vector2 gridCoords = gridManager.GlobalToGridCoord(coordinates);
 
             // Display the coordinates of the target rounded to 2 d.p.
-            _text.text = $"({(int)coordinates.x/_cellSize % _cellSize}, {(int)coordinates.z/_cellSize % _cellSize})";
+            _text.text = $"({gridCoords.x}, {gridCoords.y})";
         }
     }
 }

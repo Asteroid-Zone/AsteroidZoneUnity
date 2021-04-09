@@ -1,4 +1,4 @@
-ï»¿using System;
+?¿using System;
 using Statics;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,11 +9,13 @@ namespace PlayGame
     {
         public GameObject gridSquarePrefab;
         public int totalCells;
+        private GameObject[,] _grid;
 
         private void Start() {
             // X/Y of the first grid square (top left)
             var startX = GameConstants.GridCellSize / 2;
             var startY = GameConstants.GridCellSize / 2;
+            _grid = new GameObject[Height, Width];
             for (int y = 0; y < GameConstants.GridHeight; y++)
             {
                 for (int x = 0; x < GameConstants.GridWidth; x++)
@@ -24,7 +26,9 @@ namespace PlayGame
                     var position = new Vector3(startX + (x * GameConstants.GridCellSize), 0, startY + (y * GameConstants.GridCellSize));
                     var newGridSquare = Instantiate(gridSquarePrefab, position, Quaternion.identity);
                     newGridSquare.transform.parent = gameObject.transform;
-                    newGridSquare.transform.GetChild(0).GetChild(0).GetComponent<Text>().text = $"({NumberToLetterCoord(x)}, {y})";
+                    newGridSquare.transform.GetChild(0).GetChild(0).GetComponent<Text>().text =
+                        $"({NumberToLetterCoord(x)}, {y})";
+                    _grid[y, x] = newGridSquare;
                 }
             }
         }
@@ -65,6 +69,14 @@ namespace PlayGame
             return globalCoord;
         }
 
+        public Vector2 GlobalToGridCoord(Vector3 globalCoord)
+        {
+            Vector2 gridCoord;
+            gridCoord.x = (int) globalCoord.x / GameConstants.GridCellSize;
+            gridCoord.y = (int) globalCoord.z / GameConstants.GridCellSize;
+            return gridCoord;
+        }
+
         public static Vector3 GetGridCentre() {
             float x = (GameConstants.GridWidth / 2f) * GameConstants.GridCellSize;
             float z = (GameConstants.GridHeight / 2f) * GameConstants.GridCellSize;
@@ -74,6 +86,21 @@ namespace PlayGame
         // Gets the total number of cells in the grid
         public int GetTotalCells() {
             return GameConstants.GridHeight * GameConstants.GridWidth;
+        }
+
+        public GameObject [,] GetGrid()
+        {
+            return _grid;
+        }
+
+        public int GetWidth()
+        {
+            return GameConstants.GridWidth;
+        }
+
+        public int GetHeight()
+        {
+            return GameConstants.GridHeight;
         }
     }
 }
