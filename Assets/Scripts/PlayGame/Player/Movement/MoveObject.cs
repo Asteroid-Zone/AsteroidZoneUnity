@@ -53,6 +53,14 @@ namespace PlayGame.Player.Movement
             UpdateRotation();
         }
 
+        public bool InLockRange(ToggleCommand.LockTargetType lockType) {
+            float lockRange = 0;
+            if (lockType == ToggleCommand.LockTargetType.Asteroid) lockRange = GameConstants.PlayerMiningRange;
+            if (lockType == ToggleCommand.LockTargetType.Pirate) lockRange = _playerData.GetLaserRange();
+            
+            return Vector3.Distance(transform.position, _lockTarget.position) < lockRange;
+        }
+
         private void Update() {
             if (GameManager.gameOver) return;
             // Get the speed of the player's ship
@@ -60,11 +68,8 @@ namespace PlayGame.Player.Movement
 
             // If locked on automatically move so player is in range
             if (_lockType != ToggleCommand.LockTargetType.None && _lockTarget != null) {
-                float lockRange = 0;
-                if (_lockType == ToggleCommand.LockTargetType.Asteroid) lockRange = GameConstants.PlayerMiningRange;
-                if (_lockType == ToggleCommand.LockTargetType.Pirate) lockRange = _playerData.GetLaserRange();
                 // If player not in range move forward
-                if (Vector3.Distance(transform.position, _lockTarget.position) > lockRange) {
+                if (!InLockRange(_lockType)) {
                     SetDirection(transform.forward, false);
                     SetSpeed(1);
                 } else SetSpeed(0);
