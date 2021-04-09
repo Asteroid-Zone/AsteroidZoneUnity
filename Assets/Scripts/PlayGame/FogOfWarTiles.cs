@@ -24,6 +24,8 @@ public class FogOfWarTiles : MonoBehaviour
     private int _width;
     private int _height;
 
+    private bool _playerIsStationCommander;
+
     private List<Vector2> _visibleTiles;
     
     // Start is called before the first frame update
@@ -37,9 +39,21 @@ public class FogOfWarTiles : MonoBehaviour
         Camera _camera = GameObject.Find("Follow Camera").GetComponent<Camera>();
         _playerID = _player.GetComponent<PlayerData>().GetPlayerID();
         
+        // Station commander doesn't need fog of war
+        if (_player.GetComponent<PlayerData>().GetRole() == Role.StationCommander)
+        {
+            _playerIsStationCommander = true;
+        }
+        else
+        {
+            _playerIsStationCommander = false;
+        }
         
         int FoW1Layer = 9;
+
         
+        // THIS LINE DISABLES FOG OF WAR FOR THE STATION COMMANDER
+        // if (_playerIsStationCommander) return;
         for (int i = 0; i < 4; i++)
         {
             if (i == _playerID)
@@ -57,7 +71,10 @@ public class FogOfWarTiles : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
+    { 
+        // THIS LINE DISABLES FOG OF WAR FOR THE STATION COMMANDER
+        // if (_playerIsStationCommander) return;
+        
         // Toggle visibility for "cover" objects on tiles in defined radius, make tiles on the border black again
         // Actually fix this so each player calculates their own
         Vector2 position = _gridManager.GlobalToGridCoord(_player.transform.position);
@@ -67,13 +84,16 @@ public class FogOfWarTiles : MonoBehaviour
         foreach (Vector2 tile in tileLists.Item1)
         {
             // Get the ith cover
-            _grid[(int) tile.y, (int) tile.x].transform.GetChild(0).GetChild(1).GetChild(_playerID).gameObject.SetActive(false);
+            _grid[(int) tile.y, (int) tile.x].transform.GetChild(0).GetChild(1).GetChild(_playerID).gameObject
+                .SetActive(false);
         }
+
         // Invisible case
         foreach (Vector2 tile in tileLists.Item2)
         {
             // Get the ith cover
-            _grid[(int) tile.y, (int) tile.x].transform.GetChild(0).GetChild(1).GetChild(_playerID).gameObject.SetActive(true);
+            _grid[(int) tile.y, (int) tile.x].transform.GetChild(0).GetChild(1).GetChild(_playerID).gameObject
+                .SetActive(true);
         }
     }
 
