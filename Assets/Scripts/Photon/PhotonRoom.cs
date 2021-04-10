@@ -99,6 +99,13 @@ namespace Photon
           ListLobby();
         }
 
+        public override void OnMasterClientSwitched(Player newMasterClient)
+        {
+          PhotonNetwork.LeaveRoom();
+          roomControlPanel.SetActive(false);
+          lobbyControlPanel.SetActive(true);
+        }
+
         public void StartGame()
         {
             Debug.Log("Loading Level");
@@ -126,6 +133,7 @@ namespace Photon
                 Destroy(playerPanel.GetChild(i).gameObject);
             }
         }
+
 
         public void ListLobby()
         {
