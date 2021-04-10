@@ -15,24 +15,27 @@ namespace MainMenu {
         private GameObject lobbyControlPanel;
         [SerializeField]
         private GameObject roomControlPanel;
+        [SerializeField]
+        private GameObject playGame;
 
         public AudioSource buttonPress;
 
         void Start()
         {
           controlPanel.SetActive(true);
+          playGame.SetActive(false);
           lobbyControlPanel.SetActive(false);
           roomControlPanel.SetActive(false);
         }
 
-		void Update() 
+		void Update()
 		{
-			if (lobbyControlPanel.activeSelf && Input.GetButtonDown("Cancel")) 
+			if (lobbyControlPanel.activeSelf && Input.GetButtonDown("Cancel"))
 			{
 				lobbyControlPanel.SetActive(false);
 				controlPanel.SetActive(true);
 			}
-		
+
 		}
 
         public void PlayGame()
