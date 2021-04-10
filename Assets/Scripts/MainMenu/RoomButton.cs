@@ -18,5 +18,6 @@ public class RoomButton : MonoBehaviourPunCallbacks
     public void JoinRoom()
     {
       PhotonNetwork.JoinRoom(roomName);
+      Destroy(this.gameObject);
     }
 }

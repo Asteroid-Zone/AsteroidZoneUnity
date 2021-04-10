@@ -104,6 +104,7 @@ namespace Photon
           PhotonNetwork.LeaveRoom();
           roomControlPanel.SetActive(false);
           lobbyControlPanel.SetActive(true);
+          PhotonNetwork.JoinLobby();
         }
 
         public void StartGame()
