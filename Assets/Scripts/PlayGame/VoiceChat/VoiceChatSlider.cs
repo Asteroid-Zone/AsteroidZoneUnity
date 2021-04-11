@@ -27,13 +27,15 @@ namespace PlayGame.VoiceChat
         private void VoiceChatSliderChange()
         {
             float value = _voiceChatCommandSlider.value;
-            VoiceChatController.MuteUnmuteMyselfInVoiceChat();
+            
             switch (value)
             {
                 case 0:
+                    VoiceChatController.MuteMyselfInVoiceChat();
                     SpeechRecognition.StartSpeechRecognitionInTheBrowser();
                     break;
                 case 1:
+                    VoiceChatController.UnmuteMyselfInVoiceChat();
                     SpeechRecognition.StopSpeechRecognitionInTheBrowser();
                     break;
                 default:

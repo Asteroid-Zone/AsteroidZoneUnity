@@ -35,11 +35,19 @@ namespace PlayGame.VoiceChat
             Application.ExternalCall("leaveVoiceChat");
         }
 
-        public static void MuteUnmuteMyselfInVoiceChat()
+        public static void MuteMyselfInVoiceChat()
         {
             if (_chatRunning)
             {
-                Application.ExternalCall("muteUnmuteMyselfInVoiceChat");
+                Application.ExternalCall("muteMyselfInVoiceChat");
+            }
+        }
+        
+        public static void UnmuteMyselfInVoiceChat()
+        {
+            if (_chatRunning)
+            {
+                Application.ExternalCall("unmuteMyselfInVoiceChat");
             }
         }
     }
