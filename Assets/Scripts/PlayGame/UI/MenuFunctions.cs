@@ -11,6 +11,7 @@ namespace PlayGame.UI
         public GameObject tipsPanel;
         public GameObject debugPanel;
         public Toggle debugToggle;
+        public GameObject quest;
 
         public void Start() {
             debugToggle.isOn = DebugSettings.DebugKeys || DebugSettings.ArrowKeys;
@@ -23,11 +24,13 @@ namespace PlayGame.UI
 
         public void ShowTipsPanel()
         {
+            if (quest != null) quest.SetActive(false);
             tipsPanel.SetActive(true);
         }
 
         public void HideTipsPanel()
         {
+            if (quest != null) quest.SetActive(true);
             tipsPanel.SetActive(false);
         }
 
