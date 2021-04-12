@@ -247,9 +247,16 @@ namespace PlayGame.Player.Movement
         }
         
         private Transform GetLockTarget(ToggleCommand.LockTargetType lockTargetType) {
-            if (lockTargetType == ToggleCommand.LockTargetType.Pirate) return GetNearestEnemyTransform();
-            if (lockTargetType == ToggleCommand.LockTargetType.Asteroid) return GetNearestAsteroidTransform();
-            return null;
+            Transform lockTarget = null;
+            
+            if (lockTargetType == ToggleCommand.LockTargetType.Pirate) lockTarget = GetNearestEnemyTransform();
+            if (lockTargetType == ToggleCommand.LockTargetType.Asteroid) lockTarget = GetNearestAsteroidTransform();
+            if (lockTarget == null) return null;
+
+            // Player cant lock onto targets they cant see
+            if (Vector3.Distance(transform.position, lockTarget.position) > GameConstants.PlayerLookRadius) lockTarget = null;
+
+            return lockTarget;
         }
 
         public Transform GetLockTarget()
