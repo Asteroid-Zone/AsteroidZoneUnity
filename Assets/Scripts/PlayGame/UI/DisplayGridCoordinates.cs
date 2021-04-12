@@ -18,8 +18,8 @@ namespace PlayGame.UI
             _cellSize = gridManager.GetCellSize();
         }
 
-        private void Update()
-        {
+        private void Update() {
+            if (target == null) return;
             // Get the coordinates of the target
             var coordinates = target.position;
             Vector2 gridCoords = gridManager.GlobalToGridCoord(coordinates);

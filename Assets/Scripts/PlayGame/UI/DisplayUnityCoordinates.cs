@@ -17,8 +17,8 @@ namespace PlayGame.UI
             _text = GetComponent<Text>();
         }
 
-        private void Update()
-        {
+        private void Update() {
+            if (target == null) return;
             // Get the coordinates of the target
             var coordinates = target.position;
 

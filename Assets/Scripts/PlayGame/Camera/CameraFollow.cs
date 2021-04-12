@@ -22,6 +22,8 @@ namespace PlayGame.Camera {
         }
 
         private void LateUpdate() {
+            if (target == null) return;
+            
             // Follow the player from behind
             var  wantedPosition = target.TransformPoint(0, height, followBehind ? -distance : distance);
             transform.position = Vector3.Lerp(transform.position, wantedPosition, Time.deltaTime * damping);

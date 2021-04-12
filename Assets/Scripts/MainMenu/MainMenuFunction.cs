@@ -23,13 +23,13 @@ namespace MainMenu {
         public AudioSource buttonPress;
 
         void Start() {
-          controlPanel.SetActive(true);
-          progressLabel.SetActive(false);
-          lobbyControlPanel.SetActive(false);
-          roomControlPanel.SetActive(false);
+            controlPanel.SetActive(true);
+            progressLabel.SetActive(false);
+            lobbyControlPanel.SetActive(false);
+            roomControlPanel.SetActive(false);
         }
 
-		void Update()
+        void Update()
 		{
 			if (lobbyControlPanel.activeSelf && Input.GetButtonDown("Cancel"))
 			{
