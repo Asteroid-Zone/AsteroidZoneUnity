@@ -46,6 +46,8 @@ namespace Photon
         /// This is used for the OnConnectedToMaster() callback when a user wants to leave the game.
         private bool _isConnecting;
 
+        private bool connected;
+
         /// MonoBehaviour methods called on GameObject by Unity during early initialization phase.
 
         private void Awake()
@@ -59,6 +61,7 @@ namespace Photon
             controlPanel.SetActive(true);
             PhotonNetwork.ConnectUsingSettings();
             PhotonNetwork.GameVersion = GameVersion;
+            connected = false;
         }
 
         public static PhotonLobby getInstance()
