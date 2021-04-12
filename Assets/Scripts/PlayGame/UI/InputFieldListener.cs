@@ -22,6 +22,10 @@ namespace PlayGame.UI {
                     if (initial) _inputField.text = GameConstants.PlayerMaxHealth.ToString();
                     else GameConstants.PlayerMaxHealth = int.Parse(value);
                     break;
+                case "PlayerLookRadiusInput":
+                    if (initial) _inputField.text = GameConstants.PlayerLookRadius.ToString();
+                    else GameConstants.PlayerLookRadius = float.Parse(value);
+                    break;
                 case "PlayerMaxSpeedInput":
                     if (initial) _inputField.text = GameConstants.PlayerMaxSpeed.ToString();
                     else GameConstants.PlayerMaxSpeed = float.Parse(value);
