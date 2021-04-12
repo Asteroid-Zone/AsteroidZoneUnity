@@ -55,28 +55,17 @@ namespace Photon
 
         private void Start()
         {
-            progressLabel.SetActive(false);
-            controlPanel.SetActive(true);
             PhotonNetwork.GameVersion = GameVersion;
             connected = false;
         }
 
-        void Update()
-        {
-         if(connected){
-           progressLabel.SetActive(false);
-           lobbyControlPanel.SetActive(true);
-         }
-        }
+
+
         public static PhotonLobby getInstance()
         {
             return _instance;
         }
 
-        /*public void Test()
-        {
-            PhotonLobby.getInstance().Connect();
-        }*/
 
         /// Start the connection process.
         /// - If already connected, we attempt joining a random room
@@ -104,7 +93,8 @@ namespace Photon
         //Methods overriding MonoBehaviourPunCallbacks Callbacks
         public override void OnConnectedToMaster()
         {
-            connected = true;
+            progressLabel.SetActive(false);
+            lobbyControlPanel.SetActive(true);
             Debug.Log("Asteroid Zone/MainMenuFunction: OnConnectedToMaster() was called by PUN");
             PhotonNetwork.AutomaticallySyncScene = true;
             // we don't want to do anything if we are not attempting to join a room.

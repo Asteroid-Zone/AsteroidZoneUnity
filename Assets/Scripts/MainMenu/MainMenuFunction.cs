@@ -24,6 +24,7 @@ namespace MainMenu {
 
         void Start() {
           controlPanel.SetActive(true);
+          progressLabel.SetActive(false);
           lobbyControlPanel.SetActive(false);
           roomControlPanel.SetActive(false);
         }
