@@ -24,8 +24,6 @@ namespace Photon
         [Tooltip("The UI Label to inform the user that the connection is in progress")]
         [SerializeField]
         private GameObject progressLabel;
-        [SerializeField]
-        private GameObject playGame;
 
         public string RoomName;
 
@@ -59,11 +57,17 @@ namespace Photon
         {
             progressLabel.SetActive(false);
             controlPanel.SetActive(true);
-            PhotonNetwork.ConnectUsingSettings();
             PhotonNetwork.GameVersion = GameVersion;
             connected = false;
         }
 
+        void Update()
+        {
+         if(connected){
+           progressLabel.SetActive(false);
+           lobbyControlPanel.SetActive(true);
+         }
+        }
         public static PhotonLobby getInstance()
         {
             return _instance;
@@ -100,7 +104,7 @@ namespace Photon
         //Methods overriding MonoBehaviourPunCallbacks Callbacks
         public override void OnConnectedToMaster()
         {
-            playGame.SetActive(true);
+            connected = true;
             Debug.Log("Asteroid Zone/MainMenuFunction: OnConnectedToMaster() was called by PUN");
             PhotonNetwork.AutomaticallySyncScene = true;
             // we don't want to do anything if we are not attempting to join a room.
