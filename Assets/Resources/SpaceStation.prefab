@@ -61,8 +61,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd0ebe9bce548b04dbac869da9227d8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridManager: {fileID: 0}
-  gameManager: {fileID: 0}
   stationAttacked:
     m_PersistentCalls:
       m_Calls: []
@@ -77,9 +75,9 @@ NavMeshObstacle:
   m_Enabled: 1
   serializedVersion: 3
   m_Shape: 0
-  m_Extents: {x: 2, y: 1, z: 2}
+  m_Extents: {x: 3, y: 1, z: 3}
   m_MoveThreshold: 0.1
-  m_Carve: 0
+  m_Carve: 1
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0, z: 0}
   m_TimeToStationary: 0.5
