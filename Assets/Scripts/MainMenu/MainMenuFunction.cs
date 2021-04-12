@@ -1,11 +1,13 @@
 ﻿using Photon;
+using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Statics;
 
 
 namespace MainMenu {
-    public class MainMenuFunction : MonoBehaviour {
+    public class MainMenuFunction : MonoBehaviourPunCallbacks {
 
         [Tooltip("The UI Panel with Main Menu Options")]
         [SerializeField]
@@ -16,13 +18,13 @@ namespace MainMenu {
         [SerializeField]
         private GameObject roomControlPanel;
         [SerializeField]
-        private GameObject playGame;
+        private GameObject progressLabel;
 
         public AudioSource buttonPress;
 
         void Start() {
           controlPanel.SetActive(true);
-          playGame.SetActive(false);
+          progressLabel.SetActive(false);
           lobbyControlPanel.SetActive(false);
           roomControlPanel.SetActive(false);
         }
@@ -40,8 +42,9 @@ namespace MainMenu {
         public void PlayGame()
         {
             buttonPress.Play();
+            PhotonNetwork.ConnectUsingSettings();
             controlPanel.SetActive(false);
-            lobbyControlPanel.SetActive(true);
+            progressLabel.SetActive(true);
         }
 
         public void JoinLobby()
