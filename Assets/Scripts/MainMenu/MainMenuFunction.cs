@@ -20,8 +20,7 @@ namespace MainMenu {
 
         public AudioSource buttonPress;
 
-        void Start()
-        {
+        void Start() {
           controlPanel.SetActive(true);
           playGame.SetActive(false);
           lobbyControlPanel.SetActive(false);
