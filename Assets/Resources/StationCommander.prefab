@@ -48,6 +48,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   role: 0
+  viewableArea: {fileID: 0}
+  viewableAreaMinimap: {fileID: 0}
   currentQuest: 0
 --- !u!114 &1092679028797384607
 MonoBehaviour:

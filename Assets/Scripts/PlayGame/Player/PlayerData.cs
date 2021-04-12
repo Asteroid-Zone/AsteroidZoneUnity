@@ -38,6 +38,7 @@ namespace PlayGame.Player
         public Role role;
 
         public GameObject viewableArea;
+        public GameObject viewableAreaMinimap;
 
         private int _maxHealth;
         private int _health;
@@ -105,6 +106,8 @@ namespace PlayGame.Player
             // Set the size of the viewable area ring
             int size = ((int) GameConstants.PlayerLookRadius * 2) / 10;
             viewableArea.transform.localScale = new Vector3(size, size, size);
+            size *= 8;
+            viewableAreaMinimap.transform.localScale = new Vector3(size, size, size);
             
             currentQuest = QuestType.MineAsteroids;
             _playerID = (PlayerStats.photonID / 1000) - 1;
