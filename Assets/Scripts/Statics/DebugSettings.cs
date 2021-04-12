@@ -6,13 +6,14 @@
         // as they are always either true or false
         
         public static readonly bool Debug = false; // true disables photon, allows running in unity editor
-        public static readonly bool SinglePlayer = true; // true makes game playable for 1 player, station commander but spawn with ship
+        public static readonly bool SinglePlayer = false; // true makes game playable for 1 player, station commander but spawn with ship
         public static bool DebugKeys = false; // disables/enables keyboard controls
         public static bool ArrowKeys = false; // disables/enables arrow key controls
 
         public static readonly bool SpawnPirates = true; // enables/disables pirate spawning
         public static readonly bool InfiniteMiningRange = false;
-
+        
+        public static readonly bool FogOfWar = true; // Enable/Disable fog of war
         public static readonly bool TileBasedFogOfWar = false; // Switch between Tile based fog of war and radius based
     }
 }

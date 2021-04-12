@@ -50,6 +50,8 @@ namespace PlayGame.Player
         private int _laserDamage;
         private int _laserRange;
 
+        private float _lookRadius;
+
         private int _resources;
 
         private NavMeshAgent _playerAgent;
@@ -97,17 +99,15 @@ namespace PlayGame.Player
             _laserSpeed = GameConstants.PlayerLaserSpeed;
             _laserDamage = GameConstants.PlayerLaserDamage;
             _laserRange = GameConstants.PlayerLaserRange;
+
+            _lookRadius = GameConstants.PlayerLookRadius;
             
             // The current speed of the player is will be stored in the speed of its NavMeshAgent
             _playerAgent.speed = 0;
             _resources = 0;
             _health = _maxHealth;
 
-            // Set the size of the viewable area ring
-            int size = ((int) GameConstants.PlayerLookRadius * 2) / 10;
-            viewableArea.transform.localScale = new Vector3(size, size, size);
-            size *= 8;
-            viewableAreaMinimap.transform.localScale = new Vector3(size, size, size);
+            ResizeViewableArea();
             
             currentQuest = QuestType.MineAsteroids;
             _playerID = (PlayerStats.photonID / 1000) - 1;
@@ -119,6 +119,19 @@ namespace PlayGame.Player
             transform.position = GridManager.GetGridCentre();
             gameObject.transform.position = _spaceStation.position;
             currentQuest = QuestType.HelpPlayers;
+        }
+
+        // Sets the size of the viewable area ring and minimap ring
+        private void ResizeViewableArea() {
+            if (!DebugSettings.FogOfWar) {
+                viewableArea.SetActive(false);
+                viewableAreaMinimap.SetActive(false);
+            } else {
+                int size = ((int) GetLookRadius() * 2) / 10;
+                viewableArea.transform.localScale = new Vector3(size, size, size);
+                size *= 8;
+                viewableAreaMinimap.transform.localScale = new Vector3(size, size, size);
+            }
         }
 
         [PunRPC]
@@ -210,6 +223,11 @@ namespace PlayGame.Player
 
         public int GetLaserRange() {
             return _laserRange;
+        }
+
+        // todo add modifier to this if adding powerups
+        public float GetLookRadius() {
+            return _lookRadius;
         }
 
         public QuestType GetQuest()

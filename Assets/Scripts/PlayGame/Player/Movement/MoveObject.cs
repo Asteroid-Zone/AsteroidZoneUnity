@@ -254,7 +254,7 @@ namespace PlayGame.Player.Movement
             if (lockTarget == null) return null;
 
             // Player cant lock onto targets they cant see
-            if (Vector3.Distance(transform.position, lockTarget.position) > GameConstants.PlayerLookRadius) lockTarget = null;
+            if (DebugSettings.FogOfWar && Vector3.Distance(transform.position, lockTarget.position) > _playerData.GetLookRadius()) lockTarget = null;
 
             return lockTarget;
         }

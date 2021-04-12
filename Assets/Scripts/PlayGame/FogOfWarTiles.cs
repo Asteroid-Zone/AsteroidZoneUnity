@@ -27,21 +27,17 @@ namespace PlayGame
 
         private PlayerData _playerData;
 
-        private bool _playerIsStationCommander;
-
         private List<Vector2> _visibleTiles;
     
         // Start is called before the first frame update
         private void Start() {
+            if (!DebugSettings.FogOfWar) return;
             if (!DebugSettings.TileBasedFogOfWar) return;
         
             _player = !DebugSettings.Debug ? PhotonPlayer.Instance.myAvatar : TestPlayer.GetPlayerShip();
             _playerData = _player.GetComponent<PlayerData>();
-        
-            // Station commander doesn't need fog of war
-            _playerIsStationCommander = _playerData.GetRole() == Role.StationCommander;
-            if (_playerIsStationCommander) return; // THIS LINE DISABLES FOG OF WAR FOR THE STATION COMMANDER
-        
+            if (_playerData.GetRole() == Role.StationCommander) return;
+
             _gridManager = GetComponent<GridManager>();
             _width = _gridManager.GetWidth();
             _height = _gridManager.GetHeight();
@@ -64,9 +60,9 @@ namespace PlayGame
         // Update is called once per frame
         private void Update() {
             if (!DebugSettings.TileBasedFogOfWar) return;
-        
-            if (_playerIsStationCommander) return; // THIS LINE DISABLES FOG OF WAR FOR THE STATION COMMANDER
-        
+            if (!DebugSettings.FogOfWar) return;
+            if (_playerData.GetRole() == Role.StationCommander) return;
+
             // Toggle visibility for "cover" objects on tiles in defined radius, make tiles on the border black again
             // Actually fix this so each player calculates their own
             Vector2 position = _gridManager.GlobalToGridCoord(_player.transform.position);
