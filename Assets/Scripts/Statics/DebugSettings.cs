@@ -13,6 +13,6 @@
         public static readonly bool SpawnPirates = true; // enables/disables pirate spawning
         public static readonly bool InfiniteMiningRange = false;
 
-        public static readonly bool TileBasedFogOfWar = true; // Switch between Tile based fog of war and radius based
+        public static readonly bool TileBasedFogOfWar = false; // Switch between Tile based fog of war and radius based
     }
 }
