@@ -123,7 +123,7 @@ namespace PlayGame.Player
 
         // Sets the size of the viewable area ring and minimap ring
         private void ResizeViewableArea() {
-            if (!DebugSettings.FogOfWar) {
+            if (!DebugSettings.FogOfWar || !photonView.IsMine) {
                 viewableArea.SetActive(false);
                 viewableAreaMinimap.SetActive(false);
             } else {
