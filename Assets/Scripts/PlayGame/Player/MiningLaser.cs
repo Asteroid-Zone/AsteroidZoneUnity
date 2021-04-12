@@ -9,6 +9,9 @@ namespace PlayGame.Player {
 
         private PlayerData _playerData;
         private AudioSource _miningLaserSfx;
+
+        public AudioClip laserOn;
+        public AudioClip laserOff;
         
         public LineRenderer laser;
         
@@ -35,12 +38,7 @@ namespace PlayGame.Player {
         }
         
         private void Update() {
-            if (laser.enabled)
-            {
-                if (!_miningLaserSfx.isPlaying)
-                {
-                    _miningLaserSfx.Play();
-                }
+            if (laser.enabled) {
                 RaycastHit hit;
                 Physics.Raycast(transform.position, transform.forward, out hit, GameConstants.PlayerMiningRange); // Get the game object that the laser is hitting
 
@@ -52,10 +50,6 @@ namespace PlayGame.Player {
                 } else {
                     UpdateLaser(GameConstants.PlayerMiningRange);
                 }
-            }
-            else
-            {
-                _miningLaserSfx.Stop();
             }
         }
 
@@ -81,11 +75,21 @@ namespace PlayGame.Player {
         }
         
         public void EnableMiningLaser() {
+            if (laser.enabled) return; // If its already on dont do anything
+            
             laser.enabled = true;
+            
+            _miningLaserSfx.clip = laserOn;
+            _miningLaserSfx.Play();
         }
 
         public void DisableMiningLaser() {
+            if (!laser.enabled) return; // If its already off dont do anything
+            
             laser.enabled = false;
+            
+            _miningLaserSfx.clip = laserOff;
+            _miningLaserSfx.Play();
         }
     }
 }

@@ -191,6 +191,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4de3f43754642d7bacc942e7b5a6934, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  laserOn: {fileID: 8300000, guid: 16367fd7ec4cdd0408c1a34fa517a9fd, type: 3}
+  laserOff: {fileID: 8300000, guid: f24d6d3759f2e3b4693c35d7bda36716, type: 3}
   laser: {fileID: 881533015036624799}
 --- !u!114 &1092679028797384607
 MonoBehaviour:
@@ -5411,7 +5413,7 @@ GameObject:
   - component: {fileID: 7312385043916497342}
   - component: {fileID: 3961590641574376048}
   m_Layer: 0
-  m_Name: Mining Laser
+  m_Name: MiningLaserOff
   m_TagString: MiningLaserSFX
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5441,11 +5443,11 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 6d72ea4f13b8e3f4bbbdc59f182e10f2, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 16367fd7ec4cdd0408c1a34fa517a9fd, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.03
+  m_Volume: 1
   m_Pitch: 1
-  Loop: 1
+  Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
