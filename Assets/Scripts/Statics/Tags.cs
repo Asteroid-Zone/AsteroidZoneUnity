@@ -12,5 +12,7 @@
         public const string CombatLaserTag = "CombatLaser";
         public const string CameraManagerTag = "CameraManager";
         public const string StationCommanderTag = "StationCommander";
+        public const string PingManagerTag = "PingManager";
+        public const string SpeechTextTag = "SpeechText";
     }
 }

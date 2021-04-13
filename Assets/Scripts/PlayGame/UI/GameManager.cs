@@ -9,6 +9,10 @@ namespace PlayGame.UI {
 
         public static bool gameOver = false;
 
+        private void Start() {
+            gameOver = false;
+        }
+
         /// Called when the local player left the room. We need to load the launcher scene.
         public override void OnLeftRoom() {
             CleanUpGameObjects();

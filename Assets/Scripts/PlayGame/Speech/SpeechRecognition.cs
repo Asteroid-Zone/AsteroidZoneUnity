@@ -42,9 +42,9 @@ namespace PlayGame.Speech {
             _moveObject = player.GetComponent<MoveObject>();
             _miningLaser = player.GetComponent<MiningLaser>();
             _laserGun = player.GetComponent<LaserGun>();
-            text = GameObject.Find("Speech").GetComponent<Text>();
-            ping = GameObject.Find("PingManager");
-            spaceStation = GameObject.Find("SpaceStation");
+            text = GameObject.FindGameObjectWithTag(Tags.SpeechTextTag).GetComponent<Text>();
+            ping = GameObject.FindGameObjectWithTag(Tags.PingManagerTag);
+            spaceStation = GameObject.FindGameObjectWithTag(Tags.StationTag);
             _actionController = CreateActionController(player);
         }
 
