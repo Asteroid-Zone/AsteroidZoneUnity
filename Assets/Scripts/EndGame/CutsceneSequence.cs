@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using PlayGame;
 using PlayGame.Stats;
 using Statics;
 using UnityEngine;
@@ -32,15 +34,24 @@ namespace EndGame
             _animator.Play("Station.Flyby");
             yield return new WaitForSeconds(5);
             _trackingSpaceStation = false;
-            if (StatsManager.GameStats.victory)
-            {
-                _animator.Play("Station.Hyperspace");
+            
+            switch (StatsManager.GameStats.gameOverType) {
+                case GameManager.GameOverType.Victory:
+                    _animator.Play("Station.Hyperspace");
+                    break;
+                case GameManager.GameOverType.StationDestroyed:
+                    Instantiate(explosionPrefab, spaceStation, false);
+                    spaceStation.gameObject.GetComponent<Animation>().Play("Explode");
+                    break;
+                case GameManager.GameOverType.TimeUp:
+                    // todo add pirate boss destroying station
+                    Instantiate(explosionPrefab, spaceStation, false);
+                    spaceStation.gameObject.GetComponent<Animation>().Play("Explode");
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-            else
-            {
-                Instantiate(explosionPrefab, spaceStation, false);
-                spaceStation.gameObject.GetComponent<Animation>().Play("Explode");
-            }
+            
             yield return new WaitForSeconds(1.5f);
             _animator.Play("Camera.FadeOut");
             yield return new WaitForSeconds(0.5f);

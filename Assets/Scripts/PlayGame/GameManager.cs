@@ -1,27 +1,58 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using System;
+using System.Collections.Generic;
 using Photon.Pun;
 using PlayGame.Pirates;
-using Statics;
 using PlayGame.Player;
 using PlayGame.Stats;
+using PlayGame.UI;
+using Statics;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
-namespace PlayGame.UI {
+namespace PlayGame {
     public class GameManager : MonoBehaviourPunCallbacks {
 
-        public static bool GameOver = false;
+        public enum GameOverType {
+            Victory,
+            StationDestroyed,
+            TimeUp
+        }
+
+        public static bool gameOver = false;
 
         private void Start() {
             ResetStaticVariables();
         }
-
+        
         private static void ResetStaticVariables() {
-            GameOver = false;
+            gameOver = false;
             PirateController.ResetStaticVariables();
             PlayerData.Players = new List<GameObject>();
             StatsManager.PlayerStatsList.Clear();
             StatsManager.GameStats.Reset();
+        }
+
+        private void Update() {
+            if (Time.time - StatsManager.GameStats.startTime > GameConstants.TimeLimit) GameOver(GameOverType.TimeUp);
+        }
+
+        public void GameOver(GameOverType gameOverType) {
+            if (gameOver) return; // Ensures LeaveRoom is only called once
+
+            if (!DebugSettings.Debug && PhotonNetwork.IsMasterClient) photonView.RPC(nameof(RPC_GameOver), RpcTarget.AllBuffered, gameOverType, Time.time - StatsManager.GameStats.startTime);
+            else if (DebugSettings.Debug) RPC_GameOver(gameOverType, Time.time - StatsManager.GameStats.startTime);
+        }
+        
+        [PunRPC]
+        public void RPC_GameOver(GameOverType gameOverType, float time) {
+            gameOver = true;
+            string eventMessage = "Game Over";
+            if (gameOverType == GameOverType.Victory) eventMessage = "Game completed";
+            EventsManager.AddMessage(eventMessage);
+            StatsManager.GameStats.victory = gameOverType == GameOverType.Victory;
+            StatsManager.GameStats.gameOverType = gameOverType;
+            StatsManager.GameStats.gameTime = time;
+            SceneManager.LoadScene(Scenes.EndCutsceneScene);
         }
 
         /// Called when the local player left the room. We need to load the launcher scene.
@@ -54,7 +85,6 @@ namespace PlayGame.UI {
         {
             Debug.LogFormat("OnPlayerEnteredRoom() {0}", other.NickName); // not seen if you're the player connecting
         }
-
 
         public override void OnPlayerLeftRoom(Photon.Realtime.Player other)
         {

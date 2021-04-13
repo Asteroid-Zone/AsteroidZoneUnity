@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using Photon.Pun;
 using PlayGame.Speech.Commands;
-using PlayGame.Stats;
 using PlayGame.UI;
 using Statics;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 namespace PlayGame.SpaceStation {
@@ -28,7 +26,10 @@ namespace PlayGame.SpaceStation {
 
         public int resources = 0;
 
+        public GameManager gameManager;
+
         private void Start() {
+            gameManager = GameObject.FindGameObjectWithTag(Tags.GameManager).GetComponent<GameManager>();
             transform.position = GridManager.GetGridCentre();
             
             _hyperdrive = new Hyperdrive(this);
@@ -61,26 +62,6 @@ namespace PlayGame.SpaceStation {
 
         private void Update() {
             _shieldGenerator.Update();
-        }
-
-        public void GameOver(bool victory) {
-            // Ensures LeaveRoom is only called once
-            if (!_complete) {
-                if (!DebugSettings.Debug && PhotonNetwork.IsMasterClient) photonView.RPC(nameof(RPC_GameOver), RpcTarget.AllBuffered, victory, Time.time - StatsManager.GameStats.startTime);
-                else if (DebugSettings.Debug) RPC_GameOver(victory, Time.time - StatsManager.GameStats.startTime);
-            }
-        }
-        
-        [PunRPC]
-        public void RPC_GameOver(bool victory, float time) {
-            GameManager.GameOver = true;
-            string eventMessage = "Game over";
-            if (victory) eventMessage = "Game completed";
-            EventsManager.AddMessage(eventMessage);
-            StatsManager.GameStats.victory = victory;
-            StatsManager.GameStats.gameTime = time;
-            SceneManager.LoadScene(Scenes.EndCutsceneScene);
-            _complete = true;
         }
 
         public void AddResources(int amount) {

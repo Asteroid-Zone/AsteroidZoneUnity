@@ -16,6 +16,7 @@ TagManager:
   - StationCommander
   - SpeechText
   - PingManager
+  - GameManager
   layers:
   - Default
   - TransparentFX

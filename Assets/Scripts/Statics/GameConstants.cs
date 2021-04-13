@@ -1,6 +1,10 @@
 ﻿namespace Statics {
     public static class GameConstants {
 
+        public static float TimeLimit = 300; // Time limit in seconds
+
+        
+        
         // Grid
         public static int GridCellSize = 10;
         public static int GridWidth = 11;

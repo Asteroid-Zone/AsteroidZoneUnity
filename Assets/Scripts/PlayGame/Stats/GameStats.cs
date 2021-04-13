@@ -2,6 +2,7 @@
     public class GameStats {
 
         public bool victory;
+        public GameManager.GameOverType gameOverType;
         
         public float startTime;
         public float gameTime;

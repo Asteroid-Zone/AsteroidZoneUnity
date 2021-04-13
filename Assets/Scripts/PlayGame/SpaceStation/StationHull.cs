@@ -37,7 +37,7 @@ namespace PlayGame.SpaceStation {
         
         public override void TakeDamage(int damage) {
             base.TakeDamage(damage);
-            if (ModuleHealth <= 0) Station.GameOver(false); // Space station destroyed
+            if (ModuleHealth <= 0) Station.gameManager.GameOver(GameManager.GameOverType.StationDestroyed); // Space station destroyed
         }
     }
 }

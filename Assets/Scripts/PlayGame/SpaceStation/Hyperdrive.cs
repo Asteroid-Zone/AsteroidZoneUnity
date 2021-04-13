@@ -18,7 +18,7 @@ namespace PlayGame.SpaceStation {
         public void Activate() {
             if (IsFunctional()) {
                 Mat.mainTexture = _activeTexture;
-                Station.GameOver(true);
+                Station.gameManager.GameOver(GameManager.GameOverType.Victory);
             } else {
                 EventsManager.AddMessage("Hyperdrive is not functional");
             }

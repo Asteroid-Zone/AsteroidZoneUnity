@@ -60,7 +60,7 @@ namespace PlayGame.Player.Movement
         }
 
         private void Update() {
-            if (GameManager.GameOver) return;
+            if (GameManager.gameOver) return;
             // Get the speed of the player's ship
             float speed = _playerData.GetSpeed();
 

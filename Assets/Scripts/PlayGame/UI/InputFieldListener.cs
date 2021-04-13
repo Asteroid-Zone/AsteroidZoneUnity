@@ -18,6 +18,10 @@ namespace PlayGame.UI {
         private void EditValue(string value) {
             bool initial = (value == "initial");
             switch (_inputField.name) {
+                case "TimeLimitInput":
+                    if (initial) _inputField.text = GameConstants.TimeLimit.ToString();
+                    else GameConstants.TimeLimit = float.Parse(value);
+                    break;
                 case "PlayerMaxHealthInput":
                     if (initial) _inputField.text = GameConstants.PlayerMaxHealth.ToString();
                     else GameConstants.PlayerMaxHealth = int.Parse(value);

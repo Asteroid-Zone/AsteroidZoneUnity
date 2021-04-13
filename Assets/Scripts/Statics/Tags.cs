@@ -13,5 +13,6 @@
         public const string StationCommanderTag = "StationCommander";
         public const string PingManagerTag = "PingManager";
         public const string SpeechTextTag = "SpeechText";
+        public const string GameManager = "GameManager";
     }
 }
