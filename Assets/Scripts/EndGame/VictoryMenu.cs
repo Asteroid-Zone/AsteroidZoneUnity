@@ -71,7 +71,7 @@ namespace EndGame {
 
         private void CleanUpGameObjects() {
             foreach (GameObject g in FindObjectsOfType<GameObject>()) {
-                Destroy(g);
+                if (!g.name.Equals("PhotonMono")) Destroy(g);
             }
         }
     }

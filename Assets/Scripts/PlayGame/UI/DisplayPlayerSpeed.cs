@@ -20,8 +20,8 @@ namespace PlayGame.UI
             _playerData = player.GetComponent<PlayerData>();
         }
 
-        private void LateUpdate()
-        {
+        private void LateUpdate() {
+            if (player == null) return;
             Vector3 currentPosition = player.transform.position;
             float speed = (currentPosition - _lastPosition).magnitude / Time.deltaTime;
             _lastPosition = currentPosition;

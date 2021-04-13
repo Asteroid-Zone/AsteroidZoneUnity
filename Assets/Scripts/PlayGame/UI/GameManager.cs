@@ -11,9 +11,16 @@ namespace PlayGame.UI {
 
         /// Called when the local player left the room. We need to load the launcher scene.
         public override void OnLeftRoom() {
+            CleanUpGameObjects();
             SceneManager.LoadScene(Scenes.MainMenuScene);
             
             base.OnLeftRoom();
+        }
+        
+        private void CleanUpGameObjects() {
+            foreach (GameObject g in FindObjectsOfType<GameObject>()) {
+                if (!g.name.Equals("PhotonMono")) Destroy(g);
+            }
         }
 
         public void LeaveRoom() {
