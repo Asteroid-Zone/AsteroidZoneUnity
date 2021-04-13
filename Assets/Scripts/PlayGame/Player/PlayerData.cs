@@ -71,7 +71,7 @@ namespace PlayGame.Player
 
             PlayerStats = new PlayerStats();
             if (!DebugSettings.Debug) PlayerStats.photonID = photonView.ViewID;
-            Debug.Log(PlayerStats.photonID);
+            Debug.Log("Photon id: " + PlayerStats.photonID);
             PlayerStats.playerName = PhotonNetwork.NickName;
             StatsManager.PlayerStatsList.Add(PlayerStats);
 

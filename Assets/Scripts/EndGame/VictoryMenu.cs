@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace EndGame {
-    public class VictoryMenu : MonoBehaviour {
+    public class VictoryMenu : MonoBehaviourPunCallbacks {
     
         public AudioSource buttonPress;
 
@@ -58,8 +58,15 @@ namespace EndGame {
         public void BackToMenu() {
             buttonPress.Play();
             PhotonNetwork.LeaveRoom();
+        }
+        
+        /// Called when the local player left the room
+        /// Delete all remaining game objects and load the menu
+        public override void OnLeftRoom() {
             CleanUpGameObjects();
             SceneManager.LoadScene(Scenes.MainMenuScene);
+            
+            base.OnLeftRoom();
         }
 
         private void CleanUpGameObjects() {

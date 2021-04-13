@@ -42,7 +42,7 @@ namespace MainMenu {
         public void PlayGame()
         {
             buttonPress.Play();
-            PhotonNetwork.ConnectUsingSettings();
+            if (!PhotonNetwork.IsConnected) PhotonNetwork.ConnectUsingSettings();
             controlPanel.SetActive(false);
             progressLabel.SetActive(true);
         }

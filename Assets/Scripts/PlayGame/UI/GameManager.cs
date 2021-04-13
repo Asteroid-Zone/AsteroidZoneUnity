@@ -12,6 +12,8 @@ namespace PlayGame.UI {
         /// Called when the local player left the room. We need to load the launcher scene.
         public override void OnLeftRoom() {
             SceneManager.LoadScene(Scenes.MainMenuScene);
+            
+            base.OnLeftRoom();
         }
 
         public void LeaveRoom() {
