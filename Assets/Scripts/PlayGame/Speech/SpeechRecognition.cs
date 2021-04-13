@@ -146,6 +146,14 @@ namespace PlayGame.Speech {
         // Displays the suggested command and performs it if we are confident its what they meant
         private void DisplaySuggestedCommand(Tuple<string, float, bool, string> suggestedCommand) {
             string eventMessage = "";
+            
+            if (suggestedCommand == null) {
+                eventMessage = "Invalid command. We're not sure what you meant.";
+                EventsManager.AddMessage(eventMessage);
+                ReadTextToSpeech(eventMessage);
+                return;
+            }
+            
             string suggestedPhrase = suggestedCommand.Item1;
             string originalPhrase = suggestedCommand.Item4;
             float confidence = suggestedCommand.Item2;
@@ -176,29 +184,36 @@ namespace PlayGame.Speech {
         }
 
         private Tuple<string, float, bool, string> FindBestSuggestedCommand(List<Tuple<string, float, bool, string>> suggestedCommands) {
+            Tuple<string, float, bool, string> bestCommand = null;
             Tuple<string, float, bool, string> bestCommandFromData = null;
             Tuple<string, float, bool, string> bestCommandFromDistance = null;
 
             foreach (Tuple<string, float, bool, string> command in suggestedCommands) {
-                if (command.Item3) { // If command is from data
-                    if (bestCommandFromData == null) bestCommandFromData = command;
-                    else if (command.Item2 > bestCommandFromData.Item2) bestCommandFromData = command;
-                } else {
-                    if (bestCommandFromDistance == null) bestCommandFromDistance = command;
-                    else if (command.Item2 > bestCommandFromDistance.Item2) bestCommandFromDistance = command;
+                if (command != null) {
+                    if (command.Item1 == null) bestCommand = command;
+                    else {
+                        if (command.Item3) { // If command is from data
+                            if (bestCommandFromData == null) bestCommandFromData = command;
+                            else if (command.Item2 > bestCommandFromData.Item2) bestCommandFromData = command;
+                        } else {
+                            if (bestCommandFromDistance == null) bestCommandFromDistance = command;
+                            else if (command.Item2 > bestCommandFromDistance.Item2) bestCommandFromDistance = command;
+                        }
+                    }
                 }
             }
 
-            if (bestCommandFromData != null && bestCommandFromData.Item2 > 0) return bestCommandFromData;
-            if (bestCommandFromDistance != null && bestCommandFromDistance.Item2 > 0.5) return bestCommandFromDistance;
-            return null;
+            if (bestCommandFromData != null && bestCommandFromData.Item2 > 0) bestCommand = bestCommandFromData;
+            if (bestCommandFromDistance != null && bestCommandFromDistance.Item2 > 0.5) bestCommand = bestCommandFromDistance;
+            
+            return bestCommand;
         }
         
         // Returns a list of suggested commands for all the detected phrases
         // Tuple(command, confidence, fromData, phrase)
         private List<Tuple<string, float, bool, string>> FindSuggestedCommands() {
             List<Tuple<string, float, bool, string>> suggestedCommands = new List<Tuple<string, float, bool, string>>();
-            
+
             foreach (string phrase in _detectedPhrases) {
                 suggestedCommands.Add(FindSuggestedCommand(phrase));
             }
@@ -209,7 +224,10 @@ namespace PlayGame.Speech {
         // Returns the suggested command for a given phrase
         // Tuple(command, confidence, fromData, phrase)
         private Tuple<string, float, bool, string> FindSuggestedCommand(string phrase) {
-            Tuple<string, float> suggestedCommandFromData = Grammar.GetSuggestedCommandFromData(phrase, _playerData, _moveObject, _miningLaser.enabled, _laserGun.IsShooting());
+            Tuple<string, float> suggestedCommandFromData;
+            if (_playerData.GetRole() == Role.StationCommander) suggestedCommandFromData = Grammar.GetSuggestedCommandFromData(phrase, _playerData, null, false, false);
+            else suggestedCommandFromData = Grammar.GetSuggestedCommandFromData(phrase, _playerData, _moveObject, _miningLaser.enabled, _laserGun.IsShooting());
+
             Tuple<string, float> suggestedCommandFromDistance = Grammar.GetSuggestedCommandFromDistance(phrase);
 
             // If confidence is greater than 0 for fromdata use that command
@@ -218,7 +236,7 @@ namespace PlayGame.Speech {
             // If confidence is greater than 0.5 for fromdistance ask the user
             if (suggestedCommandFromDistance.Item2 > 0.5) return new Tuple<string, float, bool, string>(suggestedCommandFromDistance.Item1, suggestedCommandFromDistance.Item2, false, phrase);
             
-            return null; // Otherwise no command was found
+            return new Tuple<string, float, bool, string>(null, 0, false, phrase); // Otherwise no command was found
         }
 
         private static void ReadTextToSpeech(string phrase) {

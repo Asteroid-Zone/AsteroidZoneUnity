@@ -120,11 +120,17 @@ namespace PlayGame.Speech {
             dataProvided.stationModule = GetCommandListIdentifier(phrase, StationModules);
 
             dataProvided.playerQuestType = playerData.currentQuest;
-            dataProvided.playerLockType = moveObject.GetLockType();
             dataProvided.miningLaser = miningLaser;
             dataProvided.combatLaser = combatLaser;
-            dataProvided.nearStation = moveObject.NearStation();
             dataProvided.role = playerData.GetRole();
+
+            if (moveObject == null) {
+                dataProvided.nearStation = false;
+                dataProvided.playerLockType = ToggleCommand.LockTargetType.None;
+            } else {
+                dataProvided.nearStation = moveObject.NearStation();
+                dataProvided.playerLockType = moveObject.GetLockType();
+            }
 
             return dataProvided;
         }
