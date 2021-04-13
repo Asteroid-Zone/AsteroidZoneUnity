@@ -23,8 +23,8 @@ namespace PlayGame.UI
             _playerData = player.GetComponent<PlayerData>();
         }
 
-        private void Update()
-        {
+        private void Update() {
+            if (_playerData == null) return;
             _currentQuest = _playerData.GetQuest();
             string questStr = questToString(_currentQuest);
             _text.text = questStr;

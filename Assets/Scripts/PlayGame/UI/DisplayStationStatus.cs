@@ -16,6 +16,8 @@ namespace PlayGame.UI {
         }
 
         private void Update() {
+            if (_spaceStation == null) return;
+            
             string text = "Station Resources: " + _spaceStation.resources + "\n";
 
             text += "Station Modules\n";

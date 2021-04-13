@@ -26,8 +26,6 @@ namespace PlayGame.Player.Movement
         public bool rotating;
         private bool _turnRight; // false = turn left, true = turn right
 
-        //private bool? _movingForward = null; // true = forward, false = back
-
         // Needed to reference enemies in order to rotate towards them
         private GameObject _enemySpawner;
 

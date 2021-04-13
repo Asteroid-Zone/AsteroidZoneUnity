@@ -30,6 +30,12 @@ namespace PlayGame.Pirates {
         private PirateLaserGun _laserGun;
         private PirateData _pirateData;
 
+        public static void ResetStaticVariables() {
+            _alert = false;
+            _knownStationLocation = Vector3.zero;
+            _minimapAlert = null;
+        }
+        
         private void Start() {
             _spaceStation = GameObject.FindGameObjectWithTag(Tags.StationTag).transform;
             _agent = GetComponent<NavMeshAgent>();

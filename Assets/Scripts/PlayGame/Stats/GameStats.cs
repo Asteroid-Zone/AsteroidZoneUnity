@@ -10,5 +10,14 @@
         public int asteroidsDestroyed;
         public int piratesDestroyed;
 
+        public void Reset() {
+            victory = false;
+            startTime = 0;
+            gameTime = 0;
+            resourcesHarvested = 0;
+            asteroidsDestroyed = 0;
+            piratesDestroyed = 0;
+        }
+
     }
 }

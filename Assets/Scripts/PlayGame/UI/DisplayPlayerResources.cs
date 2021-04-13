@@ -19,6 +19,7 @@ namespace PlayGame.UI {
         }
 
         private void Update() {
+            if (_playerData == null) return;
             _text.text = "Resources: " + _playerData.GetResources();
         }
     }

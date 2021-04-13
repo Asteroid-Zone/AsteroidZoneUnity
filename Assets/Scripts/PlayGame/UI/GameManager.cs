@@ -1,8 +1,11 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
+using PlayGame.Pirates;
 using Statics;
 using PlayGame.Player;
+using PlayGame.Stats;
 
 namespace PlayGame.UI {
     public class GameManager : MonoBehaviourPunCallbacks {
@@ -10,7 +13,15 @@ namespace PlayGame.UI {
         public static bool gameOver = false;
 
         private void Start() {
+            ResetStaticVariables();
+        }
+
+        private static void ResetStaticVariables() {
             gameOver = false;
+            PirateController.ResetStaticVariables();
+            PlayerData.Players = new List<GameObject>();
+            StatsManager.PlayerStatsList.Clear();
+            StatsManager.GameStats.Reset();
         }
 
         /// Called when the local player left the room. We need to load the launcher scene.

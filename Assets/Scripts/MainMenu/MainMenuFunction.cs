@@ -1,10 +1,7 @@
-﻿using Photon;
-using Photon.Pun;
-using Photon.Realtime;
+﻿using Photon.Pun;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Statics;
-
 
 namespace MainMenu {
     public class MainMenuFunction : MonoBehaviourPunCallbacks {
@@ -22,7 +19,7 @@ namespace MainMenu {
 
         public AudioSource buttonPress;
 
-        void Start() {
+        private void Start() {
             if (PhotonNetwork.IsConnected) PhotonNetwork.Disconnect(); // Need to disconnect otherwise the lobby will load before the player presses play game
             
             controlPanel.SetActive(true);
@@ -31,7 +28,7 @@ namespace MainMenu {
             roomControlPanel.SetActive(false);
         }
 
-        void Update() {
+        private void Update() {
 			if (lobbyControlPanel.activeSelf && Input.GetButtonDown("Cancel")) {
 				lobbyControlPanel.SetActive(false);
 				controlPanel.SetActive(true);

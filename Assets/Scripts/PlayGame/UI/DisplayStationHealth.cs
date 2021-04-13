@@ -17,6 +17,7 @@ namespace PlayGame.UI
         }
 
         private void Update() {
+            if (_spaceStation == null) return;
             StationModule module = _spaceStation.GetStationHull();
             _text.text = module.name + " Health: " + module.moduleHealth + "/" + module.maxHealth;
         }

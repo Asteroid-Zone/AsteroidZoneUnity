@@ -2,7 +2,6 @@
 using Photon.Pun;
 using PlayGame.Player;
 using PlayGame.Stats;
-using PlayGame.UI;
 using Statics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
