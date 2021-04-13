@@ -1,5 +1,4 @@
-﻿using System.Xml.Serialization;
-using Statics;
+﻿using Statics;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,10 +10,12 @@ namespace PlayGame.UI
         public GameObject tipsPanel;
         public GameObject debugPanel;
         public Toggle debugToggle;
+        public Toggle singlePlayerToggle;
         public GameObject quest;
 
         public void Start() {
             debugToggle.isOn = DebugSettings.DebugKeys || DebugSettings.ArrowKeys;
+            if (singlePlayerToggle != null) singlePlayerToggle.isOn = DebugSettings.SinglePlayer;
         }
         
         public void ShowOrHideMenuPanel()
@@ -45,6 +46,10 @@ namespace PlayGame.UI
         public void ToggleDebugMode() {
             DebugSettings.ArrowKeys = debugToggle.isOn;
             DebugSettings.DebugKeys = debugToggle.isOn;
+        }
+
+        public void ToggleSinglePlayer() {
+            DebugSettings.SinglePlayer = singlePlayerToggle.isOn;
         }
         
     }
