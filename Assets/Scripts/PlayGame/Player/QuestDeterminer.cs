@@ -38,8 +38,7 @@ namespace PlayGame.Player
         }
     
         private IEnumerator DetermineQuestMiner() {
-            while (true)
-            {
+            while (true) {
                 Transform nearestEnemy = _moveObject.GetNearestEnemyTransform();
                 if (_stationDamaged) {
                     // If within laser range of station hint should be shoot pirates otherwise return to station

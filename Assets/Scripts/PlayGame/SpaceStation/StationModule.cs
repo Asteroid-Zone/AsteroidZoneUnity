@@ -1,69 +1,68 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 using Random = UnityEngine.Random;
 
 namespace PlayGame.SpaceStation {
     public class StationModule {
         
-        protected readonly SpaceStation spaceStation;
+        protected readonly SpaceStation Station;
 
-        protected Material _material;
-        protected Texture _damagedTexture;
-        protected Texture _functionalTexture;
+        protected Material Mat;
+        protected Texture DamagedTexture;
+        protected Texture FunctionalTexture;
         
-        public readonly string name;
-        public readonly int maxHealth;
-        public int moduleHealth;
+        public readonly string Name;
+        public readonly int MaxHealth;
+        public int ModuleHealth;
 
         protected StationModule(string name, int maxHealth, SpaceStation station, string path) {
-            this.name = name;
-            this.maxHealth = maxHealth;
-            spaceStation = station;
-            moduleHealth = Random.Range(0, maxHealth / 2); // Set initial health to be less than half
+            Name = name;
+            MaxHealth = maxHealth;
+            Station = station;
+            ModuleHealth = Random.Range(0, maxHealth / 2); // Set initial health to be less than half
             Debug.Log(path);
-            _material = station.transform.Find(path).gameObject.GetComponent<Renderer>().material;
-            _damagedTexture = Texture2D.redTexture;
-            _functionalTexture = Texture2D.whiteTexture;
+            Mat = station.transform.Find(path).gameObject.GetComponent<Renderer>().material;
+            DamagedTexture = Texture2D.redTexture;
+            FunctionalTexture = Texture2D.whiteTexture;
             UpdateMesh();
         }
         
         protected StationModule(string name, int maxHealth, SpaceStation station) {
-            this.name = name;
-            this.maxHealth = maxHealth;
-            spaceStation = station;
-            moduleHealth = Random.Range(0, maxHealth / 2); // Set initial health to be less than half
+            Name = name;
+            MaxHealth = maxHealth;
+            Station = station;
+            ModuleHealth = Random.Range(0, maxHealth / 2); // Set initial health to be less than half
         }
 
         protected virtual void UpdateMesh() {
-            _material.mainTexture = IsFunctional() ? _functionalTexture : _damagedTexture;
+            Mat.mainTexture = IsFunctional() ? FunctionalTexture : DamagedTexture;
         }
 
         public void Repair(int resources) {
             int repairAmount = GetRepairAmount(resources);
             
-            moduleHealth += repairAmount;
-            spaceStation.resources -= repairAmount;
+            ModuleHealth += repairAmount;
+            Station.resources -= repairAmount;
             if (IsFunctional()) UpdateMesh();
         }
 
         // Returns the repair amount, minimum of station resources, remaining health to repair and the amount chosen by the player
         private int GetRepairAmount(int resources) {
-            return Math.Min(Math.Min(maxHealth - moduleHealth, spaceStation.resources), resources);
+            return Math.Min(Math.Min(MaxHealth - ModuleHealth, Station.resources), resources);
         }
 
         public bool IsFunctional() {
-            return moduleHealth >= maxHealth;
+            return ModuleHealth >= MaxHealth;
         }
 
         public virtual void TakeDamage(int damage) {
-            moduleHealth -= damage;
-            if (moduleHealth < 0) moduleHealth = 0;
+            ModuleHealth -= damage;
+            if (ModuleHealth < 0) ModuleHealth = 0;
             if (!IsFunctional()) UpdateMesh();
         }
 
         public override string ToString() {
-            return name + ": " + moduleHealth + "/" + maxHealth;
+            return Name + ": " + ModuleHealth + "/" + MaxHealth;
         }
     }
 }

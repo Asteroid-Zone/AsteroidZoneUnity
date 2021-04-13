@@ -8,7 +8,6 @@ namespace PlayGame
     public class GridManager : MonoBehaviour
     {
         public GameObject gridSquarePrefab;
-        public int totalCells;
         private GameObject[,] _grid;
 
         private void Start() {
@@ -37,7 +36,7 @@ namespace PlayGame
             return (char) (numCoord + 65);
         }
 
-        public int GetCellSize() {
+        public static int GetCellSize() {
             return GameConstants.GridCellSize;
         }
 
@@ -69,11 +68,10 @@ namespace PlayGame
             return globalCoord;
         }
 
-        public Vector2 GlobalToGridCoord(Vector3 globalCoord)
-        {
+        public static Vector2 GlobalToGridCoord(Vector3 globalCoord) {
             Vector2 gridCoord;
-            gridCoord.x = (int) globalCoord.x / GameConstants.GridCellSize;
-            gridCoord.y = (int) globalCoord.z / GameConstants.GridCellSize;
+            gridCoord.x = (int) (globalCoord.x / GameConstants.GridCellSize);
+            gridCoord.y = (int) (globalCoord.z / GameConstants.GridCellSize);
             return gridCoord;
         }
 
@@ -84,7 +82,7 @@ namespace PlayGame
         }
 
         // Gets the total number of cells in the grid
-        public int GetTotalCells() {
+        public static int GetTotalCells() {
             return GameConstants.GridHeight * GameConstants.GridWidth;
         }
 
@@ -93,12 +91,12 @@ namespace PlayGame
             return _grid;
         }
 
-        public int GetWidth()
+        public static int GetWidth()
         {
             return GameConstants.GridWidth;
         }
 
-        public int GetHeight()
+        public static int GetHeight()
         {
             return GameConstants.GridHeight;
         }

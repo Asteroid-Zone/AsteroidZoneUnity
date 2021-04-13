@@ -33,7 +33,7 @@ namespace PlayGame.Player.Movement
         private GameObject _asteroidSpawner;
         
         private Transform _lockTarget;
-        public ToggleCommand.LockTargetType _lockType = ToggleCommand.LockTargetType.None;
+        public ToggleCommand.LockTargetType lockType = ToggleCommand.LockTargetType.None;
 
         private Transform _spaceStation;
         
@@ -51,23 +51,23 @@ namespace PlayGame.Player.Movement
             UpdateRotation();
         }
 
-        public bool InLockRange(ToggleCommand.LockTargetType lockType) {
+        public bool InLockRange(ToggleCommand.LockTargetType lockTargetType) {
             float lockRange = 0;
-            if (lockType == ToggleCommand.LockTargetType.Asteroid) lockRange = GameConstants.PlayerMiningRange;
-            if (lockType == ToggleCommand.LockTargetType.Pirate) lockRange = _playerData.GetLaserRange();
+            if (lockTargetType == ToggleCommand.LockTargetType.Asteroid) lockRange = GameConstants.PlayerMiningRange;
+            if (lockTargetType == ToggleCommand.LockTargetType.Pirate) lockRange = _playerData.GetLaserRange();
             
             return Vector3.Distance(transform.position, _lockTarget.position) < lockRange;
         }
 
         private void Update() {
-            if (GameManager.gameOver) return;
+            if (GameManager.GameOver) return;
             // Get the speed of the player's ship
             float speed = _playerData.GetSpeed();
 
             // If locked on automatically move so player is in range
-            if (_lockType != ToggleCommand.LockTargetType.None && _lockTarget != null) {
+            if (lockType != ToggleCommand.LockTargetType.None && _lockTarget != null) {
                 // If player not in range move forward
-                if (!InLockRange(_lockType)) {
+                if (!InLockRange(lockType)) {
                     SetDirection(transform.forward, false);
                     SetSpeed(1);
                 } else SetSpeed(0);
@@ -84,8 +84,8 @@ namespace PlayGame.Player.Movement
             // Rotate slowly
             if (rotating) Rotate();
 
-            if (_lockType != ToggleCommand.LockTargetType.None) {
-                if (_lockTarget == null) _lockTarget = GetLockTarget(_lockType);
+            if (lockType != ToggleCommand.LockTargetType.None) {
+                if (_lockTarget == null) _lockTarget = GetLockTarget(lockType);
                 if (_lockTarget != null) FaceTarget(_lockTarget);
             } else {
                 _lockTarget = null;
@@ -240,7 +240,7 @@ namespace PlayGame.Player.Movement
         }
 
         public void SetLockTargetType(ToggleCommand.LockTargetType type) {
-            _lockType = type;
+            lockType = type;
             _lockTarget = null;
         }
         
@@ -264,7 +264,7 @@ namespace PlayGame.Player.Movement
         
         public ToggleCommand.LockTargetType GetLockType()
         {
-            return _lockType;
+            return lockType;
         }
 
         public float DistanceToStation() {

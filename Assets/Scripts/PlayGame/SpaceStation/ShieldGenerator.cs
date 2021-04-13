@@ -2,14 +2,14 @@
 using UnityEngine;
 
 namespace PlayGame.SpaceStation {
-    public class ShieldGenerator : StationModule {
+    public sealed class ShieldGenerator : StationModule {
 
         private int _shields = 0;
         private float _timeSinceLastCharge = 1; // Seconds since last charge
 
         public ShieldGenerator(SpaceStation station) : base("Shield Generator", GameConstants.ShieldGeneratorMaxHealth, station, "SpaceStation/station/shield_generator") {
-            _damagedTexture = Resources.Load<Texture>(Textures.ShieldGeneratorDamaged);
-            _functionalTexture = Resources.Load<Texture>(Textures.ShieldGenerator);
+            DamagedTexture = Resources.Load<Texture>(Textures.ShieldGeneratorDamaged);
+            FunctionalTexture = Resources.Load<Texture>(Textures.ShieldGenerator);
             UpdateMesh();
         }
         
@@ -33,12 +33,11 @@ namespace PlayGame.SpaceStation {
         // Shields take as much of the damage as they can, return the rest of the damage
         public int AbsorbDamage(int damage) {
             _shields -= damage;
-            if (_shields < 0) {
-                int damageRemaining = _shields * -1;
-                _shields = 0;
-                return damageRemaining;
-            }
-            return 0;
+            if (_shields >= 0) return 0;
+            
+            int damageRemaining = _shields * -1;
+            _shields = 0;
+            return damageRemaining;
         }
 
         public override string ToString() {

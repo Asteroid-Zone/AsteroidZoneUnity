@@ -16,7 +16,7 @@ namespace PlayGame
      This whole section can probably be optimised.
      */
         public GameObject followCamera;
-        public int FogOfWarRadius;
+        public int fogOfWarRadius;
         
         private GameObject _player;
         private GridManager _gridManager;
@@ -39,8 +39,8 @@ namespace PlayGame
             if (_playerData.GetRole() == Role.StationCommander) return;
 
             _gridManager = GetComponent<GridManager>();
-            _width = _gridManager.GetWidth();
-            _height = _gridManager.GetHeight();
+            _width = GridManager.GetWidth();
+            _height = GridManager.GetHeight();
             _grid = _gridManager.GetGrid();
             UnityEngine.Camera cam = followCamera.GetComponent<UnityEngine.Camera>();
             _playerID = _playerData.GetPlayerID();
@@ -65,7 +65,7 @@ namespace PlayGame
 
             // Toggle visibility for "cover" objects on tiles in defined radius, make tiles on the border black again
             // Actually fix this so each player calculates their own
-            Vector2 position = _gridManager.GlobalToGridCoord(_player.transform.position);
+            Vector2 position = GridManager.GlobalToGridCoord(_player.transform.position);
             var (visibleTiles, invisibleTiles) = CalcVisibleTiles(position);
             _visibleTiles = visibleTiles;
         
@@ -90,7 +90,7 @@ namespace PlayGame
         // (I can explain the logic for this if needed)
         private (List<Vector2>, List<Vector2>) CalcVisibleTiles(Vector2 inputTile)
         {
-            int newRadius = FogOfWarRadius + 1;
+            int newRadius = fogOfWarRadius + 1;
             List<Vector2> visibleTilesList = new List<Vector2>();
             List<Vector2> invisibleTilesList = new List<Vector2>();
             int diameter = (newRadius * 2) + 1;

@@ -2,20 +2,20 @@
 using UnityEngine;
 
 namespace PlayGame.SpaceStation {
-    public class StationHull : StationModule {
+    public sealed class StationHull : StationModule {
 
         private readonly Material _materialUpperRing;
-        private Texture _damagedTextureUpperRing;
-        private Texture _functionalTextureUpperRing;
+        private readonly Texture _damagedTextureUpperRing;
+        private readonly Texture _functionalTextureUpperRing;
         
         private readonly Material _materialLowerRing;
-        private Texture _damagedTextureLowerRing;
-        private Texture _functionalTextureLowerRing;
+        private readonly Texture _damagedTextureLowerRing;
+        private readonly Texture _functionalTextureLowerRing;
         
         public StationHull(SpaceStation station) : base("Station Hull", GameConstants.StationHullMaxHealth, station) {
-            _material = station.transform.Find("SpaceStation/station/hull/centre_hull").gameObject.GetComponent<Renderer>().material;
-            _damagedTexture = Resources.Load<Texture>(Textures.CentreHullDamaged);
-            _functionalTexture = Resources.Load<Texture>(Textures.CentreHull);
+            Mat = station.transform.Find("SpaceStation/station/hull/centre_hull").gameObject.GetComponent<Renderer>().material;
+            DamagedTexture = Resources.Load<Texture>(Textures.CentreHullDamaged);
+            FunctionalTexture = Resources.Load<Texture>(Textures.CentreHull);
             
             _materialUpperRing = station.transform.Find("SpaceStation/station/hull/upper_ring").gameObject.GetComponent<Renderer>().material;
             _damagedTextureUpperRing = Resources.Load<Texture>(Textures.UpperRingDamaged);
@@ -26,18 +26,18 @@ namespace PlayGame.SpaceStation {
             _functionalTextureLowerRing = Resources.Load<Texture>(Textures.LowerRing);
             
             UpdateMesh();
-            moduleHealth += GameConstants.StationHullMaxHealth / 2; // Increase the minimum starting health to half
+            ModuleHealth += GameConstants.StationHullMaxHealth / 2; // Increase the minimum starting health to half
         }
 
         protected override void UpdateMesh() {
-            _material.mainTexture = IsFunctional() ? _functionalTexture : _damagedTexture;
+            Mat.mainTexture = IsFunctional() ? FunctionalTexture : DamagedTexture;
             _materialUpperRing.mainTexture = IsFunctional() ? _functionalTextureUpperRing : _damagedTextureUpperRing;
             _materialLowerRing.mainTexture = IsFunctional() ? _functionalTextureLowerRing : _damagedTextureLowerRing;
         }
         
         public override void TakeDamage(int damage) {
             base.TakeDamage(damage);
-            if (moduleHealth <= 0) spaceStation.GameOver(false); // Space station destroyed
+            if (ModuleHealth <= 0) Station.GameOver(false); // Space station destroyed
         }
     }
 }

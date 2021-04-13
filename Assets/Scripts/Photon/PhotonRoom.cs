@@ -1,30 +1,25 @@
 ﻿using Photon.Pun;
 using Photon.Realtime;
 using PlayGame.Stats;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-namespace Photon
-{
-    public class PhotonRoom : MonoBehaviourPunCallbacks, IInRoomCallbacks
-    {
+namespace Photon {
+    public class PhotonRoom : MonoBehaviourPunCallbacks {
         [Tooltip("The UI Panel with Room Options")]
         [SerializeField]
         private GameObject roomControlPanel;
         [Tooltip("The UI Panel with lobby Options")]
         [SerializeField]
         private GameObject lobbyControlPanel;
-        private GameObject progressLabel;
+        private GameObject _progressLabel;
         public GameObject startButton;
 
         public GameObject playerListPrefab;
         public Transform playerPanel;
 
-        public static PhotonRoom Instance;
-        private PhotonView PV;
+        private static PhotonRoom _instance;
 
         public int multiplayerScene;
         private int _currentScene;
@@ -32,20 +27,19 @@ namespace Photon
         private void Awake()
         {
             //Set up Singleton
-            if (Instance == null)
+            if (_instance == null)
             {
-                Instance = this;
+                _instance = this;
             }
             else
             {
-                if (Instance != this)
+                if (_instance != this)
                 {
-                    Destroy(Instance.gameObject);
-                    Instance = this;
+                    Destroy(_instance.gameObject);
+                    _instance = this;
                 }
             }
             DontDestroyOnLoad(gameObject);
-            PV = GetComponent<PhotonView>();
         }
 
         public override void OnEnable()
@@ -134,14 +128,10 @@ namespace Photon
                 Destroy(playerPanel.GetChild(i).gameObject);
             }
         }
-
-
-        public void ListLobby()
-        {
-          if(PhotonNetwork.InRoom)
-          {
-            foreach(Player player in PhotonNetwork.PlayerList)
-            {
+        
+        public void ListLobby() {
+          if(PhotonNetwork.InRoom) {
+            foreach(Player player in PhotonNetwork.PlayerList) {
                 GameObject tempListing = Instantiate(playerListPrefab, playerPanel);
                 Text tempText = tempListing.transform.GetChild(0).GetComponent<Text>();
                 tempText.text = player.NickName;

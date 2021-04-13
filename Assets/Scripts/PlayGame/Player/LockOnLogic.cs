@@ -13,7 +13,7 @@ namespace PlayGame.Player
         private PlayerData _playerData;
         private MoveObject _moveObject;
         private Transform _lockTarget;
-        private Image image;
+        private Image _image;
         public Sprite asteroidReticle;
         public Sprite enemyReticle;
         public Sprite outOfRangeReticle;
@@ -25,8 +25,8 @@ namespace PlayGame.Player
             if (_playerData.GetRole() == Role.StationCommander) Destroy(gameObject);
             
             _moveObject = !DebugSettings.Debug ? PhotonPlayer.Instance.myAvatar.GetComponent<MoveObject>() : TestPlayer.GetPlayerShip().GetComponent<MoveObject>();
-            image = GetComponent<Image>();
-            image.enabled = true;
+            _image = GetComponent<Image>();
+            _image.enabled = true;
         }
 
         // Update is called once per frame
@@ -35,16 +35,16 @@ namespace PlayGame.Player
             
             if (_lockTarget) {
                 Vector3 screenPos = cameraMan.GetCurrentCamera().WorldToScreenPoint(_lockTarget.position);
-                image.transform.position = screenPos;
+                _image.transform.position = screenPos;
                 
                 ToggleCommand.LockTargetType lockType = _moveObject.GetLockType();
                 if (_moveObject.InLockRange(lockType)) {
-                    image.sprite = lockType == ToggleCommand.LockTargetType.Asteroid ? asteroidReticle : enemyReticle;
-                } else image.sprite = outOfRangeReticle;
+                    _image.sprite = lockType == ToggleCommand.LockTargetType.Asteroid ? asteroidReticle : enemyReticle;
+                } else _image.sprite = outOfRangeReticle;
 
-                image.enabled = true;
+                _image.enabled = true;
             } else {
-                image.enabled = false;
+                _image.enabled = false;
             }
         }
     }

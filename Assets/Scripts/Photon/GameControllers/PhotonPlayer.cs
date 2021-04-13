@@ -21,10 +21,10 @@ namespace Photon.GameControllers
         private void Awake()
             {
                 int spawnPicker = Random.Range(0, GameSetup.Instance.spawnPoints.Length);
-                if(photonView.IsMine) {
-                    if (PhotonNetwork.IsMasterClient && !DebugSettings.SinglePlayer) myAvatar = PhotonNetwork.Instantiate(Prefabs.StationCommander, GameSetup.Instance.spawnPoints[spawnPicker].position, GameSetup.Instance.spawnPoints[spawnPicker].rotation, 0);
-                    else myAvatar = PhotonNetwork.Instantiate(Prefabs.PlayerShip, GameSetup.Instance.spawnPoints[spawnPicker].position, GameSetup.Instance.spawnPoints[spawnPicker].rotation, 0);
-                }
+                if (!photonView.IsMine) return;
+                
+                if (PhotonNetwork.IsMasterClient && !DebugSettings.SinglePlayer) myAvatar = PhotonNetwork.Instantiate(Prefabs.StationCommander, GameSetup.Instance.spawnPoints[spawnPicker].position, GameSetup.Instance.spawnPoints[spawnPicker].rotation);
+                else myAvatar = PhotonNetwork.Instantiate(Prefabs.PlayerShip, GameSetup.Instance.spawnPoints[spawnPicker].position, GameSetup.Instance.spawnPoints[spawnPicker].rotation);
             }
 
     }

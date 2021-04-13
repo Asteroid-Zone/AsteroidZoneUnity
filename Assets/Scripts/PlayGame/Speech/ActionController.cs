@@ -122,8 +122,8 @@ namespace PlayGame.Speech {
             // Check player is in the same grid square as the station
             if (moveObject.NearStation()) {
                 if ((!DebugSettings.Debug && player.GetPhotonView().IsMine) || DebugSettings.Debug) {
-                    spaceStation.AddResources(playerData.GetResources()); // Add the resources into the space station
-                    playerData.RemoveResources(playerData.GetResources()); // Remove them from the player
+                    spaceStation.AddResources(command.TransferAmount); // Add the resources into the space station
+                    playerData.RemoveResources(command.TransferAmount); // Remove them from the player
                 }
             } else {
                 EventsManager.AddMessage("You must be next to the space station to transfer resources");
@@ -175,8 +175,8 @@ namespace PlayGame.Speech {
         }
 
         private void PerformSpeedCommand(SpeedCommand command) {
-            moveObject.SetSpeed(command.speed);
-            if (command.speed == 0) {
+            moveObject.SetSpeed(command.Speed);
+            if (command.Speed == 0) {
                 moveObject.SetLockTargetType(ToggleCommand.LockTargetType.None);
                 moveObject.StopRotating();
             }

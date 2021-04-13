@@ -28,7 +28,6 @@ namespace PlayGame {
         public GameObject gridManager;
         public GameObject asteroid;
         
-        private GridManager _gridManager;
         // Will be used as the size of the checked space when spawning (checked space should be empty)
         private float _spawnRangeCheck; 
         private int _maxAsteroids;
@@ -37,16 +36,14 @@ namespace PlayGame {
         private void Start()
         {
             if (!PhotonNetwork.IsMasterClient && !DebugSettings.Debug) return;
-            _gridManager = gridManager.GetComponent<GridManager>();
             InvokeRepeating(nameof(AsteroidRNG), 0, GameConstants.AsteroidEveryXSeconds);
             
             // Checked space is the half size in OverlapBoxNonAlloc
-            _spawnRangeCheck = _gridManager.GetCellSize() / 2f;
-            _maxAsteroids = (int) (GameConstants.MaxAsteroidsMultiplier * Math.Floor(2 * Math.Sqrt(_gridManager.GetTotalCells())));
+            _spawnRangeCheck = GridManager.GetCellSize() / 2f;
+            _maxAsteroids = (int) (GameConstants.MaxAsteroidsMultiplier * Math.Floor(2 * Math.Sqrt(GridManager.GetTotalCells())));
         }
 
-        private void AsteroidRNG()
-        {
+        private void AsteroidRNG() {
             if (!PhotonNetwork.IsMasterClient && !DebugSettings.Debug) return;
             // Don't spawn asteroids if the maximum count is reached.
             if (transform.childCount >= _maxAsteroids)
@@ -84,7 +81,7 @@ namespace PlayGame {
             else newAsteroid = Instantiate(asteroid, randomGlobalCoord, Quaternion.identity);
 
             if (DebugSettings.Debug) newAsteroid.transform.parent = gameObject.transform;
-            else this.photonView.RPC(nameof(SetParent), RpcTarget.AllBuffered, newAsteroid.GetPhotonView().ViewID);
+            else photonView.RPC(nameof(SetParent), RpcTarget.AllBuffered, newAsteroid.GetPhotonView().ViewID);
         }
 
         [PunRPC]

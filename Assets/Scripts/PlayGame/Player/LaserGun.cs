@@ -20,7 +20,7 @@ namespace PlayGame.Player {
 
             // Get the combat laser SFX that has the necessary tag and is a child of the current player's game object
             // Note: it should be a child of the current player, because in multiplayer it wouldn't work otherwise
-            GameObject.FindGameObjectsWithTag(Tags.CombatLaserSFXTag).ToList().ForEach(miningSfx =>
+            GameObject.FindGameObjectsWithTag(Tags.CombatLaserSfxTag).ToList().ForEach(miningSfx =>
             {
                 if (miningSfx.transform.parent.parent == gameObject.transform)
                 {

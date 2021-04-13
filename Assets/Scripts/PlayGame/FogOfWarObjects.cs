@@ -14,7 +14,6 @@ namespace PlayGame {
         private GameObject[] _asteroids;
         private GameObject[] _pirates;
         public GameObject gridManagerObject;
-        private GridManager _gridManager;
         private FogOfWarTiles _fogOfWarTiles;
 
         // Radius FOW Objects
@@ -27,7 +26,6 @@ namespace PlayGame {
             _playerData = _player.GetComponent<PlayerData>();
             if (_playerData.GetRole() == Role.StationCommander) return;
             
-            _gridManager = gridManagerObject.GetComponent<GridManager>();
             _fogOfWarTiles = gridManagerObject.GetComponent<FogOfWarTiles>();
         }
 
@@ -63,10 +61,10 @@ namespace PlayGame {
             // TODO: Improve performance by having objects register themselves
             _asteroids = GameObject.FindGameObjectsWithTag("Asteroid");
             _pirates = GameObject.FindGameObjectsWithTag("Pirate");
-            List <Vector2> _visibleTiles = _fogOfWarTiles.GetVisibleTiles();
+            List<Vector2> visibleTiles = _fogOfWarTiles.GetVisibleTiles();
             foreach (GameObject asteroid in _asteroids) {
-                Vector2 position = _gridManager.GlobalToGridCoord(asteroid.transform.position);
-                if (_visibleTiles.Contains(position))
+                Vector2 position = GridManager.GlobalToGridCoord(asteroid.transform.position);
+                if (visibleTiles.Contains(position))
                 {
                     asteroid.layer = 0;
                 }
@@ -77,8 +75,8 @@ namespace PlayGame {
             }
             foreach (GameObject pirate in _pirates)
             {
-                Vector2 position = _gridManager.GlobalToGridCoord(pirate.transform.position);
-                if (_visibleTiles.Contains(position))
+                Vector2 position = GridManager.GlobalToGridCoord(pirate.transform.position);
+                if (visibleTiles.Contains(position))
                 {
                     pirate.layer = 0;
                     pirate.transform.GetChild(1).gameObject.layer = 0;

@@ -4,10 +4,10 @@ using Statics;
 namespace PlayGame.Speech.Commands {
     public class SpeedCommand : Command {
 
-        public readonly float speed;
+        public readonly float Speed;
 
         public SpeedCommand(string speed) : base(CommandType.Speed, false, true) {
-            this.speed = GetSpeedFromString(speed);
+            Speed = GetSpeedFromString(speed);
         }
 
         private static float GetSpeedFromString(string speed) {

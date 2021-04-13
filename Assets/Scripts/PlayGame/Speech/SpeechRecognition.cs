@@ -32,7 +32,7 @@ namespace PlayGame.Speech {
         private bool _foundCommand = false;
         private Command _command = null; // Holds latest valid command
         private string _phrase = null; // Latest valid phrase
-        private List<string> _detectedPhrases = new List<string>();
+        private readonly List<string> _detectedPhrases = new List<string>();
 
         private void Start() {
             StartSpeechRecognitionInTheBrowser();
@@ -63,7 +63,7 @@ namespace PlayGame.Speech {
         }
 
         private void Update() {
-            if (GameManager.gameOver) return;
+            if (GameManager.GameOver) return;
             if (!DebugSettings.Debug && !this.photonView.IsMine) return;
             text.text = _myResponse;
         }
@@ -145,7 +145,7 @@ namespace PlayGame.Speech {
 
         // Displays the suggested command and performs it if we are confident its what they meant
         private void DisplaySuggestedCommand(Tuple<string, float, bool, string> suggestedCommand) {
-            string eventMessage = "";
+            string eventMessage;
             
             if (suggestedCommand == null) {
                 eventMessage = "Invalid command. We're not sure what you meant.";

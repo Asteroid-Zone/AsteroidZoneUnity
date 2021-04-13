@@ -10,14 +10,14 @@ using PlayGame.Stats;
 namespace PlayGame.UI {
     public class GameManager : MonoBehaviourPunCallbacks {
 
-        public static bool gameOver = false;
+        public static bool GameOver = false;
 
         private void Start() {
             ResetStaticVariables();
         }
 
         private static void ResetStaticVariables() {
-            gameOver = false;
+            GameOver = false;
             PirateController.ResetStaticVariables();
             PlayerData.Players = new List<GameObject>();
             StatsManager.PlayerStatsList.Clear();
@@ -42,10 +42,8 @@ namespace PlayGame.UI {
             PhotonNetwork.LeaveRoom();
         }
 
-        void LoadArena()
-        {
-            if (!PhotonNetwork.IsMasterClient)
-            {
+        private void LoadArena() {
+            if (!PhotonNetwork.IsMasterClient) {
                 Debug.LogError("PhotonNetwork : Trying to Load a level but we are not the master Client");
             }
             Debug.LogFormat("PhotonNetwork : Loading Play Game");

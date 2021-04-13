@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Photon.Pun;
-using PlayGame.Player;
 using PlayGame.Speech.Commands;
 using PlayGame.Stats;
 using PlayGame.UI;
@@ -48,7 +47,7 @@ namespace PlayGame.SpaceStation {
             {
                 for (int i = 0; i < _stationModules.Count; i++)
                 {
-                    this.photonView.RPC(nameof(RPC_SyncStationHealth), RpcTarget.AllBuffered, _stationModules[i].moduleHealth, i);
+                    photonView.RPC(nameof(RPC_SyncStationHealth), RpcTarget.AllBuffered, _stationModules[i].ModuleHealth, i);
                 }
 
             }
@@ -57,7 +56,7 @@ namespace PlayGame.SpaceStation {
         [PunRPC]
         public void RPC_SyncStationHealth(int health, int index)
         {
-            _stationModules[index].moduleHealth = health;
+            _stationModules[index].ModuleHealth = health;
         }
 
         private void Update() {
@@ -74,7 +73,7 @@ namespace PlayGame.SpaceStation {
         
         [PunRPC]
         public void RPC_GameOver(bool victory, float time) {
-            GameManager.gameOver = true;
+            GameManager.GameOver = true;
             string eventMessage = "Game over";
             if (victory) eventMessage = "Game completed";
             EventsManager.AddMessage(eventMessage);
@@ -84,16 +83,15 @@ namespace PlayGame.SpaceStation {
             _complete = true;
         }
 
-        public void AddResources(int resources) {
-            if (!DebugSettings.Debug) photonView.RPC(nameof(RPC_AddResources), RpcTarget.AllBuffered, resources);
-            else this.resources += resources;
+        public void AddResources(int amount) {
+            if (!DebugSettings.Debug) photonView.RPC(nameof(RPC_AddResources), RpcTarget.AllBuffered, amount);
+            else resources += amount;
         }
 
         [PunRPC]
-        public void RPC_AddResources(int resources)
-        {
-            this.resources += resources;
-            EventsManager.AddMessage("Resources at " + this.resources.ToString());
+        public void RPC_AddResources(int amount) {
+            resources += amount;
+            EventsManager.AddMessage("Resources at " + resources);
         }
 
         public void TakeDamage(int damage) {

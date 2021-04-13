@@ -1,5 +1,4 @@
-﻿using System;
-using Statics;
+﻿using Statics;
 
 namespace PlayGame.Speech.Commands {
     public class ToggleCommand : Command {

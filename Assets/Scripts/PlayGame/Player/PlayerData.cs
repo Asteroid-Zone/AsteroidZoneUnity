@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Photon.GameControllers;
 using Photon.Pun;
 using PlayGame.Camera;
@@ -56,9 +55,7 @@ namespace PlayGame.Player
 
         private NavMeshAgent _playerAgent;
 
-        private Transform _lockTarget;
-
-        public PlayerStats PlayerStats;
+        private PlayerStats _playerStats;
 
         public QuestType currentQuest;
 
@@ -69,11 +66,11 @@ namespace PlayGame.Player
             _playerAgent = GetComponent<NavMeshAgent>();
             DontDestroyOnLoad(gameObject);
 
-            PlayerStats = new PlayerStats();
-            if (!DebugSettings.Debug) PlayerStats.photonID = photonView.ViewID;
-            Debug.Log("Photon id: " + PlayerStats.photonID);
-            PlayerStats.playerName = PhotonNetwork.NickName;
-            StatsManager.PlayerStatsList.Add(PlayerStats);
+            _playerStats = new PlayerStats();
+            if (!DebugSettings.Debug) _playerStats.photonID = photonView.ViewID;
+            Debug.Log("Photon id: " + _playerStats.photonID);
+            _playerStats.playerName = PhotonNetwork.NickName;
+            StatsManager.PlayerStatsList.Add(_playerStats);
 
             // Initialise the players list
             Players = new List<GameObject>();
@@ -110,7 +107,7 @@ namespace PlayGame.Player
             ResizeViewableArea();
             
             currentQuest = QuestType.MineAsteroids;
-            _playerID = (PlayerStats.photonID / 1000) - 1;
+            _playerID = (_playerStats.photonID / 1000) - 1;
          //   _playerID = _playerID > 3 ? 3 : _playerID;
         //    _playerID = _playerID < 0 ? 0 : _playerID;
         }
@@ -171,7 +168,7 @@ namespace PlayGame.Player
         public void AddResources(int resources) {
             StatsManager.GameStats.resourcesHarvested += resources;
             _resources += resources;
-            PlayerStats.resourcesHarvested += resources;
+            _playerStats.resourcesHarvested += resources;
         }
         
         public void RemoveResources(int amount) {
@@ -257,11 +254,6 @@ namespace PlayGame.Player
         public int GetPlayerID()
         {
             return _playerID;
-        }
-
-        public void SetLockTarget(Transform lockTarget)
-        {
-            _lockTarget = lockTarget;
         }
 
         public static PlayerData GetMyPlayerData()

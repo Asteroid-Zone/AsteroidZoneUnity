@@ -24,7 +24,7 @@ namespace PlayGame.Player {
             
             // Get the mining laser SFX that has the necessary tag and is a child of the current player's game object
             // Note: it should be a child of the current player, because in multiplayer it wouldn't work otherwise
-            GameObject.FindGameObjectsWithTag(Tags.MiningLaserSFXTag).ToList().ForEach(miningSfx =>
+            GameObject.FindGameObjectsWithTag(Tags.MiningLaserSfxTag).ToList().ForEach(miningSfx =>
                 {
                     if (miningSfx.transform.parent.parent == gameObject.transform)
                     {
@@ -38,18 +38,18 @@ namespace PlayGame.Player {
         }
         
         private void Update() {
-            if (laser.enabled) {
-                RaycastHit hit;
-                Physics.Raycast(transform.position, transform.forward, out hit, GameConstants.PlayerMiningRange); // Get the game object that the laser is hitting
+            if (!laser.enabled) return;
+            
+            RaycastHit hit;
+            Physics.Raycast(transform.position, transform.forward, out hit, GameConstants.PlayerMiningRange); // Get the game object that the laser is hitting
 
-                if (hit.collider) { // If the laser is hitting a game object
-                    UpdateLaser((int) hit.distance);
-                    if (hit.collider.gameObject.CompareTag(Tags.AsteroidTag)) {
-                        if ((!DebugSettings.Debug && PhotonNetwork.IsMasterClient) || DebugSettings.Debug) MineAsteroid(hit.collider.gameObject);
-                    }
-                } else {
-                    UpdateLaser(GameConstants.PlayerMiningRange);
+            if (hit.collider) { // If the laser is hitting a game object
+                UpdateLaser((int) hit.distance);
+                if (hit.collider.gameObject.CompareTag(Tags.AsteroidTag)) {
+                    if ((!DebugSettings.Debug && PhotonNetwork.IsMasterClient) || DebugSettings.Debug) MineAsteroid(hit.collider.gameObject);
                 }
+            } else {
+                UpdateLaser(GameConstants.PlayerMiningRange);
             }
         }
 

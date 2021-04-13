@@ -12,12 +12,12 @@ namespace PlayGame {
     public class Asteroid : MonoBehaviour {
 
         private readonly struct AsteroidModel {
-            public readonly Vector3 scale;
-            public readonly Mesh mesh;
+            public readonly Vector3 Scale;
+            public readonly Mesh Mesh;
 
             public AsteroidModel(Vector3 scale, Mesh mesh) {
-                this.scale = scale;
-                this.mesh = mesh;
+                Scale = scale;
+                Mesh = mesh;
             }
         }
         
@@ -61,8 +61,8 @@ namespace PlayGame {
         }
 
         private void SetAsteroidProperties(int asteroidMeshIndex, Quaternion rotation, int resources) {
-            GetComponent<MeshCollider>().sharedMesh = GetComponent<MeshFilter>().mesh = AsteroidMeshes[asteroidMeshIndex].mesh;
-            _modelScale = AsteroidMeshes[asteroidMeshIndex].scale;
+            GetComponent<MeshCollider>().sharedMesh = GetComponent<MeshFilter>().mesh = AsteroidMeshes[asteroidMeshIndex].Mesh;
+            _modelScale = AsteroidMeshes[asteroidMeshIndex].Scale;
             transform.rotation = rotation;
 
             _totalResources = resources;
@@ -126,7 +126,7 @@ namespace PlayGame {
             if (!DebugSettings.Debug) gameObject.GetPhotonView().RPC(nameof(RPC_MineAsteroid), RpcTarget.AllBuffered, _resourcesRemaining, transform.localScale, destroyed, photonID);
             else {
                 if (destroyed && !_asteroidDestroyed) {
-                    _asteroidDestroyed = destroyed;
+                    _asteroidDestroyed = true;
                     StatsManager.PlayerStatsList[0].asteroidsDestroyed++;
                     StatsManager.GameStats.asteroidsDestroyed++;
                     EventsManager.AddMessage("Asteroid destroyed at " + GridCoord.GetCoordFromVector(transform.position));
@@ -141,7 +141,7 @@ namespace PlayGame {
             transform.localScale = scale;
 
             if (destroyed && !_asteroidDestroyed) {
-                _asteroidDestroyed = destroyed;
+                _asteroidDestroyed = true;
                 if (photonID != -1) {
                     StatsManager.GetPlayerStats(photonID).asteroidsDestroyed++;
                     StatsManager.GameStats.asteroidsDestroyed++;

@@ -25,11 +25,9 @@ namespace PlayGame.Pirates {
         }
         #endregion
         
-        public GameObject gridManager;
         public GameObject scout;
         public GameObject elite;
         
-        private GridManager _gridManager;
         // Will be used as the size of the checked space when spawning (checked space should be empty)
         private float _spawnRangeCheck; 
         private int _maxPirates;
@@ -37,12 +35,11 @@ namespace PlayGame.Pirates {
         // Start is called before the first frame update
         private void Start() {
             if (!DebugSettings.Debug && !PhotonNetwork.IsMasterClient) return;
-            _gridManager = gridManager.GetComponent<GridManager>();
             InvokeRepeating(nameof(PirateRNG), 0, GameConstants.PirateEveryXSeconds);
             
             // Checked space is the half size in OverlapBoxNonAlloc
-            _spawnRangeCheck = _gridManager.GetCellSize() / 2f;
-            _maxPirates =  (int) (GameConstants.MaxPiratesMultiplier * Math.Floor(2 * Math.Sqrt(_gridManager.GetTotalCells())));
+            _spawnRangeCheck = GridManager.GetCellSize() / 2f;
+            _maxPirates =  (int) (GameConstants.MaxPiratesMultiplier * Math.Floor(2 * Math.Sqrt(GridManager.GetTotalCells())));
         }
 
         private void PirateRNG() {
@@ -52,7 +49,7 @@ namespace PlayGame.Pirates {
                 return;
             }
             
-            var generatedProb = Random.Range(0, 1.0f);
+            float generatedProb = Random.Range(0, 1.0f);
             if (generatedProb < GameConstants.PirateProbability) {
                 if (DebugSettings.SpawnPirates) SpawnPirate(PirateData.PirateType.Scout);
             }
@@ -71,13 +68,13 @@ namespace PlayGame.Pirates {
             if (!DebugSettings.Debug && !PhotonNetwork.IsMasterClient) return;
 
             // Initialise some random grid coordinates on the map
-            var randomGridCoord = new Vector2(Random.Range(0, GameConstants.GridWidth), Random.Range(0, GameConstants.GridHeight));
+            Vector2 randomGridCoord = new Vector2(Random.Range(0, GameConstants.GridWidth), Random.Range(0, GameConstants.GridHeight));
             
             // Transform the grid coordinates to global coordinates
-            var randomGlobalCoord = GridManager.GridToGlobalCoord(randomGridCoord);
+            Vector3 randomGlobalCoord = GridManager.GridToGlobalCoord(randomGridCoord);
 
             // Half of the dimensions of the checked space
-            var checkedSpaceHalfDims = new Vector3(_spawnRangeCheck, _spawnRangeCheck, _spawnRangeCheck);
+            Vector3 checkedSpaceHalfDims = new Vector3(_spawnRangeCheck, _spawnRangeCheck, _spawnRangeCheck);
             // If collisions were found for the current spawn, stop spawning
             if (Physics.OverlapBoxNonAlloc(randomGlobalCoord, checkedSpaceHalfDims, new Collider[16]) > 0) return;
 
@@ -102,12 +99,11 @@ namespace PlayGame.Pirates {
             if (!DebugSettings.Debug) newPirate = PhotonNetwork.InstantiateRoomObject(prefab, randomGlobalCoord, Quaternion.identity);
             else newPirate = Instantiate(pirate, randomGlobalCoord, Quaternion.identity);
             
-            if (!DebugSettings.Debug) this.photonView.RPC(nameof(RPC_SetPirateParam), RpcTarget.AllBuffered, newPirate.GetComponent<PhotonView>().ViewID);
+            if (!DebugSettings.Debug) photonView.RPC(nameof(RPC_SetPirateParam), RpcTarget.AllBuffered, newPirate.GetComponent<PhotonView>().ViewID);
             else {
                 newPirate.transform.parent = gameObject.transform;
                 newPirate.GetComponent<PirateController>().pirateSpawner = this;
             }
-
         }
 
         [PunRPC]

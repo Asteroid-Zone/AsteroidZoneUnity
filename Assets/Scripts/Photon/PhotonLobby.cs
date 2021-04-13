@@ -4,10 +4,8 @@ using System.Collections.Generic;
 using MainMenu;
 using UnityEngine;
 
-namespace Photon
-{
-    public class PhotonLobby : MonoBehaviourPunCallbacks, ILobbyCallbacks
-    {
+namespace Photon {
+    public class PhotonLobby : MonoBehaviourPunCallbacks {
         [Tooltip("The maximum number of players per room. When a room is full, it can't be joined by new players, and so new room will be created")]
         [SerializeField]
         private byte maxPlayersPerRoom = 4;
@@ -25,7 +23,7 @@ namespace Photon
         [SerializeField]
         private GameObject progressLabel;
 
-        public string RoomName;
+        public string roomName;
 
         private static PhotonLobby _instance;
 
@@ -34,7 +32,7 @@ namespace Photon
 
         public Transform roomPanel;
         public Transform playerPanel;
-        public List<RoomInfo> globalRoomList;
+        public List<RoomInfo> GlobalRoomList;
 
         /// This client's version number. Users are separated from each other by gameVersion.
         private const string GameVersion = "1";
@@ -43,8 +41,6 @@ namespace Photon
         /// we need to keep track of this to properly adjust the behavior when we receive call back by Photon.
         /// This is used for the OnConnectedToMaster() callback when a user wants to leave the game.
         private bool _isConnecting;
-
-        private bool connected;
 
         /// MonoBehaviour methods called on GameObject by Unity during early initialization phase.
 
@@ -56,14 +52,12 @@ namespace Photon
         private void Start()
         {
             PhotonNetwork.GameVersion = GameVersion;
-            connected = false;
         }
 
         public static PhotonLobby getInstance()
         {
             return _instance;
         }
-
 
         /// Start the connection process.
         /// - If already connected, we attempt joining a random room
@@ -111,7 +105,7 @@ namespace Photon
         {
           Debug.Log("creating a room");
           RoomOptions roomOps = new RoomOptions() {IsVisible = true, IsOpen = true, MaxPlayers = maxPlayersPerRoom};
-          PhotonNetwork.CreateRoom(RoomName, roomOps);
+          PhotonNetwork.CreateRoom(roomName, roomOps);
         }
 
 
@@ -171,7 +165,7 @@ namespace Photon
 
         public void RoomNameGrab(string roomNameInput)
         {
-          RoomName = roomNameInput;
+          roomName = roomNameInput;
         }
 
         public void JoinLobby()
