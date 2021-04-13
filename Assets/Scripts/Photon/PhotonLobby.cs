@@ -59,8 +59,6 @@ namespace Photon
             connected = false;
         }
 
-
-
         public static PhotonLobby getInstance()
         {
             return _instance;

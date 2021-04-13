@@ -23,43 +23,38 @@ namespace MainMenu {
         public AudioSource buttonPress;
 
         void Start() {
+            if (PhotonNetwork.IsConnected) PhotonNetwork.Disconnect(); // Need to disconnect otherwise the lobby will load before the player presses play game
+            
             controlPanel.SetActive(true);
             progressLabel.SetActive(false);
             lobbyControlPanel.SetActive(false);
             roomControlPanel.SetActive(false);
         }
 
-        void Update()
-		{
-			if (lobbyControlPanel.activeSelf && Input.GetButtonDown("Cancel"))
-			{
+        void Update() {
+			if (lobbyControlPanel.activeSelf && Input.GetButtonDown("Cancel")) {
 				lobbyControlPanel.SetActive(false);
 				controlPanel.SetActive(true);
 			}
+        }
 
-		}
-
-        public void PlayGame()
-        {
+        public void PlayGame() {
             buttonPress.Play();
-            if (!PhotonNetwork.IsConnected) PhotonNetwork.ConnectUsingSettings();
+            PhotonNetwork.ConnectUsingSettings();
             controlPanel.SetActive(false);
             progressLabel.SetActive(true);
         }
 
-        public void JoinLobby()
-        {
+        public void JoinLobby() {
           buttonPress.Play();
           lobbyControlPanel.SetActive(false);
         }
 
-        public void QuitGame()
-        {
+        public void QuitGame() {
             Application.Quit();
         }
 
-        public void ViewCredits()
-        {
+        public void ViewCredits() {
             buttonPress.Play();
             SceneManager.LoadScene(Scenes.CreditsScene);
         }
