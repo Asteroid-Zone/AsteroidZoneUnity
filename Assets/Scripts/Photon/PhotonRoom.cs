@@ -42,6 +42,10 @@ namespace Photon {
             DontDestroyOnLoad(gameObject);
         }
 
+        public static void ResetStaticVariables() {
+            _instance = null;
+        }
+
         public override void OnEnable()
         {
             //subscribe to functions

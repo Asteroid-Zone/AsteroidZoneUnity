@@ -16,7 +16,7 @@ namespace MainMenu {
         public void JoinRoom()
         {
             PhotonNetwork.JoinRoom(roomName);
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
     }
 }

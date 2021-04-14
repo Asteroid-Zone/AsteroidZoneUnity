@@ -8,6 +8,11 @@ namespace PlayGame.Player
         #region Singleton
         private static TestPlayer _instance;
 
+        public static void ResetStaticVariables()
+        {
+            _instance = null;
+        }
+        
         private void Awake()
         {
             if (_instance != null && _instance != this)

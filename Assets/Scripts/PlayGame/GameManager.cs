@@ -1,5 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Photon;
+using Photon.GameControllers;
 using Photon.Pun;
 using PlayGame.Pirates;
 using PlayGame.Player;
@@ -20,16 +21,21 @@ namespace PlayGame {
 
         public static bool gameOver = false;
 
-        private void Start() {
-            ResetStaticVariables();
-        }
-        
         private static void ResetStaticVariables() {
             gameOver = false;
             PirateController.ResetStaticVariables();
             PlayerData.Players = new List<GameObject>();
             StatsManager.PlayerStatsList.Clear();
             StatsManager.GameStats.Reset();
+            
+            GameSetup.Instance = null;
+            PhotonPlayer.Instance = null;
+            PhotonLobby.ResetStaticVariables();
+            PhotonRoom.ResetStaticVariables();
+            
+            PirateSpawner.ResetStaticVariables();
+            TestPlayer.ResetStaticVariables();
+            AsteroidSpawner.ResetStaticVariables();
         }
 
         private void Update() {
@@ -58,6 +64,7 @@ namespace PlayGame {
         /// Called when the local player left the room. We need to load the launcher scene.
         public override void OnLeftRoom() {
             CleanUpGameObjects();
+            ResetStaticVariables();
             SceneManager.LoadScene(Scenes.MainMenuScene);
             
             base.OnLeftRoom();

@@ -54,6 +54,10 @@ namespace Photon {
             PhotonNetwork.GameVersion = GameVersion;
         }
 
+        public static void ResetStaticVariables() {
+            _instance = null;
+        }
+
         public static PhotonLobby getInstance()
         {
             return _instance;

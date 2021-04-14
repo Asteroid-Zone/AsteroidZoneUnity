@@ -18,7 +18,11 @@ namespace PlayGame.Pirates {
                 _instance = this;
             }
         }
-        
+
+        public static void ResetStaticVariables() {
+            _instance = null;
+        }
+
         public static PirateSpawner GetInstance()
         {
             return _instance;

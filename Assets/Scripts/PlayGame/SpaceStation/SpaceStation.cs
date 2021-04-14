@@ -93,8 +93,7 @@ namespace PlayGame.SpaceStation {
         }
 
         [PunRPC]
-        public void RPC_TakeDamage(int moduleDamage, int index, int damageRemaining)
-        {  
+        public void RPC_TakeDamage(int moduleDamage, int index, int damageRemaining) {  
             _stationModules[index].TakeDamage(moduleDamage);
             damageRemaining -= moduleDamage;
 

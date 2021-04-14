@@ -19,6 +19,10 @@ namespace PlayGame {
             }
         }
 
+        public static void ResetStaticVariables() {
+            _instance = null;
+        }
+
         public static AsteroidSpawner GetInstance()
         {
             return _instance;

@@ -153,7 +153,7 @@ namespace PlayGame.Player
                     _youDiedWrittenOnScreen = true;
                 }
             } else {
-                gameObject.transform.position = _spaceStation.position;
+                if (_spaceStation != null) gameObject.transform.position = _spaceStation.position;
             }
         }
 
