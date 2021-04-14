@@ -14,6 +14,5 @@
         public static readonly bool InfiniteMiningRange = false;
         
         public static readonly bool FogOfWar = true; // Enable/Disable fog of war
-        public static readonly bool TileBasedFogOfWar = false; // Switch between Tile based fog of war and radius based
     }
 }
