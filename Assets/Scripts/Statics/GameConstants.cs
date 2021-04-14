@@ -48,7 +48,7 @@
         
         // ---------- Players ----------
         
-        public static int PlayerMaxHealth = 100;
+        public static int PlayerMaxHealth = 200;
         public static float PlayerMaxSpeed = 2.5f;
         public static float PlayerRotateSpeed = 0.5f;
 
@@ -86,8 +86,8 @@
         
         // ---------- Asteroids ----------
         
-        public static int AsteroidMinResources = 25;
-        public static int AsteroidMaxResources = 100;
+        public static int AsteroidMinResources = 50;
+        public static int AsteroidMaxResources = 150;
         
         // Spawning - Every X seconds, there is a chance for an asteroid to spawn on a random grid coordinate 
         public static float AsteroidProbability = 0.7f;
