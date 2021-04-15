@@ -30,7 +30,7 @@ namespace PlayGame {
 
         private bool _asteroidDestroyed;
         
-        private const float MaxScale = 6f;
+        private const float MaxScale = 4f;
         private const float MinScale = 2f;
         
         private const float FadeSpeed = 2f;
@@ -48,16 +48,16 @@ namespace PlayGame {
             if (!DebugSettings.Debug) {
                 if (!PhotonNetwork.IsMasterClient) return;
                 gameObject.GetPhotonView().RPC(nameof(RPC_SyncAsteroid), RpcTarget.AllBuffered, asteroidMeshIndex, rotation, totalResources);
-                CreateNavMeshObstacle();
             } else {
                 SetAsteroidProperties(asteroidMeshIndex, rotation, totalResources);
-                CreateNavMeshObstacle();
+                CreateNavMeshObstacle(asteroidMeshIndex);
             }
         }
         
         [PunRPC]
         public void RPC_SyncAsteroid(int asteroidMeshIndex, Quaternion rotation, int resources) {
             SetAsteroidProperties(asteroidMeshIndex, rotation, resources);
+            CreateNavMeshObstacle(asteroidMeshIndex);
         }
 
         private void SetAsteroidProperties(int asteroidMeshIndex, Quaternion rotation, int resources) {
@@ -71,11 +71,11 @@ namespace PlayGame {
             transform.localScale = _initialScale * _modelScale;
         }
 
-        private void CreateNavMeshObstacle() {
+        private void CreateNavMeshObstacle(int asteroidMeshIndex) {
             NavMeshObstacle navMeshObstacle = gameObject.AddComponent<NavMeshObstacle>();
-            navMeshObstacle.radius = 0.6f;
             navMeshObstacle.shape = NavMeshObstacleShape.Capsule;
             navMeshObstacle.carving = true;
+            navMeshObstacle.radius = (asteroidMeshIndex == 0) ? 1.2f : 1f;
         }
         
         private static AsteroidModel GetAsteroidModel(string path) {
