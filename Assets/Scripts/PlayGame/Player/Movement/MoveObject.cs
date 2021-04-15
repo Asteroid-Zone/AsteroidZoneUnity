@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using PlayGame.Pirates;
 using PlayGame.Speech.Commands;
-using PlayGame.UI;
 using Statics;
 using UnityEngine;
 using UnityEngine.AI;
@@ -64,15 +63,6 @@ namespace PlayGame.Player.Movement
             // Get the speed of the player's ship
             float speed = _playerData.GetSpeed();
 
-            // If locked on automatically move so player is in range
-            if (lockType != ToggleCommand.LockTargetType.None && _lockTarget != null) {
-                // If player not in range move forward
-                if (!InLockRange(lockType)) {
-                    SetDirection(transform.forward, false);
-                    SetSpeed(1);
-                } else SetSpeed(0);
-            }
-
             // Check if destination has been reached and if not provide it to AI
             if (!HasReachedDestination()) {
                 _playerAgent.SetDestination(_destination);
@@ -83,9 +73,30 @@ namespace PlayGame.Player.Movement
             
             // Rotate slowly
             if (rotating) Rotate();
+            
+            // If locked on automatically move so player is in range
+            if (lockType != ToggleCommand.LockTargetType.None && _lockTarget != null) {
+                // If player not in range move forward
+                if (!InLockRange(lockType)) {
+                    if (_playerAgent.enabled)
+                    {
+                        SetSpeed(1);
+                        _playerAgent.SetDestination(_lockTarget.position);
+                    }
+                }
+                else {
+                    SetSpeed(0f);
+                    SetDirection(transform.forward, false);
+                }
+            }
 
             if (lockType != ToggleCommand.LockTargetType.None) {
-                if (_lockTarget == null) _lockTarget = GetLockTarget(lockType);
+                if (_lockTarget == null) {
+                    _lockTarget = GetLockTarget(lockType);
+                    if (_lockTarget != null) {
+                        _playerAgent.enabled = true;
+                    }
+                }
                 if (_lockTarget != null) FaceTarget(_lockTarget);
                 else
                 {
