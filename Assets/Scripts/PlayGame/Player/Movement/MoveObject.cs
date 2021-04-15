@@ -87,6 +87,11 @@ namespace PlayGame.Player.Movement
             if (lockType != ToggleCommand.LockTargetType.None) {
                 if (_lockTarget == null) _lockTarget = GetLockTarget(lockType);
                 if (_lockTarget != null) FaceTarget(_lockTarget);
+                else
+                {
+                    // Turn off lock on if nothing in range
+                    lockType = ToggleCommand.LockTargetType.None;
+                }
             } else {
                 _lockTarget = null;
             }
