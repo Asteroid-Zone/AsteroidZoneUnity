@@ -73,10 +73,8 @@ namespace PlayGame.Player
             StatsManager.PlayerStatsList.Add(_playerStats);
 
             // Initialise the players list
-            Players = new List<GameObject>();
-            Players.AddRange(GameObject.FindGameObjectsWithTag(Tags.PlayerTag));
-            Players.Add(GameObject.FindGameObjectWithTag(Tags.StationCommanderTag));
-            if (!DebugSettings.Debug) this.photonView.RPC(nameof(RPC_UpdatePlayerLists), RpcTarget.Others);
+            UpdatePlayerLists();
+            if (!DebugSettings.Debug) photonView.RPC(nameof(RPC_UpdatePlayerLists), RpcTarget.Others);
 
             // Set camera to cockpit for miners and tactical for station commander, if single player play in cockpit mode
             if (photonView.IsMine) {
@@ -134,16 +132,20 @@ namespace PlayGame.Player
         [PunRPC]
         public void RPC_UpdatePlayerLists()
         {
-            Players.Clear();
-            Players.AddRange(GameObject.FindGameObjectsWithTag(Tags.PlayerTag));
-            Players.Add(GameObject.FindGameObjectWithTag(Tags.StationCommanderTag));
+            UpdatePlayerLists();
         }
 
         public static void UpdatePlayerLists()
         {
-            Players.Clear();
+            Players = new List<GameObject>();
             Players.AddRange(GameObject.FindGameObjectsWithTag(Tags.PlayerTag));
-            Players.Add(GameObject.FindGameObjectWithTag(Tags.StationCommanderTag));
+            
+            // Add the station commander only if there is one
+            GameObject stationCommander = GameObject.FindGameObjectWithTag(Tags.StationCommanderTag);
+            if (stationCommander != null)
+            {
+                Players.Add(stationCommander);
+            }
         }
 
         private void Update() {
