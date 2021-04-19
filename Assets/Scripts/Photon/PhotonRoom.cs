@@ -1,6 +1,7 @@
 ﻿using Photon.Pun;
 using Photon.Realtime;
 using PlayGame.Stats;
+using Statics;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -105,11 +106,100 @@ namespace Photon {
           PhotonNetwork.JoinLobby();
         }
 
-        public void StartGame()
-        {
+        public void StartGame() {
+            if (PhotonNetwork.IsMasterClient) SyncGameConstants();
             Debug.Log("Loading Level");
             PhotonNetwork.LoadLevel(multiplayerScene);
             StatsManager.GameStats.startTime = Time.time;
+        }
+
+        private void SyncGameConstants() {
+            photonView.RPC(nameof(RPC_SyncGameConstants), RpcTarget.AllBuffered, GameConstants.TimeLimit, GameConstants.GridHeight, GameConstants.GridWidth, GameConstants.GridCellSize);
+            photonView.RPC(nameof(RPC_SyncPirateConstants), RpcTarget.AllBuffered, GameConstants.PirateLaserMiningRate, GameConstants.MaxPiratesMultiplier, GameConstants.PirateProbability, GameConstants.PirateEveryXSeconds, GameConstants.PirateMinReinforcements, GameConstants.PirateMaxReinforcements);
+            photonView.RPC(nameof(RPC_SyncPirateScoutConstants), RpcTarget.AllBuffered, GameConstants.PirateScoutMaxHealth, GameConstants.PirateScoutSpeed, GameConstants.PirateScoutLookRadius, GameConstants.PirateScoutLaserSpeed, GameConstants.PirateScoutLaserRange, GameConstants.PirateScoutLaserDamageRange, GameConstants.PirateScoutLaserDamage, GameConstants.PirateScoutShotDelay);
+            photonView.RPC(nameof(RPC_SyncPirateEliteConstants), RpcTarget.AllBuffered, GameConstants.PirateEliteMaxHealth, GameConstants.PirateEliteSpeed, GameConstants.PirateEliteLookRadius, GameConstants.PirateEliteLaserSpeed, GameConstants.PirateEliteLaserRange, GameConstants.PirateEliteLaserDamageRange, GameConstants.PirateEliteLaserDamage, GameConstants.PirateEliteShotDelay);
+            photonView.RPC(nameof(RPC_SyncPlayerConstants), RpcTarget.AllBuffered, GameConstants.PlayerMaxHealth, GameConstants.PlayerMaxSpeed, GameConstants.PlayerRotateSpeed, GameConstants.PlayerLookRadius, GameConstants.PlayerMiningRange, GameConstants.PlayerMiningRate, GameConstants.PlayerMiningDelay, GameConstants.PlayerShotDelay, GameConstants.PlayerLaserSpeed, GameConstants.PlayerLaserDamage, GameConstants.PlayerLaserDamageRange, GameConstants.PlayerLaserMiningRate, GameConstants.PlayerLaserRange);
+            photonView.RPC(nameof(RPC_SyncStationConstants), RpcTarget.AllBuffered, GameConstants.EnginesMaxHealth, GameConstants.HyperdriveMaxHealth, GameConstants.StationHullMaxHealth, GameConstants.SolarPanelsMaxHealth, GameConstants.ShieldGeneratorMaxHealth, GameConstants.StationMaxShields, GameConstants.StationShieldsRechargeRate);
+            photonView.RPC(nameof(RPC_SyncAsteroidConstants), RpcTarget.AllBuffered, GameConstants.AsteroidMinResources, GameConstants.AsteroidMaxResources, GameConstants.AsteroidProbability, GameConstants.AsteroidEveryXSeconds, GameConstants.MaxAsteroidsMultiplier);
+        }
+        
+        [PunRPC]
+        public void RPC_SyncGameConstants(float timeLimit, int height, int width, int cell) {
+            GameConstants.TimeLimit = timeLimit;
+            GameConstants.GridHeight = height;
+            GameConstants.GridWidth = width;
+            GameConstants.GridCellSize = cell;
+        }
+        
+        [PunRPC]
+        public void RPC_SyncPirateConstants(int miningRate, float maxMultiplier, float probability, float everyX, int minReinforcements, int maxReinforcements) {
+            GameConstants.PirateLaserMiningRate = miningRate;
+            GameConstants.MaxPiratesMultiplier = maxMultiplier;
+            GameConstants.PirateProbability = probability;
+            GameConstants.PirateEveryXSeconds = everyX;
+            GameConstants.PirateMinReinforcements = minReinforcements;
+            GameConstants.PirateMaxReinforcements = maxReinforcements;
+        }
+        
+        [PunRPC]
+        public void RPC_SyncPirateScoutConstants(float maxHealth, float speed, float lookRadius, float laserSpeed, int laserRange, int damageRange, int damage, int delay) {
+            GameConstants.PirateScoutMaxHealth = maxHealth;
+            GameConstants.PirateScoutSpeed = speed;
+            GameConstants.PirateScoutLookRadius = lookRadius;
+            GameConstants.PirateScoutLaserSpeed = laserSpeed;
+            GameConstants.PirateScoutLaserRange = laserRange;
+            GameConstants.PirateScoutLaserDamageRange = damageRange;
+            GameConstants.PirateScoutLaserDamage = damage;
+            GameConstants.PirateScoutShotDelay = delay;
+        }
+        
+        [PunRPC]
+        public void RPC_SyncPirateEliteConstants(float maxHealth, float speed, float lookRadius, float laserSpeed, int laserRange, int damageRange, int damage, int delay) {
+            GameConstants.PirateEliteMaxHealth = maxHealth;
+            GameConstants.PirateEliteSpeed = speed;
+            GameConstants.PirateEliteLookRadius = lookRadius;
+            GameConstants.PirateEliteLaserSpeed = laserSpeed;
+            GameConstants.PirateEliteLaserRange = laserRange;
+            GameConstants.PirateEliteLaserDamageRange = damageRange;
+            GameConstants.PirateEliteLaserDamage = damage;
+            GameConstants.PirateEliteShotDelay = delay;
+        }
+        
+        [PunRPC]
+        public void RPC_SyncPlayerConstants(int maxHealth, float speed, float rotateSpeed, float lookRadius, int miningRange, int miningRate, int miningDelay, int shotDelay, int laserSpeed, int laserDamage, int damageRange, int laserMiningRate, int laserRange) {
+            GameConstants.PlayerMaxHealth = maxHealth;
+            GameConstants.PlayerMaxSpeed = speed;
+            GameConstants.PlayerRotateSpeed = rotateSpeed;
+            GameConstants.PlayerLookRadius = lookRadius;
+            GameConstants.PlayerMiningRange = miningRange;
+            GameConstants.PlayerMiningRate = miningRate;
+            GameConstants.PlayerMiningDelay = miningDelay;
+            GameConstants.PlayerShotDelay = shotDelay;
+            GameConstants.PlayerLaserSpeed = laserSpeed;
+            GameConstants.PlayerLaserDamage = laserDamage;
+            GameConstants.PlayerLaserDamageRange = damageRange;
+            GameConstants.PlayerLaserMiningRate = laserMiningRate;
+            GameConstants.PlayerLaserRange = laserRange;
+        }
+        
+        [PunRPC]
+        public void RPC_SyncStationConstants(int engines, int hyperdrive, int hull, int solarPanels, int shieldGen, int shields, int rechargeRate) {
+            GameConstants.EnginesMaxHealth = engines;
+            GameConstants.HyperdriveMaxHealth = hyperdrive;
+            GameConstants.StationHullMaxHealth = hull;
+            GameConstants.SolarPanelsMaxHealth = solarPanels;
+            GameConstants.ShieldGeneratorMaxHealth = shieldGen;
+            GameConstants.StationMaxShields = shields;
+            GameConstants.StationShieldsRechargeRate = rechargeRate;
+        }
+        
+        [PunRPC]
+        public void RPC_SyncAsteroidConstants(int minRes, int maxRes, float probability, float everyX, float maxMultiplier) {
+            GameConstants.AsteroidMinResources = minRes;
+            GameConstants.AsteroidMaxResources = maxRes;
+            GameConstants.AsteroidProbability = probability;
+            GameConstants.AsteroidEveryXSeconds = everyX;
+            GameConstants.MaxAsteroidsMultiplier = maxMultiplier;
         }
 
         private void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
