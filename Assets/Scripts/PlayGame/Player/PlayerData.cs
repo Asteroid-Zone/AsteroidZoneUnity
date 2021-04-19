@@ -114,6 +114,7 @@ namespace PlayGame.Player
         //    _playerID = _playerID < 0 ? 0 : _playerID;
         
             SetPlayerColour();
+            if (photonView.IsMine) transform.position = GameSetup.Instance.spawnPoints[_playerID].position; // Set spawn point
         }
 
         private void SetUpStationCommander() {

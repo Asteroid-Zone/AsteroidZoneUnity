@@ -18,8 +18,7 @@ namespace Photon.GameControllers
             }
         }
 
-        private void Awake()
-            {
+        private void Awake() {
                 int spawnPicker = Random.Range(0, GameSetup.Instance.spawnPoints.Length);
                 if (!photonView.IsMine) return;
                 
