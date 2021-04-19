@@ -45,11 +45,14 @@ namespace PlayGame {
                 }
             }
 
-            foreach (GameObject player in PlayerData.Players) {
-                if (Vector3.Distance(_player.transform.position, player.transform.position) < _playerData.GetLookRadius()) {
+            foreach (GameObject playerObject in GameObject.FindGameObjectsWithTag(Tags.PlayerTag)) {
+                Transform player = playerObject.transform;
+                if (Vector3.Distance(_player.transform.position, player.position) < _playerData.GetLookRadius()) {
                     player.gameObject.layer = 0;
+                    player.GetChild(1).gameObject.layer = 31;
                 } else {
                     player.gameObject.layer = 31;
+                    player.GetChild(1).gameObject.layer = 31;
                 }
             }
         }
