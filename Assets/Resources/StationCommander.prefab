@@ -51,6 +51,7 @@ MonoBehaviour:
   viewableArea: {fileID: 0}
   viewableAreaMinimap: {fileID: 0}
   currentQuest: 0
+  shipModel: {fileID: 0}
 --- !u!114 &1092679028797384607
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -59,6 +59,10 @@ namespace PlayGame.Player
 
         public QuestType currentQuest;
 
+        public MeshRenderer shipModel;
+        public MeshRenderer gunLeft;
+        public MeshRenderer gunRight;
+
         private Transform _spaceStation;
         
         private void Start() {
@@ -108,12 +112,33 @@ namespace PlayGame.Player
             _playerID = (_playerStats.photonID / 1000) - 1;
          //   _playerID = _playerID > 3 ? 3 : _playerID;
         //    _playerID = _playerID < 0 ? 0 : _playerID;
+        
+            SetPlayerColour();
         }
 
         private void SetUpStationCommander() {
             transform.position = GridManager.GetGridCentre();
             gameObject.transform.position = _spaceStation.position;
             currentQuest = QuestType.HelpPlayers;
+        }
+
+        private void SetPlayerColour() {
+            Color colour = Color.cyan;
+            switch (_playerID) {
+                case 1:
+                    colour = Color.red;
+                    break;
+                case 2:
+                    colour = Color.green;
+                    break;
+                case 3:
+                    colour = Color.yellow;
+                    break;
+            }
+
+            shipModel.material.color = colour;
+            gunLeft.material.color = colour;
+            gunRight.material.color = colour;
         }
 
         // Sets the size of the viewable area ring and minimap ring

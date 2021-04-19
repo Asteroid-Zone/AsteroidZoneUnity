@@ -179,6 +179,9 @@ MonoBehaviour:
   viewableArea: {fileID: 8626551488903073980}
   viewableAreaMinimap: {fileID: 1103957441763934853}
   currentQuest: 0
+  shipModel: {fileID: 5408127184032460700}
+  gunLeft: {fileID: 4440250818642847759}
+  gunRight: {fileID: 1665956148755353748}
 --- !u!114 &70575772956023081
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15430,9 +15433,21 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4980bf21972c4b14e976da1f2f663784, type: 3}
+--- !u!23 &1665956148755353748 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 5463632632496595852, guid: 4980bf21972c4b14e976da1f2f663784,
+    type: 3}
+  m_PrefabInstance: {fileID: 6686740046260859672}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7704617308392401138 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -5323151148032467990, guid: 4980bf21972c4b14e976da1f2f663784,
+    type: 3}
+  m_PrefabInstance: {fileID: 6686740046260859672}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &5408127184032460700 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: 4980bf21972c4b14e976da1f2f663784,
     type: 3}
   m_PrefabInstance: {fileID: 6686740046260859672}
   m_PrefabAsset: {fileID: 0}
@@ -15445,6 +15460,12 @@ Transform:
 --- !u!4 &7422419062956478476 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -4914086440618810604, guid: 4980bf21972c4b14e976da1f2f663784,
+    type: 3}
+  m_PrefabInstance: {fileID: 6686740046260859672}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &4440250818642847759 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7012916321324751639, guid: 4980bf21972c4b14e976da1f2f663784,
     type: 3}
   m_PrefabInstance: {fileID: 6686740046260859672}
   m_PrefabAsset: {fileID: 0}
