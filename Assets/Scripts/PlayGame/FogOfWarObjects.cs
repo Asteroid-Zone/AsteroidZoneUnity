@@ -45,15 +45,20 @@ namespace PlayGame {
                 }
             }
 
-            foreach (GameObject playerObject in GameObject.FindGameObjectsWithTag(Tags.PlayerTag)) {
-                Transform player = playerObject.transform;
-                if (Vector3.Distance(_player.transform.position, player.position) < _playerData.GetLookRadius()) {
-                    player.gameObject.layer = 0;
-                    player.GetChild(1).gameObject.layer = 31;
+            foreach (GameObject playerObject in GameObject.FindGameObjectsWithTag(Tags.PlayerModelTag)) {
+                if (Vector3.Distance(_player.transform.position, playerObject.transform.position) < _playerData.GetLookRadius()) {
+                    if (playerObject.layer != 0) SetLayerRecursively(playerObject, 0);
                 } else {
-                    player.gameObject.layer = 31;
-                    player.GetChild(1).gameObject.layer = 31;
+                    if (playerObject.layer != 31) SetLayerRecursively(playerObject, 31);
                 }
+            }
+        }
+        
+        private void SetLayerRecursively(GameObject o, int newLayer) {
+            o.layer = newLayer;
+
+            foreach (Transform child in o.transform){
+                SetLayerRecursively(child.gameObject, newLayer);
             }
         }
 

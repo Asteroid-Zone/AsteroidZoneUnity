@@ -17,6 +17,7 @@ TagManager:
   - SpeechText
   - PingManager
   - GameManager
+  - PlayerModel
   layers:
   - Default
   - TransparentFX

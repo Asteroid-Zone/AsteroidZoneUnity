@@ -3,6 +3,7 @@
     public static class Tags
     {
         public const string PlayerTag = "Player";
+        public const string PlayerModelTag = "PlayerModel";
         public const string PirateTag = "Pirate";
         public const string AsteroidTag = "Asteroid";
         public const string StationTag = "Station";
