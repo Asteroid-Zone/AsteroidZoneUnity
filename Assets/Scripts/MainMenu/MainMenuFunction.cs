@@ -47,10 +47,6 @@ namespace MainMenu {
           lobbyControlPanel.SetActive(false);
         }
 
-        public void QuitGame() {
-            Application.Quit();
-        }
-
         public void ViewCredits() {
             buttonPress.Play();
             SceneManager.LoadScene(Scenes.CreditsScene);
