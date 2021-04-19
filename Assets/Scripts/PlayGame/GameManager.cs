@@ -21,7 +21,7 @@ namespace PlayGame {
 
         public static bool gameOver = false;
 
-        private static void ResetStaticVariables() {
+        public static void ResetStaticVariables() {
             gameOver = false;
             PirateController.ResetStaticVariables();
             PlayerData.Players = new List<GameObject>();

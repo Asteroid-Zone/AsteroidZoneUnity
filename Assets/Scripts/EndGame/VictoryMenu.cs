@@ -1,5 +1,6 @@
 ﻿using System;
 using Photon.Pun;
+using PlayGame;
 using PlayGame.Player;
 using PlayGame.Stats;
 using Statics;
@@ -63,6 +64,7 @@ namespace EndGame {
         /// Delete all remaining game objects and load the menu
         public override void OnLeftRoom() {
             CleanUpGameObjects();
+            GameManager.ResetStaticVariables();
             SceneManager.LoadScene(Scenes.MainMenuScene);
             
             base.OnLeftRoom();
