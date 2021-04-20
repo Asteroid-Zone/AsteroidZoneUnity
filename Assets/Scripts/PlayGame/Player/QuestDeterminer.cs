@@ -40,6 +40,7 @@ namespace PlayGame.Player
         private IEnumerator DetermineQuestMiner() {
             while (true) {
                 Transform nearestEnemy = _moveObject.GetNearestEnemyTransform();
+                Transform nearestAsteroid = _moveObject.GetNearestAsteroidTransform();
                 if (_stationDamaged) {
                     // If within laser range of station hint should be shoot pirates otherwise return to station
                     if (_moveObject.DistanceToStation() > _playerData.GetLaserRange()) _playerData.SetQuest(QuestType.ReturnToStationDefend);
@@ -47,14 +48,16 @@ namespace PlayGame.Player
                     
                     yield return new WaitForSeconds(4);
                     _stationDamaged = false;
-                } else if (nearestEnemy != null && Vector3.Distance(nearestEnemy.position, transform.position) < 20) {
+                } else if (nearestEnemy != null && Vector3.Distance(nearestEnemy.position, transform.position) < _playerData.GetLookRadius()) {
                     _playerData.SetQuest(QuestType.PirateWarning);
                 } else if (_playerData.GetResources() > 75) {
                     // Choose the hint depending on if player is at station or not
                     if (_moveObject.NearStation()) _playerData.SetQuest(QuestType.TransferResources);
                     else _playerData.SetQuest(QuestType.ReturnToStationResources);
-                } else {
+                } else if (nearestAsteroid != null && Vector3.Distance(nearestAsteroid.position, transform.position) < _playerData.GetLookRadius()) {
                     _playerData.SetQuest(QuestType.MineAsteroids);
+                } else {
+                    _playerData.SetQuest(QuestType.FindAsteroids);
                 }
 
                 yield return new WaitForSeconds(0.25f);

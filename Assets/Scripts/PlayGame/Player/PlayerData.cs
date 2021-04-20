@@ -25,7 +25,8 @@ namespace PlayGame.Player
         DefendStation,
         HelpPlayers,
         RepairStation,
-        ActivateHyperdrive
+        ActivateHyperdrive,
+        FindAsteroids
     }
 
     public class PlayerData : MonoBehaviourPun {

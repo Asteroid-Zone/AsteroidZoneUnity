@@ -38,6 +38,8 @@ namespace PlayGame.UI
                     return "The station is under attack! Get back and help! (try saying 'Shoot pirates')";
                 case QuestType.MineAsteroids:
                     return "Mine asteroids (try saying 'Mine asteroids')";
+                case QuestType.FindAsteroids:
+                    return "Explore to find asteroids or ask your station commander for help (try saying 'Move forwards' and 'Turn left/right' to move)";
                 case QuestType.PirateWarning:
                     return "Be careful there are pirates in the area (try saying 'Shoot pirates')";
                 case QuestType.ReturnToStationResources:
