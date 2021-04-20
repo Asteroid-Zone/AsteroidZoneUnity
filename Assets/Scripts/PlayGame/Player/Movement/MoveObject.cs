@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using PlayGame.Pirates;
 using PlayGame.Speech.Commands;
+using PlayGame.UI;
 using Statics;
 using UnityEngine;
 using UnityEngine.AI;
@@ -35,12 +37,18 @@ namespace PlayGame.Player.Movement
         public ToggleCommand.LockTargetType lockType = ToggleCommand.LockTargetType.None;
 
         private Transform _spaceStation;
+
+        private LaserGun _laserGun;
+        private MiningLaser _miningLaser;
         
         private void Start() {
             // fetch the objects of the spawners
             _enemySpawner = PirateSpawner.GetInstance().gameObject;
             _asteroidSpawner = AsteroidSpawner.GetInstance().gameObject;
             _spaceStation = GameObject.FindWithTag(Tags.StationTag).transform;
+            
+            _miningLaser = gameObject.GetComponent<MiningLaser>();
+            _laserGun = gameObject.GetComponent<LaserGun>();
             
             // Get the initial components
             _direction = transform.rotation.eulerAngles;
@@ -98,10 +106,13 @@ namespace PlayGame.Player.Movement
                     }
                 }
                 if (_lockTarget != null) FaceTarget(_lockTarget);
-                else
-                {
-                    // Turn off lock on if nothing in range
-                    lockType = ToggleCommand.LockTargetType.None;
+                else {
+                    string eventMessage = "No targets found.";
+                    if (lockType == ToggleCommand.LockTargetType.Asteroid) eventMessage = "No asteroids found. Mining laser disabled.";
+                    if (lockType == ToggleCommand.LockTargetType.Pirate) eventMessage = "No pirates found. Laser gun disabled.";
+                    EventsManager.AddMessage(eventMessage);
+                    
+                    SetLockTargetType(ToggleCommand.LockTargetType.None); // Turn off lock on if nothing in range
                 }
             } else {
                 _lockTarget = null;
@@ -258,6 +269,23 @@ namespace PlayGame.Player.Movement
         public void SetLockTargetType(ToggleCommand.LockTargetType type) {
             lockType = type;
             _lockTarget = null;
+
+            switch (type) {
+                case ToggleCommand.LockTargetType.Asteroid:
+                    _laserGun.StopShooting();
+                    _miningLaser.EnableMiningLaser();
+                    break;
+                case ToggleCommand.LockTargetType.Pirate:
+                    _laserGun.StartShooting();
+                    _miningLaser.DisableMiningLaser();
+                    break;
+                case ToggleCommand.LockTargetType.None:
+                    _laserGun.StopShooting();
+                    _miningLaser.DisableMiningLaser();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
         
         private Transform GetLockTarget(ToggleCommand.LockTargetType lockTargetType) {
