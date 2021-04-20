@@ -505,13 +505,13 @@ namespace PlayGame.Speech {
             }
             
             if (dataProvided.destination != null) {
-                commands.Add(new Tuple<string, float>(c + " " + dataProvided.destination, completeness + 0.5f));
+                commands.Add(new Tuple<string, float>(c + " to " + dataProvided.destination, completeness + 0.5f));
             } else {
                 float asteroidConfidence = completeness;
                 float pirateConfidence = completeness;
                 
                 // Confidence adjustments for quest type
-                if (dataProvided.playerQuestType == QuestType.ReturnToStationResources || dataProvided.playerQuestType == QuestType.ReturnToStationDefend) commands.Add(new Tuple<string, float>(c + " " + SpaceStation[0], completeness + 0.2f)); // 0.2f so it prompts the player
+                if (dataProvided.playerQuestType == QuestType.ReturnToStationResources || dataProvided.playerQuestType == QuestType.ReturnToStationDefend) commands.Add(new Tuple<string, float>(c + " to " + SpaceStation[0], completeness + 0.2f)); // 0.2f so it prompts the player
                 if (dataProvided.playerQuestType == QuestType.MineAsteroids) asteroidConfidence += 0.2f; // 0.2f so it prompts the player
                 if (dataProvided.playerQuestType == QuestType.PirateWarning) pirateConfidence += 0.2f; // 0.2f so it prompts the player
                 
@@ -519,15 +519,15 @@ namespace PlayGame.Speech {
                 if (dataProvided.playerLockType == ToggleCommand.LockTargetType.Asteroid) asteroidConfidence += 0.2f;
                 if (dataProvided.playerLockType == ToggleCommand.LockTargetType.Pirate) pirateConfidence += 0.2f;
                 
-                commands.Add(new Tuple<string, float>(c + " " + Asteroid[0], asteroidConfidence));
-                commands.Add(new Tuple<string, float>(c + " " + Pirate[0], pirateConfidence));
-                if (completeness != 0) commands.Add(new Tuple<string, float>(c + " (destination)", completeness));
+                commands.Add(new Tuple<string, float>(c + " to " + Asteroid[0], asteroidConfidence));
+                commands.Add(new Tuple<string, float>(c + " to " + Pirate[0], pirateConfidence));
+                if (completeness != 0) commands.Add(new Tuple<string, float>(c + " to (destination)", completeness));
             }
             
             if (dataProvided.grid != null) {
-                commands.Add(new Tuple<string, float>(c + " " + dataProvided.grid, completeness + 0.5f));
+                commands.Add(new Tuple<string, float>(c + " to " + dataProvided.grid, completeness + 0.5f));
             } else {
-                if (completeness != 0) commands.Add(new Tuple<string, float>(c + " (grid coord)", completeness));
+                if (completeness != 0) commands.Add(new Tuple<string, float>(c + " to (grid coord)", completeness));
             }
             
             return commands;
