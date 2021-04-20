@@ -465,6 +465,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pirateType: 1
+  focusStation: 1
   healthBar: {fileID: 2190548073130229317}
   healthBarGradient:
     serializedVersion: 2

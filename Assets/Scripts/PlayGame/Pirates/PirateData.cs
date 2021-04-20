@@ -28,6 +28,8 @@ namespace PlayGame.Pirates {
         private int _laserDamageRange = 5; // Makes the amount of damage the laser does vary a bit
         private int _shotDelay = 100; // Number of frames to wait between shots
 
+        public bool focusStation = true;
+        
         private float _health;
         private NavMeshAgent _pirateAgent;
 
@@ -39,9 +41,12 @@ namespace PlayGame.Pirates {
             SetStats();
             _pirateAgent = GetComponent<NavMeshAgent>();
             _pirateAgent.speed = _speed;
+
+            int randomInt = Random.Range(0, 2);
+            if (randomInt < 1) focusStation = false;
             
             _health = _maxHealth;
-            
+
             // Set the health bar of the pirate
             healthBar.maxValue = _maxHealth;
             SetHealthBar();
