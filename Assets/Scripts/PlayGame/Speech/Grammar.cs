@@ -28,34 +28,34 @@ namespace PlayGame.Speech {
             public Role role;
         }
         
-        private const string LetterRegex = @"(?<![a-z])[a-z](?![a-z])"; // Should match only if the letter is not followed or preceded by another letter
+        private const string LetterRegex = @"(?<![a-z])[a-k](?![a-z])"; // Should match only if the letter is not followed or preceded by another letter
         private const string NumberRegex = @"\d+";
 
         private static readonly List<string> A = new List<string>{"a"};
         private static readonly List<string> B = new List<string>{"b", "bee", "be"};
-        private static readonly List<string> C = new List<string>{"c", "sea", "see"};
-        private static readonly List<string> D = new List<string>{"d"};
-        private static readonly List<string> E = new List<string>{"e"};
-        private static readonly List<string> F = new List<string>{"f"};
-        private static readonly List<string> G = new List<string>{"g"};
+        private static readonly List<string> C = new List<string>{"c", "sea", "see", "she"};
+        private static readonly List<string> D = new List<string>{"d", "dy", "dee", "de"};
+        private static readonly List<string> E = new List<string>{"e", "y"};
+        private static readonly List<string> F = new List<string>{"f", "s", "fh"};
+        private static readonly List<string> G = new List<string>{"g", "gu"};
         private static readonly List<string> H = new List<string>{"h"};
-        private static readonly List<string> I = new List<string>{"i", "eye"};
+        private static readonly List<string> I = new List<string>{"i", "eye", "ice"};
         private static readonly List<string> J = new List<string>{"j", "jay"};
-        private static readonly List<string> K = new List<string>{"k", "kay"};
+        private static readonly List<string> K = new List<string>{"k", "kay", "ka"};
         private static readonly List<List<string>> Letters = new List<List<string>>{A, B, C, D, E, F, G, H, I, J, K};
         
-        private static readonly List<string> One = new List<string>{"1"};
-        private static readonly List<string> Two = new List<string>{"2", "too", "to"};
+        private static readonly List<string> Zero = new List<string>{"0", "zero"};
+        private static readonly List<string> One = new List<string>{"1", "won", "want"};
+        private static readonly List<string> Two = new List<string>{"2", "too", "to", "tu", "t"};
         private static readonly List<string> Three = new List<string>{"3", "free"};
-        private static readonly List<string> Four = new List<string>{"4"};
+        private static readonly List<string> Four = new List<string>{"4", "thought", "for"};
         private static readonly List<string> Five = new List<string>{"5"};
-        private static readonly List<string> Six = new List<string>{"6"};
+        private static readonly List<string> Six = new List<string>{"6", "sics", "sicks"};
         private static readonly List<string> Seven = new List<string>{"7"};
         private static readonly List<string> Eight = new List<string>{"8", "ate"};
         private static readonly List<string> Nine = new List<string>{"9"};
         private static readonly List<string> Ten = new List<string>{"10"};
-        private static readonly List<string> Eleven = new List<string>{"11"};
-        private static readonly List<List<string>> Numbers = new List<List<string>>{One, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Eleven};
+        private static readonly List<List<string>> Numbers = new List<List<string>>{Zero, One, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten};
         
         // Lists containing synonyms for commands
         private static readonly List<string> MovementCommands = new List<string>{"move", "go", "travel"}; // Needs direction/destination/grid
