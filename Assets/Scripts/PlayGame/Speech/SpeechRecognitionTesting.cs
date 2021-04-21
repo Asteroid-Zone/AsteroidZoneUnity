@@ -1,5 +1,6 @@
 ﻿using Statics;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace PlayGame.Speech {
     public class SpeechRecognitionTesting : MonoBehaviour {
@@ -114,6 +115,16 @@ namespace PlayGame.Speech {
             }
         }
 
+        private void Start() {
+            // Grid Coord Assertions
+            Assert.AreEqual(Grammar.GetGridCoord("a8"), "a8");
+            Assert.AreEqual(Grammar.GetGridCoord("7b"), "b7");
+            Assert.AreEqual(Grammar.GetGridCoord("a ate"), "a8");
+            Assert.AreEqual(Grammar.GetGridCoord("be 6"), "b6");
+            Assert.AreEqual(Grammar.GetGridCoord("bee free"), "b3");
+            Assert.AreEqual(Grammar.GetGridCoord("eye 3"), "i3");
+        }
+        
     }
     
 }
