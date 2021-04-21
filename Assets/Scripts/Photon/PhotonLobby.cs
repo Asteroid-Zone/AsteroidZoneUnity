@@ -82,8 +82,6 @@ namespace Photon {
                 _isConnecting = PhotonNetwork.ConnectUsingSettings();
                 PhotonNetwork.GameVersion = GameVersion;
             }
-            progressLabel.SetActive(false);
-            roomControlPanel.SetActive(true);
         }
 
         //Methods overriding MonoBehaviourPunCallbacks Callbacks
@@ -111,7 +109,16 @@ namespace Photon {
           RoomOptions roomOps = new RoomOptions() {IsVisible = true, IsOpen = true, MaxPlayers = maxPlayersPerRoom};
           PhotonNetwork.CreateRoom(roomName, roomOps);
         }
-
+        
+        public override void OnCreateRoomFailed(short returnCode, string message)
+        {
+            Debug.LogWarningFormat("Room creation failed: {0}", message);
+            base.OnCreateRoomFailed(returnCode, message);
+            progressLabel.SetActive(false);
+            controlPanel.SetActive(false);
+            lobbyControlPanel.SetActive(true);
+            roomControlPanel.SetActive(false);
+        }
 
         public override void OnDisconnected(DisconnectCause cause)
         {
