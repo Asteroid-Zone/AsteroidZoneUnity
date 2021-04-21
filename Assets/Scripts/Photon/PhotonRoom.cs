@@ -115,6 +115,13 @@ namespace Photon {
             PhotonNetwork.LoadLevel(multiplayerScene);
             StatsManager.GameStats.startTime = Time.time;
         }
+        
+        public void LeaveRoom() {
+            PhotonNetwork.LeaveRoom();
+            roomControlPanel.SetActive(false);
+            lobbyControlPanel.SetActive(true);
+            PhotonNetwork.JoinLobby();
+        }
 
         private void SyncGameConstants() {
             photonView.RPC(nameof(RPC_SyncGameConstants), RpcTarget.AllBuffered, GameConstants.TimeLimit, GameConstants.GridHeight, GameConstants.GridWidth, GameConstants.GridCellSize);
