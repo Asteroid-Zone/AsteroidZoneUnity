@@ -104,7 +104,10 @@ namespace PlayGame.Speech {
 
         private static readonly List<string> CompassDirections = new List<string>{Strings.North, Strings.East, Strings.South, Strings.West};
         private static readonly List<string> Forward = new List<string>{Strings.Forward, "ahead", "beforward", "ford", "afford"};
-        private static readonly List<string> RelativeDirections = new List<string>{Strings.Back, Strings.Left, Strings.Right};                          // todo separate into lists
+        private static readonly List<string> Back = new List<string>{Strings.Back, "pack"};
+        private static readonly List<string> Left = new List<string>{Strings.Left, "lift"};
+        private static readonly List<string> Right = new List<string>{Strings.Right, "wright", "write"};
+        private static readonly List<string> RelativeDirections = new List<string>();
         private static readonly List<List<string>> Directions = new List<List<string>>{CompassDirections, RelativeDirections};
         
         private static readonly List<List<string>> Destinations = new List<List<string>>{SpaceStation, Ping, Pirate, Asteroid};
@@ -137,6 +140,9 @@ namespace PlayGame.Speech {
             TurnCommandsWrong.AddRange(InstantTurnWrong);
             
             RelativeDirections.AddRange(Forward);
+            RelativeDirections.AddRange(Back);
+            RelativeDirections.AddRange(Left);
+            RelativeDirections.AddRange(Right);
             
             TurnCommands.AddRange(InstantTurn);
             TurnCommands.AddRange(SmoothTurn);
@@ -791,6 +797,9 @@ namespace PlayGame.Speech {
                 foreach (string command in commandList) {
                     if (phrase.Contains(command)) {
                         if (Forward.Contains(command)) return Forward[0];
+                        if (Back.Contains(command)) return Back[0];
+                        if (Left.Contains(command)) return Left[0];
+                        if (Right.Contains(command)) return Right[0];
                         return command;
                     }
                 }
