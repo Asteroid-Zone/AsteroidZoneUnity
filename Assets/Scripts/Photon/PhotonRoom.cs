@@ -18,6 +18,7 @@ namespace Photon {
         public GameObject startButton;
 
         public GameObject playerListPrefab;
+        public GameObject voiceChatPrefab;
         public Transform playerPanel;
 
         private static PhotonRoom _instance;
@@ -78,6 +79,8 @@ namespace Photon {
             {
               startButton.SetActive(false);
             }
+            Debug.Log("creating voice chat");
+            Instantiate(voiceChatPrefab, gameObject.transform);
             ClearList();
             ListLobby();
         }
