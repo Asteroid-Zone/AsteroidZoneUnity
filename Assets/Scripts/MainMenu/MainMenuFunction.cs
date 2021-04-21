@@ -32,6 +32,7 @@ namespace MainMenu {
 			if (lobbyControlPanel.activeSelf && Input.GetButtonDown("Cancel")) {
 				lobbyControlPanel.SetActive(false);
 				controlPanel.SetActive(true);
+                if (PhotonNetwork.IsConnected) PhotonNetwork.Disconnect();
 			}
         }
 
