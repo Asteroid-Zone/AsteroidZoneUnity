@@ -41,6 +41,7 @@ namespace PlayGame.Speech {
         
         private static readonly List<string> GenericOnCommands = new List<string>{"activate", "engage", "turn on", "switch on", "start", "enable", "initiate"}; // Can be used to activate anything
         private static readonly List<string> LockCommands = new List<string>{"lock", "aim", "target", "focus"}; // Can only be used to activate a lock
+        private static readonly List<string> LockCommandsWrong = new List<string>{"tiger"};
         private static readonly List<string> ShootCommands = new List<string>{"shoot", "fire"}; // Can only be used to activate laser gun or mining laser
         //private static readonly List<string> OnCommands = new List<string>{GenericOnCommands, LockCommands, ShootCommands};
         private static readonly List<string> OnCommands = new List<string>(); // Is initialised to the above line at startup
@@ -53,6 +54,7 @@ namespace PlayGame.Speech {
         private static readonly List<string> MiningLaser = new List<string>{Strings.MiningLaser, "mining beam", "mining ray", "mining"};
         private static readonly List<string> SpaceStation = new List<string>{Strings.SpaceStation, "space station", "base"};
         private static readonly List<string> Ping = new List<string>{Strings.Ping, "pin", "mark", "flag"};
+        private static readonly List<string> PingWrong = new List<string>{"pink"};
         private static readonly List<string> Resources = new List<string>{Strings.Resources, "materials", "rock", "supplies"};
         private static readonly List<string> LaserGun = new List<string> {Strings.LaserGun, "gun", "shoot", "attack", "laser beam", "ray gun", "laser"};
         
@@ -63,7 +65,7 @@ namespace PlayGame.Speech {
         private static readonly List<string> SolarPanels = new List<string> {Strings.SolarPanels, "panels", "solar"};
 
         private static readonly List<string> CompassDirections = new List<string>{Strings.North, Strings.East, Strings.South, Strings.West};
-        private static readonly List<string> Forward = new List<string>{Strings.Forward, "ahead"};
+        private static readonly List<string> Forward = new List<string>{Strings.Forward, "ahead", "beforward", "ford"};
         private static readonly List<string> RelativeDirections = new List<string>{Strings.Back, Strings.Left, Strings.Right};
         private static readonly List<List<string>> Directions = new List<List<string>>{CompassDirections, RelativeDirections};
         
@@ -80,6 +82,10 @@ namespace PlayGame.Speech {
         private static readonly List<string> CommandWords;
         
         static Grammar() {
+            // Add common wrong commands
+            LockCommands.AddRange(LockCommandsWrong);
+            Ping.AddRange(PingWrong);
+            
             RelativeDirections.AddRange(Forward);
             
             TurnCommands.AddRange(InstantTurn);
@@ -237,7 +243,7 @@ namespace PlayGame.Speech {
             foreach (string command in LockCommands) {
                 if (phrase.Contains(command)) {
                     completeness = 0.5f;
-                    c = command;
+                    if (!LockCommandsWrong.Contains(command)) c = command; // Use the command if its not a common mistake
                 }
             }
             if (c == "") c = LockCommands[0];
@@ -455,7 +461,7 @@ namespace PlayGame.Speech {
             foreach (string command in Ping) {
                 if (phrase.Contains(command)) {
                     completeness = third;
-                    c = command;
+                    if (!PingWrong.Contains(command)) c = command; // Use the command if its not a common mistake
                 }
             }
             if (c == "") c = Ping[0];
