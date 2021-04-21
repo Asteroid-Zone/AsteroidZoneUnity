@@ -14,6 +14,7 @@ namespace Photon {
         [Tooltip("The UI Panel with lobby Options")]
         [SerializeField]
         private GameObject lobbyControlPanel;
+        [SerializeField]
         private GameObject _progressLabel;
         public GameObject startButton;
 
@@ -68,6 +69,7 @@ namespace Photon {
         {
             //sets player data when we join the room
             base.OnJoinedRoom();
+            _progressLabel.SetActive(false);
             lobbyControlPanel.SetActive(false);
             roomControlPanel.SetActive(true);
             Debug.Log("Asteroid Zone/MainMenuFunction: OnJoinedRoom() called by PUN. Now this client is in a room.");
@@ -114,6 +116,13 @@ namespace Photon {
             Debug.Log("Loading Level");
             PhotonNetwork.LoadLevel(multiplayerScene);
             StatsManager.GameStats.startTime = Time.time;
+        }
+        
+        public void LeaveRoom() {
+            PhotonNetwork.LeaveRoom();
+            roomControlPanel.SetActive(false);
+            lobbyControlPanel.SetActive(true);
+            PhotonNetwork.JoinLobby();
         }
 
         private void SyncGameConstants() {
