@@ -59,41 +59,55 @@ namespace PlayGame.Speech {
         
         // Lists containing synonyms for commands
         private static readonly List<string> MovementCommands = new List<string>{"move", "go", "travel"}; // Needs direction/destination/grid
+        private static readonly List<string> MovementCommandsWrong = new List<string>{"leave", "news", "is"};
         private static readonly List<string> InstantTurn = new List<string>{"face", "look"};
+        private static readonly List<string> InstantTurnWrong = new List<string>{"space"};
         private static readonly List<string> SmoothTurn = new List<string>{"turn", "rotate"};
         private static readonly List<string> TurnCommands = new List<string>(); // Initialised at startup, Needs direction/destination/grid
+        private static readonly List<string> TurnCommandsWrong = new List<string>(); // Initialised at startup
         private static readonly List<string> SpeedCommands = new List<string>{Strings.Stop, Strings.Go};
         private static readonly List<string> TransferCommands = new List<string>{"transfer", "deposit", "unload", "drop", "shift"}; // Needs resources
         private static readonly List<string> MineCommands = new List<string> {"mine"};
         
         private static readonly List<string> GenericOnCommands = new List<string>{"activate", "engage", "turn on", "switch on", "start", "enable", "initiate"}; // Can be used to activate anything
         private static readonly List<string> LockCommands = new List<string>{"lock", "aim", "target", "focus"}; // Can only be used to activate a lock
-        private static readonly List<string> LockCommandsWrong = new List<string>{"tiger"};
+        private static readonly List<string> LockCommandsWrong = new List<string>{"tiger", "famous"};
         private static readonly List<string> ShootCommands = new List<string>{"shoot", "fire"}; // Can only be used to activate laser gun or mining laser
+        private static readonly List<string> ShootCommandsWrong = new List<string> {"cute", "shoe", "sheet"};
         //private static readonly List<string> OnCommands = new List<string>{GenericOnCommands, LockCommands, ShootCommands};
         private static readonly List<string> OnCommands = new List<string>(); // Is initialised to the above line at startup
         private static readonly List<string> OffCommands = new List<string>{"deactivate", "disengage", "turn off", "switch off", "stop", "disable"};
+        private static readonly List<string> OffCommandsWrong = new List<string>{"sable"};
         private static readonly List<string> RepairCommands = new List<string>{"repair", "fix", "mend"};
+        private static readonly List<string> RepairCommandsWrong = new List<string>{"meant", "men"};
 
         // Lists containing synonyms for objects
         private static readonly List<string> Pirate = new List<string>{Strings.Pirate, "enemy"};
+        private static readonly List<string> PirateWrong = new List<string>{"anime"};
         private static readonly List<string> Asteroid = new List<string>{Strings.Asteroid, "meteor"};
         private static readonly List<string> MiningLaser = new List<string>{Strings.MiningLaser, "mining beam", "mining ray", "mining"};
+        private static readonly List<string> MiningLaserWrong = new List<string>{"morning"};
         private static readonly List<string> SpaceStation = new List<string>{Strings.SpaceStation, "space station", "base"};
         private static readonly List<string> Ping = new List<string>{Strings.Ping, "pin", "mark", "flag"};
-        private static readonly List<string> PingWrong = new List<string>{"pink"};
+        private static readonly List<string> PingWrong = new List<string>{"pink", "pig"};
         private static readonly List<string> Resources = new List<string>{Strings.Resources, "materials", "rock", "supplies"};
         private static readonly List<string> LaserGun = new List<string> {Strings.LaserGun, "gun", "shoot", "attack", "laser beam", "ray gun", "laser"};
+        private static readonly List<string> LaserGunWrong = new List<string> {"lazer", "riser", "lazarbeam"};
         
-        private static readonly List<string> Hyperdrive = new List<string> {Strings.Hyperdrive, "warp drive", "hyper drive"};
+        private static readonly List<string> Hyperdrive = new List<string>{Strings.Hyperdrive, "warp drive", "hyper drive"};
         private static readonly List<string> Hull = new List<string> {Strings.Hull, "body", "frame", "structure", "armour", "exterior"};
+        private static readonly List<string> HullWrong = new List<string>{"how", "hal", "armagh", "abba"};
         private static readonly List<string> ShieldGenerator = new List<string> {Strings.ShieldGenerator, "shield"};
         private static readonly List<string> Engines = new List<string> {Strings.Engines, "thrusters"};
         private static readonly List<string> SolarPanels = new List<string> {Strings.SolarPanels, "panels", "solar"};
+        private static readonly List<string> SolarPanelsWrong = new List<string> {"panos"};
 
         private static readonly List<string> CompassDirections = new List<string>{Strings.North, Strings.East, Strings.South, Strings.West};
-        private static readonly List<string> Forward = new List<string>{Strings.Forward, "ahead", "beforward", "ford"};
-        private static readonly List<string> RelativeDirections = new List<string>{Strings.Back, Strings.Left, Strings.Right};
+        private static readonly List<string> Forward = new List<string>{Strings.Forward, "ahead", "beforward", "ford", "afford"};
+        private static readonly List<string> Back = new List<string>{Strings.Back, "pack"};
+        private static readonly List<string> Left = new List<string>{Strings.Left, "lift"};
+        private static readonly List<string> Right = new List<string>{Strings.Right, "wright", "write"};
+        private static readonly List<string> RelativeDirections = new List<string>();
         private static readonly List<List<string>> Directions = new List<List<string>>{CompassDirections, RelativeDirections};
         
         private static readonly List<List<string>> Destinations = new List<List<string>>{SpaceStation, Ping, Pirate, Asteroid};
@@ -110,10 +124,25 @@ namespace PlayGame.Speech {
         
         static Grammar() {
             // Add common wrong commands
+            MovementCommands.AddRange(MovementCommandsWrong);
+            InstantTurn.AddRange(InstantTurnWrong);
             LockCommands.AddRange(LockCommandsWrong);
             Ping.AddRange(PingWrong);
+            ShootCommands.AddRange(ShootCommandsWrong);
+            OffCommands.AddRange(OffCommandsWrong);
+            RepairCommands.AddRange(RepairCommandsWrong);
+            Pirate.AddRange(PirateWrong);
+            MiningLaser.AddRange(MiningLaserWrong);
+            LaserGun.AddRange(LaserGunWrong);
+            Hull.AddRange(HullWrong);
+            SolarPanels.AddRange(SolarPanelsWrong);
+            
+            TurnCommandsWrong.AddRange(InstantTurnWrong);
             
             RelativeDirections.AddRange(Forward);
+            RelativeDirections.AddRange(Back);
+            RelativeDirections.AddRange(Left);
+            RelativeDirections.AddRange(Right);
             
             TurnCommands.AddRange(InstantTurn);
             TurnCommands.AddRange(SmoothTurn);
@@ -197,8 +226,8 @@ namespace PlayGame.Speech {
             DataProvided dataProvided = GetDataProvided(phrase, playerData, moveObject, miningLaser, combatLaser);
             List<Tuple<string, float>> commands = new List<Tuple<string, float>>(); // List of (command, dataRequiredPercentage)
 
-            commands.AddRange(GetPartiallyCompleteMovementCommands(phrase, dataProvided, MovementCommands));
-            commands.AddRange(GetPartiallyCompleteMovementCommands(phrase, dataProvided, TurnCommands));
+            commands.AddRange(GetPartiallyCompleteMovementCommands(phrase, dataProvided, MovementCommands, MovementCommandsWrong));
+            commands.AddRange(GetPartiallyCompleteMovementCommands(phrase, dataProvided, TurnCommands, TurnCommandsWrong));
             
             commands.Add(GetPartiallyCompletePingCommand(phrase, dataProvided));
             commands.Add(GetPartiallyCompleteTransferCommand(phrase, dataProvided));
@@ -225,7 +254,7 @@ namespace PlayGame.Speech {
                 if (phrase.Contains(command)) {
                     completeness = 0.5f;
                     completenessAmount = third;
-                    c = command;
+                    if (!RepairCommandsWrong.Contains(command)) c = command; // Use the command if its not a common mistake
                 }
             }
             if (c == "") c = RepairCommands[0];
@@ -314,7 +343,8 @@ namespace PlayGame.Speech {
             foreach (string command in ShootCommands) {
                 if (phrase.Contains(command)) {
                     completeness = 0.5f;
-                    c = command;
+                    if (!ShootCommandsWrong.Contains(command)) c = command; // Use the command if its not a common mistake
+                    else c = ShootCommands[0];
                 }
             }
             if (c == "") { // If no shoot command was found check for generic on commands
@@ -418,7 +448,7 @@ namespace PlayGame.Speech {
             foreach (string command in OffCommands) {
                 if (phrase.Contains(command)) {
                     completeness = 0.5f;
-                    c = command;
+                    if (!OffCommandsWrong.Contains(command)) c = command; // Use the command if its not a common mistake
                 }
             }
             if (c == "") c = OffCommands[0];
@@ -514,7 +544,7 @@ namespace PlayGame.Speech {
             return new Tuple<string, float>(c, completeness);
         }
 
-        private static List<Tuple<string, float>> GetPartiallyCompleteMovementCommands(string phrase, DataProvided dataProvided, List<string> commandList) {
+        private static List<Tuple<string, float>> GetPartiallyCompleteMovementCommands(string phrase, DataProvided dataProvided, List<string> commandList, List<string> commandListWrong) {
             List<Tuple<string, float>> commands = new List<Tuple<string, float>>(); // List of (command, dataRequiredPercentage)
 
             float completeness = 0;
@@ -524,7 +554,7 @@ namespace PlayGame.Speech {
             foreach (string command in commandList) {
                 if (phrase.Contains(command)) {
                     completeness = 0.5f;
-                    c = command;
+                    if (!commandListWrong.Contains(command)) c = command; // Use the command if its not a common mistake
                 }
             }
             if (c == "") c = commandList[0];
@@ -767,6 +797,9 @@ namespace PlayGame.Speech {
                 foreach (string command in commandList) {
                     if (phrase.Contains(command)) {
                         if (Forward.Contains(command)) return Forward[0];
+                        if (Back.Contains(command)) return Back[0];
+                        if (Left.Contains(command)) return Left[0];
+                        if (Right.Contains(command)) return Right[0];
                         return command;
                     }
                 }
