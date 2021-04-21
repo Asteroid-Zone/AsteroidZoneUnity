@@ -131,15 +131,12 @@ namespace Photon {
         public override void OnRoomListUpdate(List<RoomInfo> roomList)
         {
           foreach(RoomInfo room in roomList)
-          {
-            if(!room.RemovedFromList)
-            {
-              ListRoom(room);
-            }
-            else
-            {
+          { 
               ClearRoom(room);
-            }
+              if(!room.RemovedFromList) 
+              {
+                ListRoom(room);
+              }
           }
         }
 
@@ -164,6 +161,7 @@ namespace Photon {
 
         public void ListRoom(RoomInfo room)
         {
+            Debug.Log("Listing room");
           if(room.IsOpen && room.IsVisible)
           {
             GameObject tempListing = Instantiate(roomListPrefab, roomPanel);
