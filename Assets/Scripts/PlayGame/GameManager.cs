@@ -6,6 +6,7 @@ using PlayGame.Pirates;
 using PlayGame.Player;
 using PlayGame.Stats;
 using PlayGame.UI;
+using PlayGame.VoiceChat;
 using Statics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -45,6 +46,9 @@ namespace PlayGame {
         public void GameOver(GameOverType gameOverType) {
             if (gameOver) return; // Ensures LeaveRoom is only called once
 
+            // Unmute everyone for the cutscene and stats screen
+            VoiceChatController.UnmuteMyselfInVoiceChat();
+            
             if (!DebugSettings.Debug && PhotonNetwork.IsMasterClient) photonView.RPC(nameof(RPC_GameOver), RpcTarget.AllBuffered, gameOverType, Time.time - StatsManager.GameStats.startTime);
             else if (DebugSettings.Debug) RPC_GameOver(gameOverType, Time.time - StatsManager.GameStats.startTime);
         }
