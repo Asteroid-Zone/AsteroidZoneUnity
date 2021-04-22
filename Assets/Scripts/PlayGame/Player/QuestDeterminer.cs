@@ -41,7 +41,9 @@ namespace PlayGame.Player
             while (true) {
                 Transform nearestEnemy = _moveObject.GetNearestEnemyTransform();
                 Transform nearestAsteroid = _moveObject.GetNearestAsteroidTransform();
-                if (_stationDamaged) {
+                if (_playerData.dead) {
+                    _playerData.SetQuest(QuestType.Respawn);
+                } else if (_stationDamaged) {
                     // If within laser range of station hint should be shoot pirates otherwise return to station
                     if (_moveObject.DistanceToStation() > _playerData.GetLaserRange()) _playerData.SetQuest(QuestType.ReturnToStationDefend);
                     else _playerData.SetQuest(QuestType.DefendStation);

@@ -52,6 +52,8 @@ namespace PlayGame.UI
                     return "Use the resources to repair the station (try saying 'repair [module name]') You can see which modules are damaged in the top left of your screen.";
                 case QuestType.ActivateHyperdrive:
                     return "Activate the hyperdrive and escape! (try saying 'activate hyperdrive')";
+                case QuestType.Respawn:
+                    return "Ask the station commander to respawn you (resources required)";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(quest), quest, null);
             }

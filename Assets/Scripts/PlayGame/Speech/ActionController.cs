@@ -65,7 +65,10 @@ namespace PlayGame.Speech {
 
         private void PerformRespawnCommand() {
             if (!PhotonNetwork.IsMasterClient) return;
-            if (spaceStation.resources < spaceStation.GetRespawnCost()) return; // If the station doesn't have enough resources dont respawn
+            if (spaceStation.resources < spaceStation.GetRespawnCost()) { // If the station doesn't have enough resources dont respawn
+                EventsManager.AddMessage(spaceStation.GetRespawnCost() + " resources required.");
+                return;
+            }
             
             spaceStation.AddResources(-spaceStation.GetRespawnCost()); // Remove resources
             spaceStation.IncreaseRespawnCost();
