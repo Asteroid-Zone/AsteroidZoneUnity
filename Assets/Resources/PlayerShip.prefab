@@ -175,6 +175,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef4c257420341c740a973ba8928fd0cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dead: 0
   role: 1
   viewableArea: {fileID: 8626551488903073980}
   viewableAreaMinimap: {fileID: 1103957441763934853}

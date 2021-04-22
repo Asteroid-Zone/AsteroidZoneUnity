@@ -81,6 +81,8 @@ namespace PlayGame.Speech {
         private static readonly List<string> RepairCommands = new List<string>{"repair", "fix", "mend"};
         private static readonly List<string> RepairCommandsWrong = new List<string>{"meant", "men"};
 
+        private static readonly List<string> RespawnCommands = new List<string>{"respawn", "revive"};
+
         // Lists containing synonyms for objects
         private static readonly List<string> Pirate = new List<string>{Strings.Pirate, "enemy"};
         private static readonly List<string> PirateWrong = new List<string>{"anime"};
@@ -117,7 +119,7 @@ namespace PlayGame.Speech {
         private static readonly List<List<string>> GenericActivatableObjects = new List<List<string>>{Hyperdrive}; // Objects that are only activated using the generic on commands and don't need any extra data
         private static readonly List<List<string>> StationModules = new List<List<string>>{Hyperdrive, Hull, ShieldGenerator, Engines, SolarPanels};
         
-        private static readonly List<List<string>> SingleCommands = new List<List<string>>{SpeedCommands, ShootCommands, MineCommands};
+        private static readonly List<List<string>> SingleCommands = new List<List<string>>{SpeedCommands, ShootCommands, MineCommands, RespawnCommands};
         private static readonly List<List<string>> CompoundCommands = new List<List<string>>{MovementCommands, TurnCommands, Ping, TransferCommands, OffCommands, OnCommands, RepairCommands};
 
         private static readonly List<string> CommandWords;
@@ -684,6 +686,7 @@ namespace PlayGame.Speech {
                             if (commandList == SpeedCommands) return new SpeedCommand(command);
                             if (commandList == ShootCommands) return new ToggleCommand(true, ToggleCommand.ObjectType.LaserGun); // Turn laser gun on
                             if (commandList == MineCommands) return new ToggleCommand(true, ToggleCommand.ObjectType.MiningLaser); // Turn mining laser on
+                            if (commandList == RespawnCommands) return new Command(Command.CommandType.Respawn, true, false);
                         }
                     }
                 }

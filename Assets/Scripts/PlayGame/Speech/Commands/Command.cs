@@ -6,7 +6,8 @@
             Transfer,
             Toggle,
             Speed,
-            Repair
+            Repair,
+            Respawn
         }
 
         private readonly bool _isValid;

@@ -30,6 +30,8 @@ namespace PlayGame.Pirates {
         private PirateLaserGun _laserGun;
         private PirateData _pirateData;
 
+        private bool _chasingPlayer = false;
+
         public static void ResetStaticVariables() {
             _alert = false;
             _knownStationLocation = Vector3.zero;
@@ -56,7 +58,10 @@ namespace PlayGame.Pirates {
             (GameObject closestPlayer, float closestPlayerDist) = GetClosestPlayer();
             float lookRadius = _pirateData.GetLookRadius();
 
-            
+            if (_chasingPlayer && closestPlayer == null) {
+                _chasingPlayer = false;
+                RandomSearch();
+            }
             
             // If pirate can see the station
             if (Vector3.Distance(transform.position, _spaceStation.position) < lookRadius) {
@@ -71,12 +76,17 @@ namespace PlayGame.Pirates {
 
             // Some pirates focus on the station and some focus on the player
             if (_pirateData.focusStation) {
-                if (_alert && Vector3.Distance(transform.position, _spaceStation.position) < _pirateData.GetLaserRange()) ShootTarget(_spaceStation);
-                else if (closestPlayer != null && closestPlayerDist <= lookRadius) ChasePlayer(closestPlayer.transform, closestPlayerDist); // If pirate is close to a player chase them
+                if (_alert && Vector3.Distance(transform.position, _spaceStation.position) < _pirateData.GetLaserRange()) {
+                    _chasingPlayer = false;
+                    ShootTarget(_spaceStation);
+                } else if (closestPlayer != null && closestPlayerDist <= lookRadius) ChasePlayer(closestPlayer.transform, closestPlayerDist); // If pirate is close to a player chase them
                 else if (!_alert && _pirateData.pirateType != PirateData.PirateType.Scout && Vector3.Distance(transform.position, _destination) < DespawnDistance) _pirateData.Leave();
             } else {
                 if (closestPlayer != null && closestPlayerDist <= lookRadius) ChasePlayer(closestPlayer.transform, closestPlayerDist); // If pirate is close to a player chase them
-                else if (_alert && Vector3.Distance(transform.position, _spaceStation.position) < _pirateData.GetLaserRange()) ShootTarget(_spaceStation);
+                else if (_alert && Vector3.Distance(transform.position, _spaceStation.position) < _pirateData.GetLaserRange()) {
+                    _chasingPlayer = false;
+                    ShootTarget(_spaceStation);
+                }
                 else if (!_alert && _pirateData.pirateType != PirateData.PirateType.Scout && Vector3.Distance(transform.position, _destination) < DespawnDistance) _pirateData.Leave();
             }
         }
@@ -87,6 +97,7 @@ namespace PlayGame.Pirates {
         }
 
         private void LeaveMap() {
+            _chasingPlayer = false;
             _destination = GridManager.GetNearestEdgePoint(transform.position);
             _agent.stoppingDistance = 0;
             _laserGun.StopShooting();
@@ -173,6 +184,7 @@ namespace PlayGame.Pirates {
         }
         
         private void ChasePlayer(Transform closestPlayer, float closestPlayerDist) {
+            _chasingPlayer = true;
             _agent.stoppingDistance = StoppingDistChasingPlayer;
             _agent.SetDestination(closestPlayer.position);
 
@@ -186,7 +198,8 @@ namespace PlayGame.Pirates {
             float closestPlayerDist = float.MaxValue;
             PlayerData.Players.ForEach(p => {
                 if (p != null) {
-                    if (p.GetComponent<PlayerData>().GetRole() != Role.StationCommander) {
+                    PlayerData playerData = p.GetComponent<PlayerData>();
+                    if (playerData.GetRole() != Role.StationCommander && playerData.dead == false) {
                         Vector3 position = p.transform.position;
                         float distance = Vector3.Distance(transform.position, position);
                         if (distance < closestPlayerDist) {

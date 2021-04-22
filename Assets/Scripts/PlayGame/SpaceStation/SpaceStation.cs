@@ -28,9 +28,13 @@ namespace PlayGame.SpaceStation {
 
         public GameManager gameManager;
 
+        private int _respawnCost;
+
         private void Start() {
             gameManager = GameObject.FindGameObjectWithTag(Tags.GameManager).GetComponent<GameManager>();
             transform.position = GridManager.GetGridCentre();
+
+            _respawnCost = GameConstants.PlayerRespawnCost;
             
             _hyperdrive = new Hyperdrive(this);
             _shieldGenerator = new ShieldGenerator(this);
@@ -127,6 +131,20 @@ namespace PlayGame.SpaceStation {
                 default:
                     throw new ArgumentOutOfRangeException(nameof(module), module, null);
             }
+        }
+
+        public void IncreaseRespawnCost() {
+            if (!DebugSettings.Debug) photonView.RPC(nameof(RPC_IncreaseRespawnCost), RpcTarget.AllBuffered);
+            else _respawnCost += GameConstants.PlayerRespawnCostIncrease;
+        }
+        
+        [PunRPC]
+        public void RPC_IncreaseRespawnCost() {
+            _respawnCost += GameConstants.PlayerRespawnCostIncrease;
+        }
+        
+        public int GetRespawnCost() {
+            return _respawnCost;
         }
 
     }

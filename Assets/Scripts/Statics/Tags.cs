@@ -1,7 +1,6 @@
 ﻿namespace Statics
 {
-    public static class Tags
-    {
+    public static class Tags {
         public const string PlayerTag = "Player";
         public const string PlayerModelTag = "PlayerModel";
         public const string PirateTag = "Pirate";
@@ -15,5 +14,6 @@
         public const string PingManagerTag = "PingManager";
         public const string SpeechTextTag = "SpeechText";
         public const string GameManager = "GameManager";
+        public const string DeadPanel = "DeadPanel";
     }
 }

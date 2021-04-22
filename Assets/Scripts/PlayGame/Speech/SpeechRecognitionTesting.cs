@@ -18,8 +18,8 @@ namespace PlayGame.Speech {
                 speechRecognition.GetFinalResponse("mine asteroids");
             }
             
-            if (Input.GetKeyDown(KeyCode.N)) { // Move station to random location
-                speechRecognition.MoveStation();
+            if (Input.GetKeyDown(KeyCode.N)) { // Respawn a random player
+                speechRecognition.GetFinalResponse("respawn");
             }
             
             if (Input.GetKeyDown(KeyCode.W)) { // Move forward

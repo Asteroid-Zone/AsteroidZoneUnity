@@ -2,6 +2,8 @@
 using Photon.GameControllers;
 using Photon.Pun;
 using PlayGame.Camera;
+using PlayGame.Player.Movement;
+using PlayGame.Speech.Commands;
 using PlayGame.Stats;
 using PlayGame.UI;
 using Statics;
@@ -33,7 +35,7 @@ namespace PlayGame.Player
         public static List<GameObject> Players;
         private int _playerID;
 
-        private bool _youDiedWrittenOnScreen; // TODO remove this and make something else when player dies
+        public bool dead;
 
         public Role role;
 
@@ -65,6 +67,12 @@ namespace PlayGame.Player
         public MeshRenderer gunRight;
 
         private Transform _spaceStation;
+
+        private LaserGun _laserGun;
+        private MiningLaser _miningLaser;
+        private MoveObject _moveObject;
+
+        private GameObject _deadPanel;
         
         private void Start() {
             _spaceStation = GameObject.FindGameObjectWithTag(Tags.StationTag).transform;
@@ -88,10 +96,25 @@ namespace PlayGame.Player
             }
 
             if (role == Role.StationCommander && !DebugSettings.SinglePlayer) SetUpStationCommander();
-            else SetUpMiner();
+            else SetUpMiner(true);
         }
 
-        private void SetUpMiner() {
+        private void SetUpMiner(bool initial) {
+            if (initial) {
+                _laserGun = gameObject.GetComponent<LaserGun>();
+                _miningLaser = gameObject.GetComponent<MiningLaser>();
+                _moveObject = gameObject.GetComponent<MoveObject>();
+                
+                if (photonView.IsMine) _deadPanel = GameObject.FindGameObjectWithTag(Tags.DeadPanel);
+                
+                _playerID = (_playerStats.photonID / 1000) - 1;
+                //   _playerID = _playerID > 3 ? 3 : _playerID;
+                //    _playerID = _playerID < 0 ? 0 : _playerID;
+                SetPlayerColour();
+            }
+            
+            if (photonView.IsMine) _deadPanel.SetActive(false);
+            
             _maxHealth = GameConstants.PlayerMaxHealth;
             _maxSpeed = GameConstants.PlayerMaxSpeed;
             _rotateSpeed = GameConstants.PlayerRotateSpeed;
@@ -110,11 +133,7 @@ namespace PlayGame.Player
             ResizeViewableArea();
             
             currentQuest = QuestType.MineAsteroids;
-            _playerID = (_playerStats.photonID / 1000) - 1;
-         //   _playerID = _playerID > 3 ? 3 : _playerID;
-        //    _playerID = _playerID < 0 ? 0 : _playerID;
-        
-            SetPlayerColour();
+
             if (photonView.IsMine) transform.position = GameSetup.Instance.spawnPoints[_playerID].position; // Set spawn point
         }
 
@@ -141,6 +160,25 @@ namespace PlayGame.Player
             shipModel.material.color = colour;
             gunLeft.material.color = colour;
             gunRight.material.color = colour;
+        }
+
+        public void RespawnPlayer(int playerID) {
+            if (!PhotonNetwork.IsMasterClient) return;
+            photonView.RPC(nameof(RPC_RespawnPlayer), RpcTarget.AllBuffered, playerID);
+        }
+        
+        [PunRPC]
+        public void RPC_RespawnPlayer(int playerID) {
+            foreach (GameObject o in Players) {
+                PlayerData p = o.GetComponent<PlayerData>();
+                if (p.GetPlayerID() == playerID) p.Respawn();
+            }
+        }
+
+        private void Respawn() {
+            dead = false;
+            SetUpMiner(false);
+            SetActiveRecursively(shipModel.gameObject, true);
         }
 
         // Sets the size of the viewable area ring and minimap ring
@@ -177,12 +215,35 @@ namespace PlayGame.Player
 
         private void Update() {
             if (role != Role.StationCommander) {
-                if (!_youDiedWrittenOnScreen && _health <= 0) {
-                    EventsManager.AddMessage("YOU DIED");
-                    _youDiedWrittenOnScreen = true;
+                if (!dead && _health <= 0) {
+                    Die();
                 }
             } else {
                 if (_spaceStation != null) gameObject.transform.position = _spaceStation.position;
+            }
+        }
+
+        private void Die() {
+            dead = true;
+            
+            if (photonView.IsMine) {
+                _deadPanel.SetActive(true);
+                EventsManager.AddMessage("YOU DIED");
+            } else EventsManager.AddMessage(_playerStats.playerName + " DIED");
+            
+            SetActiveRecursively(shipModel.gameObject, false); // Hide the ship model
+            
+            _laserGun.StopShooting();
+            _miningLaser.DisableMiningLaser();
+            _moveObject.SetSpeed(0);
+            _moveObject.SetLockTargetType(ToggleCommand.LockTargetType.None);
+        }
+        
+        private void SetActiveRecursively(GameObject o, bool active) {
+            o.SetActive(active);
+
+            foreach (Transform child in o.transform){
+                SetActiveRecursively(child.gameObject, active);
             }
         }
 
@@ -280,9 +341,22 @@ namespace PlayGame.Player
             }
         }
 
-        public int GetPlayerID()
-        {
+        public int GetPlayerID() {
             return _playerID;
+        }
+
+        public static PlayerData GetRandomDeadPlayer() {
+            List<PlayerData> deadPlayers = new List<PlayerData>();
+            
+            foreach (GameObject player in Players) {
+                PlayerData playerData = player.GetComponent<PlayerData>();
+                if (playerData.dead) deadPlayers.Add(playerData);
+            }
+
+            if (deadPlayers.Count == 0) return null;
+
+            int randomInt = Random.Range(0, deadPlayers.Count);
+            return deadPlayers[randomInt];
         }
 
         public static PlayerData GetMyPlayerData()

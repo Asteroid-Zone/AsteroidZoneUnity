@@ -24,8 +24,17 @@ namespace PlayGame.Speech {
         public PingManager pingManager;
 
         public void PerformActions(Command command) {
-            if (playerData.GetRole() != Role.StationCommander && command.IsCommanderOnly()) return; // Prevent players from performing station commander commands
-            if (playerData.GetRole() != Role.Miner && command.IsMinerOnly()) return; // Prevent commander from performing miner commands
+            if (playerData.GetRole() != Role.StationCommander && command.IsCommanderOnly()) { // Prevent players from performing station commander commands
+                if (playerData.photonView.IsMine) EventsManager.AddMessage("Only the station commander can perform that command!");
+                return;
+            }
+            
+            if (playerData.GetRole() != Role.Miner && command.IsMinerOnly()) { // Prevent commander from performing miner commands
+                if (playerData.photonView.IsMine) EventsManager.AddMessage("Only miners can perform that command!");
+                return;
+            }
+
+            if (playerData.dead) return; // Dead players can't perform actions
             
             switch (command.GetCommandType()) {
                 case Command.CommandType.Movement:
@@ -46,9 +55,23 @@ namespace PlayGame.Speech {
                 case Command.CommandType.Repair:
                     PerformRepairCommand((RepairCommand) command);
                     break;
+                case Command.CommandType.Respawn:
+                    PerformRespawnCommand();
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        private void PerformRespawnCommand() {
+            if (!PhotonNetwork.IsMasterClient) return;
+            if (spaceStation.resources < spaceStation.GetRespawnCost()) return; // If the station doesn't have enough resources dont respawn
+            
+            spaceStation.AddResources(-spaceStation.GetRespawnCost()); // Remove resources
+            spaceStation.IncreaseRespawnCost();
+            
+            PlayerData p = PlayerData.GetRandomDeadPlayer();
+            if (p != null) playerData.RespawnPlayer(p.GetPlayerID()); // Respawn a random dead player
         }
 
         private void PerformRepairCommand(RepairCommand command) {
