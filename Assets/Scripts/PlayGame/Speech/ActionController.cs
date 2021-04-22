@@ -26,6 +26,8 @@ namespace PlayGame.Speech {
         public void PerformActions(Command command) {
             if (playerData.GetRole() != Role.StationCommander && command.IsCommanderOnly()) return; // Prevent players from performing station commander commands
             if (playerData.GetRole() != Role.Miner && command.IsMinerOnly()) return; // Prevent commander from performing miner commands
+
+            if (playerData.dead) return; // Dead players can't perform actions
             
             switch (command.GetCommandType()) {
                 case Command.CommandType.Movement:

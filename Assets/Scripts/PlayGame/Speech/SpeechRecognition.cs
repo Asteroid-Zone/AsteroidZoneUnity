@@ -73,7 +73,7 @@ namespace PlayGame.Speech {
         }
 
         public void RespawnPlayer() {
-            _playerData.Respawn();
+            if (_playerData.dead) _playerData.Respawn();
         }
         
         public void MoveStation() {
