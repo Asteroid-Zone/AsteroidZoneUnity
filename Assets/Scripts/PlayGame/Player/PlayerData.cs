@@ -162,7 +162,20 @@ namespace PlayGame.Player
             gunRight.material.color = colour;
         }
 
-        public void Respawn() {
+        public void RespawnPlayer(int playerID) {
+            if (!PhotonNetwork.IsMasterClient) return;
+            photonView.RPC(nameof(RPC_RespawnPlayer), RpcTarget.AllBuffered, playerID);
+        }
+        
+        [PunRPC]
+        public void RPC_RespawnPlayer(int playerID) {
+            foreach (GameObject o in Players) {
+                PlayerData p = o.GetComponent<PlayerData>();
+                if (p.GetPlayerID() == playerID) p.Respawn();
+            }
+        }
+
+        private void Respawn() {
             dead = false;
             SetUpMiner(false);
             SetActiveRecursively(shipModel.gameObject, true);

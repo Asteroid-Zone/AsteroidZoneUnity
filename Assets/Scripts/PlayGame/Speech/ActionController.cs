@@ -64,8 +64,10 @@ namespace PlayGame.Speech {
         }
 
         private void PerformRespawnCommand() {
+            if (!PhotonNetwork.IsMasterClient) return;
+            
             PlayerData p = PlayerData.GetRandomDeadPlayer();
-            if (p != null) p.Respawn(); // Respawn a random dead player
+            if (p != null) playerData.RespawnPlayer(p.GetPlayerID()); // Respawn a random dead player
         }
 
         private void PerformRepairCommand(RepairCommand command) {
