@@ -319,9 +319,22 @@ namespace PlayGame.Player
             }
         }
 
-        public int GetPlayerID()
-        {
+        public int GetPlayerID() {
             return _playerID;
+        }
+
+        public static PlayerData GetRandomDeadPlayer() {
+            List<PlayerData> deadPlayers = new List<PlayerData>();
+            
+            foreach (GameObject player in Players) {
+                PlayerData playerData = player.GetComponent<PlayerData>();
+                if (playerData.dead) deadPlayers.Add(playerData);
+            }
+
+            if (deadPlayers.Count == 0) return null;
+
+            int randomInt = Random.Range(0, deadPlayers.Count);
+            return deadPlayers[randomInt];
         }
 
         public static PlayerData GetMyPlayerData()

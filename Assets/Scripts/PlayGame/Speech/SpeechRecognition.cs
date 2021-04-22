@@ -72,10 +72,6 @@ namespace PlayGame.Speech {
             StopSpeechRecognitionInTheBrowser();
         }
 
-        public void RespawnPlayer() {
-            if (_playerData.dead) _playerData.Respawn();
-        }
-        
         public void MoveStation() {
             spaceStation.transform.position = new GridCoord(Random.Range(0, 11), Random.Range(0, 11)).GetWorldVector();
         }

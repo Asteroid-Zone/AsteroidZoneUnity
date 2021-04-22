@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Photon.Pun;
 using PlayGame.Pings;
 using PlayGame.Player;
@@ -24,8 +25,15 @@ namespace PlayGame.Speech {
         public PingManager pingManager;
 
         public void PerformActions(Command command) {
-            if (playerData.GetRole() != Role.StationCommander && command.IsCommanderOnly()) return; // Prevent players from performing station commander commands
-            if (playerData.GetRole() != Role.Miner && command.IsMinerOnly()) return; // Prevent commander from performing miner commands
+            if (playerData.GetRole() != Role.StationCommander && command.IsCommanderOnly()) { // Prevent players from performing station commander commands
+                if (playerData.photonView.IsMine) EventsManager.AddMessage("Only the station commander can perform that command!");
+                return;
+            }
+            
+            if (playerData.GetRole() != Role.Miner && command.IsMinerOnly()) { // Prevent commander from performing miner commands
+                if (playerData.photonView.IsMine) EventsManager.AddMessage("Only miners can perform that command!");
+                return;
+            }
 
             if (playerData.dead) return; // Dead players can't perform actions
             
@@ -48,9 +56,17 @@ namespace PlayGame.Speech {
                 case Command.CommandType.Repair:
                     PerformRepairCommand((RepairCommand) command);
                     break;
+                case Command.CommandType.Respawn:
+                    PerformRespawnCommand();
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        private void PerformRespawnCommand() {
+            PlayerData p = PlayerData.GetRandomDeadPlayer();
+            if (p != null) p.Respawn(); // Respawn a random dead player
         }
 
         private void PerformRepairCommand(RepairCommand command) {
