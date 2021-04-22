@@ -22,6 +22,14 @@ namespace PlayGame.UI {
                     if (initial) _inputField.text = GameConstants.TimeLimit.ToString();
                     else GameConstants.TimeLimit = float.Parse(value);
                     break;
+                case "PlayerRespawnCostInput":
+                    if (initial) _inputField.text = GameConstants.PlayerRespawnCost.ToString();
+                    else GameConstants.PlayerRespawnCost = int.Parse(value);
+                    break;
+                case "PlayerRespawnCostIncreaseInput":
+                    if (initial) _inputField.text = GameConstants.PlayerRespawnCostIncrease.ToString();
+                    else GameConstants.PlayerRespawnCostIncrease = int.Parse(value);
+                    break;
                 case "PlayerMaxHealthInput":
                     if (initial) _inputField.text = GameConstants.PlayerMaxHealth.ToString();
                     else GameConstants.PlayerMaxHealth = int.Parse(value);

@@ -65,6 +65,10 @@ namespace PlayGame.Speech {
 
         private void PerformRespawnCommand() {
             if (!PhotonNetwork.IsMasterClient) return;
+            if (spaceStation.resources < spaceStation.GetRespawnCost()) return; // If the station doesn't have enough resources dont respawn
+            
+            spaceStation.AddResources(-spaceStation.GetRespawnCost()); // Remove resources
+            spaceStation.IncreaseRespawnCost();
             
             PlayerData p = PlayerData.GetRandomDeadPlayer();
             if (p != null) playerData.RespawnPlayer(p.GetPlayerID()); // Respawn a random dead player

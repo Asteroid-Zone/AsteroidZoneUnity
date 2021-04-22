@@ -47,7 +47,9 @@
         
         
         // ---------- Players ----------
-        
+
+        public static int PlayerRespawnCost = 150; // Resources to respawn a player
+        public static int PlayerRespawnCostIncrease = 25; // Amount the cost increases each time
         public static int PlayerMaxHealth = 200;
         public static float PlayerMaxSpeed = 2.5f;
         public static float PlayerRotateSpeed = 0.5f;
