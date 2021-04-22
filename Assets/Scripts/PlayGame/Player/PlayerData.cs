@@ -71,6 +71,8 @@ namespace PlayGame.Player
         private LaserGun _laserGun;
         private MiningLaser _miningLaser;
         private MoveObject _moveObject;
+
+        private GameObject _deadPanel;
         
         private void Start() {
             _spaceStation = GameObject.FindGameObjectWithTag(Tags.StationTag).transform;
@@ -103,11 +105,15 @@ namespace PlayGame.Player
                 _miningLaser = gameObject.GetComponent<MiningLaser>();
                 _moveObject = gameObject.GetComponent<MoveObject>();
                 
+                if (photonView.IsMine) _deadPanel = GameObject.FindGameObjectWithTag(Tags.DeadPanel);
+                
                 _playerID = (_playerStats.photonID / 1000) - 1;
                 //   _playerID = _playerID > 3 ? 3 : _playerID;
                 //    _playerID = _playerID < 0 ? 0 : _playerID;
                 SetPlayerColour();
             }
+            
+            if (photonView.IsMine) _deadPanel.SetActive(false);
             
             _maxHealth = GameConstants.PlayerMaxHealth;
             _maxSpeed = GameConstants.PlayerMaxSpeed;
@@ -206,8 +212,11 @@ namespace PlayGame.Player
 
         private void Die() {
             dead = true;
-            if (photonView.IsMine) EventsManager.AddMessage("YOU DIED");
-            else EventsManager.AddMessage(_playerStats.playerName + " DIED");
+            
+            if (photonView.IsMine) {
+                _deadPanel.SetActive(true);
+                EventsManager.AddMessage("YOU DIED");
+            } else EventsManager.AddMessage(_playerStats.playerName + " DIED");
             
             SetActiveRecursively(shipModel.gameObject, false); // Hide the ship model
             
