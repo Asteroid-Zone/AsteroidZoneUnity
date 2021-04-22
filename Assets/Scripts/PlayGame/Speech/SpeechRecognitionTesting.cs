@@ -19,7 +19,7 @@ namespace PlayGame.Speech {
             }
             
             if (Input.GetKeyDown(KeyCode.N)) { // Move station to random location
-                speechRecognition.MoveStation();
+                speechRecognition.RespawnPlayer();
             }
             
             if (Input.GetKeyDown(KeyCode.W)) { // Move forward

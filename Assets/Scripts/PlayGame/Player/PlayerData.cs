@@ -2,6 +2,8 @@
 using Photon.GameControllers;
 using Photon.Pun;
 using PlayGame.Camera;
+using PlayGame.Player.Movement;
+using PlayGame.Speech.Commands;
 using PlayGame.Stats;
 using PlayGame.UI;
 using Statics;
@@ -33,7 +35,7 @@ namespace PlayGame.Player
         public static List<GameObject> Players;
         private int _playerID;
 
-        private bool _youDiedWrittenOnScreen; // TODO remove this and make something else when player dies
+        public bool dead;
 
         public Role role;
 
@@ -65,6 +67,10 @@ namespace PlayGame.Player
         public MeshRenderer gunRight;
 
         private Transform _spaceStation;
+
+        private LaserGun _laserGun;
+        private MiningLaser _miningLaser;
+        private MoveObject _moveObject;
         
         private void Start() {
             _spaceStation = GameObject.FindGameObjectWithTag(Tags.StationTag).transform;
@@ -88,10 +94,21 @@ namespace PlayGame.Player
             }
 
             if (role == Role.StationCommander && !DebugSettings.SinglePlayer) SetUpStationCommander();
-            else SetUpMiner();
+            else SetUpMiner(true);
         }
 
-        private void SetUpMiner() {
+        private void SetUpMiner(bool initial) {
+            if (initial) {
+                _laserGun = gameObject.GetComponent<LaserGun>();
+                _miningLaser = gameObject.GetComponent<MiningLaser>();
+                _moveObject = gameObject.GetComponent<MoveObject>();
+                
+                _playerID = (_playerStats.photonID / 1000) - 1;
+                //   _playerID = _playerID > 3 ? 3 : _playerID;
+                //    _playerID = _playerID < 0 ? 0 : _playerID;
+                SetPlayerColour();
+            }
+            
             _maxHealth = GameConstants.PlayerMaxHealth;
             _maxSpeed = GameConstants.PlayerMaxSpeed;
             _rotateSpeed = GameConstants.PlayerRotateSpeed;
@@ -110,11 +127,7 @@ namespace PlayGame.Player
             ResizeViewableArea();
             
             currentQuest = QuestType.MineAsteroids;
-            _playerID = (_playerStats.photonID / 1000) - 1;
-         //   _playerID = _playerID > 3 ? 3 : _playerID;
-        //    _playerID = _playerID < 0 ? 0 : _playerID;
-        
-            SetPlayerColour();
+
             if (photonView.IsMine) transform.position = GameSetup.Instance.spawnPoints[_playerID].position; // Set spawn point
         }
 
@@ -141,6 +154,12 @@ namespace PlayGame.Player
             shipModel.material.color = colour;
             gunLeft.material.color = colour;
             gunRight.material.color = colour;
+        }
+
+        public void Respawn() {
+            dead = false;
+            SetUpMiner(false);
+            SetActiveRecursively(shipModel.gameObject, true);
         }
 
         // Sets the size of the viewable area ring and minimap ring
@@ -177,12 +196,32 @@ namespace PlayGame.Player
 
         private void Update() {
             if (role != Role.StationCommander) {
-                if (!_youDiedWrittenOnScreen && _health <= 0) {
-                    EventsManager.AddMessage("YOU DIED");
-                    _youDiedWrittenOnScreen = true;
+                if (!dead && _health <= 0) {
+                    Die();
                 }
             } else {
                 if (_spaceStation != null) gameObject.transform.position = _spaceStation.position;
+            }
+        }
+
+        private void Die() {
+            dead = true;
+            if (photonView.IsMine) EventsManager.AddMessage("YOU DIED");
+            else EventsManager.AddMessage(_playerStats.playerName + " DIED");
+            
+            SetActiveRecursively(shipModel.gameObject, false); // Hide the ship model
+            
+            _laserGun.StopShooting();
+            _miningLaser.DisableMiningLaser();
+            _moveObject.SetSpeed(0);
+            _moveObject.SetLockTargetType(ToggleCommand.LockTargetType.None);
+        }
+        
+        private void SetActiveRecursively(GameObject o, bool active) {
+            o.SetActive(active);
+
+            foreach (Transform child in o.transform){
+                SetActiveRecursively(child.gameObject, active);
             }
         }
 
