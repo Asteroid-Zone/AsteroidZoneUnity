@@ -13,10 +13,13 @@ namespace PlayGame.Player {
         
         private float _timeSinceLastFired = 0;
 
+        private int _shotDelay;
+
         private bool _shooting;
 
         private void Start() {
             _playerData = GetComponent<PlayerData>();
+            _shotDelay = GameConstants.PlayerShotDelay;
 
             // Get the combat laser SFX that has the necessary tag and is a child of the current player's game object
             // Note: it should be a child of the current player, because in multiplayer it wouldn't work otherwise
@@ -32,7 +35,7 @@ namespace PlayGame.Player {
 
         private void Update() {
             _timeSinceLastFired += (Time.deltaTime * 1000);
-            if (_shooting && _timeSinceLastFired > GameConstants.PlayerShotDelay) Shoot(); // Only fire every x ms
+            if (_shooting && _timeSinceLastFired > _shotDelay) Shoot(); // Only fire every x ms
         }
 
         private void Shoot() {
@@ -53,6 +56,10 @@ namespace PlayGame.Player {
 
         public bool IsShooting() {
             return _shooting;
+        }
+
+        public void ReduceShotDelay(int amount) {
+            _shotDelay -= amount;
         }
     }
 }

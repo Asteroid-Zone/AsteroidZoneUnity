@@ -123,6 +123,8 @@ namespace PlayGame.Pirates {
             } else {
                 _health -= damage;
                 if (_health <= 0) {
+                    playerData.IncreaseCombatXP(Random.Range(GameConstants.MinXPCombatKill, GameConstants.MaxXPCombatKill));
+                    
                     StatsManager.PlayerStatsList[0].piratesDestroyed++;
                     StatsManager.GameStats.piratesDestroyed++;
                     Die();
@@ -137,6 +139,8 @@ namespace PlayGame.Pirates {
         public void RPC_TakeDamage(int damage, int photonID) {
             _health -= damage;
             if (_health <= 0) {
+                PlayerData.GetPlayerWithID(photonID).IncreaseCombatXP(Random.Range(GameConstants.MinXPCombatKill, GameConstants.MaxXPCombatKill));
+                
                 StatsManager.GetPlayerStats(photonID).piratesDestroyed++;
                 StatsManager.GameStats.piratesDestroyed++;
                 Die();
