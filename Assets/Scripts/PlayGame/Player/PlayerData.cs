@@ -206,6 +206,33 @@ namespace PlayGame.Player
                 _laserDamageRange -= 1;
             }
         }
+        
+        public void IncreaseMiningXP(int amount) {
+            if (!photonView.IsMine) return; // Each player keeps track of their own xp, levels are rpc called
+            
+            _miningXP += amount;
+
+            int levelUpThreshold = GameConstants.InitialLevelUpThreshold + (_miningLevel * GameConstants.LevelUpScaleAmount);
+            if (_miningXP > levelUpThreshold) {
+                _miningXP = 0;
+                
+                if (!DebugSettings.Debug) photonView.RPC(nameof(RPC_LevelUpMining), RpcTarget.AllBuffered);
+                else RPC_LevelUpMining();
+            }
+        }
+
+        [PunRPC]
+        public void RPC_LevelUpMining() {
+            _miningLevel += 1;
+            
+            _miningLaser.IncreaseMiningRange(1);
+
+            // Only change every other level
+            if (_miningLevel % 2 == 0) {
+                _miningLaser.IncreaseMiningRate(1);
+                _miningLaser.ReduceMiningDelay(1); // todo convert to ms from frames
+            }
+        }
 
         public void RespawnPlayer(int playerID) {
             if (!PhotonNetwork.IsMasterClient) return;

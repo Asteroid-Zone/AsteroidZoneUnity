@@ -127,6 +127,7 @@ namespace PlayGame {
             else {
                 if (destroyed && !_asteroidDestroyed) {
                     _asteroidDestroyed = true;
+                    playerData.IncreaseMiningXP(Random.Range(GameConstants.MinXPMiningComplete, GameConstants.MaxXPMiningComplete));
                     StatsManager.PlayerStatsList[0].asteroidsDestroyed++;
                     StatsManager.GameStats.asteroidsDestroyed++;
                     EventsManager.AddMessage("Asteroid destroyed at " + GridCoord.GetCoordFromVector(transform.position));
@@ -143,6 +144,7 @@ namespace PlayGame {
             if (destroyed && !_asteroidDestroyed) {
                 _asteroidDestroyed = true;
                 if (photonID != -1) {
+                    PlayerData.GetPlayerWithID(photonID).IncreaseMiningXP(Random.Range(GameConstants.MinXPMiningComplete, GameConstants.MaxXPMiningComplete));
                     StatsManager.GetPlayerStats(photonID).asteroidsDestroyed++;
                     StatsManager.GameStats.asteroidsDestroyed++;
                     EventsManager.AddMessage("Asteroid destroyed at " + GridCoord.GetCoordFromVector(transform.position));
