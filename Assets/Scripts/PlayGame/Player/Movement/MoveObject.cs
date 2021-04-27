@@ -70,8 +70,9 @@ namespace PlayGame.Player.Movement
 
         private bool HasLineOfSight(Transform target) {
             RaycastHit hit;
-            Vector3 direction = (target.transform.position - transform.position).normalized; // The direction should be from the player to the target
-            Physics.Raycast(transform.position, direction, out hit, Vector3.Distance(transform.position, target.position));
+            var laserPosition = _laserGun.gameObject.transform.position;
+            Vector3 direction = (target.transform.position - laserPosition).normalized; // The direction should be from the player to the target
+            Physics.SphereCast(laserPosition, 1, direction, out hit, Vector3.Distance(laserPosition, target.position));
             if (!hit.collider) return true; // If there is no collision return true
             if (hit.collider.gameObject.transform.Equals(target)) return true; // If it collides with the target return true
             return false; // If it collides with anything else return false
