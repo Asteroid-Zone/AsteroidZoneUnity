@@ -179,6 +179,15 @@ namespace PlayGame.Player
             gunRight.material.color = colour;
         }
 
+        public float GetCombatLevelProgress() {
+            float levelUpThreshold = GameConstants.InitialLevelUpThreshold + (_combatLevel * GameConstants.LevelUpScaleAmount);
+            return _combatXP / levelUpThreshold;
+        }
+
+        public int GetCombatLevel() {
+            return _combatLevel;
+        }
+
         public void IncreaseCombatXP(int amount) {
             if (!photonView.IsMine) return; // Each player keeps track of their own xp, levels are rpc called
             
@@ -205,6 +214,15 @@ namespace PlayGame.Player
             if (_combatLevel % 2 == 0) {
                 _laserDamageRange -= 1;
             }
+        }
+        
+        public float GetMiningLevelProgress() {
+            float levelUpThreshold = GameConstants.InitialLevelUpThreshold + (_miningLevel * GameConstants.LevelUpScaleAmount);
+            return _miningXP / levelUpThreshold;
+        }
+
+        public int GetMiningLevel() {
+            return _miningLevel;
         }
         
         public void IncreaseMiningXP(int amount) {
