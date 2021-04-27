@@ -26,6 +26,8 @@ namespace PlayGame.Player {
                 // todo play animation (explosion)
 
                 if (collision.gameObject.CompareTag(Tags.PirateTag)) {
+                    _shootingPlayerData.IncreaseCombatXP(Random.Range(GameConstants.MinXPCombatHit, GameConstants.MaxXPCombatHit));
+                    
                     if ((!DebugSettings.Debug && PhotonNetwork.IsMasterClient) || DebugSettings.Debug) {
                         PirateData pirateData = collision.gameObject.GetComponent<PirateData>();
                         pirateData.TakeDamage(_shootingPlayerData);

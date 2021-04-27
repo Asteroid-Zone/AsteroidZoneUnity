@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Photon.GameControllers;
 using Photon.Pun;
 using PlayGame.Camera;
@@ -43,6 +44,11 @@ namespace PlayGame.Player
         public GameObject viewableArea;
         public GameObject viewableAreaMinimap;
 
+        private int _miningLevel;
+        private int _miningXP;
+        private int _combatLevel;
+        private int _combatXP;
+        
         private int _maxHealth;
         private int _health;
     
@@ -52,6 +58,7 @@ namespace PlayGame.Player
         private int _laserSpeed;
         private int _laserDamage;
         private int _laserRange;
+        private int _laserDamageRange;
 
         private float _lookRadius;
 
@@ -107,6 +114,22 @@ namespace PlayGame.Player
                 _moveObject = gameObject.GetComponent<MoveObject>();
                 
                 if (photonView.IsMine) _deadPanel = GameObject.FindGameObjectWithTag(Tags.DeadPanel);
+
+                // Levels do not reset when player dies, xp towards leveling up does get reset
+                _miningLevel = 0;
+                _combatLevel = 0;
+
+                _laserDamageRange = GameConstants.PlayerLaserDamageRange;
+                
+                _maxHealth = GameConstants.PlayerMaxHealth;
+                _maxSpeed = GameConstants.PlayerMaxSpeed;
+                _rotateSpeed = GameConstants.PlayerRotateSpeed;
+
+                _laserSpeed = GameConstants.PlayerLaserSpeed;
+                _laserDamage = GameConstants.PlayerLaserDamage;
+                _laserRange = GameConstants.PlayerLaserRange;
+
+                _lookRadius = GameConstants.PlayerLookRadius;
                 
                 _playerID = (_playerStats.photonID / 1000) - 1;
                 //   _playerID = _playerID > 3 ? 3 : _playerID;
@@ -115,16 +138,9 @@ namespace PlayGame.Player
             }
             
             if (photonView.IsMine) _deadPanel.SetActive(false);
-            
-            _maxHealth = GameConstants.PlayerMaxHealth;
-            _maxSpeed = GameConstants.PlayerMaxSpeed;
-            _rotateSpeed = GameConstants.PlayerRotateSpeed;
 
-            _laserSpeed = GameConstants.PlayerLaserSpeed;
-            _laserDamage = GameConstants.PlayerLaserDamage;
-            _laserRange = GameConstants.PlayerLaserRange;
-
-            _lookRadius = GameConstants.PlayerLookRadius;
+            _miningXP = 0;
+            _combatXP = 0;
             
             // The current speed of the player is will be stored in the speed of its NavMeshAgent
             _playerAgent.speed = 0;
@@ -161,6 +177,79 @@ namespace PlayGame.Player
             shipModel.material.color = colour;
             gunLeft.material.color = colour;
             gunRight.material.color = colour;
+        }
+
+        public float GetCombatLevelProgress() {
+            float levelUpThreshold = GameConstants.InitialLevelUpThreshold + (_combatLevel * GameConstants.LevelUpScaleAmount);
+            return _combatXP / levelUpThreshold;
+        }
+
+        public int GetCombatLevel() {
+            return _combatLevel;
+        }
+
+        public void IncreaseCombatXP(int amount) {
+            if (!photonView.IsMine) return; // Each player keeps track of their own xp, levels are rpc called
+            
+            _combatXP += amount;
+
+            int levelUpThreshold = GameConstants.InitialLevelUpThreshold + (_combatLevel * GameConstants.LevelUpScaleAmount);
+            if (_combatXP > levelUpThreshold) {
+                _combatXP = 0;
+                
+                if (!DebugSettings.Debug) photonView.RPC(nameof(RPC_LevelUpCombat), RpcTarget.AllBuffered);
+                else RPC_LevelUpCombat();
+            }
+        }
+
+        [PunRPC]
+        public void RPC_LevelUpCombat() {
+            _combatLevel += 1;
+            
+            _laserGun.ReduceShotDelay(20); // Reduce shot delay by 20ms
+            _laserDamage += 1;
+            _laserRange += 1;
+
+            // Only change every other level
+            if (_combatLevel % 2 == 0) {
+                _laserDamageRange -= 1;
+            }
+        }
+        
+        public float GetMiningLevelProgress() {
+            float levelUpThreshold = GameConstants.InitialLevelUpThreshold + (_miningLevel * GameConstants.LevelUpScaleAmount);
+            return _miningXP / levelUpThreshold;
+        }
+
+        public int GetMiningLevel() {
+            return _miningLevel;
+        }
+        
+        public void IncreaseMiningXP(int amount) {
+            if (!photonView.IsMine) return; // Each player keeps track of their own xp, levels are rpc called
+            
+            _miningXP += amount;
+
+            int levelUpThreshold = GameConstants.InitialLevelUpThreshold + (_miningLevel * GameConstants.LevelUpScaleAmount);
+            if (_miningXP > levelUpThreshold) {
+                _miningXP = 0;
+                
+                if (!DebugSettings.Debug) photonView.RPC(nameof(RPC_LevelUpMining), RpcTarget.AllBuffered);
+                else RPC_LevelUpMining();
+            }
+        }
+
+        [PunRPC]
+        public void RPC_LevelUpMining() {
+            _miningLevel += 1;
+            
+            _miningLaser.IncreaseMiningRange(1);
+
+            // Only change every other level
+            if (_miningLevel % 2 == 0) {
+                _miningLaser.IncreaseMiningRate(1);
+                _miningLaser.ReduceMiningDelay(1); // todo convert to ms from frames
+            }
         }
 
         public void RespawnPlayer(int playerID) {
@@ -329,8 +418,8 @@ namespace PlayGame.Player
         }
 
         public int GetLaserDamage() {
-            // Make the amount of damage vary a bit.
-            return _laserDamage + Random.Range(-GameConstants.PlayerLaserDamageRange, GameConstants.PlayerLaserDamageRange + 1);
+            // Make the amount of damage vary a bit
+            return _laserDamage + Random.Range(-_laserDamageRange, _laserDamageRange + 1);
         }
 
         public void TakeDamage(int damage)
@@ -344,6 +433,14 @@ namespace PlayGame.Player
 
         public int GetPlayerID() {
             return _playerID;
+        }
+
+        public static PlayerData GetPlayerWithID(int photonID) {
+            foreach (GameObject player in Players) {
+                if (player.GetPhotonView().ViewID == photonID) return player.GetComponent<PlayerData>();
+            }
+
+            throw new ArgumentException("Invalid photon id - No player was found with photon id (" + photonID + ")");
         }
 
         public static PlayerData GetRandomDeadPlayer() {

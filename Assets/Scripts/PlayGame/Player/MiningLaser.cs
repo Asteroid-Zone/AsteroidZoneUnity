@@ -17,6 +17,10 @@ namespace PlayGame.Player {
         
         private int _lastFrameMined = 0;
 
+        private int _miningRange;
+        private int _miningRate;
+        private int _miningDelay;
+
         private void Start() {
             _playerData = GetComponent<PlayerData>();
             laser.positionCount = 2;
@@ -33,36 +37,41 @@ namespace PlayGame.Player {
                 });
             
             VolumeControl.AddSfxCSource(_miningLaserSfx);
-            
-            if (DebugSettings.InfiniteMiningRange) GameConstants.PlayerMiningRange = 10000;
+
+            _miningDelay = GameConstants.PlayerMiningDelay;
+            _miningRate = GameConstants.PlayerMiningRate;
+
+            if (DebugSettings.InfiniteMiningRange) _miningRange = 100000;
+            else _miningRange = GameConstants.PlayerMiningRange;
         }
         
         private void Update() {
             if (!laser.enabled) return;
             
             RaycastHit hit;
-            Physics.Raycast(transform.position, transform.forward, out hit, GameConstants.PlayerMiningRange); // Get the game object that the laser is hitting
+            Physics.Raycast(transform.position, transform.forward, out hit, _miningRange); // Get the game object that the laser is hitting
 
             if (hit.collider) { // If the laser is hitting a game object
                 UpdateLaser((int) hit.distance);
                 if (hit.collider.gameObject.CompareTag(Tags.AsteroidTag)) {
-                    if ((!DebugSettings.Debug && PhotonNetwork.IsMasterClient) || DebugSettings.Debug) MineAsteroid(hit.collider.gameObject);
+                    if (Time.frameCount - _lastFrameMined > _miningDelay) { // Only mine the asteroid every x frames // todo change to time based instead of frames
+                        _playerData.IncreaseMiningXP(Random.Range(GameConstants.MinXPMiningHit, GameConstants.MaxXPMiningHit));
+                        if ((!DebugSettings.Debug && PhotonNetwork.IsMasterClient) || DebugSettings.Debug) MineAsteroid(hit.collider.gameObject);
+                    }
                 }
             } else {
-                UpdateLaser(GameConstants.PlayerMiningRange);
+                UpdateLaser(_miningRange);
             }
         }
 
         private void MineAsteroid(GameObject asteroid) {
-            if (Time.frameCount - _lastFrameMined > GameConstants.PlayerMiningDelay) { // Only mine the asteroid every x frames
-                Asteroid asteroidScript = asteroid.GetComponent<Asteroid>();
-                asteroidScript.MineAsteroid(GameConstants.PlayerMiningRate, _playerData);
-                _lastFrameMined = Time.frameCount;
+            Asteroid asteroidScript = asteroid.GetComponent<Asteroid>();
+            asteroidScript.MineAsteroid(_miningRate, _playerData);
+            _lastFrameMined = Time.frameCount;
 
-                int resources = asteroidScript.GetResources(GameConstants.PlayerMiningRate);
-                if (!DebugSettings.Debug) gameObject.GetPhotonView().RPC(nameof(RPC_AddResources), RpcTarget.AllBuffered, resources);
-                else _playerData.AddResources(resources);
-            }
+            int resources = asteroidScript.GetResources(_miningRate);
+            if (!DebugSettings.Debug) gameObject.GetPhotonView().RPC(nameof(RPC_AddResources), RpcTarget.AllBuffered, resources);
+            else _playerData.AddResources(resources);
         }
         
         [PunRPC]
@@ -90,6 +99,18 @@ namespace PlayGame.Player {
             
             _miningLaserSfx.clip = laserOff;
             _miningLaserSfx.Play();
+        }
+
+        public void IncreaseMiningRange(int amount) {
+            _miningRange += amount;
+        }
+
+        public void ReduceMiningDelay(int amount) {
+            _miningDelay -= amount;
+        }
+
+        public void IncreaseMiningRate(int amount) {
+            _miningRate += amount;
         }
     }
 }

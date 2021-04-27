@@ -69,6 +69,19 @@
         public static int PlayerLaserMiningRate = 4; // Amount of resources gathered every mining tick
         public static int PlayerLaserRange = 20;
         
+        // XP
+        public static int InitialLevelUpThreshold = 1000; // Amount of XP needed to level up from 0 to 1
+        public static int LevelUpScaleAmount = 100; // Level up amount increase each time
+
+        public static int MinXPCombatHit = 50;
+        public static int MaxXPCombatHit = 150;
+        public static int MinXPCombatKill = 100;
+        public static int MaxXPCombatKill = 250;
+        
+        public static int MinXPMiningHit = 20;
+        public static int MaxXPMiningHit = 50;
+        public static int MinXPMiningComplete = 100;
+        public static int MaxXPMiningComplete = 250;
         
         
         // ---------- Space Station ----------
