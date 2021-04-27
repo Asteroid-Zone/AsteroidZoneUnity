@@ -59,7 +59,7 @@
         // Mining Laser
         public static int PlayerMiningRange = 20;
         public static int PlayerMiningRate = 8; // Amount of resources gathered every mining tick
-        public static int PlayerMiningDelay = 20; // Number of frames to wait between mining
+        public static int PlayerMiningDelay = 500; // Number of ms to wait between mining
         
         // Combat Laser
         public static int PlayerShotDelay = 1000; // Number of ms to wait between shooting

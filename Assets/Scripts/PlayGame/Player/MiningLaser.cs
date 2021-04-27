@@ -15,7 +15,7 @@ namespace PlayGame.Player {
         
         public LineRenderer laser;
         
-        private int _lastFrameMined = 0;
+        private float _timeSinceLastMined = 0;
 
         private int _miningRange;
         private int _miningRate;
@@ -46,6 +46,7 @@ namespace PlayGame.Player {
         }
         
         private void Update() {
+            if (_timeSinceLastMined <= _miningDelay) _timeSinceLastMined += (Time.deltaTime * 1000);
             if (!laser.enabled) return;
             
             RaycastHit hit;
@@ -54,7 +55,7 @@ namespace PlayGame.Player {
             if (hit.collider) { // If the laser is hitting a game object
                 UpdateLaser((int) hit.distance);
                 if (hit.collider.gameObject.CompareTag(Tags.AsteroidTag)) {
-                    if (Time.frameCount - _lastFrameMined > _miningDelay) { // Only mine the asteroid every x frames // todo change to time based instead of frames
+                    if (_timeSinceLastMined > _miningDelay) { // Only mine the asteroid every x ms
                         _playerData.IncreaseMiningXP(Random.Range(GameConstants.MinXPMiningHit, GameConstants.MaxXPMiningHit));
                         if ((!DebugSettings.Debug && PhotonNetwork.IsMasterClient) || DebugSettings.Debug) MineAsteroid(hit.collider.gameObject);
                     }
@@ -67,7 +68,7 @@ namespace PlayGame.Player {
         private void MineAsteroid(GameObject asteroid) {
             Asteroid asteroidScript = asteroid.GetComponent<Asteroid>();
             asteroidScript.MineAsteroid(_miningRate, _playerData);
-            _lastFrameMined = Time.frameCount;
+            _timeSinceLastMined = 0;
 
             int resources = asteroidScript.GetResources(_miningRate);
             if (!DebugSettings.Debug) gameObject.GetPhotonView().RPC(nameof(RPC_AddResources), RpcTarget.AllBuffered, resources);
