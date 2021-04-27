@@ -40,6 +40,8 @@ namespace PlayGame.Player.Movement
 
         private LaserGun _laserGun;
         private MiningLaser _miningLaser;
+
+        private bool autoMove = false;
         
         private void Start() {
             // fetch the objects of the spawners
@@ -84,17 +86,21 @@ namespace PlayGame.Player.Movement
             
             // If locked on automatically move so player is in range
             if (lockType != ToggleCommand.LockTargetType.None && _lockTarget != null) {
-                // If player not in range move forward
-                if (!InLockRange(lockType)) {
-                    if (_playerAgent.enabled)
+                if (autoMove) {
+                    // If player not in range move forward
+                    if (!InLockRange(lockType))
                     {
-                        SetSpeed(1);
-                        _playerAgent.SetDestination(_lockTarget.position);
+                        if (_playerAgent.enabled)
+                        {
+                            SetSpeed(1);
+                            _playerAgent.SetDestination(_lockTarget.position);
+                        }
                     }
-                }
-                else {
-                    SetSpeed(0f);
-                    SetDirection(transform.forward, false);
+                    else
+                    {
+                        SetSpeed(0f);
+                        SetDirection(transform.forward, false);
+                    }
                 }
             }
 
@@ -317,6 +323,10 @@ namespace PlayGame.Player.Movement
         
         public bool NearStation() {
             return GridCoord.GetCoordFromVector(transform.position).Equals(GridCoord.GetCoordFromVector(_spaceStation.position));
+        }
+
+        public void SetAutoMove(bool move) {
+            autoMove = move;
         }
 
     }
