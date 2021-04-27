@@ -329,7 +329,7 @@ namespace PlayGame.Player
             _moveObject.SetLockTargetType(ToggleCommand.LockTargetType.None);
         }
         
-        private void SetActiveRecursively(GameObject o, bool active) {
+        private static void SetActiveRecursively(GameObject o, bool active) {
             o.SetActive(active);
 
             foreach (Transform child in o.transform){

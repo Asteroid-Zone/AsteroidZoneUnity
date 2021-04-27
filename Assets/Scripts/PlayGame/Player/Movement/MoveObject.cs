@@ -70,10 +70,10 @@ namespace PlayGame.Player.Movement
 
         private bool HasLineOfSight(Transform target) {
             RaycastHit hit;
-            Physics.Raycast(transform.position, transform.forward, out hit, Vector3.Distance(transform.position, target.position));
+            Vector3 direction = (target.transform.position - transform.position).normalized; // The direction should be from the player to the target
+            Physics.Raycast(transform.position, direction, out hit, Vector3.Distance(transform.position, target.position));
             if (!hit.collider) return true; // If there is no collision return true
             if (hit.collider.gameObject.transform.Equals(target)) return true; // If it collides with the target return true
-
             return false; // If it collides with anything else return false
         }
 
@@ -97,16 +97,11 @@ namespace PlayGame.Player.Movement
             if (lockType != ToggleCommand.LockTargetType.None && _lockTarget != null) {
                 if (autoMove) {
                     // If player not in range move forward
-                    if (!InLockRange(lockType)) {
+                    if (!(InLockRange(lockType) && HasLineOfSight(_lockTarget))) {
                         if (_playerAgent.enabled) {
                             SetSpeed(1);
                             _playerAgent.SetDestination(_lockTarget.position);
                         }
-                    } else if (!HasLineOfSight(_lockTarget)) {
-                        // todo this isnt working properly
-                        _playerAgent.enabled = true;
-                        SetSpeed(1);
-                        _playerAgent.SetDestination(_lockTarget.position);
                     } else {
                         SetSpeed(0f);
                         SetDirection(transform.forward, false);
