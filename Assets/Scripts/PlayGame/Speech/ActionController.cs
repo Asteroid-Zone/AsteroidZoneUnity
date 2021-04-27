@@ -99,10 +99,7 @@ namespace PlayGame.Speech {
         }
 
         private void PerformMovementCommand(MovementCommand command) {
-            if (!command.turnOnly) {
-                moveObject.SetSpeed(1); // Start moving if not a turn command
-                moveObject.SetAutoMove(false); // Stop the ship auto moving to a lock target
-            }
+            if (!command.turnOnly) moveObject.SetSpeed(1); // Start moving if not a turn command
 
             switch (command.movementType) {
                 case MovementCommand.MovementType.Direction:
@@ -169,7 +166,6 @@ namespace PlayGame.Speech {
                     }
                     break;
                 case ToggleCommand.ObjectType.Lock:
-                    moveObject.SetAutoMove(true);
                     moveObject.SetLockTargetType(command.lockTargetType);
                     break;
                 case ToggleCommand.ObjectType.LaserGun:

@@ -41,7 +41,7 @@ namespace PlayGame.Player.Movement
         private LaserGun _laserGun;
         private MiningLaser _miningLaser;
 
-        private bool autoMove = false;
+        private bool autoMove = true;
         
         private void Start() {
             // fetch the objects of the spawners
@@ -68,6 +68,15 @@ namespace PlayGame.Player.Movement
             return Vector3.Distance(transform.position, _lockTarget.position) < lockRange;
         }
 
+        private bool HasLineOfSight(Transform target) {
+            RaycastHit hit;
+            Physics.Raycast(transform.position, transform.forward, out hit, Vector3.Distance(transform.position, target.position));
+            if (!hit.collider) return true; // If there is no collision return true
+            if (hit.collider.gameObject.transform.Equals(target)) return true; // If it collides with the target return true
+
+            return false; // If it collides with anything else return false
+        }
+
         private void Update() {
             if (GameManager.gameOver) return;
             // Get the speed of the player's ship
@@ -88,22 +97,24 @@ namespace PlayGame.Player.Movement
             if (lockType != ToggleCommand.LockTargetType.None && _lockTarget != null) {
                 if (autoMove) {
                     // If player not in range move forward
-                    if (!InLockRange(lockType))
-                    {
-                        if (_playerAgent.enabled)
-                        {
+                    if (!InLockRange(lockType)) {
+                        if (_playerAgent.enabled) {
                             SetSpeed(1);
                             _playerAgent.SetDestination(_lockTarget.position);
                         }
-                    }
-                    else
-                    {
+                    } else if (!HasLineOfSight(_lockTarget)) {
+                        // todo this isnt working properly
+                        _playerAgent.enabled = true;
+                        SetSpeed(1);
+                        _playerAgent.SetDestination(_lockTarget.position);
+                    } else {
                         SetSpeed(0f);
                         SetDirection(transform.forward, false);
                     }
                 }
             }
-
+            
+            // Get lock target and face it
             if (lockType != ToggleCommand.LockTargetType.None) {
                 if (_lockTarget == null) {
                     _lockTarget = GetLockTarget(lockType);
@@ -111,6 +122,7 @@ namespace PlayGame.Player.Movement
                         _playerAgent.enabled = true;
                     }
                 }
+
                 if (_lockTarget != null) FaceTarget(_lockTarget);
                 else {
                     string eventMessage = "No targets found.";
@@ -280,14 +292,17 @@ namespace PlayGame.Player.Movement
                 case ToggleCommand.LockTargetType.Asteroid:
                     _laserGun.StopShooting();
                     _miningLaser.EnableMiningLaser();
+                    autoMove = true;
                     break;
                 case ToggleCommand.LockTargetType.Pirate:
                     _laserGun.StartShooting();
                     _miningLaser.DisableMiningLaser();
+                    autoMove = true;
                     break;
                 case ToggleCommand.LockTargetType.None:
                     _laserGun.StopShooting();
                     _miningLaser.DisableMiningLaser();
+                    autoMove = false;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -323,10 +338,6 @@ namespace PlayGame.Player.Movement
         
         public bool NearStation() {
             return GridCoord.GetCoordFromVector(transform.position).Equals(GridCoord.GetCoordFromVector(_spaceStation.position));
-        }
-
-        public void SetAutoMove(bool move) {
-            autoMove = move;
         }
 
     }
