@@ -54,8 +54,10 @@ namespace PlayGame.Player {
             if (hit.collider) { // If the laser is hitting a game object
                 UpdateLaser((int) hit.distance);
                 if (hit.collider.gameObject.CompareTag(Tags.AsteroidTag)) {
-                    _playerData.IncreaseMiningXP(Random.Range(GameConstants.MinXPMiningHit, GameConstants.MaxXPMiningHit));
-                    if ((!DebugSettings.Debug && PhotonNetwork.IsMasterClient) || DebugSettings.Debug) MineAsteroid(hit.collider.gameObject);
+                    if (Time.frameCount - _lastFrameMined > _miningDelay) { // Only mine the asteroid every x frames // todo change to time based instead of frames
+                        _playerData.IncreaseMiningXP(Random.Range(GameConstants.MinXPMiningHit, GameConstants.MaxXPMiningHit));
+                        if ((!DebugSettings.Debug && PhotonNetwork.IsMasterClient) || DebugSettings.Debug) MineAsteroid(hit.collider.gameObject);
+                    }
                 }
             } else {
                 UpdateLaser(_miningRange);
@@ -63,15 +65,13 @@ namespace PlayGame.Player {
         }
 
         private void MineAsteroid(GameObject asteroid) {
-            if (Time.frameCount - _lastFrameMined > _miningDelay) { // Only mine the asteroid every x frames // todo change to time based instead of frames
-                Asteroid asteroidScript = asteroid.GetComponent<Asteroid>();
-                asteroidScript.MineAsteroid(_miningRate, _playerData);
-                _lastFrameMined = Time.frameCount;
+            Asteroid asteroidScript = asteroid.GetComponent<Asteroid>();
+            asteroidScript.MineAsteroid(_miningRate, _playerData);
+            _lastFrameMined = Time.frameCount;
 
-                int resources = asteroidScript.GetResources(_miningRate);
-                if (!DebugSettings.Debug) gameObject.GetPhotonView().RPC(nameof(RPC_AddResources), RpcTarget.AllBuffered, resources);
-                else _playerData.AddResources(resources);
-            }
+            int resources = asteroidScript.GetResources(_miningRate);
+            if (!DebugSettings.Debug) gameObject.GetPhotonView().RPC(nameof(RPC_AddResources), RpcTarget.AllBuffered, resources);
+            else _playerData.AddResources(resources);
         }
         
         [PunRPC]

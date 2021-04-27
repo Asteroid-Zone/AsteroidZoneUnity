@@ -78,8 +78,8 @@
         public static int MinXPCombatKill = 100;
         public static int MaxXPCombatKill = 250;
         
-        public static int MinXPMiningHit = 50;
-        public static int MaxXPMiningHit = 150;
+        public static int MinXPMiningHit = 20;
+        public static int MaxXPMiningHit = 50;
         public static int MinXPMiningComplete = 100;
         public static int MaxXPMiningComplete = 250;
         
