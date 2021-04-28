@@ -1,5 +1,9 @@
 ﻿namespace Statics {
-    public class Textures {
+    
+    /// <summary>
+    /// This class contains the texture path constants. Stored in variables to reduce the risk of typos.
+    /// </summary>
+    public static class Textures {
         
         public const string HyperdriveDamaged = "Textures/station/damaged/hyperdrive_damaged";
         public const string Hyperdrive = "Textures/station/functional/hyperdrive";

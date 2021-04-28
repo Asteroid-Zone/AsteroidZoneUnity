@@ -1,4 +1,8 @@
 ﻿namespace Statics {
+    
+    /// <summary>
+    /// This class contains string constants used in the command recognition. Stored in variables to reduce the risk of typos.
+    /// </summary>
     public static class Strings {
 
         public const string NoCommand = "No command found";

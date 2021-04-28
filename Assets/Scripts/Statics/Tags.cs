@@ -1,5 +1,8 @@
-﻿namespace Statics
-{
+﻿namespace Statics {
+    
+    /// <summary>
+    /// This class contains the tag constants. Stored in variables to reduce the risk of typos.
+    /// </summary>
     public static class Tags {
         public const string PlayerTag = "Player";
         public const string PlayerModelTag = "PlayerModel";
