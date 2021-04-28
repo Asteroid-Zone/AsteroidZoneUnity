@@ -6,7 +6,12 @@ using UnityEngine.AI;
 using Random = UnityEngine.Random;
 
 namespace PlayGame.Pirates {
+    
+    /// <summary>
+    /// This class controls the pirates behaviour.
+    /// </summary>
     public class PirateController : MonoBehaviour {
+        
         private Transform _spaceStation;
         public PirateSpawner pirateSpawner;
         
@@ -32,6 +37,9 @@ namespace PlayGame.Pirates {
 
         private bool _chasingPlayer = false;
 
+        /// <summary>
+        /// Resets all of the static variables.
+        /// </summary>
         public static void ResetStaticVariables() {
             _alert = false;
             _knownStationLocation = Vector3.zero;
@@ -45,19 +53,30 @@ namespace PlayGame.Pirates {
             _pirateData = GetComponent<PirateData>();
             _destination = _randomDestination = transform.position;
 
+            // Create the minimap alert sphere if it has not already been created
             if (_minimapAlert == null) {
                 GameObject prefab = Resources.Load<GameObject>(Prefabs.PirateAlertMinimap);
                 _minimapAlert = Instantiate(prefab, transform.position, Quaternion.identity);
                 _minimapAlert.SetActive(false);
             }
 
-            if (_alert) Alert();
+            if (_alert) Alert(); // If the pirates know the location of the space station alert this pirate
         }
         
+        /// <summary>
+        /// <para>Decides which actions the pirate will perform this frame.</para>
+        /// <para></para>
+        /// If a pirate was chasing a player that escaped them they start searching for the station again.
+        /// <para>If a pirate finds the station it alerts all other pirates.</para>
+        /// If a pirate is at its search location it checks if the station is there.
+        /// <para>If a pirate is close enough to shoot a player/station it does so, priority is based on the pirates 'personality'.</para>
+        /// If the pirate is an elite pirate and not alert it leaves the map.
+        /// </summary>
         private void Update() {
             (GameObject closestPlayer, float closestPlayerDist) = GetClosestPlayer();
             float lookRadius = _pirateData.GetLookRadius();
 
+            // If the player has escaped start searching for the station again
             if (_chasingPlayer && closestPlayer == null) {
                 _chasingPlayer = false;
                 RandomSearch();
@@ -91,11 +110,18 @@ namespace PlayGame.Pirates {
             }
         }
 
+        /// <summary>
+        /// Face the target and start shooting.
+        /// </summary>
+        /// <param name="target"></param>
         private void ShootTarget(Transform target) {
             FaceTarget(target);
             _laserGun.StartShooting();
         }
 
+        /// <summary>
+        /// Sets the destination to the nearest point on the edge of the grid.
+        /// </summary>
         private void LeaveMap() {
             _chasingPlayer = false;
             _destination = GridManager.GetNearestEdgePoint(transform.position);
@@ -104,7 +130,9 @@ namespace PlayGame.Pirates {
             _agent.SetDestination(_destination);
         }
 
-        // Go to the stations known location
+        /// <summary>
+        /// Sets the destination to the stations known location
+        /// </summary>
         private void Alert() {
             _destination = _knownStationLocation;
             _agent.stoppingDistance = StoppingDistSearchingForStation;
@@ -112,12 +140,20 @@ namespace PlayGame.Pirates {
             _agent.SetDestination(_destination);
         }
         
-        // Scouts start searching again, other pirates leave
+        /// <summary>
+        /// <para>Method is called when the station moves or all pirates are killed.</para>
+        /// Scout pirates start searching for the station again.
+        /// Elite pirates leave the grid.
+        /// </summary>
         private void Unalert() {
             if (_pirateData.pirateType == PirateData.PirateType.Scout) RandomSearch();
             else LeaveMap();
         }
 
+        /// <summary>
+        /// Calls the Alert method for all pirates, displays the minimap alert object and spawns reinforcements.
+        /// </summary>
+        /// <param name="position"></param>
         private void AlertPirates(Vector3 position) {
             PirateController[] pirateControllers = PirateSpawner.GetAllPirateControllers();
             _alert = true;
@@ -136,10 +172,12 @@ namespace PlayGame.Pirates {
             pirateSpawner.SpawnReinforcements();
         }
         
+        /// <summary>
+        /// Calls the Unalert method for all pirates and disables the minimap alert object.
+        /// </summary>
         public static void UnalertPirates() {
             // Check if the pirates were alerted at all initially
-            if (!_alert)
-            {
+            if (!_alert) {
                 return;
             }
             
@@ -152,7 +190,9 @@ namespace PlayGame.Pirates {
             }
         }
 
-        // Search a random grid coordinate
+        /// <summary>
+        /// Sets the pirates destination to a random grid coordinate that they will search.
+        /// </summary>
         private void RandomSearch() {
             GridCoord newDestination = new GridCoord(Random.Range(0, GameConstants.GridWidth), Random.Range(0, GameConstants.GridHeight));
             _destination = newDestination.GetWorldVector();
@@ -161,6 +201,11 @@ namespace PlayGame.Pirates {
             _agent.SetDestination(_destination);
         }
 
+        /// <summary>
+        /// Method is called when a pirate reaches its grid coordinate to search.
+        /// If the station is found alert the other pirates.
+        /// Otherwise unalert them and start a new random search.
+        /// </summary>
         private void SearchGridSquare() {
             if (GridCoord.GetCoordFromVector(_spaceStation.position).Equals(GridCoord.GetCoordFromVector(_destination))) { // If found station
                 if (!_alert) AlertPirates(_spaceStation.position);
@@ -171,6 +216,10 @@ namespace PlayGame.Pirates {
             }
         }
         
+        /// <summary>
+        /// Move randomly.
+        /// If enough time has passed set a new random destination.
+        /// </summary>
         private void RandomMovement() {
             _agent.stoppingDistance = StoppingDistGoingRand;
             _laserGun.StopShooting();
@@ -183,6 +232,12 @@ namespace PlayGame.Pirates {
             }
         }
         
+        /// <summary>
+        /// Follows the player.
+        /// If the pirate is within range shoot the player.
+        /// </summary>
+        /// <param name="closestPlayer"></param>
+        /// <param name="closestPlayerDist"></param>
         private void ChasePlayer(Transform closestPlayer, float closestPlayerDist) {
             _chasingPlayer = true;
             _agent.stoppingDistance = StoppingDistChasingPlayer;
@@ -193,6 +248,9 @@ namespace PlayGame.Pirates {
             }
         }
         
+        /// <summary>
+        /// Returns the closest player to this pirate.
+        /// </summary>
         private Tuple<GameObject, float> GetClosestPlayer() {
             GameObject closestPlayer = null;
             float closestPlayerDist = float.MaxValue;
@@ -213,17 +271,23 @@ namespace PlayGame.Pirates {
             return new Tuple<GameObject, float>(closestPlayer, closestPlayerDist);
         }
 
+        /// <summary>
+        /// Spherically interpolates the rotation of the pirate to face the target.
+        /// </summary>
+        /// <param name="target"></param>
         private void FaceTarget(Transform target) {
             Vector3 direction = (target.position - transform.position).normalized;
             Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5);
         }
 
+        /// <summary>
+        /// Draws Gizmos for the pirates look radius.
+        /// </summary>
         private void OnDrawGizmosSelected() {
             Gizmos.color = Color.red;
             float gizmosRadius = 15f;
-            if (_pirateData != null)
-            {
+            if (_pirateData != null) {
                 gizmosRadius = _pirateData.GetLookRadius();
             }
             

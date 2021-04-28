@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 
 namespace PlayGame.Pirates {
+    
+    /// <summary>
+    /// This class controls the pirates laser gun.
+    /// </summary>
     public class PirateLaserGun : MonoBehaviour {
 
         public GameObject laserPrefab;
@@ -14,11 +18,17 @@ namespace PlayGame.Pirates {
             _pirateData = GetComponent<PirateData>();
         }
 
+        /// <summary>
+        /// Shoots if the gun is shooting and it has been long enough since the last shot.
+        /// </summary>
         private void Update() {
             _timeSinceLastFired += (Time.deltaTime * 1000);
-            if (_shooting && _timeSinceLastFired > _pirateData.GetShotDelay()) Shoot(); // Only fire every x frames
+            if (_shooting && _timeSinceLastFired > _pirateData.GetShotDelay()) Shoot(); // Only fire every x seconds
         }
 
+        /// <summary>
+        /// Instantiates a new PirateLaserProjectile.
+        /// </summary>
         private void Shoot() {
             Vector3 spawnPosition = transform.position + (transform.forward * 2); // Offset the laser so it doesn't spawn in the pirate ship
             GameObject laser = Instantiate(laserPrefab, spawnPosition, transform.rotation);
@@ -27,10 +37,16 @@ namespace PlayGame.Pirates {
             _timeSinceLastFired = 0;
         }
 
+        /// <summary>
+        /// Starts shooting every x seconds.
+        /// </summary>
         public void StartShooting() {
             _shooting = true;
         }
         
+        /// <summary>
+        /// Stops the laser gun from shooting.
+        /// </summary>
         public void StopShooting() {
             _shooting = false;
         }

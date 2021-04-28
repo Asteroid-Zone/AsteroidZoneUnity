@@ -6,22 +6,27 @@ using UnityEngine;
 
 namespace PlayGame.Pings {
 
-    public class PingManager : MonoBehaviour{
+    /// <summary>
+    /// This class manages all the active pings.
+    /// </summary>
+    public class PingManager : MonoBehaviour {
+        
         private const int PingTimeInSeconds = 10;
 
         private Dictionary<Ping, GameObject> _pings;
 
         private void Start() {
-            // Initialise dictionary of pings
-            _pings = new Dictionary<Ping, GameObject>();
+            _pings = new Dictionary<Ping, GameObject>(); // Initialise a dictionary of pings
         }
 
-        public void AddPing(Ping ping)
-        {
+        /// <summary>
+        /// Creates a new ping with a game object.
+        /// </summary>
+        /// <param name="ping"></param>
+        public void AddPing(Ping ping) {
             // Remove all old pings with the same location (should be at most one old ping, but just to make sure it is implemented for many)
             var sameLocPings = _pings.ToList().Where(kvp => kvp.Key.GetGridCoord().Equals(ping.GetGridCoord())).ToList();
-            foreach (var sameLocPing in sameLocPings)
-            {
+            foreach (var sameLocPing in sameLocPings) {
                 RemovePing(sameLocPing.Key);
             }
 
@@ -35,22 +40,30 @@ namespace PlayGame.Pings {
             StartCoroutine(RemovePingAfterTime(ping));
         }
 
-        public Dictionary<Ping, GameObject> GetPings()
-        {
+        /// <summary>
+        /// Returns a dictionary of all active pings.
+        /// </summary>
+        /// <returns></returns>
+        public Dictionary<Ping, GameObject> GetPings() {
             return _pings;
         }
 
-        private IEnumerator RemovePingAfterTime(Ping ping)
-        {
-            // Wait for a specific amount of time and remove the ping (including the game object)
+        /// <summary>
+        /// Removes a ping after a certain amount of time.
+        /// </summary>
+        /// <param name="ping"></param>
+        /// <returns></returns>
+        private IEnumerator RemovePingAfterTime(Ping ping) {
             yield return new WaitForSeconds(PingTimeInSeconds);
             RemovePing(ping);
         }
 
-        private void RemovePing(Ping ping)
-        {
-            if (_pings.ContainsKey(ping))
-            {
+        /// <summary>
+        /// Destroys the pings GameObject and removes it from the dictionary.
+        /// </summary>
+        /// <param name="ping"></param>
+        private void RemovePing(Ping ping) {
+            if (_pings.ContainsKey(ping)) {
                 // Remove ping game object
                 DestroyImmediate(_pings[ping]);
             }
@@ -58,13 +71,16 @@ namespace PlayGame.Pings {
             _pings.Remove(ping);
         }
 
-        private GameObject CreateObjectForPing(Ping ping)
-        {
+        /// <summary>
+        /// Creates a GameObject for a ping.
+        /// </summary>
+        /// <param name="ping"></param>
+        /// <returns></returns>
+        private GameObject CreateObjectForPing(Ping ping) {
             GameObject pingObject;
             
             // Create a game object according to the ping type
-            switch (ping.GetPingType())
-            {
+            switch (ping.GetPingType()) {
                 case PingType.Asteroid:
                     pingObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     break;
@@ -76,8 +92,7 @@ namespace PlayGame.Pings {
                     break;
             }
 
-            if (pingObject != null)
-            {
+            if (pingObject != null) {
                 // Set the properties of the ping game object
                 pingObject.transform.localScale = new Vector3(4,4,4);
                 pingObject.layer = LayerMask.NameToLayer("Minimap");

@@ -5,7 +5,12 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace PlayGame.Pirates {
+    
+    /// <summary>
+    /// This class controls the pirate spawning.
+    /// </summary>
     public class PirateSpawner : MonoBehaviourPun {
+        
         #region Singleton
         private static PirateSpawner _instance;
 
@@ -36,9 +41,8 @@ namespace PlayGame.Pirates {
         private float _spawnRangeCheck; 
         private int _maxPirates;
 
-        // Start is called before the first frame update
         private void Start() {
-            if (!DebugSettings.Debug && !PhotonNetwork.IsMasterClient) return;
+            if (!DebugSettings.Debug && !PhotonNetwork.IsMasterClient) return; // Only the host spawns pirates
             InvokeRepeating(nameof(PirateRNG), 0, GameConstants.PirateEveryXSeconds);
             
             // Checked space is the half size in OverlapBoxNonAlloc
@@ -46,19 +50,29 @@ namespace PlayGame.Pirates {
             _maxPirates =  (int) (GameConstants.MaxPiratesMultiplier * Math.Floor(2 * Math.Sqrt(GridManager.GetTotalCells())));
         }
 
+        /// <summary>
+        /// <para>Method is called every <c>GameConstants.PirateEveryXSeconds</c> seconds.</para>
+        /// Has a random chance to spawn a scout pirate.
+        /// </summary>
         private void PirateRNG() {
             if (!DebugSettings.Debug && !PhotonNetwork.IsMasterClient) return;
+            
             // Don't spawn pirates if the maximum count is reached.
             if (transform.childCount >= _maxPirates) {
                 return;
             }
             
+            // Random chance to spawn a scout pirate
             float generatedProb = Random.Range(0, 1.0f);
             if (generatedProb < GameConstants.PirateProbability) {
                 if (DebugSettings.SpawnPirates) SpawnPirate(PirateData.PirateType.Scout);
             }
         }
 
+        /// <summary>
+        /// <para>Method is called when pirates discover the space station.</para>
+        /// Spawns a random number of elite pirates between the min and max values.
+        /// </summary>
         public void SpawnReinforcements() {
             if (!DebugSettings.Debug && !PhotonNetwork.IsMasterClient) return;
             int reinforcements = Random.Range(GameConstants.PirateMinReinforcements, GameConstants.PirateMaxReinforcements);
@@ -68,6 +82,11 @@ namespace PlayGame.Pirates {
             }
         }
 
+        /// <summary>
+        /// Spawns a pirate in a random location.
+        /// </summary>
+        /// <param name="type">The type of pirate to spawn.</param>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if type is an invalid PirateType.</exception>
         private void SpawnPirate(PirateData.PirateType type) {
             if (!DebugSettings.Debug && !PhotonNetwork.IsMasterClient) return;
 
@@ -110,6 +129,10 @@ namespace PlayGame.Pirates {
             }
         }
 
+        /// <summary>
+        /// Sets the pirates parent to this spawner.
+        /// </summary>
+        /// <param name="viewID">The photonID of the pirate.</param>
         [PunRPC]
         public void RPC_SetPirateParam(int viewID) {
             GameObject newPirate = PhotonView.Find(viewID).gameObject;
@@ -117,6 +140,9 @@ namespace PlayGame.Pirates {
             newPirate.GetComponent<PirateController>().pirateSpawner = this;
         }
 
+        /// <summary>
+        /// Returns a list of all the pirates.
+        /// </summary>
         public static PirateController[] GetAllPirateControllers()
         {
             return _instance.gameObject.GetComponentsInChildren<PirateController>();
