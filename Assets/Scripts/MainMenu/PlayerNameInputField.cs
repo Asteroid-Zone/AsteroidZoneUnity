@@ -3,21 +3,23 @@ using UnityEngine.UI;
 using Photon.Pun;
 
 namespace MainMenu {
-    /// Player name input field. Let the user input their name, will appear above the player in the game.
+    
+    /// <summary>
+    /// <para>This class provides the NameInputField functions.</para>
+    /// Requires <c>InputField</c> for player name input.
+    /// </summary>
     [RequireComponent(typeof(InputField))]
-    public class PlayerNameInputField : MonoBehaviour
-    {
+    public class PlayerNameInputField : MonoBehaviour {
+        
         // Store the PlayerPref Key to avoid typos
         private const string PlayerNamePrefKey = "PlayerName";
 
-        private void Start()
-        {
+        private void Start() {
             string defaultName = string.Empty;
             InputField inputField = GetComponent<InputField>();
-            if (inputField != null)
-            {
-                if (PlayerPrefs.HasKey(PlayerNamePrefKey))
-                {
+            if (inputField != null) {
+                // Set the players name to their last used name if they have played before
+                if (PlayerPrefs.HasKey(PlayerNamePrefKey)) {
                     defaultName = PlayerPrefs.GetString(PlayerNamePrefKey);
                     inputField.text = defaultName;
                 }
@@ -26,17 +28,16 @@ namespace MainMenu {
             PhotonNetwork.NickName = defaultName;
         }
 
-        /// Sets the name of the player, and save it in the PlayerPrefs for future sessions.
-        public void SetPlayerName(string value)
-        {
-            // #Important
-            if (string.IsNullOrEmpty(value))
-            {
+        /// <summary>
+        /// Sets the players Photon name and saves it in the PlayerPrefs.
+        /// </summary>
+        public void SetPlayerName(string value) {
+            if (string.IsNullOrEmpty(value)) {
                 Debug.LogError("Player Name is null or empty");
                 return;
             }
-            PhotonNetwork.NickName = value;
             
+            PhotonNetwork.NickName = value;
             PlayerPrefs.SetString(PlayerNamePrefKey, value);
         }
     }

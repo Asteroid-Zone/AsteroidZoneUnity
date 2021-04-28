@@ -4,6 +4,10 @@ using UnityEngine.SceneManagement;
 using Statics;
 
 namespace MainMenu {
+    
+    /// <summary>
+    /// This class provides the main menu functions.
+    /// </summary>
     public class MainMenuFunction : MonoBehaviourPunCallbacks {
 
         [Tooltip("The UI Panel with Main Menu Options")]
@@ -29,6 +33,7 @@ namespace MainMenu {
         }
 
         private void Update() {
+            // If the player presses cancel in the lobby selection screen load the main menu
 			if (lobbyControlPanel.activeSelf && Input.GetButtonDown("Cancel")) {
 				lobbyControlPanel.SetActive(false);
 				controlPanel.SetActive(true);
@@ -36,6 +41,10 @@ namespace MainMenu {
 			}
         }
 
+        /// <summary>
+        /// <para>Method is called when the player presses the 'Play Game' button on the main menu.</para>
+        /// Starts connecting to the PhotonNetwork and displays a loading screen.
+        /// </summary>
         public void PlayGame() {
             buttonPress.Play();
             PhotonNetwork.ConnectUsingSettings();
@@ -43,11 +52,10 @@ namespace MainMenu {
             progressLabel.SetActive(true);
         }
 
-        public void JoinLobby() {
-          buttonPress.Play();
-          lobbyControlPanel.SetActive(false);
-        }
-
+        /// <summary>
+        /// <para>Method is called when the player presses the 'View Credits' button on the main menu.</para>
+        /// Loads the credits scene.
+        /// </summary>
         public void ViewCredits() {
             buttonPress.Play();
             SceneManager.LoadScene(Scenes.CreditsScene);

@@ -2,29 +2,31 @@
 using Statics;
 using UnityEngine;
 
-namespace Photon.GameControllers
-{
-    public class PhotonPlayer : MonoBehaviourPun
-    {
+namespace Photon.GameControllers {
+    
+    /// <summary>
+    /// This class represents a player in the PhotonNetwork game.
+    /// </summary>
+    public class PhotonPlayer : MonoBehaviourPun {
+        
         public GameObject myAvatar;
 
         public static PhotonPlayer Instance;
 
-        private void OnEnable()
-        {
-            if (Instance == null)
-            {
+        private void OnEnable() {
+            if (Instance == null) {
                 Instance = this;
             }
         }
 
         private void Awake() {
-                int spawnPicker = Random.Range(0, GameSetup.Instance.spawnPoints.Length);
-                if (!photonView.IsMine) return;
-                
-                if (PhotonNetwork.IsMasterClient && !DebugSettings.SinglePlayer) myAvatar = PhotonNetwork.Instantiate(Prefabs.StationCommander, GameSetup.Instance.spawnPoints[spawnPicker].position, GameSetup.Instance.spawnPoints[spawnPicker].rotation);
-                else myAvatar = PhotonNetwork.Instantiate(Prefabs.PlayerShip, GameSetup.Instance.spawnPoints[spawnPicker].position, GameSetup.Instance.spawnPoints[spawnPicker].rotation);
-            }
+            if (!photonView.IsMine) return;
+            int spawnPicker = Random.Range(0, GameSetup.Instance.spawnPoints.Length);
+            
+            // Instantiates the player as either the commander or a miner
+            if (PhotonNetwork.IsMasterClient && !DebugSettings.SinglePlayer) myAvatar = PhotonNetwork.Instantiate(Prefabs.StationCommander, GameSetup.Instance.spawnPoints[spawnPicker].position, GameSetup.Instance.spawnPoints[spawnPicker].rotation);
+            else myAvatar = PhotonNetwork.Instantiate(Prefabs.PlayerShip, GameSetup.Instance.spawnPoints[spawnPicker].position, GameSetup.Instance.spawnPoints[spawnPicker].rotation);
+        }
 
     }
 }
