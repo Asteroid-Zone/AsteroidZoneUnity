@@ -19,5 +19,7 @@ namespace PlayGame.Stats {
 
         public int numberOfTimesRespawned;
 
+        public int finalScore;
+
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using PlayGame.Player;
 using UnityEngine;
 
@@ -24,10 +25,26 @@ namespace PlayGame.Stats {
             Debug.Log("Player stats not found");
             return null;
         }
-        
-        public static int GetPlayerScore(int id) {
-            PlayerStats playerStats = GetPlayerStats(id);
+
+        public static void SortPlayersByScore() {
+            List<PlayerStats> statsList = PlayerStatsList.OrderByDescending(x => x.finalScore).ThenByDescending(x => x.piratesDestroyed).ToList();
             
+            PlayerStatsList.Clear();
+            PlayerStatsList.AddRange(statsList);
+        }
+
+        public static void CalculateScores() {
+            int score = 0;
+            
+            foreach (PlayerStats stats in PlayerStatsList) {
+                stats.finalScore = GetPlayerScore(stats);
+                score += stats.finalScore;
+            }
+
+            GameStats.finalScore = score;
+        }
+
+        private static int GetPlayerScore(PlayerStats playerStats) {
             return playerStats.role == Role.Miner ? GetMinerScore(playerStats) : GetCommanderScore();
         }
 
@@ -52,7 +69,7 @@ namespace PlayGame.Stats {
             score += playerStats.finalMiningLevel * 5; // 5 points for each mining level
 
             score -= playerStats.numberOfTimesRespawned * 300; // -300 points for each death
-                
+            
             if (GameStats.victory) score += 1000; // 1000 points for victory
             score += (int) GameStats.gameTime; // 1 point for each second survived
 

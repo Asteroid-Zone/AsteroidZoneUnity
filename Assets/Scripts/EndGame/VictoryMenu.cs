@@ -1,7 +1,6 @@
 ﻿using System;
 using Photon.Pun;
 using PlayGame;
-using PlayGame.Player;
 using PlayGame.Stats;
 using Statics;
 using UnityEngine;
@@ -19,7 +18,7 @@ namespace EndGame {
 
         public Text winText;
 
-        //public Text gameTime;
+        public Text gameTime;
 
         public GameObject scoreboard;
         public GameObject playerScorePanel;
@@ -27,6 +26,18 @@ namespace EndGame {
         private void Start() {
             winText.text = StatsManager.GameStats.victory ? "You Win!" : "You lose!";
 
+            StatsManager.CalculateScores();
+            StatsManager.SortPlayersByScore();
+            CreatePlayerScorePanels();
+            CreateTotalScorePanel();
+
+            gameTime.text = "You survived for: " + FormatTime(StatsManager.GameStats.gameTime);
+        }
+
+        /// <summary>
+        /// Creates a scoreboard row for each player.
+        /// </summary>
+        private void CreatePlayerScorePanels() {
             foreach (PlayerStats stats in StatsManager.PlayerStatsList) {
                 GameObject playerPanel = Instantiate(playerScorePanel, scoreboard.transform);
                 Text[] texts = playerPanel.GetComponentsInChildren<Text>();
@@ -34,10 +45,21 @@ namespace EndGame {
                 texts[1].text = StatsManager.GetEndRole(stats.photonID).ToString();
                 texts[2].text = stats.resourcesHarvested.ToString();
                 texts[3].text = stats.piratesDestroyed.ToString();
-                texts[4].text = StatsManager.GetPlayerScore(stats.photonID).ToString();
+                texts[4].text = stats.finalScore.ToString();
             }
-
-            //gameTime.text += FormatTime(StatsManager.GameStats.gameTime);
+        }
+        
+        /// <summary>
+        /// Creates a scoreboard row for the totals.
+        /// </summary>
+        private void CreateTotalScorePanel() {
+            GameObject totalPanel = Instantiate(playerScorePanel, scoreboard.transform);
+            Text[] texts = totalPanel.GetComponentsInChildren<Text>();
+            texts[0].text = "Total";
+            texts[1].text = "";
+            texts[2].text = StatsManager.GameStats.resourcesHarvested.ToString();
+            texts[3].text = StatsManager.GameStats.piratesDestroyed.ToString();
+            texts[4].text = StatsManager.GameStats.finalScore.ToString();
         }
 
         /// <summary>
