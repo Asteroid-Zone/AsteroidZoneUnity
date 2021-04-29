@@ -1,6 +1,7 @@
 ﻿using System;
 using Photon.Pun;
 using PlayGame.Player;
+using PlayGame.Player.Movement;
 using PlayGame.Stats;
 using PlayGame.UI;
 using Statics;
@@ -44,10 +45,14 @@ namespace PlayGame.Pirates {
         public Gradient healthBarGradient;
         public Image healthBarFill;
 
+        private Transform _spaceStation;
+
         public void Start() {
             SetStats();
             _pirateAgent = GetComponent<NavMeshAgent>();
             _pirateAgent.speed = _speed;
+
+            _spaceStation = GameObject.FindGameObjectWithTag(Tags.StationTag).transform;
 
             // 50/50 chance of focusing on station/player
             int randomInt = Random.Range(0, 2);
@@ -158,7 +163,8 @@ namespace PlayGame.Pirates {
                 _health -= damage;
                 if (_health <= 0) {
                     playerData.IncreaseCombatXP(Random.Range(GameConstants.MinXPCombatKill, GameConstants.MaxXPCombatKill));
-                    
+
+                    if (NearStation()) StatsManager.PlayerStatsList[0].piratesDestroyedDefence++;
                     StatsManager.PlayerStatsList[0].piratesDestroyed++;
                     StatsManager.GameStats.piratesDestroyed++;
                     Die();
@@ -167,6 +173,13 @@ namespace PlayGame.Pirates {
                 // Display the damage on the health bar
                 SetHealthBar();
             }
+        }
+        
+        /// <summary>
+        /// Returns true if the pirate can see the space station, otherwise returns false.
+        /// </summary>
+        private bool NearStation() {
+            return Vector3.Distance(transform.position, _spaceStation.position) < _lookRadius;
         }
         
         /// <summary>
@@ -180,6 +193,7 @@ namespace PlayGame.Pirates {
             if (_health <= 0) {
                 PlayerData.GetPlayerWithID(photonID).IncreaseCombatXP(Random.Range(GameConstants.MinXPCombatKill, GameConstants.MaxXPCombatKill));
                 
+                if (NearStation()) StatsManager.GetPlayerStats(photonID).piratesDestroyedDefence++;
                 StatsManager.GetPlayerStats(photonID).piratesDestroyed++;
                 StatsManager.GameStats.piratesDestroyed++;
                 Die();

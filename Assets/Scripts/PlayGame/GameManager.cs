@@ -62,6 +62,12 @@ namespace PlayGame {
             StatsManager.GameStats.victory = gameOverType == GameOverType.Victory;
             StatsManager.GameStats.gameOverType = gameOverType;
             StatsManager.GameStats.gameTime = time;
+
+            // Set final levels
+            foreach (GameObject player in PlayerData.Players) {
+                player.GetComponent<PlayerData>().SetFinalLevels();
+            }
+            
             SceneManager.LoadScene(Scenes.EndCutsceneScene);
         }
 

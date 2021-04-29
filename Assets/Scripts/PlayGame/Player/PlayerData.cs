@@ -89,8 +89,8 @@ namespace PlayGame.Player
 
             _playerStats = new PlayerStats();
             if (!DebugSettings.Debug) _playerStats.photonID = photonView.ViewID;
-            Debug.Log("Photon id: " + _playerStats.photonID);
             _playerStats.playerName = PhotonNetwork.NickName;
+            _playerStats.role = role;
             StatsManager.PlayerStatsList.Add(_playerStats);
 
             // Initialise the players list
@@ -269,6 +269,8 @@ namespace PlayGame.Player
             dead = false;
             SetUpMiner(false);
             SetActiveRecursively(shipModel.gameObject, true);
+
+            _playerStats.numberOfTimesRespawned++;
         }
 
         // Sets the size of the viewable area ring and minimap ring
@@ -429,6 +431,11 @@ namespace PlayGame.Player
             {
                 _health = 0;
             }
+        }
+        
+        public void SetFinalLevels() {
+            _playerStats.finalCombatLevel = _combatLevel;
+            _playerStats.finalMiningLevel = _miningLevel;
         }
 
         public int GetPlayerID() {
