@@ -102,6 +102,10 @@ namespace PlayGame.Player {
             _miningLaserSfx.Play();
         }
 
+        public int GetMiningRange() {
+            return _miningRange;
+        }
+        
         public void IncreaseMiningRange(int amount) {
             _miningRange += amount;
         }

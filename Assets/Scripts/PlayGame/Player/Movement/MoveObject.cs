@@ -7,8 +7,11 @@ using Statics;
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace PlayGame.Player.Movement 
-{
+namespace PlayGame.Player.Movement {
+    
+    /// <summary>
+    /// This class controls the players movement and rotation.
+    /// </summary>
     public class MoveObject : MonoBehaviour {
         
         private Vector3 _direction;
@@ -41,10 +44,10 @@ namespace PlayGame.Player.Movement
         private LaserGun _laserGun;
         private MiningLaser _miningLaser;
 
-        private bool autoMove = true;
+        private bool _autoMove = true;
         
         private void Start() {
-            // fetch the objects of the spawners
+            // Fetch the objects of the spawners
             _enemySpawner = PirateSpawner.GetInstance().gameObject;
             _asteroidSpawner = AsteroidSpawner.GetInstance().gameObject;
             _spaceStation = GameObject.FindWithTag(Tags.StationTag).transform;
@@ -60,14 +63,22 @@ namespace PlayGame.Player.Movement
             UpdateRotation();
         }
 
+        /// <summary>
+        /// Returns true if the current lock target is in range of the players mining/combat laser.
+        /// </summary>
+        /// <param name="lockTargetType">The current type of lock target.</param>
         public bool InLockRange(ToggleCommand.LockTargetType lockTargetType) {
             float lockRange = 0;
-            if (lockTargetType == ToggleCommand.LockTargetType.Asteroid) lockRange = GameConstants.PlayerMiningRange;
+            if (lockTargetType == ToggleCommand.LockTargetType.Asteroid) lockRange = _miningLaser.GetMiningRange();
             if (lockTargetType == ToggleCommand.LockTargetType.Pirate) lockRange = _playerData.GetLaserRange();
             
             return Vector3.Distance(transform.position, _lockTarget.position) < lockRange;
         }
 
+        /// <summary>
+        /// Returns true if there are no objects in between the players laser gun and the target.
+        /// </summary>
+        /// <param name="target"></param>
         private bool HasLineOfSight(Transform target) {
             RaycastHit hit;
             var laserPosition = _laserGun.gameObject.transform.position;
@@ -78,6 +89,11 @@ namespace PlayGame.Player.Movement
             return false; // If it collides with anything else return false
         }
 
+        /// <summary>
+        /// Update is called every frame, if the MonoBehaviour is enabled.
+        /// <para>Moves the player either by directly using the transform or using the players NavMeshAgent.</para>
+        /// Updates the lock target.
+        /// </summary>
         private void Update() {
             if (GameManager.gameOver) return;
             // Get the speed of the player's ship
@@ -96,21 +112,20 @@ namespace PlayGame.Player.Movement
             
             // If locked on automatically move so player is in range
             if (lockType != ToggleCommand.LockTargetType.None && _lockTarget != null) {
-                if (autoMove) {
-                    // If player not in range move forward
-                    if (!(InLockRange(lockType) && HasLineOfSight(_lockTarget))) {
-                        if (_playerAgent.enabled) {
-                            SetSpeed(1);
-                            _playerAgent.SetDestination(_lockTarget.position);
-                        }
-                    } else {
-                        SetSpeed(0f);
-                        SetDirection(transform.forward, false);
-                    }
+                if (_autoMove) {
+                    AutoMove();
                 }
             }
             
             // Get lock target and face it
+            UpdateLockTarget();
+        }
+
+        /// <summary>
+        /// <para>Updates <c>_lockTarget</c>.</para>
+        /// If a lock target is found, face it. Otherwise disable the lock system.
+        /// </summary>
+        private void UpdateLockTarget() {
             if (lockType != ToggleCommand.LockTargetType.None) {
                 if (_lockTarget == null) {
                     _lockTarget = GetLockTarget(lockType);
@@ -121,18 +136,37 @@ namespace PlayGame.Player.Movement
 
                 if (_lockTarget != null) FaceTarget(_lockTarget);
                 else {
+                    // Disable the lock on system
                     string eventMessage = "No targets found.";
                     if (lockType == ToggleCommand.LockTargetType.Asteroid) eventMessage = "No asteroids found. Mining laser disabled.";
                     if (lockType == ToggleCommand.LockTargetType.Pirate) eventMessage = "No pirates found. Laser gun disabled.";
                     EventsManager.AddMessage(eventMessage);
                     
-                    SetLockTargetType(ToggleCommand.LockTargetType.None); // Turn off lock on if nothing in range
+                    SetLockTargetType(ToggleCommand.LockTargetType.None);
                 }
             } else {
                 _lockTarget = null;
             }
         }
 
+        /// <summary>
+        /// Automatically moves the player using the NavMeshAgent so that they have line of sight and are in range of the lock target.
+        /// </summary>
+        private void AutoMove() {
+            if (!(InLockRange(lockType) && HasLineOfSight(_lockTarget))) {
+                if (_playerAgent.enabled) {
+                    SetSpeed(1);
+                    _playerAgent.SetDestination(_lockTarget.position);
+                }
+            } else { // If the player is in range and has line of sight, stop moving
+                SetSpeed(0f);
+                SetDirection(transform.forward, false);
+            }
+        }
+
+        /// <summary>
+        /// Calculates the players new rotation using spherical interpolation.
+        /// </summary>
         private void Rotate() {
             float rotateSpeed = _playerData.GetRotateSpeed();
             Vector3 newDirection;
@@ -144,30 +178,27 @@ namespace PlayGame.Player.Movement
             _direction = newDirection;
         }
 
-        private bool HasReachedDestination() 
-        {
+        /// <summary>
+        /// Returns true and stops the player if they have reached their destination.
+        /// Returns true if the players NavMeshAgent is disabled.
+        /// </summary>
+        private bool HasReachedDestination() {
             // If AI is disabled then the destination has either been reached or there is no destination at all
-            if (!_playerAgent.enabled)
-            {
-                return true;
-            }
-            
+            if (!_playerAgent.enabled) return true;
+
             // The destination was reached, stop the player ship
-            if (Vector3.Distance(transform.position, _destination) < 0.2)
-            {
+            if (Vector3.Distance(transform.position, _destination) < 0.2) {
                 SetSpeed(0f);
                 return true;
             }
 
             // If moving to a target check distance based on closest points of collision
-            if (_hasTargetObject) 
-            {
+            if (_hasTargetObject) {
                 Vector3 closestPointTarget = _targetCollider.ClosestPoint(transform.position);
                 Vector3 closestPointPlayer = _playerCollider.ClosestPoint(closestPointTarget);
                 
                 // The colliders are very close, stop the player ship
-                if (Vector3.Distance(closestPointPlayer, closestPointTarget) < 2) 
-                {
+                if (Vector3.Distance(closestPointPlayer, closestPointTarget) < 2) {
                     SetSpeed(0f);
                     return true;
                 }
@@ -176,16 +207,25 @@ namespace PlayGame.Player.Movement
             return false;
         }
 
-        // Enemy target needed for lock-on
+        /// <summary>
+        /// Returns the nearest pirate transform to the player.
+        /// </summary>
         public Transform GetNearestEnemyTransform() {
             return GetNearestTransform(GetChildren(_enemySpawner.transform));
         }
 
+        /// <summary>
+        /// Returns the nearest asteroid transform to the player.
+        /// </summary>
+        /// <returns></returns>
         public Transform GetNearestAsteroidTransform() {
             return GetNearestTransform(GetChildren(_asteroidSpawner.transform));
         }
 
-        // Returns a list of all child transforms
+        /// <summary>
+        /// Returns a list of all child transforms.
+        /// </summary>
+        /// <param name="parent"></param>
         private static List<Transform> GetChildren(Transform parent) {
             List<Transform> children = new List<Transform>();
             
@@ -196,7 +236,11 @@ namespace PlayGame.Player.Movement
             return children;
         }
 
-        // Returns the nearest transform from a list
+        /// <summary>
+        /// Returns the closest transform to the player.
+        /// Returns null if no transform is closer than <c>float.PositiveInfinity</c>.
+        /// </summary>
+        /// <param name="transforms">The list of transforms to search.</param>
         private Transform GetNearestTransform(List<Transform> transforms) {
             float bestDistance = float.PositiveInfinity;
             int closestEnemyIndex = -1;
@@ -212,6 +256,10 @@ namespace PlayGame.Player.Movement
             return closestEnemyIndex == -1 ? null : transforms[closestEnemyIndex].transform;
         }
 
+        /// <summary>
+        /// Rotates the player using spherical interpolation to look at a target.
+        /// </summary>
+        /// <param name="target">Target transform to look at.</param>
         private void FaceTarget(Transform target) {
             if (target == null) return; // If the target is destroyed just return.
 
@@ -226,20 +274,36 @@ namespace PlayGame.Player.Movement
             else _direction = -transform.forward;
         }
 
-        // Turn to face the direction the player is moving
+        /// <summary>
+        /// Sets the players rotation equal to the direction of travel.
+        /// </summary>
         private void UpdateRotation() {
             transform.localRotation = Quaternion.LookRotation(_direction);
         }
 
+        /// <summary>
+        /// Sets the booleans that control the players rotation.
+        /// </summary>
+        /// <param name="targetDirection">The direction to turn. Should be equal to <c>transform.right</c> or <c>-transform.right</c>.</param>
         public void StartRotating(Vector3 targetDirection) {
             rotating = true;
             _turnRight = targetDirection == transform.right;
         }
 
+        /// <summary>
+        /// Disables the players rotation.
+        /// </summary>
         public void StopRotating() {
             rotating = false;
         }
     
+        /// <summary>
+        /// Updates the direction variable and disables the players NavMeshAgent.
+        /// <para>Updates the players rotation if rotate is true.</para>
+        /// Method is used to move in a given direction.
+        /// </summary>
+        /// <param name="newDirection"></param>
+        /// <param name="rotate"></param>
         public void SetDirection(Vector3 newDirection, bool rotate) {
             StopRotating();
             // Set the direction to be the new direction
@@ -253,6 +317,11 @@ namespace PlayGame.Player.Movement
             if (rotate) UpdateRotation();
         }
 
+        /// <summary>
+        /// Updates the destination variable, calculates the new direction variable and enables the players NavMeshAgent.
+        /// <para>Method is used to move to a destination.</para>
+        /// </summary>
+        /// <param name="destination"></param>
         public void SetDestination(Vector3 destination) {
             // Set the destination
             _destination = destination;
@@ -266,8 +335,13 @@ namespace PlayGame.Player.Movement
             _playerAgent.enabled = true;
         }
 
-        public void SetDestination(Vector3 destination, Collider targetCollider) 
-        {
+        /// <summary>
+        /// Sets the destination and the target object.
+        /// <para>Method is used to move to a target object.</para>
+        /// </summary>
+        /// <param name="destination"></param>
+        /// <param name="targetCollider"></param>
+        public void SetDestination(Vector3 destination, Collider targetCollider) {
             SetDestination(destination);
             
             // Set the target object collider and specify that the player is heading to an object
@@ -275,11 +349,20 @@ namespace PlayGame.Player.Movement
             _hasTargetObject = true;
         }
 
-        // Sets the current speed to a percentage of the players maximum speed
+        /// <summary>
+        /// Sets the current speed to a percentage of the players maximum speed
+        /// </summary>
+        /// <param name="fraction">Value between 0 and 1.</param>
         public void SetSpeed(float fraction) {
             _playerData.SetSpeed(fraction);
         }
 
+        /// <summary>
+        /// Sets the type of lock target and resets the current lock target.
+        /// <para>Disables/Enables laser guns and automatic movement depending on lock target type.</para>
+        /// </summary>
+        /// <param name="type"></param>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if type is an invalid LockTargetType.</exception>
         public void SetLockTargetType(ToggleCommand.LockTargetType type) {
             lockType = type;
             _lockTarget = null;
@@ -288,23 +371,28 @@ namespace PlayGame.Player.Movement
                 case ToggleCommand.LockTargetType.Asteroid:
                     _laserGun.StopShooting();
                     _miningLaser.EnableMiningLaser();
-                    autoMove = true;
+                    _autoMove = true;
                     break;
                 case ToggleCommand.LockTargetType.Pirate:
                     _laserGun.StartShooting();
                     _miningLaser.DisableMiningLaser();
-                    autoMove = true;
+                    _autoMove = true;
                     break;
                 case ToggleCommand.LockTargetType.None:
                     _laserGun.StopShooting();
                     _miningLaser.DisableMiningLaser();
-                    autoMove = false;
+                    _autoMove = false;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
         
+        /// <summary>
+        /// Returns the transform of the nearest lock target of a given type.
+        /// If fog of war is enabled it only returns transforms that are visible to the player.
+        /// </summary>
+        /// <param name="lockTargetType"></param>
         private Transform GetLockTarget(ToggleCommand.LockTargetType lockTargetType) {
             Transform lockTarget = null;
             
@@ -318,20 +406,30 @@ namespace PlayGame.Player.Movement
             return lockTarget;
         }
 
-        public Transform GetLockTarget()
-        {
+        /// <summary>
+        /// Returns the transform of the current lock target.
+        /// </summary>
+        public Transform GetLockTarget() {
             return _lockTarget;
         }
         
-        public ToggleCommand.LockTargetType GetLockType()
-        {
+        /// <summary>
+        /// Returns the current type of lock target.
+        /// </summary>
+        public ToggleCommand.LockTargetType GetLockType() {
             return lockType;
         }
 
+        /// <summary>
+        /// Returns the distance from the player to the space station.
+        /// </summary>
         public float DistanceToStation() {
             return Vector3.Distance(transform.position, _spaceStation.position);
         }
         
+        /// <summary>
+        /// Returns true if the player is in the same grid square as the space station.
+        /// </summary>
         public bool NearStation() {
             return GridCoord.GetCoordFromVector(transform.position).Equals(GridCoord.GetCoordFromVector(_spaceStation.position));
         }

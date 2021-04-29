@@ -380,10 +380,11 @@ namespace PlayGame.Player
         }
 
         public void SetSpeed(float fraction) {
+            if (fraction < 0) fraction = 0;
+            if (fraction > 1) fraction = 1;
             _playerAgent.speed = fraction * _maxSpeed;
             
-            if (fraction == 0)
-            {
+            if (fraction == 0) {
                 _playerAgent.enabled = false;
             }
         }
