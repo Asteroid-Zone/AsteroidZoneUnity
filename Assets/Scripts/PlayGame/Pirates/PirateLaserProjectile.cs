@@ -29,6 +29,7 @@ namespace PlayGame.Pirates {
         /// <summary>
         /// <para>Method is called when the laser hits a GameObject.</para>
         /// Damages the object it collided with then destroys the laser.
+        /// <remarks>This method only damages the station if called by the host or in debug mode.</remarks>
         /// </summary>
         /// <param name="collision"></param>
         private void OnTriggerEnter(Collider collision) {

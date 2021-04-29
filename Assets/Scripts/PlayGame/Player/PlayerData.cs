@@ -12,13 +12,19 @@ using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
 
-namespace PlayGame.Player
-{
+namespace PlayGame.Player {
+    
+    /// <summary>
+    /// Player roles
+    /// </summary>
     public enum Role {
         StationCommander,
         Miner
     }
 
+    /// <summary>
+    /// Player quest types
+    /// </summary>
     public enum QuestType {
         MineAsteroids,
         ReturnToStationResources,
@@ -33,7 +39,11 @@ namespace PlayGame.Player
         Respawn
     }
 
+    /// <summary>
+    /// This class controls the players data.
+    /// </summary>
     public class PlayerData : MonoBehaviourPun {
+        
         public static List<GameObject> Players;
         private int _playerID;
 
@@ -87,6 +97,7 @@ namespace PlayGame.Player
             _playerAgent = GetComponent<NavMeshAgent>();
             DontDestroyOnLoad(gameObject);
 
+            // Initialise the players stats
             _playerStats = new PlayerStats();
             if (!DebugSettings.Debug) _playerStats.photonID = photonView.ViewID;
             _playerStats.playerName = PhotonNetwork.NickName;
@@ -103,10 +114,15 @@ namespace PlayGame.Player
                 GameObject.FindGameObjectWithTag(Tags.CameraManagerTag).GetComponent<CameraManager>().SetMode(cockpitMode);
             }
 
+            // Set up the player
             if (role == Role.StationCommander && !DebugSettings.SinglePlayer) SetUpStationCommander();
             else SetUpMiner(true);
         }
 
+        /// <summary>
+        /// Gets the miners components and initialises values.
+        /// </summary>
+        /// <param name="initial">True if this is the initial game set up. False is used for resetting after respawning.</param>
         private void SetUpMiner(bool initial) {
             if (initial) {
                 _laserGun = gameObject.GetComponent<LaserGun>();
@@ -154,12 +170,18 @@ namespace PlayGame.Player
             if (photonView.IsMine) transform.position = GameSetup.Instance.spawnPoints[_playerID].position; // Set spawn point
         }
 
+        /// <summary>
+        /// Sets the station commanders initial position and starting quest.
+        /// </summary>
         private void SetUpStationCommander() {
             transform.position = GridManager.GetGridCentre();
             gameObject.transform.position = _spaceStation.position;
             currentQuest = QuestType.HelpPlayers;
         }
 
+        /// <summary>
+        /// Sets each players ship to be a different colour.
+        /// </summary>
         private void SetPlayerColour() {
             Color colour = Color.cyan;
             switch (_playerID) {
@@ -179,15 +201,28 @@ namespace PlayGame.Player
             gunRight.material.color = colour;
         }
 
+        /// <summary>
+        /// Returns the players progress towards the next combat level.
+        /// <remarks>Between 0 and 1.</remarks>
+        /// </summary>
         public float GetCombatLevelProgress() {
             float levelUpThreshold = GameConstants.InitialLevelUpThreshold + (_combatLevel * GameConstants.LevelUpScaleAmount);
             return _combatXP / levelUpThreshold;
         }
 
+        /// <summary>
+        /// Returns the players current combat level.
+        /// </summary>
         public int GetCombatLevel() {
             return _combatLevel;
         }
 
+        /// <summary>
+        /// Increases the players combat xp.
+        /// <para>Performs an RPC call to level up the player if they have enough xp.</para>
+        /// <remarks>This method can only be called if this instance belongs to the local player.</remarks>
+        /// </summary>
+        /// <param name="amount">Amount to increase the xp by.</param>
         public void IncreaseCombatXP(int amount) {
             if (!photonView.IsMine) return; // Each player keeps track of their own xp, levels are rpc called
             
@@ -202,6 +237,9 @@ namespace PlayGame.Player
             }
         }
 
+        /// <summary>
+        /// Increases the players combat level and improves their laser gun.
+        /// </summary>
         [PunRPC]
         public void RPC_LevelUpCombat() {
             _combatLevel += 1;
@@ -216,15 +254,28 @@ namespace PlayGame.Player
             }
         }
         
+        /// <summary>
+        /// Returns the players progress towards the next mining level.
+        /// <remarks>Between 0 and 1.</remarks>
+        /// </summary>
         public float GetMiningLevelProgress() {
             float levelUpThreshold = GameConstants.InitialLevelUpThreshold + (_miningLevel * GameConstants.LevelUpScaleAmount);
             return _miningXP / levelUpThreshold;
         }
 
+        /// <summary>
+        /// Returns the players current mining level.
+        /// </summary>
         public int GetMiningLevel() {
             return _miningLevel;
         }
         
+        /// <summary>
+        /// Increases the players mining xp.
+        /// <para>Performs an RPC call to level up the player if they have enough xp.</para>
+        /// <remarks>This method can only be called if this instance belongs to the local player.</remarks>
+        /// </summary>
+        /// <param name="amount">Amount to increase the xp by.</param>
         public void IncreaseMiningXP(int amount) {
             if (!photonView.IsMine) return; // Each player keeps track of their own xp, levels are rpc called
             
@@ -239,6 +290,9 @@ namespace PlayGame.Player
             }
         }
 
+        /// <summary>
+        /// Increases the players mining level and improves their mining laser.
+        /// </summary>
         [PunRPC]
         public void RPC_LevelUpMining() {
             _miningLevel += 1;
@@ -252,11 +306,20 @@ namespace PlayGame.Player
             }
         }
 
+        /// <summary>
+        /// Performs an RPC call to respawn a player with a given photonID.
+        /// <remarks>This method can only be called by the host.</remarks>
+        /// </summary>
+        /// <param name="playerID">The photonID of the player to respawn.</param>
         public void RespawnPlayer(int playerID) {
             if (!PhotonNetwork.IsMasterClient) return;
             photonView.RPC(nameof(RPC_RespawnPlayer), RpcTarget.AllBuffered, playerID);
         }
         
+        /// <summary>
+        /// Respawns the player with the given photonID.
+        /// </summary>
+        /// <param name="playerID">The photonID of the player to respawn.</param>
         [PunRPC]
         public void RPC_RespawnPlayer(int playerID) {
             foreach (GameObject o in Players) {
@@ -265,6 +328,9 @@ namespace PlayGame.Player
             }
         }
 
+        /// <summary>
+        /// Respawns this player.
+        /// </summary>
         private void Respawn() {
             dead = false;
             SetUpMiner(false);
@@ -273,7 +339,10 @@ namespace PlayGame.Player
             _playerStats.numberOfTimesRespawned++;
         }
 
-        // Sets the size of the viewable area ring and minimap ring
+        /// <summary>
+        /// Sets the size of the viewable area ring and minimap ring.
+        /// <para>Disables both if fog of war is disabled or this is not the local player.</para>
+        /// </summary>
         private void ResizeViewableArea() {
             if (!DebugSettings.FogOfWar || !photonView.IsMine) {
                 viewableArea.SetActive(false);
@@ -286,35 +355,42 @@ namespace PlayGame.Player
             }
         }
 
+        /// <summary>
+        /// Updates the list of players.
+        /// <remarks>Method is called via RPC.</remarks>
+        /// </summary>
         [PunRPC]
-        public void RPC_UpdatePlayerLists()
-        {
+        public void RPC_UpdatePlayerLists() {
             UpdatePlayerLists();
         }
 
-        public static void UpdatePlayerLists()
-        {
+        /// <summary>
+        /// Updates the list of players.
+        /// </summary>
+        public static void UpdatePlayerLists() {
             Players = new List<GameObject>();
             Players.AddRange(GameObject.FindGameObjectsWithTag(Tags.PlayerTag));
             
             // Add the station commander only if there is one
             GameObject stationCommander = GameObject.FindGameObjectWithTag(Tags.StationCommanderTag);
-            if (stationCommander != null)
-            {
+            if (stationCommander != null) {
                 Players.Add(stationCommander);
             }
         }
 
+        /// <summary>
+        /// Checks if the player is dead if they are a miner.
+        /// <para>Updates the players position to the stations position if they are the commander.</para>
+        /// </summary>
         private void Update() {
             if (role != Role.StationCommander) {
-                if (!dead && _health <= 0) {
-                    Die();
-                }
+                if (!dead && _health <= 0) Die();
             } else {
                 if (_spaceStation != null) gameObject.transform.position = _spaceStation.position;
             }
         }
 
+        
         private void Die() {
             dead = true;
             

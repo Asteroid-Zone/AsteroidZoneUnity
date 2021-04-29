@@ -5,6 +5,10 @@ using Statics;
 using UnityEngine;
 
 namespace PlayGame.Player {
+    
+    /// <summary>
+    /// This class controls the mining laser.
+    /// </summary>
     public class MiningLaser : MonoBehaviour {
 
         private PlayerData _playerData;
@@ -28,23 +32,21 @@ namespace PlayGame.Player {
             
             // Get the mining laser SFX that has the necessary tag and is a child of the current player's game object
             // Note: it should be a child of the current player, because in multiplayer it wouldn't work otherwise
-            GameObject.FindGameObjectsWithTag(Tags.MiningLaserSfxTag).ToList().ForEach(miningSfx =>
-                {
-                    if (miningSfx.transform.parent.parent == gameObject.transform)
-                    {
-                        _miningLaserSfx = miningSfx.GetComponent<AudioSource>();
-                    }
-                });
-            
+            GameObject.FindGameObjectsWithTag(Tags.MiningLaserSfxTag).ToList().ForEach(miningSfx => {
+                if (miningSfx.transform.parent.parent == gameObject.transform) _miningLaserSfx = miningSfx.GetComponent<AudioSource>();
+            });
             VolumeControl.AddSfxCSource(_miningLaserSfx);
 
             _miningDelay = GameConstants.PlayerMiningDelay;
             _miningRate = GameConstants.PlayerMiningRate;
 
-            if (DebugSettings.InfiniteMiningRange) _miningRange = 100000;
-            else _miningRange = GameConstants.PlayerMiningRange;
+            _miningRange = DebugSettings.InfiniteMiningRange ? 100000 : GameConstants.PlayerMiningRange;
         }
         
+        /// <summary>
+        /// Updates the time since last mined.
+        /// <para>Sets the length of the mining laser and checks for collisions using raycast if the laser is on.</para>
+        /// </summary>
         private void Update() {
             if (_timeSinceLastMined <= _miningDelay) _timeSinceLastMined += (Time.deltaTime * 1000);
             if (!laser.enabled) return;
@@ -65,6 +67,10 @@ namespace PlayGame.Player {
             }
         }
 
+        /// <summary>
+        /// Mines the asteroid and performs an RPC call to sync adding resources in all instances for the player. 
+        /// </summary>
+        /// <param name="asteroid">The asteroid to mine.</param>
         private void MineAsteroid(GameObject asteroid) {
             Asteroid asteroidScript = asteroid.GetComponent<Asteroid>();
             asteroidScript.MineAsteroid(_miningRate, _playerData);
@@ -75,15 +81,26 @@ namespace PlayGame.Player {
             else _playerData.AddResources(resources);
         }
         
+        /// <summary>
+        /// Adds resources for the player.
+        /// </summary>
+        /// <param name="resources">Amount of resources to add.</param>
         [PunRPC]
         public void RPC_AddResources(int resources) {  
             _playerData.AddResources(resources);
-        } 
+        }
         
+        /// <summary>
+        /// Sets the length of the laser beam.
+        /// </summary>
+        /// <param name="distance">Distance to the end of the laser beam.</param>
         private void UpdateLaser(int distance) {
             laser.SetPosition(1, new Vector3(0, 0, distance)); // Sets the end position of the laser
         }
         
+        /// <summary>
+        /// Turns the mining laser on and plays the sound effect.
+        /// </summary>
         public void EnableMiningLaser() {
             if (laser.enabled) return; // If its already on dont do anything
             
@@ -93,6 +110,9 @@ namespace PlayGame.Player {
             _miningLaserSfx.Play();
         }
 
+        /// <summary>
+        /// Turns the mining laser off and plays the sound effect.
+        /// </summary>
         public void DisableMiningLaser() {
             if (!laser.enabled) return; // If its already off dont do anything
             
@@ -102,18 +122,34 @@ namespace PlayGame.Player {
             _miningLaserSfx.Play();
         }
 
+        /// <summary>
+        /// Returns the mining lasers range.
+        /// </summary>
         public int GetMiningRange() {
             return _miningRange;
         }
         
+        /// <summary>
+        /// Increases the range of the mining laser.
+        /// </summary>
+        /// <param name="amount">Amount to increase the range by.</param>
         public void IncreaseMiningRange(int amount) {
             _miningRange += amount;
         }
 
+        /// <summary>
+        /// Reduces the delay of the mining laser.
+        /// </summary>
+        /// <param name="amount">Number of ms to reduce the mining delay by.</param>
         public void ReduceMiningDelay(int amount) {
             _miningDelay -= amount;
         }
-
+        
+        /// <summary>
+        /// Increases the rate of the mining laser.
+        /// Mining rate is the amount of the asteroid to mine each time.
+        /// </summary>
+        /// <param name="amount">Amount to increase the rate by.</param>
         public void IncreaseMiningRate(int amount) {
             _miningRate += amount;
         }

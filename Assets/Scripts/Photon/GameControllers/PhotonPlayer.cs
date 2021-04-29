@@ -19,6 +19,7 @@ namespace Photon.GameControllers {
             }
         }
 
+        /// <remarks>This method can only be called if this instance belongs to the local player.</remarks>
         private void Awake() {
             if (!photonView.IsMine) return;
             int spawnPicker = Random.Range(0, GameSetup.Instance.spawnPoints.Length);

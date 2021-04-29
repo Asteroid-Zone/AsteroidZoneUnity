@@ -1,7 +1,6 @@
 ﻿using System;
 using Photon.Pun;
 using PlayGame.Player;
-using PlayGame.Player.Movement;
 using PlayGame.Stats;
 using PlayGame.UI;
 using Statics;
@@ -124,6 +123,7 @@ namespace PlayGame.Pirates {
         /// <summary>
         /// Performs an RPC call to tell all instances to destroy the pirate.
         /// If the game is not online destroy the pirate.
+        /// <remarks>This method can only be called by the host or in debug mode.</remarks>
         /// </summary>
         private void Despawn() {
             if (!DebugSettings.Debug && gameObject != null && PhotonNetwork.IsMasterClient) 

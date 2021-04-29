@@ -126,6 +126,7 @@ namespace Photon {
         /// <summary>
         /// <para>Method is called when the host presses the 'Start Game' button.</para>
         /// Syncs the game settings and loads the game.
+        /// <remarks>This method can only be called by the host.</remarks>
         /// </summary>
         public void StartGame() {
             if (PhotonNetwork.IsMasterClient) SyncGameConstants();

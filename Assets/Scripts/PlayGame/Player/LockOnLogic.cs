@@ -6,10 +6,13 @@ using Statics;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace PlayGame.Player
-{
-    public class LockOnLogic : MonoBehaviour
-    {
+namespace PlayGame.Player {
+    
+    /// <summary>
+    /// This class controls the lock on reticle.
+    /// </summary>
+    public class LockOnLogic : MonoBehaviour {
+        
         private PlayerData _playerData;
         private MoveObject _moveObject;
         private Transform _lockTarget;
@@ -18,18 +21,23 @@ namespace PlayGame.Player
         public Sprite enemyReticle;
         public Sprite outOfRangeReticle;
         public CameraManager cameraMan;
-
-        // Start is called before the first frame update
+        
         private void Start() {
-            _playerData = !DebugSettings.Debug ? PhotonPlayer.Instance.myAvatar.GetComponent<PlayerData>() : TestPlayer.GetPlayerShip().GetComponent<PlayerData>();
-            if (_playerData.GetRole() == Role.StationCommander) Destroy(gameObject);
+            GameObject player = !DebugSettings.Debug ? PhotonPlayer.Instance.myAvatar : TestPlayer.GetPlayerShip();
             
-            _moveObject = !DebugSettings.Debug ? PhotonPlayer.Instance.myAvatar.GetComponent<MoveObject>() : TestPlayer.GetPlayerShip().GetComponent<MoveObject>();
+            _playerData = player.GetComponent<PlayerData>();
+            if (_playerData.GetRole() == Role.StationCommander) Destroy(gameObject);
+
+            _moveObject = player.GetComponent<MoveObject>();
             _image = GetComponent<Image>();
             _image.enabled = true;
         }
 
-        // Update is called once per frame
+        /// <summary>
+        /// Updates the position of the lock on reticle so that its on the lock target.
+        /// <para>Sets the reticle image depending on the type of lock target.</para>
+        /// Disables the reticle if there is no lock target.
+        /// </summary>
         private void Update() {
             _lockTarget = _moveObject.GetLockTarget();
             

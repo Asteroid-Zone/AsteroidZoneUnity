@@ -41,18 +41,23 @@ namespace PlayGame.Pirates {
         private float _spawnRangeCheck; 
         private int _maxPirates;
 
+        /// <summary>
+        /// Calls InvokeRepeating for the PirateRNG method and sets the maximum number of pirates that can be alive.
+        /// <remarks>This method can only be called by the host or in debug mode.</remarks>
+        /// </summary>
         private void Start() {
             if (!DebugSettings.Debug && !PhotonNetwork.IsMasterClient) return; // Only the host spawns pirates
             InvokeRepeating(nameof(PirateRNG), 0, GameConstants.PirateEveryXSeconds);
             
             // Checked space is the half size in OverlapBoxNonAlloc
             _spawnRangeCheck = GridManager.GetCellSize() / 2f;
-            _maxPirates =  (int) (GameConstants.MaxPiratesMultiplier * Math.Floor(2 * Math.Sqrt(GridManager.GetTotalCells())));
+            _maxPirates = (int) (GameConstants.MaxPiratesMultiplier * Math.Floor(2 * Math.Sqrt(GridManager.GetTotalCells())));
         }
 
         /// <summary>
         /// <para>Method is called every <c>GameConstants.PirateEveryXSeconds</c> seconds.</para>
         /// Has a random chance to spawn a scout pirate.
+        /// <remarks>This method can only be called by the host or in debug mode.</remarks>
         /// </summary>
         private void PirateRNG() {
             if (!DebugSettings.Debug && !PhotonNetwork.IsMasterClient) return;
@@ -72,6 +77,7 @@ namespace PlayGame.Pirates {
         /// <summary>
         /// <para>Method is called when pirates discover the space station.</para>
         /// Spawns a random number of elite pirates between the min and max values.
+        /// <remarks>This method can only be called by the host or in debug mode.</remarks>
         /// </summary>
         public void SpawnReinforcements() {
             if (!DebugSettings.Debug && !PhotonNetwork.IsMasterClient) return;
@@ -85,6 +91,7 @@ namespace PlayGame.Pirates {
         /// <summary>
         /// Spawns a pirate in a random location.
         /// </summary>
+        /// <remarks>This method can only be called by the host or in debug mode.</remarks>
         /// <param name="type">The type of pirate to spawn.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if type is an invalid PirateType.</exception>
         private void SpawnPirate(PirateData.PirateType type) {
