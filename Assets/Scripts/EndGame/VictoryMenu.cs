@@ -19,55 +19,25 @@ namespace EndGame {
 
         public Text winText;
 
-        public Text playerName;
-        public Text playerResourcesHarvested;
-        public Text playerAsteroidsDestroyed;
-        public Text playerPiratesDestroyed;
+        //public Text gameTime;
 
-        public Text gameTime;
-        public Text gameResourcesHarvested;
-        public Text gameAsteroidsDestroyed;
-        public Text gamePiratesDestroyed;
-        
-        private PlayerStats _playerStats;
-        
+        public GameObject scoreboard;
+        public GameObject playerScorePanel;
+
         private void Start() {
             winText.text = StatsManager.GameStats.victory ? "You Win!" : "You lose!";
 
-            _playerStats = GetPlayerStats();
-            
-            playerName.text += _playerStats.playerName;
-            playerResourcesHarvested.text += _playerStats.resourcesHarvested;
-            playerAsteroidsDestroyed.text += _playerStats.asteroidsDestroyed;
-            playerPiratesDestroyed.text += _playerStats.piratesDestroyed;
-
-            gameTime.text += FormatTime(StatsManager.GameStats.gameTime);
-            gameResourcesHarvested.text += StatsManager.GameStats.resourcesHarvested;
-            gameAsteroidsDestroyed.text += StatsManager.GameStats.asteroidsDestroyed;
-            gamePiratesDestroyed.text += StatsManager.GameStats.piratesDestroyed;
-        }
-
-        /// <summary>
-        /// Finds the local players stats and destroys the players <c>GameObject</c>.
-        /// </summary>
-        /// <returns>
-        /// <c>PlayerStats</c> containing the correct players stats.
-        /// </returns>
-        /// <exception cref="Exception">Thrown if no <c>PlayerStats</c> were found for the local player.</exception>
-        private PlayerStats GetPlayerStats() {
-            if (!DebugSettings.Debug) {
-                foreach (GameObject player in PlayerData.Players) {
-                    if (player != null && player.GetPhotonView().IsMine) {
-                        PlayerStats pStats = StatsManager.GetPlayerStats(player.GetPhotonView().ViewID);
-                        Destroy(player);
-                        return pStats;
-                    }
-                }
-            } else {
-                return StatsManager.PlayerStatsList[0];
+            foreach (PlayerStats stats in StatsManager.PlayerStatsList) {
+                GameObject playerPanel = Instantiate(playerScorePanel, scoreboard.transform);
+                Text[] texts = playerPanel.GetComponentsInChildren<Text>();
+                texts[0].text = stats.playerName;
+                texts[1].text = StatsManager.GetEndRole(stats.photonID).ToString();
+                texts[2].text = stats.resourcesHarvested.ToString();
+                texts[3].text = stats.piratesDestroyed.ToString();
+                texts[4].text = StatsManager.GetPlayerScore(stats.photonID).ToString();
             }
 
-            throw new Exception("Error - Player Stats Could Not Be Found");
+            //gameTime.text += FormatTime(StatsManager.GameStats.gameTime);
         }
 
         /// <summary>
