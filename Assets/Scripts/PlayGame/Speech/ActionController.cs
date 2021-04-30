@@ -11,6 +11,10 @@ using UnityEngine;
 using Ping = PlayGame.Pings.Ping;
 
 namespace PlayGame.Speech {
+    
+    /// <summary>
+    /// This class performs commands.
+    /// </summary>
     public class ActionController {
 
         public GameObject player;
@@ -23,6 +27,12 @@ namespace PlayGame.Speech {
 
         public PingManager pingManager;
 
+        /// <summary>
+        /// Checks that the players role is allowed to performs the command.
+        /// <para>If it is allowed, perform the command.</para>
+        /// </summary>
+        /// <param name="command"></param>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if the command has an invalid command type.</exception>
         public void PerformActions(Command command) {
             if (playerData.GetRole() != Role.StationCommander && command.IsCommanderOnly()) { // Prevent players from performing station commander commands
                 if (playerData.photonView.IsMine) EventsManager.AddMessage("Only the station commander can perform that command!");
@@ -63,6 +73,10 @@ namespace PlayGame.Speech {
             }
         }
 
+        /// <summary>
+        /// Respawns a random dead player and increases the respawn cost if the station has enough resources.
+        /// <remarks>This method can only be called by the host.</remarks>
+        /// </summary>
         private void PerformRespawnCommand() {
             if (!PhotonNetwork.IsMasterClient) return;
             if (spaceStation.resources < spaceStation.GetRespawnCost()) { // If the station doesn't have enough resources dont respawn
@@ -77,6 +91,10 @@ namespace PlayGame.Speech {
             if (p != null) playerData.RespawnPlayer(p.GetPlayerID()); // Respawn a random dead player
         }
 
+        /// <summary>
+        /// Repairs the specified station module.
+        /// </summary>
+        /// <param name="command"></param>
         private void PerformRepairCommand(RepairCommand command) {
             int repairAmount;
             if (command.repairAmount != null) repairAmount = (int) command.repairAmount;
@@ -85,6 +103,11 @@ namespace PlayGame.Speech {
             spaceStation.GetModule(command.stationModule).Repair(repairAmount);
         }
 
+        /// <summary>
+        /// Returns the destinations transform based on the commands destination type.
+        /// </summary>
+        /// <param name="command"></param>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if the command has an invalid destination type.</exception>
         private Transform GetDestination(MovementCommand command) {
             switch (command.destinationType) {
                 case MovementCommand.DestinationType.SpaceStation:
@@ -98,6 +121,11 @@ namespace PlayGame.Speech {
             }
         }
 
+        /// <summary>
+        /// Performs the given movement command.
+        /// </summary>
+        /// <param name="command"></param>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if the command has an invalid movement type.</exception>
         private void PerformMovementCommand(MovementCommand command) {
             if (!command.turnOnly) moveObject.SetSpeed(1); // Start moving if not a turn command
 
@@ -125,8 +153,10 @@ namespace PlayGame.Speech {
             }
         }
 
-        // Check whether there is only one ping and if so go to the ping
-        // TODO: somehow number pings so that the player can go to a specific one
+        /// <summary>
+        /// Check that there is only one ping and if so move to the ping
+        /// </summary>
+        /// TODO: somehow number pings so that the player can go to a specific one
         private void MoveToPing() {
             var pings = pingManager.GetPings();
             if (pings.Count == 1) {
@@ -139,41 +169,47 @@ namespace PlayGame.Speech {
             }
         }
 
+        /// <summary>
+        /// Creates a new ping with the given location and type.
+        /// </summary>
+        /// <param name="command"></param>
         private void PerformPingCommand(PingCommand command) {
             Ping newPing = new Ping(command.gridCoord, command.pingType);
             pingManager.AddPing(newPing);
         }
 
+        /// <summary>
+        /// Transfers the players resources to the station if the player is close enough to the station.
+        /// <remarks>This method can only be called by the local player.</remarks>
+        /// </summary>
+        /// <param name="command"></param>
         private void PerformTransferCommand(TransferCommand command) {
-            // Check player is in the same grid square as the station
-            if (moveObject.NearStation()) {
-                if ((!DebugSettings.Debug && player.GetPhotonView().IsMine) || DebugSettings.Debug) {
+            if ((!DebugSettings.Debug && player.GetPhotonView().IsMine) || DebugSettings.Debug) {
+                // Check player is in the same grid square as the station
+                if (moveObject.NearStation()) {
                     spaceStation.AddResources(command.TransferAmount); // Add the resources into the space station
                     playerData.RemoveResources(command.TransferAmount); // Remove them from the player
-                }
-            } else {
-                EventsManager.AddMessage("You must be next to the space station to transfer resources");
+                } else EventsManager.AddMessage("You must be next to the space station to transfer resources");
             }
         }
 
+        /// <summary>
+        /// Performs the given toggle command.
+        /// </summary>
+        /// <param name="command"></param>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if the command has an invalid object type.</exception>
         private void PerformToggleCommand(ToggleCommand command) {
             switch (command.objectType) {
                 case ToggleCommand.ObjectType.MiningLaser:
-                    if (command.on) {
-                        moveObject.SetLockTargetType(ToggleCommand.LockTargetType.Asteroid); // If mining lock to asteroid
-                    } else {
-                        moveObject.SetLockTargetType(ToggleCommand.LockTargetType.None); // If stopping mining disable lock
-                    }
+                    if (command.on) moveObject.SetLockTargetType(ToggleCommand.LockTargetType.Asteroid); // If mining lock to asteroid
+                    else moveObject.SetLockTargetType(ToggleCommand.LockTargetType.None); // If stopping mining disable lock
                     break;
                 case ToggleCommand.ObjectType.Lock:
                     moveObject.SetLockTargetType(command.lockTargetType);
                     break;
                 case ToggleCommand.ObjectType.LaserGun:
-                    if (command.on) {
-                        moveObject.SetLockTargetType(ToggleCommand.LockTargetType.Pirate); // If shooting lock to pirate
-                    } else {
-                        moveObject.SetLockTargetType(ToggleCommand.LockTargetType.None); // If stopping shooting disable lock
-                    }
+                    if (command.on) moveObject.SetLockTargetType(ToggleCommand.LockTargetType.Pirate); // If shooting lock to pirate
+                    else moveObject.SetLockTargetType(ToggleCommand.LockTargetType.None); // If stopping shooting disable lock
                     break;
                 case ToggleCommand.ObjectType.Hyperdrive:
                     if (command.on) spaceStation.GetHyperdrive().Activate(); // Once activated the game will finish so it cannot be deactivated
@@ -183,14 +219,27 @@ namespace PlayGame.Speech {
             }
         }
 
+        /// <summary>
+        /// Returns the transform of the nearest asteroid to the player.
+        /// </summary>
+        /// <returns></returns>
         private Transform GetNearestAsteroid() {
             return player.GetComponent<MoveObject>().GetNearestAsteroidTransform();
         }
 
+        /// <summary>
+        /// Returns the transform of the nearest pirate to the player.
+        /// </summary>
+        /// <returns></returns>
         private Transform GetNearestPirate() {
             return player.GetComponent<MoveObject>().GetNearestEnemyTransform();
         }
 
+        /// <summary>
+        /// Sets the players speed to the fraction specified in the command.
+        /// <para>If the speed is 0, stop the player from rotating and disable the lock.</para>
+        /// </summary>
+        /// <param name="command"></param>
         private void PerformSpeedCommand(SpeedCommand command) {
             moveObject.SetSpeed(command.Speed);
             if (command.Speed == 0) {
