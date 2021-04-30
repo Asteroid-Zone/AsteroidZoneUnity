@@ -112,6 +112,7 @@ namespace PlayGame.Player {
             if (photonView.IsMine) {
                 bool cockpitMode = role == Role.Miner || DebugSettings.SinglePlayer;
                 GameObject.FindGameObjectWithTag(Tags.CameraManagerTag).GetComponent<CameraManager>().SetMode(cockpitMode);
+                _deadPanel = GameObject.FindGameObjectWithTag(Tags.DeadPanel);
             }
 
             // Set up the player
@@ -129,8 +130,6 @@ namespace PlayGame.Player {
                 _miningLaser = gameObject.GetComponent<MiningLaser>();
                 _moveObject = gameObject.GetComponent<MoveObject>();
                 
-                if (photonView.IsMine) _deadPanel = GameObject.FindGameObjectWithTag(Tags.DeadPanel);
-
                 // Levels do not reset when player dies, xp towards leveling up does get reset
                 _miningLevel = 0;
                 _combatLevel = 0;
@@ -174,6 +173,8 @@ namespace PlayGame.Player {
         /// Sets the station commanders initial position and starting quest.
         /// </summary>
         private void SetUpStationCommander() {
+            if (photonView.IsMine) _deadPanel.SetActive(false);
+            
             transform.position = GridManager.GetGridCentre();
             gameObject.transform.position = _spaceStation.position;
             currentQuest = QuestType.HelpPlayers;
