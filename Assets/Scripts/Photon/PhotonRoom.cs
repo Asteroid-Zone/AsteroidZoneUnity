@@ -350,8 +350,8 @@ namespace Photon {
           if(PhotonNetwork.InRoom) {
             foreach(Player player in PhotonNetwork.PlayerList) {
                 GameObject tempListing = Instantiate(playerListPrefab, playerPanel);
-                Text tempText = tempListing.transform.GetChild(0).GetComponent<Text>();
-                tempText.text = player.NickName;
+                tempListing.transform.GetChild(0).GetComponent<Text>().text = player.NickName;
+                tempListing.transform.GetChild(1).GetComponent<Text>().text = player.IsMasterClient ? "Commander" : "Miner";
             }
           }
         }
