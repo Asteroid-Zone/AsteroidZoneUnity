@@ -174,7 +174,7 @@ namespace Photon {
         /// <param name="room"></param>
         public void ClearRoom(RoomInfo room) {
             for (int i = roomPanel.childCount - 1; i >= 0; i--) {
-                if(roomPanel.GetChild(i).gameObject.GetComponent<RoomButton>().roomName == room.Name) { 
+                if(roomPanel.GetChild(i).gameObject.GetComponent<RoomButton>().roomInfo.Name == room.Name) { 
                     Destroy(roomPanel.GetChild(i).gameObject);
                 }
             }
@@ -189,7 +189,7 @@ namespace Photon {
             if(room.IsOpen && room.IsVisible) {
                 GameObject tempListing = Instantiate(roomListPrefab, roomPanel);
                 RoomButton tempButton = tempListing.GetComponent<RoomButton>();
-                tempButton.roomName = room.Name;
+                tempButton.roomInfo = room;
                 tempButton.SetRoom();
             }
         }

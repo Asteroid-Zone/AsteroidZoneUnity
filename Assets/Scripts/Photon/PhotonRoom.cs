@@ -22,6 +22,7 @@ namespace Photon {
         [SerializeField]
         private GameObject _progressLabel;
         public GameObject startButton;
+        public GameObject settingsButton;
 
         public GameObject playerListPrefab;
         public GameObject voiceChatPrefab;
@@ -78,6 +79,7 @@ namespace Photon {
             roomControlPanel.SetActive(true);
 
             startButton.SetActive(PhotonNetwork.IsMasterClient); // Only the host can start the game
+            settingsButton.SetActive(PhotonNetwork.IsMasterClient);
             
             Instantiate(voiceChatPrefab, gameObject.transform); // Create the voice chat
             
