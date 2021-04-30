@@ -100,7 +100,7 @@ namespace PlayGame.Player {
             // Initialise the players stats
             _playerStats = new PlayerStats();
             if (!DebugSettings.Debug) _playerStats.photonID = photonView.ViewID;
-            _playerStats.playerName = PhotonNetwork.NickName;
+            _playerStats.playerName = photonView.Owner.NickName;
             _playerStats.role = role;
             StatsManager.PlayerStatsList.Add(_playerStats);
 
