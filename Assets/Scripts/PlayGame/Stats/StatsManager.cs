@@ -4,8 +4,16 @@ using PlayGame.Player;
 using UnityEngine;
 
 namespace PlayGame.Stats {
+    
+    /// <summary>
+    /// This class manages the games stats.
+    /// </summary>
     public static class StatsManager {
 
+        /// <summary>
+        /// Player roles that are displayed at the end of the game.
+        /// <para>Based on the players performance.</para>
+        /// </summary>
         public enum EndRole {
             Commander,
             Miner,
@@ -17,6 +25,11 @@ namespace PlayGame.Stats {
         public static readonly List<PlayerStats> PlayerStatsList = new List<PlayerStats>();
         public static readonly GameStats GameStats = new GameStats();
 
+        /// <summary>
+        /// Returns the PlayerStats of the player with the given photonID.
+        /// <para>Returns null if no player is found with the given photonID.</para>
+        /// </summary>
+        /// <param name="id">PhotonID of the player.</param>
         public static PlayerStats GetPlayerStats(int id) {
             foreach (PlayerStats playerStats in PlayerStatsList) {
                 if (playerStats.photonID.Equals(id)) return playerStats;
@@ -26,6 +39,9 @@ namespace PlayGame.Stats {
             return null;
         }
 
+        /// <summary>
+        /// Sorts the list of PlayerStats into descending order by final score.
+        /// </summary>
         public static void SortPlayersByScore() {
             List<PlayerStats> statsList = PlayerStatsList.OrderByDescending(x => x.finalScore).ThenByDescending(x => x.piratesDestroyed).ToList();
             
@@ -33,6 +49,9 @@ namespace PlayGame.Stats {
             PlayerStatsList.AddRange(statsList);
         }
 
+        /// <summary>
+        /// Calculates each players final score and the total game score.
+        /// </summary>
         public static void CalculateScores() {
             int score = 0;
             
@@ -44,10 +63,17 @@ namespace PlayGame.Stats {
             GameStats.finalScore = score;
         }
 
+        /// <summary>
+        /// Returns the players final score.
+        /// </summary>
+        /// <param name="playerStats"></param>
         private static int GetPlayerScore(PlayerStats playerStats) {
             return playerStats.role == Role.Miner ? GetMinerScore(playerStats) : GetCommanderScore();
         }
 
+        /// <summary>
+        /// Calculates and returns the station commanders final score.
+        /// </summary>
         private static int GetCommanderScore() {
             int score = 0;
             
@@ -57,6 +83,10 @@ namespace PlayGame.Stats {
             return score;
         }
 
+        /// <summary>
+        /// Calculates and returns a miners final score.
+        /// </summary>
+        /// <param name="playerStats">The PlayerStats of the miner.</param>
         private static int GetMinerScore(PlayerStats playerStats) {
             int score = 0;
             
@@ -76,6 +106,10 @@ namespace PlayGame.Stats {
             return score;
         }
 
+        /// <summary>
+        /// Selects and returns an EndRole for a player.
+        /// </summary>
+        /// <param name="id">The photonID of the player.</param>
         public static EndRole GetEndRole(int id) {
             PlayerStats playerStats = GetPlayerStats(id);
             if (playerStats.role == Role.StationCommander) return EndRole.Commander;
@@ -87,6 +121,10 @@ namespace PlayGame.Stats {
             return EndRole.Support;
         }
 
+        /// <summary>
+        /// Returns true if the player has the most kills near the station.
+        /// </summary>
+        /// <param name="playerStats"></param>
         private static bool HasMostDefenceKills(PlayerStats playerStats) {
             foreach (PlayerStats stats in PlayerStatsList) {
                 if (!playerStats.photonID.Equals(stats.photonID)) {
@@ -97,6 +135,10 @@ namespace PlayGame.Stats {
             return true;
         }
         
+        /// <summary>
+        /// Returns true if the player has the most kills not near the station.
+        /// </summary>
+        /// <param name="playerStats"></param>
         private static bool HasMostAttackKills(PlayerStats playerStats) {
             foreach (PlayerStats stats in PlayerStatsList) {
                 if (!playerStats.photonID.Equals(stats.photonID)) {
@@ -107,6 +149,10 @@ namespace PlayGame.Stats {
             return true;
         }
         
+        /// <summary>
+        /// Returns true if the player has the most resources harvested.
+        /// </summary>
+        /// <param name="playerStats"></param>
         private static bool HasMostMined(PlayerStats playerStats) {
             foreach (PlayerStats stats in PlayerStatsList) {
                 if (!playerStats.photonID.Equals(stats.photonID)) {

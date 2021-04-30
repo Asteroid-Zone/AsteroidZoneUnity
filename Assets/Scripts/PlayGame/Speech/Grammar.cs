@@ -82,6 +82,7 @@ namespace PlayGame.Speech {
         private static readonly List<string> RepairCommandsWrong = new List<string>{"meant", "men"};
 
         private static readonly List<string> RespawnCommands = new List<string>{"respawn", "revive"};
+        // Record, respond
 
         // Lists containing synonyms for objects
         private static readonly List<string> Pirate = new List<string>{Strings.Pirate, "enemy"};

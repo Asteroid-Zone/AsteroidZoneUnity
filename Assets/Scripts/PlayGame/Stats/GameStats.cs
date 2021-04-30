@@ -1,4 +1,8 @@
 ﻿namespace PlayGame.Stats {
+    
+    /// <summary>
+    /// This class stores overall game stats.
+    /// </summary>
     public class GameStats {
 
         public bool victory;
@@ -13,6 +17,9 @@
 
         public int finalScore;
 
+        /// <summary>
+        /// Resets the game stats.
+        /// </summary>
         public void Reset() {
             victory = false;
             startTime = 0;

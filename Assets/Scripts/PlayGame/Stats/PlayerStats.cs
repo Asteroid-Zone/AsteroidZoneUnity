@@ -1,6 +1,10 @@
 ﻿using PlayGame.Player;
 
 namespace PlayGame.Stats {
+    
+    /// <summary>
+    /// This class stores player stats.
+    /// </summary>
     public class PlayerStats {
 
         public int photonID;
