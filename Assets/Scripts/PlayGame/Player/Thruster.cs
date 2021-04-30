@@ -1,36 +1,32 @@
 ﻿using UnityEngine;
 
-namespace PlayGame.Player
-{
-    public class Thruster : MonoBehaviour
-    {
+namespace PlayGame.Player {
+    
+    /// <summary>
+    /// This class controls the ships thruster particle effect.
+    /// </summary>
+    public class Thruster : MonoBehaviour {
+        
         private Transform _shipTransform;
         private ParticleSystem _thrusterParticles;
         private Vector3 _prevPosition;
 
-        // Start is called before the first frame update
-        private void Start()
-        {
+        private void Start() {
             _shipTransform = transform.parent.parent.parent;
             _thrusterParticles = GetComponent<ParticleSystem>();
             _prevPosition = _shipTransform.position;
         }
 
-        // Update is called once per frame
-        private void Update()
-        {
+        /// <summary>
+        /// Enables the thrusters particle effect if the players ship has moved.
+        /// <para>Otherwise disables the thrusters particle effect.</para>
+        /// </summary>
+        private void Update() {
             Vector3 currentPosition = _shipTransform.position;
-            // Probably a better way to do this
-            //float speed = (currentPosition - _prevPosition).sqrMagnitude / Time.deltaTime;
-            if (currentPosition != _prevPosition)
-            {
+            if (currentPosition != _prevPosition) {
                 _thrusterParticles.Play();
                 _prevPosition = currentPosition;
-            }
-            else
-            {
-                _thrusterParticles.Stop();
-            }
+            } else _thrusterParticles.Stop();
         }
     }
 }

@@ -4,8 +4,11 @@ using Statics;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace PlayGame.Player
-{
+namespace PlayGame.Player {
+    
+    /// <summary>
+    /// This class controls the players current quest.
+    /// </summary>
     public class QuestDeterminer : MonoBehaviour {
 
         private PlayerData _playerData;
@@ -14,17 +17,18 @@ namespace PlayGame.Player
         private bool _stationDamaged;
         private UnityEvent _stationAttacked;
 
-        // Start is called before the first frame update
-        void Start() {
+        /// <summary>
+        /// Fetches components used for determining the players quest.
+        /// <para>Starts a coroutine to determine the players quest.</para>
+        /// </summary>
+        private void Start() {
             _playerData = GetComponent<PlayerData>();
             _spaceStation = GameObject.FindGameObjectWithTag(Tags.StationTag).GetComponent<SpaceStation.SpaceStation>();
             
             if (_playerData.GetRole() != Role.StationCommander) {
                 _moveObject = GetComponent<MoveObject>();
                 _stationDamaged = false;
-                // Can't find a better way of doing this
-                SpaceStation.SpaceStation spaceStation =
-                    GameObject.Find("SpaceStation").GetComponent<SpaceStation.SpaceStation>();
+                SpaceStation.SpaceStation spaceStation = GameObject.FindGameObjectWithTag(Tags.StationTag).GetComponent<SpaceStation.SpaceStation>();
                 _stationAttacked = spaceStation.stationAttacked;
                 _stationAttacked.AddListener(OnStationDamaged);
 
@@ -32,11 +36,17 @@ namespace PlayGame.Player
             } else StartCoroutine(DetermineQuestCommander());
         }
     
-        public void OnStationDamaged()
-        {
+        /// <summary>
+        /// Method is called by a UnityEvent when the station is attacked.
+        /// <para>Sets _stationDamaged to true.</para>
+        /// </summary>
+        public void OnStationDamaged() {
             _stationDamaged = true;
         }
     
+        /// <summary>
+        /// This method runs in a coroutine to determine a miners current quest.
+        /// </summary>
         private IEnumerator DetermineQuestMiner() {
             while (true) {
                 Transform nearestEnemy = _moveObject.GetNearestEnemyTransform();
@@ -66,6 +76,9 @@ namespace PlayGame.Player
             }
         }
 
+        /// <summary>
+        /// This method runs in a coroutine to determine the station commanders current quest.
+        /// </summary>
         private IEnumerator DetermineQuestCommander() {
             while (true) {
                 if (_spaceStation.GetHyperdrive().IsFunctional()) _playerData.SetQuest(QuestType.ActivateHyperdrive);

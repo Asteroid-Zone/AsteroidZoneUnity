@@ -390,7 +390,10 @@ namespace PlayGame.Player {
             }
         }
 
-        
+        /// <summary>
+        /// Activates the death screen if this instance belongs to the local player.
+        /// <para>Disables the ships model and stops its lasers and movement.</para>
+        /// </summary>
         private void Die() {
             dead = true;
             
@@ -407,6 +410,11 @@ namespace PlayGame.Player {
             _moveObject.SetLockTargetType(ToggleCommand.LockTargetType.None);
         }
         
+        /// <summary>
+        /// This method recursively calls SetActive on the game object provided and all child transforms.
+        /// </summary>
+        /// <param name="o">The GameObject to SetActive.</param>
+        /// <param name="active"></param>
         private static void SetActiveRecursively(GameObject o, bool active) {
             o.SetActive(active);
 
@@ -415,46 +423,76 @@ namespace PlayGame.Player {
             }
         }
 
-        public static List<GameObject> GetList() {
-            return Players;
-        }
-        
+        /// <summary>
+        /// Returns the number of resources the player has.
+        /// </summary>
         public int GetResources() {
             return _resources;
         }
 
+        /// <summary>
+        /// Increases the amount of resources the player has.
+        /// </summary>
+        /// <param name="resources">Amount of resources to add.</param>
         public void AddResources(int resources) {
             StatsManager.GameStats.resourcesHarvested += resources;
             _resources += resources;
             _playerStats.resourcesHarvested += resources;
         }
         
+        /// <summary>
+        /// Performs an RPC call to decrease the players resources.
+        /// <para>Reduces the players resources if debug mode is enabled.</para>
+        /// </summary>
+        /// <param name="amount">The amount of resources to be removed.</param>
         public void RemoveResources(int amount) {
             if (!DebugSettings.Debug) photonView.RPC(nameof(RPC_RemoveResources), RpcTarget.AllBuffered, amount);
             else _resources -= amount;
         }
 
+        /// <summary>
+        /// Reduces the players resources.
+        /// <remarks>Method is called via RPC.</remarks>
+        /// </summary>
+        /// <param name="amount">The amount of resources to be removed.</param>
         [PunRPC]
         public void RPC_RemoveResources(int amount) {
             _resources -= amount;
         }
 
+        /// <summary>
+        /// Returns the players role.
+        /// </summary>
         public Role GetRole() {
             return role;
         }
     
+        /// <summary>
+        /// Returns the players max speed.
+        /// </summary>
         public float GetMaxSpeed() {
             return _maxSpeed;
         }
 
+        /// <summary>
+        /// Returns the players current speed.
+        /// </summary>
         public float GetSpeed() {
             return _playerAgent.speed;
         }
 
+        /// <summary>
+        /// Returns the players rotation speed.
+        /// </summary>
         public float GetRotateSpeed() {
             return _rotateSpeed;
         }
 
+        /// <summary>
+        /// Sets the players current speed to a fraction of the maximum speed.
+        /// <para>Disables the players NavMeshAgent if the fraction is 0.</para>
+        /// </summary>
+        /// <param name="fraction">Fraction of max speed. Value between 0 and 1.</param>
         public void SetSpeed(float fraction) {
             if (fraction < 0) fraction = 0;
             if (fraction > 1) fraction = 1;
@@ -465,60 +503,94 @@ namespace PlayGame.Player {
             }
         }
 
+        /// <summary>
+        /// Returns the players combat laser speed.
+        /// </summary>
         public int GetLaserSpeed() {
             return _laserSpeed;
         }
 
+        /// <summary>
+        /// Returns the players max health.
+        /// </summary>
         public int GetMaxHealth() {
             return _maxHealth;
         }
 
+        /// <summary>
+        /// Returns the players current health.
+        /// </summary>
         public int GetHealth() {
             return _health;
         }
 
+        /// <summary>
+        /// Returns the players combat laser range.
+        /// </summary>
         public int GetLaserRange() {
             return _laserRange;
         }
 
-        // todo add modifier to this if adding powerups
+        /// <summary>
+        /// Returns the radius of the area that the player can see.
+        /// </summary>
         public float GetLookRadius() {
             return _lookRadius;
         }
 
-        public QuestType GetQuest()
-        {
+        /// <summary>
+        /// Returns the players current quest.
+        /// </summary>
+        /// <returns></returns>
+        public QuestType GetQuest() {
             return currentQuest;
         }
 
-        public void SetQuest(QuestType quest)
-        {
+        /// <summary>
+        /// Sets the players quest.
+        /// </summary>
+        /// <param name="quest"></param>
+        public void SetQuest(QuestType quest) {
             currentQuest = quest;
         }
 
+        /// <summary>
+        /// Returns the players combat laser damage with some random variation.
+        /// </summary>
+        /// <returns></returns>
         public int GetLaserDamage() {
-            // Make the amount of damage vary a bit
             return _laserDamage + Random.Range(-_laserDamageRange, _laserDamageRange + 1);
         }
 
-        public void TakeDamage(int damage)
-        {
+        /// <summary>
+        /// Reduces the players health by the given amount.
+        /// </summary>
+        /// <param name="damage"></param>
+        public void TakeDamage(int damage) {
             _health -= damage;
-            if (_health < 0)
-            {
-                _health = 0;
-            }
+            if (_health < 0) _health = 0;
         }
         
+        /// <summary>
+        /// Sets the final level values in the players stats to the players current levels.
+        /// </summary>
         public void SetFinalLevels() {
             _playerStats.finalCombatLevel = _combatLevel;
             _playerStats.finalMiningLevel = _miningLevel;
         }
 
+        /// <summary>
+        /// Returns the players id.
+        /// </summary>
         public int GetPlayerID() {
             return _playerID;
         }
 
+        /// <summary>
+        /// Returns the players PlayerData with the given photonID.
+        /// </summary>
+        /// <param name="photonID"></param>
+        /// <exception cref="ArgumentException">Thrown if no player is found with the given photonID.</exception>
         public static PlayerData GetPlayerWithID(int photonID) {
             foreach (GameObject player in Players) {
                 if (player.GetPhotonView().ViewID == photonID) return player.GetComponent<PlayerData>();
@@ -527,9 +599,14 @@ namespace PlayGame.Player {
             throw new ArgumentException("Invalid photon id - No player was found with photon id (" + photonID + ")");
         }
 
+        /// <summary>
+        /// Returns a random dead players PlayerData.
+        /// <para>Returns null if no dead players are found.</para>
+        /// </summary>
         public static PlayerData GetRandomDeadPlayer() {
             List<PlayerData> deadPlayers = new List<PlayerData>();
             
+            // Creates a list of dead players
             foreach (GameObject player in Players) {
                 PlayerData playerData = player.GetComponent<PlayerData>();
                 if (playerData.dead) deadPlayers.Add(playerData);
@@ -537,16 +614,16 @@ namespace PlayGame.Player {
 
             if (deadPlayers.Count == 0) return null;
 
+            // Select a random dead player
             int randomInt = Random.Range(0, deadPlayers.Count);
             return deadPlayers[randomInt];
         }
 
-        public static PlayerData GetMyPlayerData()
-        {
-            // Gets the PlayerData object of the current (mine) player
-            return DebugSettings.Debug
-                ? Players[0].GetComponent<PlayerData>()
-                : PhotonPlayer.Instance.myAvatar.GetComponent<PlayerData>();
+        /// <summary>
+        /// Returns the PlayerData of the local player.
+        /// </summary>
+        public static PlayerData GetMyPlayerData() {
+            return DebugSettings.Debug ? Players[0].GetComponent<PlayerData>() : PhotonPlayer.Instance.myAvatar.GetComponent<PlayerData>();
         }
 
     }

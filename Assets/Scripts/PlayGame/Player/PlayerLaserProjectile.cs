@@ -4,7 +4,10 @@ using Statics;
 using UnityEngine;
 
 namespace PlayGame.Player {
-  
+    
+    /// <summary>
+    /// This class controls a players laser.
+    /// </summary>
     public class PlayerLaserProjectile : MonoBehaviour {
         
         private Vector3 _startPosition;
@@ -14,6 +17,10 @@ namespace PlayGame.Player {
             _startPosition = transform.position;
         }
 
+        /// <summary>
+        /// Moves the laser.
+        /// <para>Destroys the laser if it has reached its range.</para>
+        /// </summary>
         private void Update() {
             transform.Translate(-transform.forward * (_shootingPlayerData.GetLaserSpeed() * Time.deltaTime));
             if (Vector3.Distance(transform.position, _startPosition) > _shootingPlayerData.GetLaserRange()) {
@@ -21,6 +28,12 @@ namespace PlayGame.Player {
             }
         }
 
+        /// <summary>
+        /// <para>Method is called when the laser hits a GameObject.</para>
+        /// Damages the object it collided with then destroys the laser.
+        /// <remarks>This method only damages a pirate if called by the host or in debug mode.</remarks>
+        /// </summary>
+        /// <param name="collision"></param>
         private void OnTriggerEnter(Collider collision) {
             try {
                 // todo play animation (explosion)
@@ -38,14 +51,16 @@ namespace PlayGame.Player {
                     Asteroid asteroid = collision.gameObject.GetComponent<Asteroid>();
                     asteroid.MineAsteroid(GameConstants.PlayerLaserMiningRate, _shootingPlayerData);
                 }
-            }
-            finally
-            {
+            } finally {
                 // Always destroy the laser in the end
                 Destroy(gameObject);
             }
         }
 
+        /// <summary>
+        /// Stores the PlayerData that fired the laser.
+        /// </summary>
+        /// <param name="shootingPlayerData"></param>
         public void SetShootingPlayerData(PlayerData shootingPlayerData) {
             _shootingPlayerData = shootingPlayerData;
         }

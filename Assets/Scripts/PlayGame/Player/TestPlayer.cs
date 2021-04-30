@@ -1,10 +1,12 @@
 ﻿using Statics;
 using UnityEngine;
 
-namespace PlayGame.Player
-{
-    public class TestPlayer : MonoBehaviour
-    {
+namespace PlayGame.Player {
+    
+    /// <summary>
+    /// This class creates a player that can be used for testing.
+    /// </summary>
+    public class TestPlayer : MonoBehaviour {
         #region Singleton
         private static TestPlayer _instance;
 
@@ -37,8 +39,11 @@ namespace PlayGame.Player
         public GameObject playerShipPrefab;
         private GameObject _playerShipInstance;
 
-        public static GameObject GetPlayerShip()
-        {
+        /// <summary>
+        /// Returns the players GameObject.
+        /// <para>Returns null if the instance is null.</para>
+        /// </summary>
+        public static GameObject GetPlayerShip() {
             return _instance != null ? _instance._playerShipInstance : null;
         }
     }
