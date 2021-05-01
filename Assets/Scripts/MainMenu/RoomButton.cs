@@ -1,4 +1,5 @@
 ﻿using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine.UI;
 
 namespace MainMenu {
@@ -9,14 +10,16 @@ namespace MainMenu {
     public class RoomButton : MonoBehaviourPunCallbacks {
        
         public Text nameText;
+        public Text playersText;
 
-        public string roomName;
+        public RoomInfo roomInfo;
 
         /// <summary>
         /// Sets the text to the room name.
         /// </summary>
         public void SetRoom() {
-            nameText.text = roomName;
+            nameText.text = roomInfo.Name;
+            playersText.text = $"{roomInfo.PlayerCount}/{roomInfo.MaxPlayers}";
         }
 
         /// <summary>
@@ -24,7 +27,7 @@ namespace MainMenu {
         /// Joins the PhotonRoom and destroys the RoomListing.
         /// </summary>
         public void JoinRoom() {
-            PhotonNetwork.JoinRoom(roomName);
+            PhotonNetwork.JoinRoom(roomInfo.Name);
             Destroy(gameObject);
         }
     }

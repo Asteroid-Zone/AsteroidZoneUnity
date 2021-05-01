@@ -22,6 +22,7 @@ namespace Photon {
         [SerializeField]
         private GameObject _progressLabel;
         public GameObject startButton;
+        public GameObject settingsButton;
 
         public GameObject playerListPrefab;
         public GameObject voiceChatPrefab;
@@ -77,7 +78,10 @@ namespace Photon {
             lobbyControlPanel.SetActive(false);
             roomControlPanel.SetActive(true);
 
+            roomControlPanel.transform.GetChild(0).GetChild(0).GetComponent<Text>().text = $"Room: {PhotonNetwork.CurrentRoom.Name}";
+            
             startButton.SetActive(PhotonNetwork.IsMasterClient); // Only the host can start the game
+            settingsButton.SetActive(PhotonNetwork.IsMasterClient);
             
             Instantiate(voiceChatPrefab, gameObject.transform); // Create the voice chat
             
@@ -348,8 +352,8 @@ namespace Photon {
           if(PhotonNetwork.InRoom) {
             foreach(Player player in PhotonNetwork.PlayerList) {
                 GameObject tempListing = Instantiate(playerListPrefab, playerPanel);
-                Text tempText = tempListing.transform.GetChild(0).GetComponent<Text>();
-                tempText.text = player.NickName;
+                tempListing.transform.GetChild(0).GetComponent<Text>().text = player.NickName;
+                tempListing.transform.GetChild(1).GetComponent<Text>().text = player.IsMasterClient ? "Commander" : "Miner";
             }
           }
         }
