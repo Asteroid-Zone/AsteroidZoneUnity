@@ -17,9 +17,9 @@ namespace PlayGame.UI
 
         private Text _text;
         
-
         private void Start() {
-            player = (!DebugSettings.Debug && SceneManager.GetActiveScene().name != Scenes.TutorialScene) ? PhotonPlayer.Instance.myAvatar : TestPlayer.GetPlayerShip();
+            if (SceneManager.GetActiveScene().name == Scenes.TutorialScene) return;
+            player = (!DebugSettings.Debug) ? PhotonPlayer.Instance.myAvatar : TestPlayer.GetPlayerShip();
             _text = GetComponent<Text>();
             _playerData = player.GetComponent<PlayerData>();
         }
