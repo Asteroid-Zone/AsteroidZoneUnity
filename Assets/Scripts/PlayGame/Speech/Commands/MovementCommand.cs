@@ -39,6 +39,7 @@ namespace PlayGame.Speech.Commands {
 
         public readonly MovementType movementType;
         public readonly Vector3 direction;
+        public readonly string directionString;
 
         public readonly DestinationType destinationType;
         
@@ -63,6 +64,7 @@ namespace PlayGame.Speech.Commands {
             this.movementType = movementType;
             switch (movementType) {
                 case MovementType.Direction:
+                    directionString = data;
                     direction = GetDirectionVectorFromString(data, player);
                     break;
                 case MovementType.Destination:

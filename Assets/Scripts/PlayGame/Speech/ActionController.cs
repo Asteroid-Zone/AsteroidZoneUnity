@@ -7,7 +7,9 @@ using PlayGame.Player.Movement;
 using PlayGame.Speech.Commands;
 using PlayGame.UI;
 using Statics;
+using Tutorial;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Ping = PlayGame.Pings.Ping;
 
 namespace PlayGame.Speech {
@@ -34,6 +36,8 @@ namespace PlayGame.Speech {
         /// <param name="command"></param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if the command has an invalid command type.</exception>
         public void PerformActions(Command command) {
+            if (SceneManager.GetActiveScene().name == Scenes.TutorialScene) TutorialManager.LatestCommand = command;
+            
             if (playerData.GetRole() != Role.StationCommander && command.IsCommanderOnly()) { // Prevent players from performing station commander commands
                 if (playerData.photonView.IsMine) EventsManager.AddMessage("Only the station commander can perform that command!");
                 return;
