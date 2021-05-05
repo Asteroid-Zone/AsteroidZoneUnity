@@ -49,10 +49,6 @@ namespace Tutorial {
             while (!_yes.Contains(inputText.text) && !_no.Contains(inputText.text)) {
                 yield return null;
             }
-            
-            Debug.Log("pre");
-            yield return new WaitForSeconds(2f);
-            Debug.Log("post");
 
             if (_yes.Contains(inputText.text)) {
                 subtitlesText.text = "Acknowledged. Let's get you up to speed on what will be expected of you during this mission. Entering virtualisation.";
@@ -70,53 +66,49 @@ namespace Tutorial {
                 _cameraManager.SetMode(true);
             
                 subtitlesText.text = "This is your ship. Attempt to interface with it through voice commands. Tell it to move forwards.";
-                WaitForMovement(Strings.Forward, null, false);
+                while(!WaitForMovement(Strings.Forward, null, false)) yield return null;
             
                 subtitlesText.text = "Great! Now tell it to stop.";
-                WaitForStopCommand();
+                while(!WaitForStopCommand()) yield return null;
             
                 subtitlesText.text = "And now backwards?";
-                WaitForMovement(Strings.Back, null, false);
+                while(!WaitForMovement(Strings.Back, null, false)) yield return null;
             
                 subtitlesText.text = "Okay, perfect. And now stop.";
-                WaitForStopCommand();
+                while(!WaitForStopCommand()) yield return null;
             
                 subtitlesText.text = "Excellent, that's all functional. You can make it turn left or right. Try that.";
-                WaitForMovement(Strings.Right, Strings.Left, true);
+                while(!WaitForMovement(Strings.Right, Strings.Left, true)) yield return null;
             
                 subtitlesText.text = "And stop?";
-                WaitForStopCommand();
+                while(!WaitForStopCommand()) yield return null;
             
                 subtitlesText.text = "There we go. You can also directly move left or right as well. See for yourself.";
-                WaitForMovement(Strings.Right, Strings.Left, false);
+                while(!WaitForMovement(Strings.Right, Strings.Left, false)) yield return null;
             
                 subtitlesText.text = "Great, that's enough.";
             }
+        }
+
+        private bool WaitForMovement(string direction, string direction2, bool turn) {
+            if (LatestCommand == null) return false;
+            if (LatestCommand.GetCommandType() != Command.CommandType.Movement) return false;
+            MovementCommand command = (MovementCommand) LatestCommand;
             
-            Debug.Log("hi");
+            if (command.movementType != MovementCommand.MovementType.Direction) return false;
+            if (command.turnOnly != turn) return false;
+            if (command.directionString.Equals(direction)) return true;
+            if (direction2 != null && command.directionString.Equals(direction2)) return true;
+            return false;
         }
 
-        private static void WaitForMovement(string direction, string direction2, bool turn) {
-            while (true) {
-                if (LatestCommand == null) continue;
-                if (LatestCommand.GetCommandType() != Command.CommandType.Movement) continue;
-                MovementCommand command = (MovementCommand) LatestCommand;
-                
-                if (command.movementType != MovementCommand.MovementType.Direction) continue;
-                if (command.turnOnly != turn) continue;
-                if (command.directionString.Equals(direction)) break;
-                if (direction2 != null && command.directionString.Equals(direction2)) break;
-            }
-        }
+        private bool WaitForStopCommand() {
+            if (LatestCommand == null) return false;
+            if (LatestCommand.GetCommandType() != Command.CommandType.Speed) return false;
+            SpeedCommand command = (SpeedCommand) LatestCommand;
 
-        private static void WaitForStopCommand() {
-            while (true) {
-                if (LatestCommand == null) continue;
-                if (LatestCommand.GetCommandType() != Command.CommandType.Speed) continue;
-                SpeedCommand command = (SpeedCommand) LatestCommand;
-                
-                if (command.Speed == 0) break;
-            }
+            if (command.Speed == 0) return true;
+            return false;
         }
 
     }
