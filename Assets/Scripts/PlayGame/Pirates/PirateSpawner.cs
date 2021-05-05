@@ -82,11 +82,35 @@ namespace PlayGame.Pirates {
         /// </summary>
         public void SpawnReinforcements() {
             if (!DebugSettings.Debug && !PhotonNetwork.IsMasterClient) return;
+            if (SceneManager.GetActiveScene().name == Scenes.TutorialScene) return;
             int reinforcements = Random.Range(GameConstants.PirateMinReinforcements, GameConstants.PirateMaxReinforcements);
 
             for (int i = 0; i < reinforcements; i++) {
                 SpawnPirate(PirateData.PirateType.Elite);
             }
+        }
+
+        public GameObject SpawnPirate(PirateData.PirateType type, GridCoord gridCoord) {
+            GameObject pirate;
+            string prefab;
+            switch (type) {
+                case PirateData.PirateType.Scout:
+                    pirate = scout;
+                    prefab = Prefabs.PirateScout;
+                    break;
+                case PirateData.PirateType.Elite:
+                    pirate = elite;
+                    prefab = Prefabs.PirateElite;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
+            
+            GameObject newPirate = Instantiate(pirate, gridCoord.GetWorldVector(), Quaternion.identity);
+            newPirate.transform.parent = gameObject.transform;
+            newPirate.GetComponent<PirateController>().pirateSpawner = this;
+
+            return newPirate;
         }
 
         /// <summary>

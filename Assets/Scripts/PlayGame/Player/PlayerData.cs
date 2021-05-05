@@ -141,6 +141,7 @@ namespace PlayGame.Player {
                 _laserDamageRange = GameConstants.PlayerLaserDamageRange;
                 
                 _maxHealth = GameConstants.PlayerMaxHealth;
+                if (SceneManager.GetActiveScene().name == Scenes.TutorialScene) _maxHealth = 600;
                 _maxSpeed = GameConstants.PlayerMaxSpeed;
                 _rotateSpeed = GameConstants.PlayerRotateSpeed;
 

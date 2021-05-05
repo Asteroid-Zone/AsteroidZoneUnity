@@ -88,6 +88,11 @@ namespace PlayGame {
             else photonView.RPC(nameof(SetParent), RpcTarget.AllBuffered, newAsteroid.GetPhotonView().ViewID);
         }
 
+        public void SpawnAsteroid(GridCoord gridCoord) {
+            GameObject newAsteroid = Instantiate(asteroid, gridCoord.GetWorldVector(), Quaternion.identity);
+            newAsteroid.transform.parent = gameObject.transform;
+        }
+
         [PunRPC]
         public void SetParent(int photonViewID) {
             PhotonView.Find(photonViewID).transform.parent = gameObject.transform;

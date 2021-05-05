@@ -6,6 +6,7 @@ using PlayGame.UI;
 using Statics;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -126,8 +127,7 @@ namespace PlayGame.Pirates {
         /// <remarks>This method can only be called by the host or in debug mode.</remarks>
         /// </summary>
         private void Despawn() {
-            if (!DebugSettings.Debug && gameObject != null && PhotonNetwork.IsMasterClient) 
-                GetComponent<PhotonView>().RPC(nameof(DestroyOnNetwork), RpcTarget.MasterClient, gameObject.GetComponent<PhotonView>().ViewID);
+            if (!DebugSettings.Debug && gameObject != null && PhotonNetwork.IsMasterClient) GetComponent<PhotonView>().RPC(nameof(DestroyOnNetwork), RpcTarget.MasterClient, gameObject.GetComponent<PhotonView>().ViewID);
             else if (DebugSettings.Debug) Destroy(gameObject);
         }
 

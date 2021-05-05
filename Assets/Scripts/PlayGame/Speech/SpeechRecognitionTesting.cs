@@ -54,8 +54,8 @@ namespace PlayGame.Speech {
                 speechRecognition.GetFinalResponse("go");
             }
 
-            if (Input.GetKeyDown(KeyCode.R)) { // Move towards Grid(C, 6)
-                speechRecognition.GetFinalResponse("move to c6");
+            if (Input.GetKeyDown(KeyCode.R)) { // Move towards Grid(C, 3)
+                speechRecognition.GetFinalResponse("move to c3");
             }
         
             if (Input.GetKeyDown(KeyCode.F)) { // Move towards ping

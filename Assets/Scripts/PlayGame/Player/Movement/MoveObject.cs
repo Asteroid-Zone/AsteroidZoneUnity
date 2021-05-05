@@ -198,7 +198,7 @@ namespace PlayGame.Player.Movement {
                 Vector3 closestPointPlayer = _playerCollider.ClosestPoint(closestPointTarget);
                 
                 // The colliders are very close, stop the player ship
-                if (Vector3.Distance(closestPointPlayer, closestPointTarget) < 2) {
+                if (Vector3.Distance(closestPointPlayer, closestPointTarget) < 1) {
                     SetSpeed(0f);
                     return true;
                 }
