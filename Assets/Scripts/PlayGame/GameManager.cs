@@ -37,6 +37,7 @@ namespace PlayGame {
             PirateSpawner.ResetStaticVariables();
             TestPlayer.ResetStaticVariables();
             AsteroidSpawner.ResetStaticVariables();
+            EventsManager.ResetStaticVariables();
         }
 
         private void Update() {

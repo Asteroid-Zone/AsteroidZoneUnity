@@ -2,6 +2,7 @@
 using PlayGame.Player;
 using Statics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace PlayGame.Camera {
     
@@ -22,7 +23,7 @@ namespace PlayGame.Camera {
 
         private void Start() {
             // Sets the target to be the player
-            target = !DebugSettings.Debug ? PhotonPlayer.Instance.myAvatar.transform : TestPlayer.GetPlayerShip().transform;
+            target = (!DebugSettings.Debug && SceneManager.GetActiveScene().name != Scenes.TutorialScene) ? PhotonPlayer.Instance.myAvatar.transform : TestPlayer.GetPlayerShip().transform;
         }
 
         /// <summary>

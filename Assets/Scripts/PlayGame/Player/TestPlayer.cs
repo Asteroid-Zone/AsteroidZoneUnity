@@ -1,5 +1,6 @@
 ﻿using Statics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace PlayGame.Player {
     
@@ -27,8 +28,7 @@ namespace PlayGame.Player {
             }
 
             // Enable the test player ship if Debug mode.
-            if (DebugSettings.Debug)
-            {
+            if (DebugSettings.Debug || SceneManager.GetActiveScene().name == Scenes.TutorialScene) {
                 Vector3 testPlayerSpawnPosition = GameObject.FindGameObjectWithTag(Tags.TestPlayerShipSpawnLoc).transform.position;
                 _playerShipInstance = Instantiate(playerShipPrefab, testPlayerSpawnPosition, Quaternion.identity);
             }

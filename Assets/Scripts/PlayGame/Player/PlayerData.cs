@@ -10,6 +10,7 @@ using PlayGame.UI;
 using Statics;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 namespace PlayGame.Player {
@@ -99,8 +100,10 @@ namespace PlayGame.Player {
 
             // Initialise the players stats
             _playerStats = new PlayerStats();
-            if (!DebugSettings.Debug) _playerStats.photonID = photonView.ViewID;
-            _playerStats.playerName = photonView.Owner.NickName;
+            if (!DebugSettings.Debug && SceneManager.GetActiveScene().name != Scenes.TutorialScene) {
+                _playerStats.photonID = photonView.ViewID;
+                _playerStats.playerName = photonView.Owner.NickName;
+            }
             _playerStats.role = role;
             StatsManager.PlayerStatsList.Add(_playerStats);
 
@@ -109,7 +112,7 @@ namespace PlayGame.Player {
             if (!DebugSettings.Debug) photonView.RPC(nameof(RPC_UpdatePlayerLists), RpcTarget.Others);
 
             // Set camera to cockpit for miners and tactical for station commander, if single player play in cockpit mode
-            if (photonView.IsMine) {
+            if (photonView.IsMine || DebugSettings.Debug) {
                 bool cockpitMode = role == Role.Miner || DebugSettings.SinglePlayer;
                 GameObject.FindGameObjectWithTag(Tags.CameraManagerTag).GetComponent<CameraManager>().SetMode(cockpitMode);
                 _deadPanel = GameObject.FindGameObjectWithTag(Tags.DeadPanel);
@@ -152,7 +155,7 @@ namespace PlayGame.Player {
                 SetPlayerColour();
             }
             
-            if (photonView.IsMine) _deadPanel.SetActive(false);
+            if (photonView.IsMine || DebugSettings.Debug) _deadPanel.SetActive(false);
 
             _miningXP = 0;
             _combatXP = 0;
@@ -167,6 +170,7 @@ namespace PlayGame.Player {
             currentQuest = QuestType.MineAsteroids;
 
             if (photonView.IsMine) transform.position = GameSetup.Instance.spawnPoints[_playerID].position; // Set spawn point
+            else if (DebugSettings.Debug) transform.position = GameSetup.Instance.spawnPoints[0].position;
         }
 
         /// <summary>
@@ -345,7 +349,7 @@ namespace PlayGame.Player {
         /// <para>Disables both if fog of war is disabled or this is not the local player.</para>
         /// </summary>
         private void ResizeViewableArea() {
-            if (!DebugSettings.FogOfWar || !photonView.IsMine) {
+            if (!DebugSettings.FogOfWar || (!photonView.IsMine && !DebugSettings.Debug)) {
                 viewableArea.SetActive(false);
                 viewableAreaMinimap.SetActive(false);
             } else {
@@ -624,7 +628,7 @@ namespace PlayGame.Player {
         /// Returns the PlayerData of the local player.
         /// </summary>
         public static PlayerData GetMyPlayerData() {
-            return DebugSettings.Debug ? Players[0].GetComponent<PlayerData>() : PhotonPlayer.Instance.myAvatar.GetComponent<PlayerData>();
+            return (!DebugSettings.Debug && SceneManager.GetActiveScene().name != Scenes.TutorialScene) ? PhotonPlayer.Instance.myAvatar.GetComponent<PlayerData>() : Players[0].GetComponent<PlayerData>();
         }
 
     }

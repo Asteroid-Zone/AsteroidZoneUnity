@@ -3,6 +3,7 @@ using PlayGame.Player;
 using UnityEngine;
 using UnityEngine.UI;
 using Statics;
+using UnityEngine.SceneManagement;
 
 namespace PlayGame.UI
 {
@@ -15,7 +16,7 @@ namespace PlayGame.UI
         private Vector3 _lastPosition;
 
         private void Start() {
-            player = !DebugSettings.Debug ? PhotonPlayer.Instance.myAvatar : TestPlayer.GetPlayerShip();
+            player = (!DebugSettings.Debug && SceneManager.GetActiveScene().name != Scenes.TutorialScene) ? PhotonPlayer.Instance.myAvatar : TestPlayer.GetPlayerShip();
             _text = GetComponent<Text>();
             _playerData = player.GetComponent<PlayerData>();
         }

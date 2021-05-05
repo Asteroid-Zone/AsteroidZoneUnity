@@ -113,6 +113,10 @@ namespace PlayGame.Speech {
             if (Input.GetKeyDown(KeyCode.V)) {
                 speechRecognition.GetFinalResponse("repair hyperdrive");
             }
+
+            if (Input.GetKeyDown(KeyCode.Space)) {
+                speechRecognition.GetFinalResponse("no");
+            }
         }
 
         private void Start() {

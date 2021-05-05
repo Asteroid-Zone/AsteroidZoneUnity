@@ -17,6 +17,10 @@ namespace PlayGame.UI {
                 _instance = this;
             }
         }
+
+        public static void ResetStaticVariables() {
+            _instance = null;
+        }
         #endregion
         
         public GameObject scrollParent;

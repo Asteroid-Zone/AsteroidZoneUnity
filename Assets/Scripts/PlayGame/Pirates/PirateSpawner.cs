@@ -2,6 +2,7 @@
 using System;
 using Statics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 namespace PlayGame.Pirates {
@@ -47,7 +48,7 @@ namespace PlayGame.Pirates {
         /// </summary>
         private void Start() {
             if (!DebugSettings.Debug && !PhotonNetwork.IsMasterClient) return; // Only the host spawns pirates
-            InvokeRepeating(nameof(PirateRNG), 0, GameConstants.PirateEveryXSeconds);
+            if (SceneManager.GetActiveScene().name != Scenes.TutorialScene) InvokeRepeating(nameof(PirateRNG), 0, GameConstants.PirateEveryXSeconds);
             
             // Checked space is the half size in OverlapBoxNonAlloc
             _spawnRangeCheck = GridManager.GetCellSize() / 2f;

@@ -2,6 +2,7 @@
 using PlayGame.Player;
 using Statics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace PlayGame.UI {
@@ -11,7 +12,7 @@ namespace PlayGame.UI {
         private Text _text;
         
         private void Start() {
-            target = !DebugSettings.Debug ? PhotonPlayer.Instance.myAvatar.transform : TestPlayer.GetPlayerShip().transform;
+            target = (!DebugSettings.Debug && SceneManager.GetActiveScene().name != Scenes.TutorialScene) ? PhotonPlayer.Instance.myAvatar.transform : TestPlayer.GetPlayerShip().transform;
             _text = GetComponent<Text>();
         }
 

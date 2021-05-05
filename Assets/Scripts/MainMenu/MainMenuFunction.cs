@@ -53,6 +53,16 @@ namespace MainMenu {
         }
 
         /// <summary>
+        /// <para>Method is called when the player presses the 'Play Tutorial' button on the main menu.</para>
+        /// Loads the tutorial scene.
+        /// </summary>
+        public void PlayTutorial() {
+            buttonPress.Play();
+            DebugSettings.Debug = true;
+            SceneManager.LoadScene(Scenes.TutorialScene);
+        }
+
+        /// <summary>
         /// <para>Method is called when the player presses the 'View Credits' button on the main menu.</para>
         /// Loads the credits scene.
         /// </summary>

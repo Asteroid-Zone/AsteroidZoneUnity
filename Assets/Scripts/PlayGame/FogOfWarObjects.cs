@@ -2,6 +2,7 @@
 using PlayGame.Player;
 using Statics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace PlayGame {
     public class FogOfWarObjects : MonoBehaviour {
@@ -15,7 +16,7 @@ namespace PlayGame {
 
         private void Start() {
             if (!DebugSettings.FogOfWar) return;
-            _player = !DebugSettings.Debug ? PhotonPlayer.Instance.myAvatar : TestPlayer.GetPlayerShip();
+            _player = (!DebugSettings.Debug && SceneManager.GetActiveScene().name != Scenes.TutorialScene) ? PhotonPlayer.Instance.myAvatar : TestPlayer.GetPlayerShip();
             _playerData = _player.GetComponent<PlayerData>();
         }
 

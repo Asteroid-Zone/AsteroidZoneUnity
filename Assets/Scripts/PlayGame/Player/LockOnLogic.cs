@@ -4,6 +4,7 @@ using PlayGame.Player.Movement;
 using PlayGame.Speech.Commands;
 using Statics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace PlayGame.Player {
@@ -23,7 +24,7 @@ namespace PlayGame.Player {
         public CameraManager cameraMan;
         
         private void Start() {
-            GameObject player = !DebugSettings.Debug ? PhotonPlayer.Instance.myAvatar : TestPlayer.GetPlayerShip();
+            GameObject player = (!DebugSettings.Debug && SceneManager.GetActiveScene().name != Scenes.TutorialScene) ? PhotonPlayer.Instance.myAvatar : TestPlayer.GetPlayerShip();
             
             _playerData = player.GetComponent<PlayerData>();
             if (_playerData.GetRole() == Role.StationCommander) Destroy(gameObject);

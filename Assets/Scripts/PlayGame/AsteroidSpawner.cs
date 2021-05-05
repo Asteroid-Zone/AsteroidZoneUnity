@@ -2,6 +2,7 @@
 using System;
 using Statics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 namespace PlayGame {
@@ -37,10 +38,9 @@ namespace PlayGame {
         private int _maxAsteroids;
         
         // Start is called before the first frame update
-        private void Start()
-        {
+        private void Start() {
             if (!PhotonNetwork.IsMasterClient && !DebugSettings.Debug) return;
-            InvokeRepeating(nameof(AsteroidRNG), 0, GameConstants.AsteroidEveryXSeconds);
+            if (SceneManager.GetActiveScene().name != Scenes.TutorialScene) InvokeRepeating(nameof(AsteroidRNG), 0, GameConstants.AsteroidEveryXSeconds);
             
             // Checked space is the half size in OverlapBoxNonAlloc
             _spawnRangeCheck = GridManager.GetCellSize() / 2f;

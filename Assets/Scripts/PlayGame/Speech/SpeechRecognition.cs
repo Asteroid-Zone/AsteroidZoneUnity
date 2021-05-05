@@ -9,6 +9,7 @@ using Photon.GameControllers;
 using Photon.Pun;
 using PlayGame.UI;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -36,7 +37,7 @@ namespace PlayGame.Speech {
 
         private void Start() {
             StartSpeechRecognitionInTheBrowser();
-            player = !DebugSettings.Debug ? PhotonPlayer.Instance.myAvatar : TestPlayer.GetPlayerShip();
+            player = (!DebugSettings.Debug && SceneManager.GetActiveScene().name != Scenes.TutorialScene) ? PhotonPlayer.Instance.myAvatar : TestPlayer.GetPlayerShip();
 
             _playerData = player.GetComponent<PlayerData>();
             _moveObject = player.GetComponent<MoveObject>();
