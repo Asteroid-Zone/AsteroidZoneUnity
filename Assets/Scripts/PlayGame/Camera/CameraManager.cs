@@ -1,6 +1,7 @@
 ﻿using PlayGame.Player;
 using Statics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace PlayGame.Camera {
     
@@ -24,7 +25,7 @@ namespace PlayGame.Camera {
         private void Update() {
             // If debug controls are enabled P switches camera mode
             if (DebugSettings.DebugKeys && Input.GetKeyDown(KeyCode.P)) {
-                SetMode(!_cockpitMode); 
+                SetMode(!_cockpitMode);
             }
         }
 

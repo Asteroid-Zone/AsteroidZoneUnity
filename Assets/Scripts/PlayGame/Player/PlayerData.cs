@@ -112,11 +112,12 @@ namespace PlayGame.Player {
             if (!DebugSettings.Debug) photonView.RPC(nameof(RPC_UpdatePlayerLists), RpcTarget.Others);
 
             // Set camera to cockpit for miners and tactical for station commander, if single player play in cockpit mode
-            if (photonView.IsMine || DebugSettings.Debug) {
+            if ((photonView.IsMine || DebugSettings.Debug) && SceneManager.GetActiveScene().name != Scenes.TutorialScene) {
                 bool cockpitMode = role == Role.Miner || DebugSettings.SinglePlayer;
                 GameObject.FindGameObjectWithTag(Tags.CameraManagerTag).GetComponent<CameraManager>().SetMode(cockpitMode);
-                _deadPanel = GameObject.FindGameObjectWithTag(Tags.DeadPanel);
             }
+            
+            if (photonView.IsMine || DebugSettings.Debug) _deadPanel = GameObject.FindGameObjectWithTag(Tags.DeadPanel);
 
             // Set up the player
             if (role == Role.StationCommander && !DebugSettings.SinglePlayer) SetUpStationCommander();

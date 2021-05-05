@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using PlayGame.UI;
+using PlayGame.Camera;
+using Statics;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,11 +17,17 @@ namespace Tutorial {
         private readonly List<string> _yes = new List<string>{"yes", "yeah"};
         private readonly List<string> _no = new List<string>{"no", "nah", "nope"};
 
+        private CameraManager _cameraManager;
+        public GameObject blackScreenPanel;
+
         private void Start() {
+            _cameraManager = GameObject.FindGameObjectWithTag(Tags.CameraManagerTag).GetComponent<CameraManager>();
             StartCoroutine(TutorialIntro());
         }
         
         private IEnumerator TutorialIntro() {
+            blackScreenPanel.SetActive(true);
+            
             while (!_introComplete) {
                 yield return new WaitForSeconds(0.1f);
                 
@@ -45,11 +52,21 @@ namespace Tutorial {
                 }
 
                 _introComplete = true;
-                StartCoroutine(_yes.Contains(inputText.text) ? CommanderTutorial() : MinerTutorial());
+                if (_yes.Contains(inputText.text)) {
+                    subtitlesText.text = "Acknowledged. Let's get you up to speed on what will be expected of you during this mission. Entering virtualisation.";
+                    yield return new WaitForSeconds(4f);
+                    StartCoroutine(CommanderTutorial());
+                } else {
+                    subtitlesText.text = "Acknowledged. Let's run your ship through some diagnostics first to ensure that all systems are operational. Entering virtualisation.";
+                    yield return new WaitForSeconds(4f);
+                    StartCoroutine(MinerTutorial());
+                }
             }
         }
 
         private IEnumerator MinerTutorial() {
+            blackScreenPanel.SetActive(false);
+            _cameraManager.SetMode(true);
             while (!_tutorialComplete) {
                 yield return new WaitForSeconds(0.1f);
                 subtitlesText.text = "Welcome to the miner tutorial!";
@@ -57,6 +74,8 @@ namespace Tutorial {
         }
         
         private IEnumerator CommanderTutorial() {
+            blackScreenPanel.SetActive(false);
+            _cameraManager.SetMode(false);
             while (!_tutorialComplete) {
                 yield return new WaitForSeconds(0.1f);
                 subtitlesText.text = "Welcome to the commander tutorial!";
