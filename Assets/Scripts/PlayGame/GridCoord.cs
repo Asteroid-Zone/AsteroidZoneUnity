@@ -6,6 +6,8 @@ namespace PlayGame {
     using System;
 
     public readonly struct GridCoord : IEquatable<GridCoord> {
+
+        public static GridCoord NullCoord = new GridCoord(-1, -1);
         
         private readonly int _x;
         private readonly int _z;

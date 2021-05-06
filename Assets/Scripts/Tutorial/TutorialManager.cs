@@ -6,6 +6,7 @@ using PlayGame.Pings;
 using PlayGame.Pirates;
 using PlayGame.Player;
 using PlayGame.Player.Movement;
+using PlayGame.SpaceStation;
 using PlayGame.Speech.Commands;
 using Statics;
 using UnityEngine;
@@ -27,22 +28,28 @@ namespace Tutorial {
         private PingManager _pingManager;
         private CameraManager _cameraManager;
         private MoveObject _moveObject;
+        private PlayerData _playerData;
+        private SpaceStation _spaceStation;
         public GameObject blackScreenPanel;
 
         public static Command LatestCommand;
+        public static bool zoom = false;
+        public static bool track = false;
+        public static bool rotate = false;
+        public static bool move = false;
 
         private readonly GridCoord _asteroidLocation = new GridCoord(7, 8);
 
         private bool _tutorialComplete = false;
-
-        // todo set debug false when finished
         
         private void Start() {
             _cameraManager = GameObject.FindGameObjectWithTag(Tags.CameraManagerTag).GetComponent<CameraManager>();
             _pingManager = GameObject.FindGameObjectWithTag(Tags.PingManagerTag).GetComponent<PingManager>();
+            _spaceStation = GameObject.FindGameObjectWithTag(Tags.StationTag).GetComponent<SpaceStation>();
             _asteroidSpawner = AsteroidSpawner.GetInstance();
             _pirateSpawner = PirateSpawner.GetInstance();
             _moveObject = TestPlayer.GetPlayerShip().GetComponent<MoveObject>();
+            _playerData = TestPlayer.GetPlayerShip().GetComponent<PlayerData>();
             StartCoroutine(TutorialIntro());
             
             _asteroidSpawner.SpawnAsteroid(_asteroidLocation);
@@ -105,10 +112,66 @@ namespace Tutorial {
 
         private IEnumerator CommanderTutorial() {
             blackScreenPanel.SetActive(false);
+            _playerData.viewableArea.SetActive(false);
+            _playerData.viewableAreaMinimap.SetActive(false);
+            PlayerData.SetActiveRecursively(_playerData.shipModel.gameObject, false); // Hide the ship model
             _cameraManager.SetMode(false);
-                
-            subtitlesText.text = "Welcome to the commander tutorial!";
-            yield return null;
+            
+            subtitlesText.text = "You're going to play a key strategic role in this escape. Use a voice command, and 'ping' or 'mark' the asteroid visible at E6. This will be visible to your team.";
+            while(!WaitForPingCommand(PingType.Asteroid, new GridCoord('e', 6))) yield return null;
+            
+            subtitlesText.text = "Good.";
+            yield return new WaitForSeconds(1.5f);
+            subtitlesText.text = "Your squadmates can only see objects in areas close to them. As you all broke down in a multidimensional zone, your surroundings aren't actually fully visible and everything is being decoded by your ships on the fly. We weren't able to give them equipment as good as yours however - you can see the full map, they can only see what's directly around them. Use this to your advantage by pointing out things on certain tiles that your team can't see.";
+            yield return new WaitForSeconds(12f);
+
+            ResetVars();
+            subtitlesText.text = "You can control the tactical view to track specific objects. Try left clicking the space station.";
+            while(!track) yield return null;
+            ResetVars();
+            subtitlesText.text = "You can also manually move the view. Try holding down the middle mouse button and dragging.";
+            while(!move) yield return null;
+            ResetVars();
+            subtitlesText.text = "You can rotate the camera by holding the right mouse button and dragging the mouse. Try doing this now.";
+            while(!rotate) yield return null;
+            ResetVars();
+            subtitlesText.text = "Finally try zooming in and out using the scroll wheel.";
+            while(!zoom) yield return null;
+            
+            subtitlesText.text = "Your teammates are going to have to mine asteroids and return those resources back to the station. You'll all be able to escape once they reach the necessary levels of Asteral. But in this sector, they will be met by pirates at every turn. There are two types - the grunts are more common and easier to take down. The elites are less common and harder to take down.";
+            yield return new WaitForSeconds(10f);
+
+            GridCoord gridCentre = GridCoord.GetCoordFromVector(GridManager.GetGridCentre());
+            GameObject pirate = _pirateSpawner.SpawnPirate(PirateData.PirateType.Scout, new GridCoord(Random.Range(gridCentre.GetX() - 2, gridCentre.GetX() + 2), Random.Range(gridCentre.GetZ() - 2, gridCentre.GetZ() + 2)));
+            subtitlesText.text = "Looks like there's one coming to attack the station and no-one's nearby! Ping it.";
+            while(!WaitForPingCommand(PingType.Pirate, GridCoord.NullCoord)) yield return null;
+            Destroy(pirate);
+
+            LatestCommand = null;
+            
+            GameObject pirate2 = _pirateSpawner.SpawnPirate(PirateData.PirateType.Elite, new GridCoord(Random.Range(gridCentre.GetX() - 2, gridCentre.GetX() + 2), Random.Range(gridCentre.GetZ() - 2, gridCentre.GetZ() + 2)));
+            subtitlesText.text = "That was a grunt. Oh no, here comes an elite! Ping it.";
+            while(!WaitForPingCommand(PingType.Pirate, GridCoord.NullCoord)) yield return null;
+            Destroy(pirate2);
+            
+            subtitlesText.text = "That'll do. Shooting down pirates before they reach and discover the station is ideal. Otherwise they'll report its location and you'll be dealing with an onslaught of them.";
+            yield return new WaitForSeconds(6f);
+            subtitlesText.text = "In the real attempt, you're most likely going to be giving your team ideas on how to tackle certain scenarios. Exactly who should go out and mine, and who should stay back and defend? Is someone carrying enough resources? Is the current plan working? These are all things beyond the scope of this tutorial, but will need to be considered.";
+            yield return new WaitForSeconds(7f);
+
+            int hyperdriveHealthRemaining = _spaceStation.GetHyperdrive().MaxHealth - _spaceStation.GetHyperdrive().ModuleHealth;
+            _spaceStation.AddResources(hyperdriveHealthRemaining / 2);
+            subtitlesText.text = "It looks like you have some resources stored in the station. Try to repair the hyperdrive.";
+            while(!WaitForRepairCommand(RepairCommand.StationModule.Hyperdrive)) yield return null;
+            
+            subtitlesText.text = "Good, it looks like you didn't have enough resources to fully repair the hyperdrive. Your teammates need to deliver more resources so that you can fix it and activate it to escape.";
+            yield return new WaitForSeconds(6f);
+            subtitlesText.text = "Wait. There's... a large energy reading heading your team's way. If I had to guess... that's the pirate leader. Your team is definitely not going to be able to defend the station from THAT thing. It's looking like you only have about 5 minutes.";
+            yield return new WaitForSeconds(7f);
+            subtitlesText.text = "Is everything clear? Your team needs to deliver 1500 grams of Asteral to the station. Ensure that the pirates don't destroy it. You only have 5 minutes.";
+            yield return new WaitForSeconds(5f);
+            subtitlesText.text = "Acknowledged. Commence operation.";
+            yield return new WaitForSeconds(2f);
 
             _tutorialComplete = true;
         }
@@ -192,6 +255,33 @@ namespace Tutorial {
             yield return new WaitForSeconds(2f);
 
             _tutorialComplete = true;
+        }
+
+        private void ResetVars() {
+            track = false;
+            move = false;
+            rotate = false;
+            zoom = false;
+        }
+
+        private bool WaitForRepairCommand(RepairCommand.StationModule module) {
+            if (LatestCommand == null) return false;
+            if (LatestCommand.GetCommandType() != Command.CommandType.Repair) return false;
+            RepairCommand command = (RepairCommand) LatestCommand;
+
+            if (command.stationModule.Equals(module)) return true;
+            return false;
+        }
+
+        private bool WaitForPingCommand(PingType type, GridCoord gridCoord) {
+            if (LatestCommand == null) return false;
+            if (LatestCommand.GetCommandType() != Command.CommandType.Ping) return false;
+            PingCommand command = (PingCommand) LatestCommand;
+
+            if (command.pingType != type) return false;
+            if (gridCoord.Equals(GridCoord.NullCoord)) return true;
+            if (gridCoord.Equals(command.gridCoord)) return true;
+            return false;
         }
 
         private bool WaitForTransferCommand() {

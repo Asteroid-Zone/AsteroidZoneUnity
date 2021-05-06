@@ -1,5 +1,7 @@
 ﻿using Statics;
+using Tutorial;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Vector3 = UnityEngine.Vector3;
 
 namespace PlayGame.Camera {
@@ -39,12 +41,16 @@ namespace PlayGame.Camera {
             Transform camTransform = transform;
             
             if (Input.GetMouseButtonDown(0)) {
+                TutorialManager.track = true;
                 TrackObject();
             } else if (Input.GetMouseButton(1)) {
+                TutorialManager.rotate = true;
                 RotateCamera(mouseDifference);
             } else if (Input.GetMouseButton(2)) {
+                TutorialManager.move = true;
                 MoveCamera(mouseDifference, camTransform);
             } else if (Input.mouseScrollDelta.y != 0) {
+                TutorialManager.zoom = true;
                 ZoomCamera(camTransform);
             }
             

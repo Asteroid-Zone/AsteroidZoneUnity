@@ -422,7 +422,7 @@ namespace PlayGame.Player {
         /// </summary>
         /// <param name="o">The GameObject to SetActive.</param>
         /// <param name="active"></param>
-        private static void SetActiveRecursively(GameObject o, bool active) {
+        public static void SetActiveRecursively(GameObject o, bool active) {
             o.SetActive(active);
 
             foreach (Transform child in o.transform){

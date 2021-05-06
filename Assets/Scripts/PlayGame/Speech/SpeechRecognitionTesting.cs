@@ -62,8 +62,8 @@ namespace PlayGame.Speech {
                 speechRecognition.GetFinalResponse("go to ping");
             }
         
-            if (Input.GetKeyDown(KeyCode.T)) { // Create ping at Grid(C, 4)
-                speechRecognition.GetFinalResponse("ping asteroid at C4");
+            if (Input.GetKeyDown(KeyCode.T)) { // Create ping at Grid(E, 6)
+                speechRecognition.GetFinalResponse("ping asteroid at E6");
             }
             
             if (Input.GetKeyDown(KeyCode.Y)) { // Create ping at Grid(G, 6)
@@ -115,7 +115,7 @@ namespace PlayGame.Speech {
             }
 
             if (Input.GetKeyDown(KeyCode.Space)) {
-                speechRecognition.GetFinalResponse("no");
+                speechRecognition.GetFinalResponse("yes");
             }
         }
 
