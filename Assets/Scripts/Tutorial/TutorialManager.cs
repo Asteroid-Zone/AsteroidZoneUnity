@@ -20,6 +20,10 @@ namespace Tutorial {
         public Text inputText;
         public Text subtitlesText;
         public List<AudioClip> introAudioLines;
+        public List<string> introTextLines;
+        public List<AudioClip> minerAudioLines;
+        public List<string> minerTextLines;
+        
 
         private PirateSpawner _pirateSpawner;
         private AsteroidSpawner _asteroidSpawner;
@@ -76,21 +80,13 @@ namespace Tutorial {
 
         private IEnumerator TutorialIntro() {
             blackScreenPanel.SetActive(true);
-            var introTextLines = new List<string>()
-            {
-                "Hello? Are you awake? Listen, we don't have much time.",
-                "That recon mission you were on? Yeah, it's cancelled. Your station malfunctioned while attempting to warp through hyperspace... it can repair itself, but it's going to need a specific mineral found in some nearby asteroids - Asteral. Thankfully, your ships should be well equipped for emergencies like these.",
-                "The bad news is that your team is stranded in a particularly troublesome sector of the multiverse. You're going to have some chance encounters with the pirates endemic to that area.",
-                "Three of you will be doing the busywork. One is the station commander who has special equipment allowing them to strategise.",
-                "The data isn't showing up for me at the moment... are you the station commander?"
-            };
 
             yield return new WaitForSeconds(0.1f);
             
             subtitlesText.text = "[Incoming Transmission From The Mothership]";
             yield return new WaitForSeconds(2.5f);
 
-            for (var i = 0; i < introTextLines.Count; i++)
+            for (var i = 0; i < introTextLines.Count - 2; i++)
             {
                 subtitlesText.text = introTextLines[i];
                 _audioSource.clip = introAudioLines[i];
@@ -100,17 +96,11 @@ namespace Tutorial {
             
             while(!WaitForYesOrNo()) yield return null;
 
-            if (_commander) {
-                subtitlesText.text = "Acknowledged. Let's get you up to speed on what will be expected of you during this mission. Entering virtualisation.";
-                yield return new WaitForSeconds(2f);
-                
-                StartCoroutine(CommanderTutorial());
-            } else {
-                subtitlesText.text = "Acknowledged. Let's run your ship through some diagnostics first to ensure that all systems are operational. Entering virtualisation.";
-                yield return new WaitForSeconds(2f);
+            var index = _commander ? 5 : 6;
+            subtitlesText.text = introTextLines[index];
+            yield return new WaitForSeconds(2f);
 
-                StartCoroutine(MinerTutorial());
-            }
+            StartCoroutine(_commander ? CommanderTutorial() : MinerTutorial());
         }
 
         private IEnumerator CommanderTutorial() {
@@ -184,35 +174,64 @@ namespace Tutorial {
             _cameraManager.SetMode(true);
             
             subtitlesText.text = "This is your ship. Attempt to interface with it through voice commands. Tell it to move forwards.";
+            _audioSource.clip = minerAudioLines[0];
+            _audioSource.Play();
+            yield return new WaitForSeconds(_audioSource.clip.length);
             while(!WaitForMovement(Strings.Forward, null, false)) yield return null;
             
             subtitlesText.text = "Great! Now tell it to stop.";
+            _audioSource.clip = minerAudioLines[1];
+            _audioSource.Play();
+            yield return new WaitForSeconds(_audioSource.clip.length);
             while(!WaitForStopCommand()) yield return null;
             
             subtitlesText.text = "And now backwards?";
+            _audioSource.clip = minerAudioLines[2];
+            _audioSource.Play();
+            yield return new WaitForSeconds(_audioSource.clip.length);
             while(!WaitForMovement(Strings.Back, null, false)) yield return null;
             
             subtitlesText.text = "Okay, perfect. And now stop.";
+            _audioSource.clip = minerAudioLines[3];
+            _audioSource.Play();
+            yield return new WaitForSeconds(_audioSource.clip.length);
             while(!WaitForStopCommand()) yield return null;
             
             subtitlesText.text = "Excellent, that's all functional. You can make it turn left or right. Try that.";
+            _audioSource.clip = minerAudioLines[4];
+            _audioSource.Play();
+            yield return new WaitForSeconds(_audioSource.clip.length);
             while(!WaitForMovement(Strings.Right, Strings.Left, true)) yield return null;
             
             subtitlesText.text = "And stop?";
+            _audioSource.clip = minerAudioLines[5];
+            _audioSource.Play();
+            yield return new WaitForSeconds(_audioSource.clip.length);
             while(!WaitForStopCommand()) yield return null;
             
             subtitlesText.text = "There we go. You can also directly move left or right as well. See for yourself.";
+            _audioSource.clip = minerAudioLines[6];
+            _audioSource.Play();
+            yield return new WaitForSeconds(_audioSource.clip.length);
             while(!WaitForMovement(Strings.Right, Strings.Left, false)) yield return null;
             
             subtitlesText.text = "Great, that's enough.";
-            yield return new WaitForSeconds(2f);
+            _audioSource.clip = minerAudioLines[7];
+            _audioSource.Play();
+            yield return new WaitForSeconds(_audioSource.clip.length);
             
             subtitlesText.text = "We'll be able to track where you are. As a result, you can make use of this coordinate system. Try to move to C3.";
+            _audioSource.clip = minerAudioLines[8];
+            _audioSource.Play();
+            yield return new WaitForSeconds(_audioSource.clip.length);
             GridCoord c3 = new GridCoord('c', 3);
             while (!WaitForMovementGrid()) yield return null;
             while (!GridCoord.GetCoordFromVector(_moveObject.transform.position).Equals(c3)) yield return null;
             
             subtitlesText.text = "Your station commander, who's also keeping an eye out, may mark a point of interest (a 'ping'). Try moving to it.";
+            _audioSource.clip = minerAudioLines[9];
+            _audioSource.Play();
+            yield return new WaitForSeconds(_audioSource.clip.length);
             GridCoord pingLocation = new GridCoord(_asteroidLocation.GetX() - 1, _asteroidLocation.GetZ());
             Ping testPing = new Ping(pingLocation, PingType.Asteroid);
             _pingManager.AddPing(testPing);
@@ -223,39 +242,68 @@ namespace Tutorial {
             while (!GridCoord.GetCoordFromVector(_moveObject.transform.position).Equals(pingLocation)) yield return null;
 
             subtitlesText.text = "That covers movement. Note that there's an asteroid here. Try mining it. Your ship should automatically detect and face it.";
+            _audioSource.clip = minerAudioLines[10];
+            _audioSource.Play();
+            yield return new WaitForSeconds(_audioSource.clip.length);
             while (!WaitForToggleCommand(ToggleCommand.ObjectType.MiningLaser)) yield return null;
             
             subtitlesText.text = "This is the lock-on system. You can also engage or disengage it manually, but your ship should be able to handle it automatically with the right commands.";
-            yield return new WaitForSeconds(4f);
+            _audioSource.clip = minerAudioLines[11];
+            _audioSource.Play();
+            yield return new WaitForSeconds(_audioSource.clip.length);
             subtitlesText.text = "You may have noticed that this asteroid was not visible before. As you broke down in multidimensional travel, you can't actually see your surroundings. Your ship's emergency proximity sensor is handling everything, indicated by this blue circle. Pirates and asteroids will only be visible inside that.";
-            yield return new WaitForSeconds(8f);
+            _audioSource.clip = minerAudioLines[12];
+            _audioSource.Play();
+            yield return new WaitForSeconds(_audioSource.clip.length);
             subtitlesText.text = "Your station commander can see everything fine, however. They have highly specialised and unwieldy equipment allowing them to do so.";
-            yield return new WaitForSeconds(6f);
+            _audioSource.clip = minerAudioLines[13];
+            _audioSource.Play();
+            yield return new WaitForSeconds(_audioSource.clip.length);
             subtitlesText.text = "Anyway, your resource count should have gone up now. You'll need to deliver this back to the station. You can simply tell your ship to go back to it.";
+            _audioSource.clip = minerAudioLines[14];
+            _audioSource.Play();
+            yield return new WaitForSeconds(_audioSource.clip.length);
             while (!WaitForMovementDestination(MovementCommand.DestinationType.SpaceStation)) yield return null;
             while (!_moveObject.NearStation()) yield return null;
             
             subtitlesText.text = "Tell it to transfer the resources.";
+            _audioSource.clip = minerAudioLines[15];
+            _audioSource.Play();
+            yield return new WaitForSeconds(_audioSource.clip.length);
             while (!WaitForTransferCommand()) yield return null;
 
             GridCoord playerLocation = GridCoord.GetCoordFromVector(_moveObject.transform.position);
             GameObject pirate = _pirateSpawner.SpawnPirate(PirateData.PirateType.Scout, new GridCoord(playerLocation.GetX() + 1, playerLocation.GetZ()));
             subtitlesText.text = "And that's that. Now unfortunately, it's not going to be this simple. Remember when I said you're stranded in a problem sector? Well, here comes a pirate. Command your ship to shoot it.";
+            _audioSource.clip = minerAudioLines[16];
+            _audioSource.Play();
+            yield return new WaitForSeconds(_audioSource.clip.length);
             while (pirate != null) yield return null;
             
             playerLocation = GridCoord.GetCoordFromVector(_moveObject.transform.position);
             pirate = _pirateSpawner.SpawnPirate(PirateData.PirateType.Elite, new GridCoord(playerLocation.GetX() + 1, playerLocation.GetZ()));
             subtitlesText.text = "That was one of the grunts. Here comes a more powerful one.";
+            _audioSource.clip = minerAudioLines[17];
+            _audioSource.Play();
+            yield return new WaitForSeconds(_audioSource.clip.length);
             while (pirate != null) yield return null;
 
             subtitlesText.text = "And that was an elite. Our data says that only these two types are currently in that area. You're going to have to protect the station from them. If they find it, they'll most likely swarm it. Failure is not an option.";
-            yield return new WaitForSeconds(6f);
+            _audioSource.clip = minerAudioLines[18];
+            _audioSource.Play();
+            yield return new WaitForSeconds(_audioSource.clip.length);
             subtitlesText.text = "W-wait. There's... a large energy reading heading your way. If I had to guess... that's their leader. You definitely aren't going to be able to defend the station from THAT thing. It's looking like you only have about 5 minutes.";
-            yield return new WaitForSeconds(6f);
+            _audioSource.clip = minerAudioLines[19];
+            _audioSource.Play();
+            yield return new WaitForSeconds(_audioSource.clip.length);
             subtitlesText.text = "Is everything clear? Deliver 1500 grams of Asteral to the station as a team. Ensure that the pirates don't destroy it. You only have 5 minutes.";
-            yield return new WaitForSeconds(5f);
+            _audioSource.clip = minerAudioLines[20];
+            _audioSource.Play();
+            yield return new WaitForSeconds(_audioSource.clip.length);
             subtitlesText.text = "Acknowledged. Commence operation.";
-            yield return new WaitForSeconds(2f);
+            _audioSource.clip = minerAudioLines[21];
+            _audioSource.Play();
+            yield return new WaitForSeconds(_audioSource.clip.length);
 
             _tutorialComplete = true;
         }
