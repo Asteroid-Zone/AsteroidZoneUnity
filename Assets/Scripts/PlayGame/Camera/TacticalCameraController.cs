@@ -41,16 +41,16 @@ namespace PlayGame.Camera {
             Transform camTransform = transform;
             
             if (Input.GetMouseButtonDown(0)) {
-                TutorialManager.track = true;
+                TutorialManager.Track = true;
                 TrackObject();
             } else if (Input.GetMouseButton(1)) {
-                TutorialManager.rotate = true;
+                TutorialManager.Rotate = true;
                 RotateCamera(mouseDifference);
             } else if (Input.GetMouseButton(2)) {
-                TutorialManager.move = true;
+                TutorialManager.Move = true;
                 MoveCamera(mouseDifference, camTransform);
             } else if (Input.mouseScrollDelta.y != 0) {
-                TutorialManager.zoom = true;
+                TutorialManager.Zoom = true;
                 ZoomCamera(camTransform);
             }
             

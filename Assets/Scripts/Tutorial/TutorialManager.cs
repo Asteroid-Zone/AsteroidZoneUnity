@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using PlayGame;
 using PlayGame.Camera;
 using PlayGame.Pings;
@@ -20,9 +19,6 @@ namespace Tutorial {
         public Text inputText;
         public Text subtitlesText;
 
-        private readonly List<string> _yes = new List<string>{"yes", "yeah"};
-        private readonly List<string> _no = new List<string>{"no", "nah", "nope"};
-
         private PirateSpawner _pirateSpawner;
         private AsteroidSpawner _asteroidSpawner;
         private PingManager _pingManager;
@@ -33,11 +29,13 @@ namespace Tutorial {
         public GameObject blackScreenPanel;
 
         public static Command LatestCommand;
-        public static bool zoom = false;
-        public static bool track = false;
-        public static bool rotate = false;
-        public static bool move = false;
+        public static bool Zoom = false;
+        public static bool Track = false;
+        public static bool Rotate = false;
+        public static bool Move = false;
 
+        private bool _commander;
+        
         private readonly GridCoord _asteroidLocation = new GridCoord(7, 8);
 
         private bool _tutorialComplete = false;
@@ -93,11 +91,9 @@ namespace Tutorial {
             yield return new WaitForSeconds(5f);
             
             subtitlesText.text = "The data isn't showing up for me at the moment... are you the station commander?";
-            while (!_yes.Contains(inputText.text) && !_no.Contains(inputText.text)) {
-                yield return null;
-            }
+            while(!WaitForYesOrNo()) yield return null;
 
-            if (_yes.Contains(inputText.text)) {
+            if (_commander) {
                 subtitlesText.text = "Acknowledged. Let's get you up to speed on what will be expected of you during this mission. Entering virtualisation.";
                 yield return new WaitForSeconds(2f);
                 
@@ -127,16 +123,16 @@ namespace Tutorial {
 
             ResetVars();
             subtitlesText.text = "You can control the tactical view to track specific objects. Try left clicking the space station.";
-            while(!track) yield return null;
+            while(!Track) yield return null;
             ResetVars();
             subtitlesText.text = "You can also manually move the view. Try holding down the middle mouse button and dragging.";
-            while(!move) yield return null;
+            while(!Move) yield return null;
             ResetVars();
             subtitlesText.text = "You can rotate the camera by holding the right mouse button and dragging the mouse. Try doing this now.";
-            while(!rotate) yield return null;
+            while(!Rotate) yield return null;
             ResetVars();
             subtitlesText.text = "Finally try zooming in and out using the scroll wheel.";
-            while(!zoom) yield return null;
+            while(!Zoom) yield return null;
             
             subtitlesText.text = "Your teammates are going to have to mine asteroids and return those resources back to the station. You'll all be able to escape once they reach the necessary levels of Asteral. But in this sector, they will be met by pirates at every turn. There are two types - the grunts are more common and easier to take down. The elites are less common and harder to take down.";
             yield return new WaitForSeconds(10f);
@@ -258,10 +254,26 @@ namespace Tutorial {
         }
 
         private void ResetVars() {
-            track = false;
-            move = false;
-            rotate = false;
-            zoom = false;
+            Track = false;
+            Move = false;
+            Rotate = false;
+            Zoom = false;
+        }
+
+        private bool WaitForYesOrNo() {
+            if (LatestCommand == null) return false;
+            
+            if (LatestCommand.GetCommandType() == Command.CommandType.Yes) {
+                _commander = true;
+                return true;
+            }
+            
+            if (LatestCommand.GetCommandType() == Command.CommandType.No) {
+                _commander = false;
+                return true;
+            }
+
+            return false;
         }
 
         private bool WaitForRepairCommand(RepairCommand.StationModule module) {

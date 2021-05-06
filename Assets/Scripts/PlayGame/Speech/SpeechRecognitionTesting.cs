@@ -115,7 +115,7 @@ namespace PlayGame.Speech {
             }
 
             if (Input.GetKeyDown(KeyCode.Space)) {
-                speechRecognition.GetFinalResponse("yes");
+                speechRecognition.GetFinalResponse("no");
             }
         }
 

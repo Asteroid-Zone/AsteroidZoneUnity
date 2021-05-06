@@ -72,6 +72,10 @@ namespace PlayGame.Speech {
                 case Command.CommandType.Respawn:
                     PerformRespawnCommand();
                     break;
+                case Command.CommandType.Yes:
+                    break;
+                case Command.CommandType.No:
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }

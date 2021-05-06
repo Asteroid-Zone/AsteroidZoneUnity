@@ -120,7 +120,10 @@ namespace PlayGame.Speech {
         private static readonly List<List<string>> GenericActivatableObjects = new List<List<string>>{Hyperdrive}; // Objects that are only activated using the generic on commands and don't need any extra data
         private static readonly List<List<string>> StationModules = new List<List<string>>{Hyperdrive, Hull, ShieldGenerator, Engines, SolarPanels};
         
-        private static readonly List<List<string>> SingleCommands = new List<List<string>>{SpeedCommands, ShootCommands, MineCommands, RespawnCommands};
+        private static readonly List<string> Yes = new List<string>{"yes", "yeah"};
+        private static readonly List<string> No = new List<string>{"no", "nah", "nope"};
+        
+        private static readonly List<List<string>> SingleCommands = new List<List<string>>{SpeedCommands, ShootCommands, MineCommands, RespawnCommands, Yes, No};
         private static readonly List<List<string>> CompoundCommands = new List<List<string>>{MovementCommands, TurnCommands, Ping, TransferCommands, OffCommands, OnCommands, RepairCommands};
 
         private static readonly List<string> CommandWords;
@@ -688,6 +691,8 @@ namespace PlayGame.Speech {
                             if (commandList == ShootCommands) return new ToggleCommand(true, ToggleCommand.ObjectType.LaserGun); // Turn laser gun on
                             if (commandList == MineCommands) return new ToggleCommand(true, ToggleCommand.ObjectType.MiningLaser); // Turn mining laser on
                             if (commandList == RespawnCommands) return new Command(Command.CommandType.Respawn, true, false);
+                            if (commandList == Yes) return new Command(Command.CommandType.Yes, false, false);
+                            if (commandList == No) return new Command(Command.CommandType.No, false, false);
                         }
                     }
                 }

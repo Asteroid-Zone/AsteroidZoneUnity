@@ -15,7 +15,9 @@
             Toggle,
             Speed,
             Repair,
-            Respawn
+            Respawn,
+            Yes,
+            No
         }
 
         private readonly bool _isValid;
