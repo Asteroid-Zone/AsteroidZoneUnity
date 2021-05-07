@@ -19,11 +19,18 @@ namespace Tutorial {
 
         public Text inputText;
         public Text subtitlesText;
+        
         public List<AudioClip> introAudioLines;
         public List<string> introTextLines;
+        
+        public List<AudioClip> commanderAudioLines;
+        public List<string> commanderTextLines;
+        
         public List<AudioClip> minerAudioLines;
         public List<string> minerTextLines;
         
+        public List<AudioClip> outroAudioLines;
+        public List<string> outroTextLines;
 
         private PirateSpawner _pirateSpawner;
         private AsteroidSpawner _asteroidSpawner;
@@ -57,7 +64,7 @@ namespace Tutorial {
             _playerData = TestPlayer.GetPlayerShip().GetComponent<PlayerData>();
             _audioSource = GetComponent<AudioSource>();
             StartCoroutine(TutorialIntro());
-            
+
             _asteroidSpawner.SpawnAsteroid(_asteroidLocation);
         }
 
@@ -107,63 +114,50 @@ namespace Tutorial {
             PlayerData.SetActiveRecursively(_playerData.shipModel.gameObject, false); // Hide the ship model
             _cameraManager.SetMode(false);
             
-            subtitlesText.text = "You're going to play a key strategic role in this escape. Use a voice command, and 'ping' or 'mark' the asteroid visible at E6. This will be visible to your team.";
+            yield return PlayLine(commanderTextLines[0],commanderAudioLines[0]);
             while(!WaitForPingCommand(PingType.Asteroid, new GridCoord('e', 6))) yield return null;
             
-            subtitlesText.text = "Good.";
-            yield return new WaitForSeconds(1.5f);
-            subtitlesText.text = "Your squadmates can only see objects in areas close to them. As you all broke down in a multidimensional zone, your surroundings aren't actually fully visible and everything is being decoded by your ships on the fly. We weren't able to give them equipment as good as yours however - you can see the full map, they can only see what's directly around them. Use this to your advantage by pointing out things on certain tiles that your team can't see.";
-            yield return new WaitForSeconds(12f);
+            yield return PlayLine(commanderTextLines[1],commanderAudioLines[1]);
+            yield return PlayLine(commanderTextLines[2],commanderAudioLines[2]);
 
             ResetVars();
-            subtitlesText.text = "You can control the tactical view to track specific objects. Try left clicking the space station.";
+            yield return PlayLine(commanderTextLines[3],commanderAudioLines[3]);
             while(!Track) yield return null;
             ResetVars();
-            subtitlesText.text = "You can also manually move the view. Try holding down the middle mouse button and dragging.";
+            yield return PlayLine(commanderTextLines[4],commanderAudioLines[4]);
             while(!Move) yield return null;
             ResetVars();
-            subtitlesText.text = "You can rotate the camera by holding the right mouse button and dragging the mouse. Try doing this now.";
+            yield return PlayLine(commanderTextLines[5],commanderAudioLines[5]);
             while(!Rotate) yield return null;
             ResetVars();
-            subtitlesText.text = "Finally try zooming in and out using the scroll wheel.";
+            yield return PlayLine(commanderTextLines[6],commanderAudioLines[6]);
             while(!Zoom) yield return null;
             
-            subtitlesText.text = "Your teammates are going to have to mine asteroids and return those resources back to the station. You'll all be able to escape once they reach the necessary levels of Asteral. But in this sector, they will be met by pirates at every turn. There are two types - the grunts are more common and easier to take down. The elites are less common and harder to take down.";
-            yield return new WaitForSeconds(10f);
+            yield return PlayLine(commanderTextLines[7],commanderAudioLines[7]);
 
             GridCoord gridCentre = GridCoord.GetCoordFromVector(GridManager.GetGridCentre());
             GameObject pirate = _pirateSpawner.SpawnPirate(PirateData.PirateType.Scout, new GridCoord(Random.Range(gridCentre.GetX() - 2, gridCentre.GetX() + 2), Random.Range(gridCentre.GetZ() - 2, gridCentre.GetZ() + 2)));
-            subtitlesText.text = "Looks like there's one coming to attack the station and no-one's nearby! Ping it.";
+            yield return PlayLine(commanderTextLines[8],commanderAudioLines[8]);
             while(!WaitForPingCommand(PingType.Pirate, GridCoord.NullCoord)) yield return null;
             Destroy(pirate);
 
             LatestCommand = null;
             
             GameObject pirate2 = _pirateSpawner.SpawnPirate(PirateData.PirateType.Elite, new GridCoord(Random.Range(gridCentre.GetX() - 2, gridCentre.GetX() + 2), Random.Range(gridCentre.GetZ() - 2, gridCentre.GetZ() + 2)));
-            subtitlesText.text = "That was a grunt. Oh no, here comes an elite! Ping it.";
+            yield return PlayLine(commanderTextLines[9],commanderAudioLines[9]);
             while(!WaitForPingCommand(PingType.Pirate, GridCoord.NullCoord)) yield return null;
             Destroy(pirate2);
             
-            subtitlesText.text = "That'll do. Shooting down pirates before they reach and discover the station is ideal. Otherwise they'll report its location and you'll be dealing with an onslaught of them.";
-            yield return new WaitForSeconds(6f);
-            subtitlesText.text = "In the real attempt, you're most likely going to be giving your team ideas on how to tackle certain scenarios. Exactly who should go out and mine, and who should stay back and defend? Is someone carrying enough resources? Is the current plan working? These are all things beyond the scope of this tutorial, but will need to be considered.";
-            yield return new WaitForSeconds(7f);
+            yield return PlayLine(commanderTextLines[10],commanderAudioLines[10]);
+            yield return PlayLine(commanderTextLines[11],commanderAudioLines[11]);
 
             int hyperdriveHealthRemaining = _spaceStation.GetHyperdrive().MaxHealth - _spaceStation.GetHyperdrive().ModuleHealth;
             _spaceStation.AddResources(hyperdriveHealthRemaining / 2);
-            subtitlesText.text = "It looks like you have some resources stored in the station. Try to repair the hyperdrive.";
+            yield return PlayLine(commanderTextLines[12],commanderAudioLines[12]);
             while(!WaitForRepairCommand(RepairCommand.StationModule.Hyperdrive)) yield return null;
             
-            subtitlesText.text = "Good, it looks like you didn't have enough resources to fully repair the hyperdrive. Your teammates need to deliver more resources so that you can fix it and activate it to escape.";
-            yield return new WaitForSeconds(6f);
-            subtitlesText.text = "Wait. There's... a large energy reading heading your team's way. If I had to guess... that's the pirate leader. Your team is definitely not going to be able to defend the station from THAT thing. It's looking like you only have about 5 minutes.";
-            yield return new WaitForSeconds(7f);
-            subtitlesText.text = "Is everything clear? Your team needs to deliver 1500 grams of Asteral to the station. Ensure that the pirates don't destroy it. You only have 5 minutes.";
-            yield return new WaitForSeconds(5f);
-            subtitlesText.text = "Acknowledged. Commence operation.";
-            yield return new WaitForSeconds(2f);
-
-            _tutorialComplete = true;
+            yield return PlayLine(commanderTextLines[13],commanderAudioLines[13]);
+            StartCoroutine(TutorialOutro());
         }
 
         private IEnumerator MinerTutorial() {
@@ -232,9 +226,13 @@ namespace Tutorial {
             while (pirate != null) yield return null;
 
             yield return PlayLine(minerTextLines[18], minerAudioLines[18]);
-            yield return PlayLine(minerTextLines[19], minerAudioLines[19]);
-            yield return PlayLine(minerTextLines[20], minerAudioLines[20]);
-            yield return PlayLine(minerTextLines[21], minerAudioLines[21]);
+            StartCoroutine(TutorialOutro());
+        }
+        
+        private IEnumerator TutorialOutro() {
+            yield return PlayLine(outroTextLines[0], outroAudioLines[0]);
+            yield return PlayLine(outroTextLines[1], outroAudioLines[1]);
+            yield return PlayLine(outroTextLines[2], outroAudioLines[2]);
 
             _tutorialComplete = true;
         }
