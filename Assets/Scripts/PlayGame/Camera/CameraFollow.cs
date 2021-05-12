@@ -37,7 +37,7 @@ namespace PlayGame.Camera {
             if (target == null) return;
             
             // Check whether the camera should zoom in/out
-            if (Input.mouseScrollDelta.y != 0) ZoomCamera(transform);
+            if (Input.mouseScrollDelta.y != 0) ZoomCamera(Input.mouseScrollDelta.y);
             
             // Calculate the wanted position of the camera
             var  wantedPosition = target.TransformPoint(0, height, followBehind ? -distance : distance);
@@ -56,13 +56,10 @@ namespace PlayGame.Camera {
         /// <para>Method is called if the scroll wheel is used.</para>
         /// Updates the camera zoom based on mouse scrolling.
         /// </summary>
-        /// <param name="camTransform"></param>
-        private void ZoomCamera(Transform camTransform) {
-            var newPosition = camTransform.position + (camTransform.forward * Input.mouseScrollDelta.y / 2);
-            var newCameraDistance = Mathf.Abs((newPosition - target.position).magnitude);
+        private void ZoomCamera(float zoomQuantity) {
+            var newCameraDistance = distance - zoomQuantity / 2;
             // Check the camera is within the min/max distances
             if (MinCamDistance <= newCameraDistance && newCameraDistance <= MaxCamDistance) {
-                camTransform.position = newPosition;
                 distance = newCameraDistance;
             }
         }
