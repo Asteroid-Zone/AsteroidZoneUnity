@@ -134,6 +134,8 @@ namespace Photon {
         /// </summary>
         public void StartGame() {
             if (PhotonNetwork.IsMasterClient) SyncGameConstants();
+            PhotonNetwork.CurrentRoom.IsVisible = false;
+            PhotonNetwork.CurrentRoom.IsOpen = false;
             Debug.Log("Loading Level");
             PhotonNetwork.LoadLevel(multiplayerScene);
             StatsManager.GameStats.startTime = Time.time;
