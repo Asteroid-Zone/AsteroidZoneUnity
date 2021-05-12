@@ -1,4 +1,5 @@
 ﻿using Photon.Pun;
+using PlayGame.Stats;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Statics;
@@ -59,6 +60,7 @@ namespace MainMenu {
         public void PlayTutorial() {
             buttonPress.Play();
             DebugSettings.Debug = true;
+            StatsManager.GameStats.startTime = Time.time;
             SceneManager.LoadScene(Scenes.TutorialScene);
         }
 
