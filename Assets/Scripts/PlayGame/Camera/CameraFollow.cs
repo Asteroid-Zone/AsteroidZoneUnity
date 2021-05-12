@@ -21,9 +21,17 @@ namespace PlayGame.Camera {
         public bool followBehind = true;
         public float rotationDamping = 10.0f;
 
+        private const float MinCamDistance = 2f;
+        private const float MaxCamDistance = 8f;
+
         private void Start() {
             // Sets the target to be the player
             target = (!DebugSettings.Debug && SceneManager.GetActiveScene().name != Scenes.TutorialScene) ? PhotonPlayer.Instance.myAvatar.transform : TestPlayer.GetPlayerShip().transform;
+        }
+
+        private void Update()
+        {
+            if (Input.mouseScrollDelta.y != 0) ZoomCamera(transform);
         }
 
         /// <summary>
@@ -44,6 +52,21 @@ namespace PlayGame.Camera {
                 transform.rotation = Quaternion.Slerp(transform.rotation, wantedRotation, Time.deltaTime * rotationDamping);
             }
             else transform.LookAt(target, target.up);
+        }
+        
+        /// <summary>
+        /// <para>Method is called if the scroll wheel is used.</para>
+        /// Updates the camera zoom based on mouse scrolling.
+        /// </summary>
+        /// <param name="camTransform"></param>
+        private void ZoomCamera(Transform camTransform) {
+            var newPosition = camTransform.position + (camTransform.forward * Input.mouseScrollDelta.y / 2);
+            var newCameraDistance = Mathf.Abs((newPosition - target.position).magnitude);
+            // Check the camera is within the min/max distances
+            if (MinCamDistance <= newCameraDistance && newCameraDistance <= MaxCamDistance) {
+                camTransform.position = newPosition;
+                distance = newCameraDistance;
+            }
         }
     }
 }

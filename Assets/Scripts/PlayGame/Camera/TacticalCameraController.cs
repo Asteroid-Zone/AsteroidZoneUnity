@@ -1,7 +1,6 @@
 ﻿using Statics;
 using Tutorial;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Vector3 = UnityEngine.Vector3;
 
 namespace PlayGame.Camera {
