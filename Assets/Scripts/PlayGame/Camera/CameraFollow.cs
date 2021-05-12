@@ -21,25 +21,23 @@ namespace PlayGame.Camera {
         public bool followBehind = true;
         public float rotationDamping = 10.0f;
 
-        private const float MinCamDistance = 2f;
-        private const float MaxCamDistance = 8f;
+        private const float MinCamDistance = 2f; // Minimum distance between the camera and its target
+        private const float MaxCamDistance = 8f; // Maximum distance between the camera and its target
 
         private void Start() {
             // Sets the target to be the player
             target = (!DebugSettings.Debug && SceneManager.GetActiveScene().name != Scenes.TutorialScene) ? PhotonPlayer.Instance.myAvatar.transform : TestPlayer.GetPlayerShip().transform;
         }
-
-        private void Update()
-        {
-            if (Input.mouseScrollDelta.y != 0) ZoomCamera(transform);
-        }
-
+        
         /// <summary>
         /// <para>LateUpdate is called every frame, if the Behaviour is enabled.</para>
         /// Move and rotate the camera to follow the player.
         /// </summary>
         private void LateUpdate() {
             if (target == null) return;
+            
+            // Check whether the camera should zoom in/out
+            if (Input.mouseScrollDelta.y != 0) ZoomCamera(transform);
             
             // Calculate the wanted position of the camera
             var  wantedPosition = target.TransformPoint(0, height, followBehind ? -distance : distance);
