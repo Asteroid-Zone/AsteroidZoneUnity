@@ -140,9 +140,10 @@ namespace Tutorial {
             GameObject pirate = _pirateSpawner.SpawnPirate(PirateData.PirateType.Scout, new GridCoord(Random.Range(gridCentre.GetX() - 2, gridCentre.GetX() + 2), Random.Range(gridCentre.GetZ() - 2, gridCentre.GetZ() + 2)));
             yield return PlayLine(commanderTextLines[8],commanderAudioLines[8]);
             while(!WaitForPingCommand(PingType.Pirate, GridCoord.NullCoord)) yield return null;
-            Destroy(pirate);
-
+            
             LatestCommand = null;
+            yield return new WaitForSeconds(3f);
+            Destroy(pirate);
             
             GameObject pirate2 = _pirateSpawner.SpawnPirate(PirateData.PirateType.Elite, new GridCoord(Random.Range(gridCentre.GetX() - 2, gridCentre.GetX() + 2), Random.Range(gridCentre.GetZ() - 2, gridCentre.GetZ() + 2)));
             yield return PlayLine(commanderTextLines[9],commanderAudioLines[9]);
