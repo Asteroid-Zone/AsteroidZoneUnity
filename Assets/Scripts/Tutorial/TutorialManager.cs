@@ -66,6 +66,7 @@ namespace Tutorial {
             StartCoroutine(TutorialIntro());
 
             _asteroidSpawner.SpawnAsteroid(_asteroidLocation);
+            _asteroidSpawner.SpawnAsteroid(new GridCoord('e', 6));
         }
 
         private void Update() {
@@ -194,10 +195,9 @@ namespace Tutorial {
             
             yield return PlayLine(minerTextLines[9], minerAudioLines[9]);
             GridCoord pingLocation = new GridCoord(_asteroidLocation.GetX() - 1, _asteroidLocation.GetZ());
-            Ping testPing = new Ping(pingLocation, PingType.Asteroid);
-            _pingManager.AddPing(testPing);
+            _pingManager.AddPing(new Ping(pingLocation, PingType.Asteroid));
             while (!WaitForMovementDestination(MovementCommand.DestinationType.Ping)) {
-                if (_pingManager.GetPings().Count == 0) _pingManager.AddPing(testPing);
+                if (_pingManager.GetPings().Count == 0) _pingManager.AddPing(new Ping(pingLocation, PingType.Asteroid));
                 yield return null;
             }
             while (!GridCoord.GetCoordFromVector(_moveObject.transform.position).Equals(pingLocation)) yield return null;
@@ -274,7 +274,7 @@ namespace Tutorial {
             if (LatestCommand.GetCommandType() != Command.CommandType.Ping) return false;
             PingCommand command = (PingCommand) LatestCommand;
 
-            if (command.pingType != type) return false;
+            if (command.pingType != type && command.pingType != PingType.Generic) return false;
             if (gridCoord.Equals(GridCoord.NullCoord)) return true;
             if (gridCoord.Equals(command.gridCoord)) return true;
             return false;
