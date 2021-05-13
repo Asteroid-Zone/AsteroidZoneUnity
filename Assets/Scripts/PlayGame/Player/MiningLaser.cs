@@ -58,6 +58,7 @@ namespace PlayGame.Player {
                 UpdateLaser((int) hit.distance);
                 if (hit.collider.gameObject.CompareTag(Tags.AsteroidTag)) {
                     if (_timeSinceLastMined > _miningDelay) { // Only mine the asteroid every x ms
+                        _timeSinceLastMined = 0;
                         _playerData.IncreaseMiningXP(Random.Range(GameConstants.MinXPMiningHit, GameConstants.MaxXPMiningHit));
                         if ((!DebugSettings.Debug && PhotonNetwork.IsMasterClient) || DebugSettings.Debug) MineAsteroid(hit.collider.gameObject);
                     }
@@ -74,7 +75,6 @@ namespace PlayGame.Player {
         private void MineAsteroid(GameObject asteroid) {
             Asteroid asteroidScript = asteroid.GetComponent<Asteroid>();
             asteroidScript.MineAsteroid(_miningRate, _playerData);
-            _timeSinceLastMined = 0;
 
             int resources = asteroidScript.GetResources(_miningRate);
             if (!DebugSettings.Debug) gameObject.GetPhotonView().RPC(nameof(RPC_AddResources), RpcTarget.AllBuffered, resources);

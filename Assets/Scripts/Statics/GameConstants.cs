@@ -65,7 +65,7 @@
         
         // Combat Laser
         public static int PlayerShotDelay = 1000; // Number of ms to wait between shooting
-        public static int PlayerLaserSpeed = 20;
+        public static int PlayerLaserSpeed = 30;
         public static int PlayerLaserDamage = 20;
         public static int PlayerLaserDamageRange = 10; // Makes the amount of damage the laser does vary a bit
         public static int PlayerLaserMiningRate = 4; // Amount of resources gathered every mining tick
