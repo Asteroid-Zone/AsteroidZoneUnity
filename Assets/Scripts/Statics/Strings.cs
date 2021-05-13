@@ -7,6 +7,8 @@
 
         public const string NoCommand = "No command found";
 
+        public const string GenericPing = "genericping";
+        
         public const string None = "none";
         public const string Pirate = "pirate";
         public const string Asteroid = "asteroid";

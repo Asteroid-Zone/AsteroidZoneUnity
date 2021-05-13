@@ -761,6 +761,7 @@ namespace PlayGame.Speech {
             string gridCoord = GetGridCoord(phrase);
 
             if (pingType != null && gridCoord != null) return new PingCommand(pingType, gridCoord);
+            if (gridCoord != null) return new PingCommand(Strings.GenericPing, gridCoord);
             return new Command(); // Return an invalid command
         }
 

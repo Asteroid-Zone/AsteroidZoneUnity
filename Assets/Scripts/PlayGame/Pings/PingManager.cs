@@ -87,6 +87,9 @@ namespace PlayGame.Pings {
                 case PingType.Pirate:
                     pingObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                     break;
+                case PingType.Generic:
+                    pingObject = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                    break;
                 default:
                     pingObject = null;
                     break;

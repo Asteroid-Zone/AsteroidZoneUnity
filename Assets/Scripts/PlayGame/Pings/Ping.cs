@@ -8,7 +8,8 @@ namespace PlayGame.Pings {
     public enum PingType {
         None,
         Asteroid,
-        Pirate
+        Pirate,
+        Generic
     }
     
     /// <summary>

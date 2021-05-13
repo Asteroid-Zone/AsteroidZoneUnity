@@ -36,6 +36,8 @@ namespace PlayGame.Speech.Commands {
                     return PingType.Asteroid;
                 case Strings.Pirate:
                     return PingType.Pirate;
+                case Strings.GenericPing:
+                    return PingType.Generic;
                 default:
                     throw new ArgumentException("Invalid Ping Type");
             }
