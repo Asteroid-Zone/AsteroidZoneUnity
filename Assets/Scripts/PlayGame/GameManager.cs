@@ -46,6 +46,7 @@ namespace PlayGame {
 
         public void GameOver(GameOverType gameOverType) {
             if (gameOver) return; // Ensures LeaveRoom is only called once
+            if (SceneManager.GetActiveScene().name == Scenes.TutorialScene) return; // Game can't end if player is in the tutorial
 
             // Unmute everyone for the cutscene and stats screen
             VoiceChatController.UnmuteMyselfInVoiceChat();
