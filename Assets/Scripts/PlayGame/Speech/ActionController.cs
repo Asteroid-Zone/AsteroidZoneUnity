@@ -37,15 +37,20 @@ namespace PlayGame.Speech {
         /// <exception cref="ArgumentOutOfRangeException">Thrown if the command has an invalid command type.</exception>
         public void PerformActions(Command command) {
             if (SceneManager.GetActiveScene().name == Scenes.TutorialScene) TutorialManager.LatestCommand = command;
-            
-            if (playerData.GetRole() != Role.StationCommander && command.IsCommanderOnly()) { // Prevent players from performing station commander commands
-                if (playerData.photonView.IsMine) EventsManager.AddMessage("Only the station commander can perform that command!");
-                return;
-            }
-            
-            if (playerData.GetRole() != Role.Miner && command.IsMinerOnly()) { // Prevent commander from performing miner commands
-                if (playerData.photonView.IsMine) EventsManager.AddMessage("Only miners can perform that command!");
-                return;
+
+            if (!DebugSettings.SinglePlayer) {
+                if (playerData.GetRole() != Role.StationCommander && command.IsCommanderOnly()) {
+                    // Prevent players from performing station commander commands
+                    if (playerData.photonView.IsMine)
+                        EventsManager.AddMessage("Only the station commander can perform that command!");
+                    return;
+                }
+
+                if (playerData.GetRole() != Role.Miner && command.IsMinerOnly()) {
+                    // Prevent commander from performing miner commands
+                    if (playerData.photonView.IsMine) EventsManager.AddMessage("Only miners can perform that command!");
+                    return;
+                }
             }
 
             if (playerData.dead) return; // Dead players can't perform actions
