@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using NUnit.Framework;
-using UnityEngine.TestTools;
+﻿using NUnit.Framework;
+using PlayGame.Pings;
 using Ping = PlayGame.Pings.Ping;
 
 namespace Tests
@@ -12,8 +10,10 @@ namespace Tests
         [Test]
         public void CreateAPing()
         {
-          new Ping('A', 1, 1);
-          Assert.AreEqual(1, GetGridCoord());
+          Ping testPing = new Ping('F', 4, PingType.Asteroid);
+          Assert.AreEqual(6, testPing.GetGridCoord().GetX());
+          Assert.AreEqual(4, testPing.GetGridCoord().GetZ());
+          Assert.AreEqual("Asteroid", testPing.GetPingType().ToString());
             // Use the Assert class to test conditions
         }
 
