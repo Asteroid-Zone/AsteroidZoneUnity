@@ -73,7 +73,7 @@ namespace PlayGame.Speech {
         private static readonly List<string> LockCommands = new List<string>{"lock", "aim", "target", "focus"}; // Can only be used to activate a lock
         private static readonly List<string> LockCommandsWrong = new List<string>{"tiger", "famous"};
         private static readonly List<string> ShootCommands = new List<string>{"shoot", "fire"}; // Can only be used to activate laser gun or mining laser
-        private static readonly List<string> ShootCommandsWrong = new List<string> {"cute", "shoe", "sheet"};
+        private static readonly List<string> ShootCommandsWrong = new List<string> {"cute", "shoe", "sheet", "she"};
         //private static readonly List<string> OnCommands = new List<string>{GenericOnCommands, LockCommands, ShootCommands};
         private static readonly List<string> OnCommands = new List<string>(); // Is initialised to the above line at startup
         private static readonly List<string> OffCommands = new List<string>{"deactivate", "disengage", "turn off", "switch off", "stop", "disable"};
@@ -92,7 +92,7 @@ namespace PlayGame.Speech {
         private static readonly List<string> MiningLaserWrong = new List<string>{"morning"};
         private static readonly List<string> SpaceStation = new List<string>{Strings.SpaceStation, "space station", "base"};
         private static readonly List<string> Ping = new List<string>{Strings.Ping, "pin", "mark", "flag"};
-        private static readonly List<string> PingWrong = new List<string>{"pink", "pig"};
+        private static readonly List<string> PingWrong = new List<string>{"pink", "pig", "king"};
         private static readonly List<string> Resources = new List<string>{Strings.Resources, "materials", "rock", "supplies"};
         private static readonly List<string> LaserGun = new List<string> {Strings.LaserGun, "gun", "shoot", "attack", "laser beam", "ray gun", "laser"};
         private static readonly List<string> LaserGunWrong = new List<string> {"lazer", "riser", "lazarbeam"};
@@ -106,7 +106,7 @@ namespace PlayGame.Speech {
         private static readonly List<string> SolarPanelsWrong = new List<string> {"panos"};
 
         private static readonly List<string> CompassDirections = new List<string>{Strings.North, Strings.East, Strings.South, Strings.West};
-        private static readonly List<string> Forward = new List<string>{Strings.Forward, "ahead", "beforward", "ford", "afford"};
+        private static readonly List<string> Forward = new List<string>{Strings.Forward, "ahead", "beforward", "ford", "afford", "before"};
         private static readonly List<string> Back = new List<string>{Strings.Back, "pack"};
         private static readonly List<string> Left = new List<string>{Strings.Left, "lift"};
         private static readonly List<string> Right = new List<string>{Strings.Right, "wright", "write"};

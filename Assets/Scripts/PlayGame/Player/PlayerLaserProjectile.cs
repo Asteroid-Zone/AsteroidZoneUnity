@@ -35,6 +35,8 @@ namespace PlayGame.Player {
         /// </summary>
         /// <param name="collision"></param>
         private void OnTriggerEnter(Collider collision) {
+            bool ignoreCollision = false;
+            
             try {
                 // todo play animation (explosion)
 
@@ -51,9 +53,15 @@ namespace PlayGame.Player {
                     Asteroid asteroid = collision.gameObject.GetComponent<Asteroid>();
                     asteroid.MineAsteroid(GameConstants.PlayerLaserMiningRate, _shootingPlayerData);
                 }
+                
+                // Don't collide with dead players
+                if (collision.gameObject.CompareTag(Tags.PlayerTag)) {
+                    PlayerData player = collision.gameObject.GetComponent<PlayerData>();
+                    if (player.dead) ignoreCollision = true;
+                }
             } finally {
                 // Always destroy the laser in the end
-                Destroy(gameObject);
+                if (!ignoreCollision) Destroy(gameObject);
             }
         }
 

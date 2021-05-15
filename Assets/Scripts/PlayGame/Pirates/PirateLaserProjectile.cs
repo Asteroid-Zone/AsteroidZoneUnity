@@ -33,12 +33,15 @@ namespace PlayGame.Pirates {
         /// </summary>
         /// <param name="collision"></param>
         private void OnTriggerEnter(Collider collision) {
+            bool ignoreCollision = false;
+            
             try {
                 // todo play animation (explosion)
                 
                 if (collision.gameObject.CompareTag(Tags.PlayerTag)) {
                     PlayerData playerData = collision.gameObject.GetComponent<PlayerData>();
-                    playerData.TakeDamage(_shootingPirateData.GetLaserDamage());
+                    if (!playerData.dead) playerData.TakeDamage(_shootingPirateData.GetLaserDamage());
+                    else ignoreCollision = true;
                 }
 
                 if (collision.gameObject.CompareTag(Tags.AsteroidTag)) {
@@ -54,7 +57,7 @@ namespace PlayGame.Pirates {
                 }
             } finally {
                 // Always destroy the laser in the end
-                Destroy(gameObject);
+                if (!ignoreCollision) Destroy(gameObject);
             }
         }
 
