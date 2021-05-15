@@ -10,6 +10,10 @@ namespace PlayGame.VoiceChat
         
         private void Start()
         {
+            // The initial mode in the game is Command mode, so voice chat should be muted
+            VoiceChatController.MuteMyselfInVoiceChat();
+            
+            // Find the voice chat slider and set its on change listner
             _voiceChatCommandSlider = GetComponent<Slider>();
             _voiceChatCommandSlider.onValueChanged.AddListener(delegate
             {
@@ -19,6 +23,7 @@ namespace PlayGame.VoiceChat
 
         private void Update()
         {
+            // The tab button changes the voice chat/command mode
             if (Input.GetKeyDown(KeyCode.Tab)) { // Switch voice chat and command modes
                 _voiceChatCommandSlider.value = 1 - _voiceChatCommandSlider.value;
             }
@@ -26,15 +31,18 @@ namespace PlayGame.VoiceChat
 
         private void VoiceChatSliderChange()
         {
+            // Get the value of the voice chat slider
             float value = _voiceChatCommandSlider.value;
             
             switch (value)
             {
                 case 0:
+                    // Command mode: mute myself in voice chat and start speech recognition
                     VoiceChatController.MuteMyselfInVoiceChat();
                     SpeechRecognition.StartSpeechRecognitionInTheBrowser();
                     break;
                 case 1:
+                    // Voice chat mode: unmute myself in voice chat and start speech recognition
                     VoiceChatController.UnmuteMyselfInVoiceChat();
                     SpeechRecognition.StopSpeechRecognitionInTheBrowser();
                     break;
