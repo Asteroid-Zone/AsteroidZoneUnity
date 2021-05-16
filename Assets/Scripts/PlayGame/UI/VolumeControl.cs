@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
+using Statics;
+using Tutorial;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace PlayGame.UI
@@ -56,10 +59,25 @@ namespace PlayGame.UI
         private void Start()
         {
             // Get the background audio source
-            _backAudioSource = GetComponent<AudioSource>();
+            if (SceneManager.GetActiveScene().name == Scenes.TutorialScene)
+            {
+                // Get the tutorial voice
+                _backAudioSource = TutorialManager.GetInstance().gameObject
+                    .GetComponent<AudioSource>();
 
-            // Set the background volume
-            backVolumeSlider.value =_backAudioSource.volume = PlayerPrefs.GetFloat(BackVolumePrefKey);
+                // Stop the background music
+                GetComponent<AudioSource>().mute = true;
+            }
+            else
+            {
+                _backAudioSource = GetComponent<AudioSource>();
+            }
+
+            // Set the background volume (if tutorial- set initially to 1 to be as loud as possible)
+            backVolumeSlider.value =_backAudioSource.volume = (SceneManager.GetActiveScene().name == Scenes.TutorialScene) ?
+                1:
+                PlayerPrefs.GetFloat(BackVolumePrefKey);
+
 
             // Set the value for the sfx volume slider and set the value for all SFX audio sources
             sfxVolumeSlider.value = PlayerPrefs.GetFloat(SfxVolumePrefKey);
