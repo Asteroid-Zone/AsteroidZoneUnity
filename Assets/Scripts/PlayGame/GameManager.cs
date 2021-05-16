@@ -89,7 +89,14 @@ namespace PlayGame {
         }
 
         public void LeaveRoom() {
-            PhotonNetwork.LeaveRoom();
+            if (SceneManager.GetActiveScene().name == Scenes.TutorialScene)
+            {
+                SceneManager.LoadScene(Scenes.MainMenuScene);
+            }
+            else
+            {
+                PhotonNetwork.LeaveRoom();
+            }
         }
 
         private void LoadArena() {
