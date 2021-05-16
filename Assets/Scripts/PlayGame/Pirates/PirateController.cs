@@ -3,7 +3,6 @@ using PlayGame.Player;
 using Statics;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace PlayGame.Pirates {
@@ -157,7 +156,7 @@ namespace PlayGame.Pirates {
         /// <param name="position"></param>
         private void AlertPirates(Vector3 position)
         {
-            PirateSpawner.musicSwitcher.SetMusic(true);
+            PirateSpawner.GetInstance().musicSwitcher.SetMusic(true);
             PirateController[] pirateControllers = PirateSpawner.GetAllPirateControllers();
             _alert = true;
             _knownStationLocation = position;
@@ -179,7 +178,7 @@ namespace PlayGame.Pirates {
         /// Calls the Unalert method for all pirates and disables the minimap alert object.
         /// </summary>
         public static void UnalertPirates() {
-            PirateSpawner.musicSwitcher.SetMusic(false);
+            PirateSpawner.GetInstance().musicSwitcher.SetMusic(false);
             // Check if the pirates were alerted at all initially
             if (!_alert) {
                 return;

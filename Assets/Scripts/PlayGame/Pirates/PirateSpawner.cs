@@ -37,7 +37,7 @@ namespace PlayGame.Pirates {
         
         public GameObject scout;
         public GameObject elite;
-        public static InGameMusicSwitcher musicSwitcher;
+        public InGameMusicSwitcher musicSwitcher;
         
         // Will be used as the size of the checked space when spawning (checked space should be empty)
         private float _spawnRangeCheck; 
