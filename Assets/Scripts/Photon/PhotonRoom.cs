@@ -1,6 +1,7 @@
 ﻿using Photon.Pun;
 using Photon.Realtime;
 using PlayGame.Stats;
+using PlayGame.VoiceChat;
 using Statics;
 using UnityEngine;
 using UnityEngine.UI;
@@ -87,6 +88,9 @@ namespace Photon {
             
             ClearList();
             ListPlayersInRoom();
+
+            // Join the voice chat when you enter a room
+            VoiceChatController.JoinVoiceChat(PhotonNetwork.CurrentRoom.Name);
         }
 
         /// <summary>
@@ -150,6 +154,7 @@ namespace Photon {
             roomControlPanel.SetActive(false);
             lobbyControlPanel.SetActive(true);
             PhotonNetwork.JoinLobby();
+            VoiceChatController.LeaveVoiceChat();
         }
 
         /// <summary>
