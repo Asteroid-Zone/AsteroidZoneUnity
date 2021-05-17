@@ -48,6 +48,8 @@ namespace PlayGame.Player {
         public static List<GameObject> Players;
         private int _playerID;
 
+        public bool tutorialCommander = false;
+
         public bool dead;
 
         public Role role;

@@ -132,6 +132,7 @@ namespace Tutorial {
 
         private IEnumerator CommanderTutorial() {
             blackScreenPanel.SetActive(false);
+            _playerData.tutorialCommander = true;
             _playerData.viewableArea.SetActive(false);
             _playerData.viewableAreaMinimap.SetActive(false);
             PlayerData.SetActiveRecursively(_playerData.shipModel.gameObject, false); // Hide the ship model
@@ -181,6 +182,8 @@ namespace Tutorial {
             while(!WaitForRepairCommand(RepairCommand.StationModule.Hyperdrive)) yield return null;
             
             yield return PlayLine(commanderTextLines[13],commanderAudioLines[13]);
+            
+            _playerData.tutorialCommander = false;
             StartCoroutine(TutorialOutro());
         }
 

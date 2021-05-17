@@ -260,7 +260,7 @@ namespace PlayGame.Pirates {
             PlayerData.Players.ForEach(p => {
                 if (p != null) {
                     PlayerData playerData = p.GetComponent<PlayerData>();
-                    if (playerData.GetRole() != Role.StationCommander && playerData.dead == false) {
+                    if (playerData.GetRole() != Role.StationCommander && playerData.dead == false && playerData.tutorialCommander == false) {
                         Vector3 position = p.transform.position;
                         float distance = Vector3.Distance(transform.position, position);
                         if (distance < closestPlayerDist) {
