@@ -24,7 +24,7 @@ namespace PlayGame {
 
         public static bool gameOver = false;
 
-        public Text gameTimer;
+        //public Text gameTimer;
 
         public static void ResetStaticVariables() {
             gameOver = false;
@@ -48,8 +48,8 @@ namespace PlayGame {
             float time = Time.time - StatsManager.GameStats.startTime;
             if (time > GameConstants.TimeLimit) GameOver(GameOverType.TimeUp);
 
-            float timeRemaining = GameConstants.TimeLimit - time;
-            gameTimer.text = "Game Time Remaining: " + FormatTime(timeRemaining);
+            //float timeRemaining = GameConstants.TimeLimit - time;
+            //gameTimer.text = "Game Time Remaining: " + FormatTime(timeRemaining);
         }
         
         private static string FormatTime(float seconds) {
