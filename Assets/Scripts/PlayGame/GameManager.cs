@@ -91,6 +91,11 @@ namespace PlayGame {
         public void LeaveRoom() {
             if (SceneManager.GetActiveScene().name == Scenes.TutorialScene)
             {
+                StopAllCoroutines();
+                DebugSettings.Debug = false;
+                
+                CleanUpGameObjects();
+                ResetStaticVariables();
                 SceneManager.LoadScene(Scenes.MainMenuScene);
             }
             else
