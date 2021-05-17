@@ -127,7 +127,10 @@ namespace PlayGame.Pirates {
 
             // Initialise some random grid coordinates on the map
             Vector2 randomGridCoord = new Vector2(Random.Range(0, GameConstants.GridWidth), Random.Range(0, GameConstants.GridHeight));
-            
+            var center = new Vector2((int)(GameConstants.GridWidth / 2), (int)(GameConstants.GridHeight / 2));
+            if (randomGridCoord.x >= center.x - 2 && randomGridCoord.x <= center.x + 2 &&
+                randomGridCoord.y >= center.y - 2 && randomGridCoord.y <= center.y + 2) return;
+
             // Transform the grid coordinates to global coordinates
             Vector3 randomGlobalCoord = GridManager.GridToGlobalCoord(randomGridCoord);
 
