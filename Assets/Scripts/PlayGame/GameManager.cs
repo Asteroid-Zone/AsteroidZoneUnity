@@ -91,6 +91,7 @@ namespace PlayGame {
             CleanUpGameObjects();
             ResetStaticVariables();
             SceneManager.LoadScene(Scenes.MainMenuScene);
+            VoiceChatController.LeaveVoiceChat();
             
             base.OnLeftRoom();
         }
