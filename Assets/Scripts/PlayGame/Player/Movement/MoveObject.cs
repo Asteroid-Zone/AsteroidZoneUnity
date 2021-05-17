@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Photon.Pun;
 using PlayGame.Pirates;
 using PlayGame.Speech.Commands;
 using PlayGame.UI;
@@ -137,11 +138,13 @@ namespace PlayGame.Player.Movement {
                 if (_lockTarget != null) FaceTarget(_lockTarget);
                 else {
                     // Disable the lock on system
-                    string eventMessage = "No targets found.";
-                    if (lockType == ToggleCommand.LockTargetType.Asteroid) eventMessage = "No asteroids found. Mining laser disabled.";
-                    if (lockType == ToggleCommand.LockTargetType.Pirate) eventMessage = "No pirates found. Laser gun disabled.";
-                    EventsManager.AddMessage(eventMessage);
-                    
+                    if (gameObject.GetPhotonView().IsMine) {
+                        string eventMessage = "No targets found.";
+                        if (lockType == ToggleCommand.LockTargetType.Asteroid) eventMessage = "No asteroids found. Mining laser disabled.";
+                        if (lockType == ToggleCommand.LockTargetType.Pirate) eventMessage = "No pirates found. Laser gun disabled.";
+                        EventsManager.AddMessage(eventMessage);
+                    }
+
                     SetLockTargetType(ToggleCommand.LockTargetType.None);
                 }
             } else {
