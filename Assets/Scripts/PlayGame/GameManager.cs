@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Photon;
 using Photon.GameControllers;
 using Photon.Pun;
@@ -10,6 +11,7 @@ using PlayGame.VoiceChat;
 using Statics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace PlayGame {
     public class GameManager : MonoBehaviourPunCallbacks {
@@ -21,6 +23,8 @@ namespace PlayGame {
         }
 
         public static bool gameOver = false;
+
+        public Text gameTimer;
 
         public static void ResetStaticVariables() {
             gameOver = false;
@@ -41,7 +45,16 @@ namespace PlayGame {
         }
 
         private void Update() {
-            if (Time.time - StatsManager.GameStats.startTime > GameConstants.TimeLimit) GameOver(GameOverType.TimeUp);
+            float time = Time.time - StatsManager.GameStats.startTime;
+            if (time > GameConstants.TimeLimit) GameOver(GameOverType.TimeUp);
+
+            float timeRemaining = GameConstants.TimeLimit - time;
+            gameTimer.text = "Game Time Remaining: " + FormatTime(timeRemaining);
+        }
+        
+        private static string FormatTime(float seconds) {
+            TimeSpan ts = TimeSpan.FromSeconds(seconds);
+            return ts.ToString(@"mm\:ss");
         }
 
         public void GameOver(GameOverType gameOverType) {
@@ -89,17 +102,14 @@ namespace PlayGame {
         }
 
         public void LeaveRoom() {
-            if (SceneManager.GetActiveScene().name == Scenes.TutorialScene)
-            {
+            if (SceneManager.GetActiveScene().name == Scenes.TutorialScene) {
                 StopAllCoroutines();
                 DebugSettings.Debug = false;
                 
                 CleanUpGameObjects();
                 ResetStaticVariables();
                 SceneManager.LoadScene(Scenes.MainMenuScene);
-            }
-            else
-            {
+            } else {
                 PhotonNetwork.LeaveRoom();
             }
         }
