@@ -5,8 +5,11 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-namespace PlayGame.UI
-{
+namespace PlayGame.UI {
+    
+    /// <summary>
+    /// This class displays the player's health in the parent text GameObject.
+    /// </summary>
     public class DisplayPlayerHealth : MonoBehaviour {
     
         public GameObject player;

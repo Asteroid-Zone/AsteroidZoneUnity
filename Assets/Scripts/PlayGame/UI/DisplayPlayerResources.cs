@@ -6,6 +6,10 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace PlayGame.UI {
+    
+    /// <summary>
+    /// This class displays the player's resources in the parent text GameObject.
+    /// </summary>
     public class DisplayPlayerResources : MonoBehaviour {
     
         public GameObject player;
@@ -21,6 +25,7 @@ namespace PlayGame.UI {
 
         private void Update() {
             if (_playerData == null) return;
+            
             _text.text = "Resources: " + _playerData.GetResources();
         }
     }

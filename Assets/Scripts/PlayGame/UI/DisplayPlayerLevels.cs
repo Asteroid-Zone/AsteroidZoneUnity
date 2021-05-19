@@ -6,6 +6,10 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace PlayGame.UI {
+    
+    /// <summary>
+    /// This class displays the player's levels on the canvas.
+    /// </summary>
     public class DisplayPlayerLevels : MonoBehaviour {
     
         public GameObject player;

@@ -2,8 +2,11 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace PlayGame.UI
-{
+namespace PlayGame.UI {
+    
+    /// <summary>
+    /// This class displays the station's hull health in the parent text GameObject.
+    /// </summary>
     public class DisplayStationHealth : MonoBehaviour {
     
         public GameObject spaceStation;
@@ -18,6 +21,7 @@ namespace PlayGame.UI
 
         private void Update() {
             if (_spaceStation == null) return;
+            
             StationModule module = _spaceStation.GetStationHull();
             _text.text = module.Name + " Health: " + module.ModuleHealth + "/" + module.MaxHealth;
         }

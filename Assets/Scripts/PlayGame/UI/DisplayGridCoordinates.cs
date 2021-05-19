@@ -6,6 +6,10 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace PlayGame.UI {
+    
+    /// <summary>
+    /// This class displays the target's current grid coordinates in the parent text GameObject.
+    /// </summary>
     public class DisplayGridCoordinates : MonoBehaviour {
         
         public Transform target;

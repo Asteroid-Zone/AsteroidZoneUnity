@@ -5,22 +5,24 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-namespace PlayGame.UI
-{
-    public class DisplayUnityCoordinates : MonoBehaviour
-    {
+namespace PlayGame.UI {
+    
+    /// <summary>
+    /// This class displays the player's current unity coordinates in the parent text GameObject.
+    /// </summary>
+    public class DisplayUnityCoordinates : MonoBehaviour {
+        
         public Transform target;
         private Text _text;
 
-        private void Start()
-        {
+        private void Start() {
             target = (!DebugSettings.Debug && SceneManager.GetActiveScene().name != Scenes.TutorialScene) ? PhotonPlayer.Instance.myAvatar.transform : TestPlayer.GetPlayerShip().transform;
             _text = GetComponent<Text>();
         }
 
         private void Update() {
             if (target == null) return;
-            // Get the coordinates of the target
+            
             var coordinates = target.position;
 
             // Display the coordinates of the target rounded to 2 d.p.

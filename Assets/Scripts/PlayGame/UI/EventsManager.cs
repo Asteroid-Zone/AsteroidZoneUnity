@@ -3,8 +3,12 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace PlayGame.UI {
-    public class EventsManager : MonoBehaviour
-    {
+    
+    /// <summary>
+    /// This class displays the event messages on the canvas.
+    /// </summary>
+    public class EventsManager : MonoBehaviour {
+        
         #region Singleton
         private static EventsManager _instance;
 
@@ -28,14 +32,15 @@ namespace PlayGame.UI {
         private Text _eventsListText;
         private ScrollRect _scrollRect;
 
-        private void Start()
-        {
-            // Get the sub-objects
+        private void Start() {
             _eventsListText = GetComponent<Text>();
             _scrollRect = scrollParent.GetComponent<ScrollRect>();
         }
         
-
+        /// <summary>
+        /// Adds a new event message to the event panel.
+        /// </summary>
+        /// <param name="message"></param>
         public static void AddMessage(string message) {
             _instance._eventsListText.text += $"[{DateTime.Now}]"
                                               + Environment.NewLine

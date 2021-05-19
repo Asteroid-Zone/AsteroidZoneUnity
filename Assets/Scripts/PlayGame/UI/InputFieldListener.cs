@@ -4,19 +4,30 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace PlayGame.UI {
+    
+    /// <summary>
+    /// This class loads the initial values for the debug menu and updates the game variables when the values are edited.
+    /// </summary>
     public class InputFieldListener : MonoBehaviour {
 
         private InputField _inputField;
+
+        private const string Initial = "initial";
         
         private void Start() {
             _inputField = gameObject.GetComponent<InputField>();
             _inputField.onEndEdit.AddListener(EditValue);
-            EditValue("initial");
+            EditValue(Initial);
         }
         
-        // todo there must be a better way to do this
+        /// <summary>
+        /// Loads the initial value of the game variable into the input field.
+        /// Sets the game variable when the input field value is changed.
+        /// </summary>
+        /// <param name="value">The value of the input field. "initial" will load the initial value.</param>
+        /// <exception cref="ArgumentException">Thrown if the input field name is not recognised.</exception>
         private void EditValue(string value) {
-            bool initial = (value == "initial");
+            bool initial = (value == Initial);
             switch (_inputField.name) {
                 case "TimeLimitInput":
                     if (initial) _inputField.text = GameConstants.TimeLimit.ToString();

@@ -5,8 +5,11 @@ using UnityEngine.UI;
 using Statics;
 using UnityEngine.SceneManagement;
 
-namespace PlayGame.UI
-{
+namespace PlayGame.UI {
+    
+    /// <summary>
+    /// This class displays the player's current speed in the parent text GameObject.
+    /// </summary>
     public class DisplayPlayerSpeed : MonoBehaviour {
     
         public GameObject player;
@@ -21,8 +24,12 @@ namespace PlayGame.UI
             _playerData = player.GetComponent<PlayerData>();
         }
 
+        /// <summary>
+        /// Calculates and displays the players current speed.
+        /// </summary>
         private void LateUpdate() {
             if (player == null) return;
+            
             Vector3 currentPosition = player.transform.position;
             float speed = (currentPosition - _lastPosition).magnitude / Time.deltaTime;
             _lastPosition = currentPosition;

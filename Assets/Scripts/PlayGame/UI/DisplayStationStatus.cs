@@ -3,6 +3,10 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace PlayGame.UI {
+    
+    /// <summary>
+    /// This class displays the station's health for each module in the parent text GameObject.
+    /// </summary>
     public class DisplayStationStatus : MonoBehaviour {
     
         public GameObject spaceStation;
@@ -15,6 +19,9 @@ namespace PlayGame.UI {
             _spaceStation = spaceStation.GetComponent<SpaceStation.SpaceStation>();
         }
 
+        /// <summary>
+        /// Displays the health of each station module.
+        /// </summary>
         private void Update() {
             if (_spaceStation == null) return;
             
@@ -24,6 +31,7 @@ namespace PlayGame.UI {
             foreach (StationModule module in _spaceStation.GetModules()) {
                 text += module + "\n";
             }
+            
             _text.text = text;
         }
     }
