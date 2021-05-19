@@ -3,44 +3,58 @@ using Statics;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace PlayGame
-{
-    public class GridManager : MonoBehaviour
-    {
+namespace PlayGame {
+    
+    /// <summary>
+    /// This class controls the game grid.
+    /// </summary>
+    public class GridManager : MonoBehaviour {
+        
         public GameObject gridSquarePrefab;
         private GameObject[,] _grid;
 
+        /// <summary>
+        /// This method creates the grid at the start of the game.
+        /// </summary>
         private void Start() {
             // X/Y of the first grid square (top left)
             var startX = GameConstants.GridCellSize / 2;
             var startY = GameConstants.GridCellSize / 2;
+            
             _grid = new GameObject[GameConstants.GridHeight, GameConstants.GridWidth];
-            for (int y = 0; y < GameConstants.GridHeight; y++)
-            {
-                for (int x = 0; x < GameConstants.GridWidth; x++)
-                {
+            
+            for (int y = 0; y < GameConstants.GridHeight; y++) {
+                for (int x = 0; x < GameConstants.GridWidth; x++) {
                     // Instantiate a grid square prefab with `this` as parent
                     // Also sets the canvas text to the sector coords
-                    // TODO: See if text setting can be done better
                     var position = new Vector3(startX + (x * GameConstants.GridCellSize), 0, startY + (y * GameConstants.GridCellSize));
                     var newGridSquare = Instantiate(gridSquarePrefab, position, Quaternion.identity);
                     newGridSquare.transform.parent = gameObject.transform;
-                    newGridSquare.transform.GetChild(0).GetChild(0).GetComponent<Text>().text =
-                        $"({NumberToLetterCoord(x)}, {y})";
+                    newGridSquare.transform.GetChild(0).GetChild(0).GetComponent<Text>().text = $"({NumberToLetterCoord(x)}, {y})";
                     _grid[y, x] = newGridSquare;
                 }
             }
         }
 
+        /// <summary>
+        /// Converts a number to a letter. (a=0, ...).
+        /// </summary>
+        /// <param name="numCoord"></param>
         private static char NumberToLetterCoord(int numCoord) {
             return (char) (numCoord + 65);
         }
 
+        /// <summary>
+        /// Returns the size of a grid cell.
+        /// </summary>
         public static int GetCellSize() {
             return GameConstants.GridCellSize;
         }
 
-        // Returns the nearest point on the edge of the grid to the given position
+        /// <summary>
+        /// Returns the nearest point on the edge of the grid to the given position.
+        /// </summary>
+        /// <param name="position"></param>
         public static Vector3 GetNearestEdgePoint(Vector3 position) {
             GridCoord coord = GridCoord.GetCoordFromVector(position);
 
@@ -58,8 +72,11 @@ namespace PlayGame
             return Vector3.positiveInfinity;
         }
 
-        // Helper function that, given coordinates on the grid, returns the centre of it in normal 3D space
-        // e.g: (0,0) is (5, 0, 5)
+        /// <summary>
+        /// Returns the world space Vector3 of the centre of the given grid coordinate.
+        /// </summary>
+        /// <param name="gridCoord"></param>
+        // todo convert to GridCoord
         public static Vector3 GridToGlobalCoord(Vector2 gridCoord) {
             Vector3 globalCoord;
             globalCoord.y = 0;
@@ -68,6 +85,11 @@ namespace PlayGame
             return globalCoord;
         }
 
+        /// <summary>
+        /// Converts a world space Vector3 to a grid coordinate Vector2.
+        /// </summary>
+        /// <param name="globalCoord"></param>
+        // todo convert to GridCoord
         public static Vector2 GlobalToGridCoord(Vector3 globalCoord) {
             Vector2 gridCoord;
             gridCoord.x = (int) (globalCoord.x / GameConstants.GridCellSize);
@@ -75,29 +97,41 @@ namespace PlayGame
             return gridCoord;
         }
 
+        /// <summary>
+        /// Returns a world space Vector3 representing the centre of the grid.
+        /// </summary>
         public static Vector3 GetGridCentre() {
             float x = (GameConstants.GridWidth / 2f) * GameConstants.GridCellSize;
             float z = (GameConstants.GridHeight / 2f) * GameConstants.GridCellSize;
             return new Vector3(x, 0, z);
         }
 
-        // Gets the total number of cells in the grid
+        /// <summary>
+        /// Returns the total number of cells in the grid.
+        /// </summary>
         public static int GetTotalCells() {
             return GameConstants.GridHeight * GameConstants.GridWidth;
         }
 
-        public GameObject [,] GetGrid()
-        {
+        /// <summary>
+        /// Returns the grid array of GameObjects.
+        /// </summary>
+        /// <returns></returns>
+        public GameObject [,] GetGrid() {
             return _grid;
         }
 
-        public static int GetWidth()
-        {
+        /// <summary>
+        /// Returns the width of the grid.
+        /// </summary>
+        public static int GetWidth() {
             return GameConstants.GridWidth;
         }
 
-        public static int GetHeight()
-        {
+        /// <summary>
+        /// Returns the height of the grid.
+        /// </summary>
+        public static int GetHeight() {
             return GameConstants.GridHeight;
         }
     }

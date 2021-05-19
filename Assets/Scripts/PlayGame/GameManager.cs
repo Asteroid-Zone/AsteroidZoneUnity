@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Photon;
 using Photon.GameControllers;
 using Photon.Pun;
@@ -11,11 +10,17 @@ using PlayGame.VoiceChat;
 using Statics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 namespace PlayGame {
+    
+    /// <summary>
+    /// This class controls the game ending and people leaving/joining.
+    /// </summary>
     public class GameManager : MonoBehaviourPunCallbacks {
 
+        /// <summary>
+        /// Type of game ending.
+        /// </summary>
         public enum GameOverType {
             Victory,
             StationDestroyed,
@@ -24,8 +29,9 @@ namespace PlayGame {
 
         public static bool gameOver = false;
 
-        //public Text gameTimer;
-
+        /// <summary>
+        /// Resets all the static variables in the game.
+        /// </summary>
         public static void ResetStaticVariables() {
             gameOver = false;
             PirateController.ResetStaticVariables();
@@ -45,18 +51,15 @@ namespace PlayGame {
         }
 
         private void Update() {
-            float time = Time.time - StatsManager.GameStats.startTime;
-            if (time > GameConstants.TimeLimit) GameOver(GameOverType.TimeUp);
-
-            //float timeRemaining = GameConstants.TimeLimit - time;
-            //gameTimer.text = "Game Time Remaining: " + FormatTime(timeRemaining);
-        }
-        
-        private static string FormatTime(float seconds) {
-            TimeSpan ts = TimeSpan.FromSeconds(seconds);
-            return ts.ToString(@"mm\:ss");
+            // End the game if enough time has passed
+            if (Time.time - StatsManager.GameStats.startTime > GameConstants.TimeLimit) GameOver(GameOverType.TimeUp);
         }
 
+        /// <summary>
+        /// This method ends the game.
+        /// <remarks>This method can only be called by the host or in debug mode.</remarks>
+        /// </summary>
+        /// <param name="gameOverType">Type of game ending.</param>
         public void GameOver(GameOverType gameOverType) {
             if (gameOver) return; // Ensures LeaveRoom is only called once
             if (SceneManager.GetActiveScene().name == Scenes.TutorialScene) return; // Game can't end if player is in the tutorial
@@ -68,6 +71,12 @@ namespace PlayGame {
             else if (DebugSettings.Debug) RPC_GameOver(gameOverType, Time.time - StatsManager.GameStats.startTime);
         }
         
+        /// <summary>
+        /// Sets the end game stats and loads the cutscene.
+        /// <remarks>This method is called via RPC.</remarks>
+        /// </summary>
+        /// <param name="gameOverType">Type of game ending.</param>
+        /// <param name="time">Total game time.</param>
         [PunRPC]
         public void RPC_GameOver(GameOverType gameOverType, float time) {
             gameOver = true;
@@ -86,7 +95,10 @@ namespace PlayGame {
             SceneManager.LoadScene(Scenes.EndCutsceneScene);
         }
 
-        /// Called when the local player left the room. We need to load the launcher scene.
+        /// <summary>
+        /// Resets the game and loads the menu.
+        /// Called when the local player left the room.
+        /// </summary>
         public override void OnLeftRoom() {
             CleanUpGameObjects();
             ResetStaticVariables();
@@ -96,12 +108,19 @@ namespace PlayGame {
             base.OnLeftRoom();
         }
         
+        /// <summary>
+        /// Destroys any remaining GameObjects.
+        /// Does not destroy PhotonMono as this causes issues when trying to start a new game.
+        /// </summary>
         private void CleanUpGameObjects() {
             foreach (GameObject g in FindObjectsOfType<GameObject>()) {
                 if (!g.name.Equals("PhotonMono")) Destroy(g);
             }
         }
 
+        /// <summary>
+        /// Leaves the PhotonRoom or loads the menu if the player is in the tutorial.
+        /// </summary>
         public void LeaveRoom() {
             if (SceneManager.GetActiveScene().name == Scenes.TutorialScene) {
                 StopAllCoroutines();
@@ -115,6 +134,9 @@ namespace PlayGame {
             }
         }
 
+        /// <summary>
+        /// Loads the game scene.
+        /// </summary>
         private void LoadArena() {
             if (!PhotonNetwork.IsMasterClient) {
                 Debug.LogError("PhotonNetwork : Trying to Load a level but we are not the master Client");
@@ -123,17 +145,22 @@ namespace PlayGame {
             PhotonNetwork.LoadLevel(Scenes.PlayGameScene);
         }
 
-        public override void OnPlayerEnteredRoom(Photon.Realtime.Player other)
-        {
+        /// <summary>
+        /// Logs in the console when a player joins the game.
+        /// </summary>
+        /// <param name="other">Player joining.</param>
+        public override void OnPlayerEnteredRoom(Photon.Realtime.Player other) {
             Debug.LogFormat("OnPlayerEnteredRoom() {0}", other.NickName); // not seen if you're the player connecting
         }
 
-        public override void OnPlayerLeftRoom(Photon.Realtime.Player other)
-        {
+        /// <summary>
+        /// Logs in the console when a player leaves the game.
+        /// </summary>
+        /// <param name="other">Player joining.</param>
+        public override void OnPlayerLeftRoom(Photon.Realtime.Player other) {
             PlayerData.UpdatePlayerLists();
             Debug.LogFormat("OnPlayerLeftRoom() {0}", other.NickName); // seen when other disconnects
         }
-
 
     }
 }

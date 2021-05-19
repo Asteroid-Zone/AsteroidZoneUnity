@@ -9,8 +9,15 @@ using UnityEngine;
 using UnityEngine.AI;
 
 namespace PlayGame {
+    
+    /// <summary>
+    /// This class controls the behaviour of an asteroid.
+    /// </summary>
     public class Asteroid : MonoBehaviour {
 
+        /// <summary>
+        /// Struct that stores an asteroid models scale and mesh.
+        /// </summary>
         private readonly struct AsteroidModel {
             public readonly Vector3 Scale;
             public readonly Mesh Mesh;
@@ -36,11 +43,13 @@ namespace PlayGame {
         private const float FadeSpeed = 2f;
         
         private void Start() {
+            // Load the asteroid meshes if they haven't been loaded
             if (AsteroidMeshes.Count == 0) {
                 AsteroidMeshes.Add(GetAsteroidModel("Models/asteroid_1"));
                 AsteroidMeshes.Add(GetAsteroidModel("Models/asteroid_2"));
             }
 
+            // Select a random mesh and a random amount of resources
             int asteroidMeshIndex = Random.Range(0, AsteroidMeshes.Count);
             Quaternion rotation = Random.rotation;
             int totalResources = Random.Range(GameConstants.AsteroidMinResources, GameConstants.AsteroidMaxResources);
@@ -54,12 +63,26 @@ namespace PlayGame {
             }
         }
         
+        /// <summary>
+        /// Syncs the asteroids properties and creates the NavMeshObstacle.
+        /// <remarks>Method is called via RPC.</remarks>
+        /// </summary>
+        /// <param name="asteroidMeshIndex">The index of the asteroid mesh.</param>
+        /// <param name="rotation">The Quaternion storing the rotation of the asteroid.</param>
+        /// <param name="resources">The amount of resources in the asteroid.</param>
         [PunRPC]
         public void RPC_SyncAsteroid(int asteroidMeshIndex, Quaternion rotation, int resources) {
             SetAsteroidProperties(asteroidMeshIndex, rotation, resources);
             CreateNavMeshObstacle(asteroidMeshIndex);
         }
 
+        /// <summary>
+        /// This method sets the asteroids mesh, scale and rotation.
+        /// It also sets the amount of resources.
+        /// </summary>
+        /// <param name="asteroidMeshIndex">The index of the asteroid mesh.</param>
+        /// <param name="rotation">The Quaternion storing the rotation of the asteroid.</param>
+        /// <param name="resources">The amount of resources in the asteroid.</param>
         private void SetAsteroidProperties(int asteroidMeshIndex, Quaternion rotation, int resources) {
             GetComponent<MeshCollider>().sharedMesh = GetComponent<MeshFilter>().mesh = AsteroidMeshes[asteroidMeshIndex].Mesh;
             _modelScale = AsteroidMeshes[asteroidMeshIndex].Scale;
@@ -71,6 +94,10 @@ namespace PlayGame {
             transform.localScale = _initialScale * _modelScale;
         }
 
+        /// <summary>
+        /// This method creates a NavMeshObstacle with the correct size.
+        /// </summary>
+        /// <param name="asteroidMeshIndex">The index of the asteroid mesh.</param>
         private void CreateNavMeshObstacle(int asteroidMeshIndex) {
             NavMeshObstacle navMeshObstacle = gameObject.AddComponent<NavMeshObstacle>();
             navMeshObstacle.shape = NavMeshObstacleShape.Capsule;
@@ -78,6 +105,10 @@ namespace PlayGame {
             navMeshObstacle.radius = (asteroidMeshIndex == 0) ? 1.2f : 1f;
         }
         
+        /// <summary>
+        /// Loads the asteroids mesh and scale.
+        /// </summary>
+        /// <param name="path">Path to the asteroids model.</param>
         private static AsteroidModel GetAsteroidModel(string path) {
             Vector3 scale = Resources.Load<GameObject>(path).transform.localScale;
             Mesh mesh = Resources.Load<Mesh>(path);
@@ -85,6 +116,12 @@ namespace PlayGame {
             return new AsteroidModel(scale, mesh);
         }
 
+        /// <summary>
+        /// This method slowly adjusts the asteroids alpha value to make it fade out.
+        /// It then destroys the GameObject.
+        /// <remarks>This method runs in a coroutine.</remarks>
+        /// </summary>
+        /// <returns></returns>
         private IEnumerator FadeOutAsteroid() {
             Material material = GetComponent<Renderer>().material;
             
@@ -103,13 +140,22 @@ namespace PlayGame {
                 Destroy(gameObject);
         }
 
+        /// <summary>
+        /// This method destroys the networked GameObject with the given photonID.
+        /// </summary>
+        /// <param name="pvID">The photonID of the GameObject to destroy.</param>
         [PunRPC]
-        public void DestroyOnNetwork(int pvID)
-        {
+        public void DestroyOnNetwork(int pvID) {
             if ((PhotonView.Find(pvID) == null)) return;
             PhotonNetwork.Destroy(PhotonView.Find(pvID));
         }
 
+        /// <summary>
+        /// Reduces the amount of resources and adjusts the scale.
+        /// Also calls RPC_MineAsteroid via an RPC call.
+        /// </summary>
+        /// <param name="miningRate">Amount of resources to remove from the asteroid.</param>
+        /// <param name="playerData">PlayerData of the player who mined the asteroid.</param>
         public void MineAsteroid(int miningRate, PlayerData playerData) {
             _resourcesRemaining -= miningRate;
             if (_resourcesRemaining < 0) _resourcesRemaining = 0;
@@ -136,6 +182,15 @@ namespace PlayGame {
             }
         }
         
+        /// <summary>
+        /// Syncs the asteroids resources and scale.
+        /// If the asteroid is destroyed, increase the players xp and stats, and start the fade out coroutine.
+        /// <remarks>This method is called via RPC.</remarks>
+        /// </summary>
+        /// <param name="resourcesRemaining">Amount of resources remaining.</param>
+        /// <param name="scale">New scale of the asteroid.</param>
+        /// <param name="destroyed">Whether or not the asteroid is destroyed.</param>
+        /// <param name="photonID">PhotonID of the player who mined the asteroid.</param>
         [PunRPC]
         public void RPC_MineAsteroid(int resourcesRemaining, Vector3 scale, bool destroyed, int photonID) {
             _resourcesRemaining = resourcesRemaining;
@@ -153,6 +208,10 @@ namespace PlayGame {
             }
         }
 
+        /// <summary>
+        /// Returns the number of resources that a player would receive from mining the asteroid.
+        /// </summary>
+        /// <param name="miningRate">The players mining rate.</param>
         public int GetResources(int miningRate) {
             if (_resourcesRemaining > miningRate) return miningRate;
             return _resourcesRemaining;

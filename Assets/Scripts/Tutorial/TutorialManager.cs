@@ -15,6 +15,10 @@ using UnityEngine.UI;
 using Ping = PlayGame.Pings.Ping;
 
 namespace Tutorial {
+    
+    /// <summary>
+    /// This class controls the tutorial.
+    /// </summary>
     public class TutorialManager : MonoBehaviour {
         
         // Make the class a singleton
@@ -76,6 +80,9 @@ namespace Tutorial {
 
         private bool _tutorialComplete = false;
         
+        /// <summary>
+        /// Loads the required components and starts the tutorial coroutine.
+        /// </summary>
         private void Start() {
             _cameraManager = GameObject.FindGameObjectWithTag(Tags.CameraManagerTag).GetComponent<CameraManager>();
             _pingManager = GameObject.FindGameObjectWithTag(Tags.PingManagerTag).GetComponent<PingManager>();
@@ -91,6 +98,9 @@ namespace Tutorial {
             _asteroidSpawner.SpawnAsteroid(new GridCoord('e', 6));
         }
 
+        /// <summary>
+        /// If the tutorial is complete, return to menu.
+        /// </summary>
         private void Update() {
             if (!_tutorialComplete) return;
             
@@ -102,12 +112,19 @@ namespace Tutorial {
             SceneManager.LoadScene(Scenes.MainMenuScene);
         }
         
+        /// <summary>
+        /// Destroys any remaining GameObjects.
+        /// Does not destroy PhotonMono as this causes issues when trying to start a new game.
+        /// </summary>
         private void CleanUpGameObjects() {
             foreach (GameObject g in FindObjectsOfType<GameObject>()) {
                 if (!g.name.Equals("PhotonMono")) Destroy(g);
             }
         }
 
+        /// <summary>
+        /// Plays the tutorial intro and starts the main tutorial coroutine.
+        /// </summary>
         private IEnumerator TutorialIntro() {
             blackScreenPanel.SetActive(true);
 
@@ -130,6 +147,9 @@ namespace Tutorial {
             StartCoroutine(_commander ? CommanderTutorial() : MinerTutorial());
         }
 
+        /// <summary>
+        /// Plays the station commander tutorial and starts the tutorial outro coroutine.
+        /// </summary>
         private IEnumerator CommanderTutorial() {
             blackScreenPanel.SetActive(false);
             _playerData.tutorialCommander = true;
@@ -187,6 +207,9 @@ namespace Tutorial {
             StartCoroutine(TutorialOutro());
         }
 
+        /// <summary>
+        /// Plays the miner tutorial and starts the tutorial outro coroutine.
+        /// </summary>
         private IEnumerator MinerTutorial() {
             blackScreenPanel.SetActive(false);
             _cameraManager.SetMode(true);
@@ -255,6 +278,9 @@ namespace Tutorial {
             StartCoroutine(TutorialOutro());
         }
         
+        /// <summary>
+        /// Plays the tutorial outro.
+        /// </summary>
         private IEnumerator TutorialOutro() {
             yield return PlayLine(outroTextLines[0], outroAudioLines[0]);
             yield return PlayLine(outroTextLines[1], outroAudioLines[1]);
@@ -263,6 +289,9 @@ namespace Tutorial {
             _tutorialComplete = true;
         }
 
+        /// <summary>
+        /// Resets the variables which keep track of the camera controls.
+        /// </summary>
         private void ResetVars() {
             Track = false;
             Move = false;
@@ -270,6 +299,9 @@ namespace Tutorial {
             Zoom = false;
         }
 
+        /// <summary>
+        /// Returns true if the last command was Yes or No.
+        /// </summary>
         private bool WaitForYesOrNo() {
             if (LatestCommand == null) return false;
             
@@ -286,6 +318,10 @@ namespace Tutorial {
             return false;
         }
 
+        /// <summary>
+        /// Returns true if the last command was a repair command for the given module.
+        /// </summary>
+        /// <param name="module"></param>
         private bool WaitForRepairCommand(RepairCommand.StationModule module) {
             if (LatestCommand == null) return false;
             if (LatestCommand.GetCommandType() != Command.CommandType.Repair) return false;
@@ -295,6 +331,11 @@ namespace Tutorial {
             return false;
         }
 
+        /// <summary>
+        /// Returns true if the last command was a ping command with the given type and location.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="gridCoord"></param>
         private bool WaitForPingCommand(PingType type, GridCoord gridCoord) {
             if (LatestCommand == null) return false;
             if (LatestCommand.GetCommandType() != Command.CommandType.Ping) return false;
@@ -306,12 +347,19 @@ namespace Tutorial {
             return false;
         }
 
+        /// <summary>
+        /// Returns true if the last command was a transfer command.
+        /// </summary>
         private bool WaitForTransferCommand() {
             if (LatestCommand == null) return false;
             if (LatestCommand.GetCommandType() == Command.CommandType.Transfer) return true;
             return false;
         }
         
+        /// <summary>
+        /// Returns true if the last command was a toggle command for the given object type.
+        /// </summary>
+        /// <param name="objectType"></param>
         private bool WaitForToggleCommand(ToggleCommand.ObjectType objectType) {
             if (LatestCommand == null) return false;
             if (LatestCommand.GetCommandType() != Command.CommandType.Toggle) return false;
@@ -322,6 +370,10 @@ namespace Tutorial {
             return false;
         }
 
+        /// <summary>
+        /// Returns true if the last command was a movement command for the given destination.
+        /// </summary>
+        /// <param name="destinationType"></param>
         private bool WaitForMovementDestination(MovementCommand.DestinationType destinationType) {
             if (LatestCommand == null) return false;
             if (LatestCommand.GetCommandType() != Command.CommandType.Movement) return false;
@@ -332,6 +384,9 @@ namespace Tutorial {
             return false;
         }
         
+        /// <summary>
+        /// Returns true if the last command was a movement command to GridCoord c3.
+        /// </summary>
         private bool WaitForMovementGrid() {
             if (LatestCommand == null) return false;
             if (LatestCommand.GetCommandType() != Command.CommandType.Movement) return false;
@@ -342,6 +397,12 @@ namespace Tutorial {
             return false;
         }
 
+        /// <summary>
+        /// Returns true if the last command was a movement command for the given direction and turn type.
+        /// </summary>
+        /// <param name="direction"></param>
+        /// <param name="direction2"></param>
+        /// <param name="turn">True if waiting for a turn command.</param>
         private bool WaitForMovement(string direction, string direction2, bool turn) {
             if (LatestCommand == null) return false;
             if (LatestCommand.GetCommandType() != Command.CommandType.Movement) return false;
@@ -354,6 +415,10 @@ namespace Tutorial {
             return false;
         }
 
+        /// <summary>
+        /// Returns true if the last command was a stop command.
+        /// </summary>
+        /// <returns></returns>
         private bool WaitForStopCommand() {
             if (LatestCommand == null) return false;
             if (LatestCommand.GetCommandType() != Command.CommandType.Speed) return false;
@@ -363,6 +428,11 @@ namespace Tutorial {
             return false;
         }
 
+        /// <summary>
+        /// Plays the given AudioClip, sets the subtitle text and returns a WaitForSeconds of the AudioClip length.
+        /// </summary>
+        /// <param name="subtitleLine"></param>
+        /// <param name="audioLine"></param>
         private WaitForSeconds PlayLine(string subtitleLine, AudioClip audioLine) {
             subtitlesText.text = subtitleLine;
             _audioSource.clip = audioLine;

@@ -2,18 +2,20 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace PlayGame.VoiceChat
-{
-    public class VoiceChatSlider : MonoBehaviour
-    {
+namespace PlayGame.VoiceChat {
+    
+    /// <summary>
+    /// This class allows the player to switch between voice chat and command mode.
+    /// </summary>
+    public class VoiceChatSlider : MonoBehaviour {
+        
         private Slider _voiceChatCommandSlider;
         
-        private void Start()
-        {
+        private void Start() {
             // The initial mode in the game is Command mode, so voice chat should be muted
             VoiceChatController.MuteMyselfInVoiceChat();
             
-            // Find the voice chat slider and set its on change listner
+            // Find the voice chat slider and set its on change listener
             _voiceChatCommandSlider = GetComponent<Slider>();
             _voiceChatCommandSlider.onValueChanged.AddListener(delegate
             {
@@ -21,21 +23,21 @@ namespace PlayGame.VoiceChat
             });
         }
 
-        private void Update()
-        {
+        private void Update() {
             // The tab button changes the voice chat/command mode
             if (Input.GetKeyDown(KeyCode.Tab)) { // Switch voice chat and command modes
                 _voiceChatCommandSlider.value = 1 - _voiceChatCommandSlider.value;
             }
         }
 
-        private void VoiceChatSliderChange()
-        {
+        /// <summary>
+        /// This method switches the players mode depending on the value of the voice slider.
+        /// </summary>
+        private void VoiceChatSliderChange() {
             // Get the value of the voice chat slider
             float value = _voiceChatCommandSlider.value;
             
-            switch (value)
-            {
+            switch (value) {
                 case 0:
                     // Command mode: mute myself in voice chat and start speech recognition
                     VoiceChatController.MuteMyselfInVoiceChat();
