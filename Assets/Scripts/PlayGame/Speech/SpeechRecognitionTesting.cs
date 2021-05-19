@@ -3,14 +3,17 @@ using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace PlayGame.Speech {
+    
+    /// <summary>
+    /// This class controls the keyboard controls for testing purposes.
+    /// </summary>
     public class SpeechRecognitionTesting : MonoBehaviour {
 
         public SpeechRecognition speechRecognition;
 
-        // Used letters:
-        // Q W E R T Y U I O
-        // A S D F G H J K L
-        // Z X C V B N M
+        /// <summary>
+        /// Checks for keyboard presses and sends the phrases to SpeechRecognition.
+        /// </summary>
         private void Update() {
             if (!DebugSettings.DebugKeys) return;
             
@@ -119,6 +122,9 @@ namespace PlayGame.Speech {
             }
         }
 
+        /// <summary>
+        /// Performs assertions to test the grammar.
+        /// </summary>
         private void Start() {
             // Grid Coord Assertions
             Assert.AreEqual(Grammar.GetGridCoord("a8"), "a8");

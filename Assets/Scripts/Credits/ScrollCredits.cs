@@ -25,8 +25,7 @@ namespace Credits {
         /// <summary>
         /// Plays the credits animation then loads the main menu scene.
         /// </summary>
-        private IEnumerator RollCredits()
-        {
+        private IEnumerator RollCredits() {
             creditsRun.SetActive(true);
 
             yield return new WaitForSeconds(25);

@@ -11,9 +11,12 @@ using PlayGame.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using Random = UnityEngine.Random;
 
 namespace PlayGame.Speech {
+    
+    /// <summary>
+    /// This class controls the speech recognition.
+    /// </summary>
     public class SpeechRecognition : MonoBehaviourPun {
 
         public Text text;
@@ -49,6 +52,10 @@ namespace PlayGame.Speech {
             _actionController = CreateActionController(player);
         }
 
+        /// <summary>
+        /// This method creates an ActionController for the given player.
+        /// </summary>
+        /// <param name="playerObject"></param>
         private ActionController CreateActionController(GameObject playerObject) {
             _actionController = new ActionController {
                 player = playerObject,
@@ -72,15 +79,16 @@ namespace PlayGame.Speech {
         private void OnDestroy() {
             StopSpeechRecognitionInTheBrowser();
         }
-
-        public void MoveStation() {
-            spaceStation.transform.position = new GridCoord(Random.Range(0, 11), Random.Range(0, 11)).GetWorldVector();
-        }
         
+        /// <summary>
+        /// Creates an ActionController for the player with the given photonID and performs the action in the phrase.
+        /// </summary>
+        /// <param name="viewID"></param>
+        /// <param name="phrase"></param>
         [PunRPC]
-        public void RPC_PerformActions(int viewID, string phrase)
-        {
+        public void RPC_PerformActions(int viewID, string phrase) {
             if (player == null) return;
+            
             GameObject prevPlayer = player;
 
             player = PhotonView.Find(viewID).gameObject;
@@ -92,6 +100,9 @@ namespace PlayGame.Speech {
             player = prevPlayer;
         }
         
+        /// <summary>
+        /// Resets the variables used in speech recognition.
+        /// </summary>
         private void ResetSpeechRecognition() {
             _foundCommand = false;
             _command = null;
@@ -99,7 +110,12 @@ namespace PlayGame.Speech {
             _detectedPhrases.Clear();
         }
         
-        // Called by javascript when speech is detected
+        /// <summary>
+        /// Parses the phrase to get a Command.
+        /// If the command is valid, perform it.
+        /// Method is called by javascript when speech is detected.
+        /// </summary>
+        /// <param name="result"></param>
         public void GetResponse(string result) {
             if (!DebugSettings.Debug && !photonView.IsMine) return;
 
@@ -117,7 +133,14 @@ namespace PlayGame.Speech {
             }
         }
         
-        // Called by javascript when the final speech is detected
+        /// <summary>
+        /// Parses the phrase to get a Command.
+        /// If the command is valid, perform it.
+        /// If no valid commands have been found since the last final speech, display the predicted command.
+        /// Finally, resets the speech recognition.
+        /// Method is called by javascript when final speech is detected.
+        /// </summary>
+        /// <param name="result"></param>
         public void GetFinalResponse(string result) {
             if (!DebugSettings.Debug && !photonView.IsMine) return;
             
@@ -144,7 +167,10 @@ namespace PlayGame.Speech {
             ResetSpeechRecognition();
         }
 
-        // Displays the suggested command and performs it if we are confident its what they meant
+        /// <summary>
+        /// Displays the suggested command and performs it if we are confident its what they meant.
+        /// </summary>
+        /// <param name="suggestedCommand"></param>
         private void DisplaySuggestedCommand(Tuple<string, float, bool, string> suggestedCommand) {
             string eventMessage;
             
@@ -184,6 +210,11 @@ namespace PlayGame.Speech {
             ReadTextToSpeech(eventMessage); // Read the message using tts in the browser
         }
 
+        /// <summary>
+        /// Returns the most likely suggested command from a list of suggested commands.
+        /// </summary>
+        /// <param name="suggestedCommands"></param>
+        /// <returns>Tuple(command, confidence, fromData, phrase)</returns>
         private Tuple<string, float, bool, string> FindBestSuggestedCommand(List<Tuple<string, float, bool, string>> suggestedCommands) {
             Tuple<string, float, bool, string> bestCommand = null;
             Tuple<string, float, bool, string> bestCommandFromData = null;
@@ -210,8 +241,10 @@ namespace PlayGame.Speech {
             return bestCommand;
         }
         
-        // Returns a list of suggested commands for all the detected phrases
-        // Tuple(command, confidence, fromData, phrase)
+        /// <summary>
+        /// Returns a list of suggested commands for all the detected phrases.
+        /// </summary>
+        /// <returns>Tuple(command, confidence, fromData, phrase)</returns>
         private List<Tuple<string, float, bool, string>> FindSuggestedCommands() {
             List<Tuple<string, float, bool, string>> suggestedCommands = new List<Tuple<string, float, bool, string>>();
 
@@ -222,8 +255,11 @@ namespace PlayGame.Speech {
             return suggestedCommands;
         }
         
-        // Returns the suggested command for a given phrase
-        // Tuple(command, confidence, fromData, phrase)
+        /// <summary>
+        /// Returns the suggested command for a given phrase.
+        /// </summary>
+        /// <param name="phrase"></param>
+        /// <returns>Tuple(command, confidence, fromData, phrase)</returns>
         private Tuple<string, float, bool, string> FindSuggestedCommand(string phrase) {
             Tuple<string, float> suggestedCommandFromData;
             if (_playerData.GetRole() == Role.StationCommander) suggestedCommandFromData = Grammar.GetSuggestedCommandFromData(phrase, _playerData, null, false, false);
@@ -240,14 +276,24 @@ namespace PlayGame.Speech {
             return new Tuple<string, float, bool, string>(null, 0, false, phrase); // Otherwise no command was found
         }
 
+        /// <summary>
+        /// Calls readTextToSpeech() in the browser.
+        /// </summary>
+        /// <param name="phrase"></param>
         private static void ReadTextToSpeech(string phrase) {
             Application.ExternalCall("readTextToSpeech", phrase);
         }
 
+        /// <summary>
+        /// Calls startVoiceRecognition() in the browser.
+        /// </summary>
         public static void StartSpeechRecognitionInTheBrowser() {
             Application.ExternalCall("startVoiceRecognition");
         }
 
+        /// <summary>
+        /// Calls stopVoiceRecognition() in the browser.
+        /// </summary>
         public static void StopSpeechRecognitionInTheBrowser() {
             Application.ExternalCall("stopVoiceRecognition");
         }

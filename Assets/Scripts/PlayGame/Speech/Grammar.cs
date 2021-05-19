@@ -8,9 +8,15 @@ using Statics;
 using UnityEngine;
 
 namespace PlayGame.Speech {
+    
+    /// <summary>
+    /// This class controls the text-to-action conversion.
+    /// </summary>
     public static class Grammar {
 
-        // Stores information about the data in the phrase and data about the players current situation
+        /// <summary>
+        /// Stores information about the data in the phrase and data about the players current situation.
+        /// </summary>
         private struct DataProvided {
             public string direction;
             public string destination;
@@ -128,6 +134,9 @@ namespace PlayGame.Speech {
 
         private static readonly List<string> CommandWords;
         
+        /// <summary>
+        /// Initialises grammar lists.
+        /// </summary>
         static Grammar() {
             // Add common wrong commands
             MovementCommands.AddRange(MovementCommandsWrong);
@@ -160,7 +169,9 @@ namespace PlayGame.Speech {
             CommandWords = GetAllCommandWords();
         }
 
-        // Returns a list containing all the command words
+        /// <summary>
+        /// Returns a list containing all the command words.
+        /// </summary>
         private static List<string> GetAllCommandWords() {
             List<string> commandWords = new List<string>();
             
@@ -175,7 +186,14 @@ namespace PlayGame.Speech {
             return commandWords;
         }
         
-        // Finds out what data is provided in the phrase and from PlayerData
+        /// <summary>
+        /// Returns a DataProvided based on data provided in the phrase and from player data.
+        /// </summary>
+        /// <param name="phrase"></param>
+        /// <param name="playerData"></param>
+        /// <param name="moveObject"></param>
+        /// <param name="miningLaser"></param>
+        /// <param name="combatLaser"></param>
         private static DataProvided GetDataProvided(string phrase, PlayerData playerData, MoveObject moveObject, bool miningLaser, bool combatLaser) {
             DataProvided dataProvided = new DataProvided();
             dataProvided.direction = GetDirection(phrase);
@@ -203,7 +221,14 @@ namespace PlayGame.Speech {
             return dataProvided;
         }
 
-        // Returns the command which was most likely intended by the player and a measure of how confident we are that its the correct command
+        /// <summary>
+        /// Returns the command which was most likely intended by the player and a measure of how confident we are that its the correct command.
+        /// </summary>
+        /// <param name="phrase"></param>
+        /// <param name="playerData"></param>
+        /// <param name="moveObject"></param>
+        /// <param name="miningLaser"></param>
+        /// <param name="combatLaser"></param>
         public static Tuple<string, float> GetSuggestedCommandFromData(string phrase, PlayerData playerData, MoveObject moveObject, bool miningLaser, bool combatLaser) {
             // Find commands that have some of the required data in the phrase
             List<Tuple<string, float>> partiallyCompleteCommands = GetPartiallyCompleteCommands(phrase, playerData, moveObject, miningLaser, combatLaser);
@@ -218,7 +243,11 @@ namespace PlayGame.Speech {
             return mostCompleteCommand;
         }
 
-        // Returns the closest command word using levenshtein distance and how confident we are that its the correct command
+        /// <summary>
+        /// Returns the closest command word using levenshtein distance and how confident we are that its the correct command.
+        /// </summary>
+        /// <param name="phrase"></param>
+        /// <returns></returns>
         public static Tuple<string, float> GetSuggestedCommandFromDistance(string phrase) {
             Tuple<string, int> closestCommandWord = GetClosestCommand(phrase);
             
@@ -228,6 +257,14 @@ namespace PlayGame.Speech {
             return new Tuple<string, float>(Strings.NoCommand, 0);
         }
 
+        /// <summary>
+        /// Returns a list of partially complete commands and their confidence.
+        /// </summary>
+        /// <param name="phrase"></param>
+        /// <param name="playerData"></param>
+        /// <param name="moveObject"></param>
+        /// <param name="miningLaser"></param>
+        /// <param name="combatLaser"></param>
         private static List<Tuple<string, float>> GetPartiallyCompleteCommands(string phrase, PlayerData playerData, MoveObject moveObject, bool miningLaser, bool combatLaser) {
             DataProvided dataProvided = GetDataProvided(phrase, playerData, moveObject, miningLaser, combatLaser);
             List<Tuple<string, float>> commands = new List<Tuple<string, float>>(); // List of (command, dataRequiredPercentage)
@@ -245,6 +282,11 @@ namespace PlayGame.Speech {
             return commands;
         }
 
+        /// <summary>
+        /// Returns a list of partially complete repair commands and their confidence.
+        /// </summary>
+        /// <param name="phrase"></param>
+        /// <param name="dataProvided"></param>
         private static List<Tuple<string, float>> GetPartiallyCompleteRepairCommands(string phrase, DataProvided dataProvided) {
             List<Tuple<string, float>> commands = new List<Tuple<string, float>>(); // List of (command, dataRequiredPercentage)
             if (dataProvided.role != Role.StationCommander) return commands; // Only station commander can perform these commands
@@ -294,6 +336,11 @@ namespace PlayGame.Speech {
             return commands;
         }
 
+        /// <summary>
+        /// Returns a list of partially complete lock commands and their confidence.
+        /// </summary>
+        /// <param name="phrase"></param>
+        /// <param name="dataProvided"></param>
         private static List<Tuple<string, float>> GetPartiallyCompleteLockCommands(string phrase, DataProvided dataProvided) {
             List<Tuple<string, float>> commands = new List<Tuple<string, float>>();
             if (dataProvided.role == Role.StationCommander) return commands; // Only miners can perform these commands
@@ -338,6 +385,11 @@ namespace PlayGame.Speech {
             return commands;
         }
         
+        /// <summary>
+        /// Returns a list of partially complete laser commands and their confidence.
+        /// </summary>
+        /// <param name="phrase"></param>
+        /// <param name="dataProvided"></param>
         private static List<Tuple<string, float>> GetPartiallyCompleteLaserCommands(string phrase, DataProvided dataProvided) {
             List<Tuple<string, float>> commands = new List<Tuple<string, float>>(); // List of (command, dataRequiredPercentage)
             if (dataProvided.role == Role.StationCommander) return commands; // Only miners can perform these commands
@@ -394,6 +446,11 @@ namespace PlayGame.Speech {
             return commands;
         }
 
+        /// <summary>
+        /// Returns a list of partially complete generic on commands and their confidence.
+        /// </summary>
+        /// <param name="phrase"></param>
+        /// <param name="dataProvided"></param>
         private static List<Tuple<string, float>> GetPartiallyCompleteGenericOnCommands(string phrase, DataProvided dataProvided) {
             List<Tuple<string, float>> commands = new List<Tuple<string, float>>(); // List of (command, dataRequiredPercentage)
             float completeness = 0;
@@ -432,6 +489,11 @@ namespace PlayGame.Speech {
             return commands;
         }
         
+        /// <summary>
+        /// Returns a list of partially complete on commands and their confidence.
+        /// </summary>
+        /// <param name="phrase"></param>
+        /// <param name="dataProvided"></param>
         private static List<Tuple<string, float>> GetPartiallyCompleteOnCommands(string phrase, DataProvided dataProvided) {
             List<Tuple<string, float>> commands = new List<Tuple<string, float>>(); // List of (command, dataRequiredPercentage)
 
@@ -442,7 +504,11 @@ namespace PlayGame.Speech {
             return commands;
         }
         
-        // Returns an off command with the percentage of data provided
+        /// <summary>
+        /// Returns a list of partially complete off commands and their confidence.
+        /// </summary>
+        /// <param name="phrase"></param>
+        /// <param name="dataProvided"></param>
         private static List<Tuple<string, float>> GetPartiallyCompleteOffCommand(string phrase, DataProvided dataProvided) {
             List<Tuple<string, float>> commands = new List<Tuple<string, float>>();
             if (dataProvided.role == Role.StationCommander) return commands; // Only miners can perform these commands
@@ -477,7 +543,11 @@ namespace PlayGame.Speech {
             return commands;
         }
         
-        // Returns a transfer command with the percentage of data provided
+        /// <summary>
+        /// Returns a partially complete transfer command and its confidence.
+        /// </summary>
+        /// <param name="phrase"></param>
+        /// <param name="dataProvided"></param>
         private static Tuple<string, float> GetPartiallyCompleteTransferCommand(string phrase, DataProvided dataProvided) {
             float completeness = 0;
             if (dataProvided.role == Role.StationCommander) return new Tuple<string, float>("transfer resources", completeness); // Only miners can perform these commands
@@ -512,7 +582,11 @@ namespace PlayGame.Speech {
             }
         }
 
-        // Returns a ping command with the percentage of data provided
+        /// <summary>
+        /// Returns a partially complete ping command and its confidence.
+        /// </summary>
+        /// <param name="phrase"></param>
+        /// <param name="dataProvided"></param>
         private static Tuple<string, float> GetPartiallyCompletePingCommand(string phrase, DataProvided dataProvided) {
             if (dataProvided.role != Role.StationCommander) return new Tuple<string, float>("ping", 0); // Only station commanders can perform these commands
             float completeness = 0;
@@ -550,6 +624,13 @@ namespace PlayGame.Speech {
             return new Tuple<string, float>(c, completeness);
         }
 
+        /// <summary>
+        /// Returns a list of partially complete movement commands and their confidence.
+        /// </summary>
+        /// <param name="phrase"></param>
+        /// <param name="dataProvided"></param>
+        /// <param name="commandList"></param>
+        /// <param name="commandListWrong"></param>
         private static List<Tuple<string, float>> GetPartiallyCompleteMovementCommands(string phrase, DataProvided dataProvided, List<string> commandList, List<string> commandListWrong) {
             List<Tuple<string, float>> commands = new List<Tuple<string, float>>(); // List of (command, dataRequiredPercentage)
 
@@ -602,7 +683,10 @@ namespace PlayGame.Speech {
             return commands;
         }
 
-        // Finds the closest command word within the phrase
+        /// <summary>
+        /// Returns the closest command word within the phrase.
+        /// </summary>
+        /// <param name="phrase"></param>
         private static Tuple<string, int> GetClosestCommand(string phrase) {
             Tuple<string, int> closestCommandWord = new Tuple<string, int>("", phrase.Length);
 
@@ -615,7 +699,11 @@ namespace PlayGame.Speech {
             return closestCommandWord;
         }
 
-        // Returns the word which has the smallest levenshtein distance in the list and its distance
+        /// <summary>
+        /// Returns the word which has the smallest levenshtein distance in the list and its distance.
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="word"></param>
         private static Tuple<string, int> GetClosestWordFromList(List<string> list, string word) {
             string closestWord = "";
             int distance = word.Length;
@@ -631,7 +719,11 @@ namespace PlayGame.Speech {
             return new Tuple<string, int>(closestWord, distance);
         }
 
-        // Returns the Levenshtein distance (number of single character edits required to make the strings equal)
+        /// <summary>
+        /// Returns the Levenshtein distance (number of single character edits required to make the strings equal)
+        /// </summary>
+        /// <param name="word1"></param>
+        /// <param name="word2"></param>
         private static int GetLevenshteinDistance(string word1, string word2) {
             if (word1.Length == 0) return word2.Length;
             if (word2.Length == 0) return word1.Length;
@@ -664,10 +756,22 @@ namespace PlayGame.Speech {
             return distance[word1.Length][word2.Length]; 
         }
 
+        /// <summary>
+        /// Returns the smallest of 3 ints.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <param name="c"></param>
         private static int Min(int a, int b, int c) {
           return Math.Min(Math.Min(a, b), c);
         } 
 
+        /// <summary>
+        /// Converts a phrase to a Command.
+        /// </summary>
+        /// <param name="phrase"></param>
+        /// <param name="playerData"></param>
+        /// <param name="player"></param>
         public static Command GetCommand(string phrase, PlayerData playerData, Transform player) {
             Command c = new Command();
             
@@ -701,6 +805,14 @@ namespace PlayGame.Speech {
             return c;
         }
         
+        /// <summary>
+        /// Converts a phrase to a Command that requires additional data.
+        /// </summary>
+        /// <param name="phrase"></param>
+        /// <param name="commandList"></param>
+        /// <param name="command"></param>
+        /// <param name="playerData"></param>
+        /// <param name="player"></param>
         private static Command GetCompoundCommand(string phrase, List<string> commandList, string command, PlayerData playerData, Transform player) {
             if (commandList.Equals(MovementCommands)) return GetMovementCommand(phrase, player);
             if (commandList.Equals(TurnCommands)) return GetTurnCommand(phrase, command, player);
@@ -713,6 +825,11 @@ namespace PlayGame.Speech {
             return new Command(); // Return an invalid command
         }
         
+        /// <summary>
+        /// Converts a phrase to a MovementCommand.
+        /// </summary>
+        /// <param name="phrase"></param>
+        /// <param name="player"></param>
         private static Command GetMovementCommand(string phrase, Transform player) {
             string data = GetDirection(phrase);
             if (data != null) {
@@ -732,6 +849,12 @@ namespace PlayGame.Speech {
             return new Command(); // Return an invalid command
         }
         
+        /// <summary>
+        /// Converts a phrase to a turn MovementCommand.
+        /// </summary>
+        /// <param name="phrase"></param>
+        /// <param name="command"></param>
+        /// <param name="player"></param>
         private static Command GetTurnCommand(string phrase, string command, Transform player) {
             string data = GetDirection(phrase);
             if (data != null) {
@@ -756,6 +879,10 @@ namespace PlayGame.Speech {
             return new Command(); // Return an invalid command
         }
 
+        /// <summary>
+        /// Converts a phrase to a PingCommand.
+        /// </summary>
+        /// <param name="phrase"></param>
         private static Command GetPingCommand(string phrase) {
             string pingType = GetCommandListIdentifier(phrase, PingTypes);
             string gridCoord = GetGridCoord(phrase);
@@ -765,11 +892,22 @@ namespace PlayGame.Speech {
             return new Command(); // Return an invalid command
         }
 
+        /// <summary>
+        /// Converts a phrase to a TransferCommand.
+        /// </summary>
+        /// <param name="phrase"></param>
+        /// <param name="playerData"></param>
         private static Command GetTransferCommand(string phrase, PlayerData playerData) {
             if (GetCommandFromList(phrase, Resources) != null) return new TransferCommand(playerData.GetResources());
             return new Command(); // Return an invalid command
         }
 
+        /// <summary>
+        /// Converts a phrase to a ToggleCommand.
+        /// </summary>
+        /// <param name="phrase"></param>
+        /// <param name="on"></param>
+        /// <param name="command"></param>
         private static Command GetToggleCommand(string phrase, bool on, string command) { // on is true if turning on, false if turning off
             List<string> activatableObject = GetCommandList(phrase, Activatable);
             if (activatableObject == null) return new Command(); // Return an invalid command
@@ -791,6 +929,10 @@ namespace PlayGame.Speech {
             return new Command(); // Return an invalid command
         }
 
+        /// <summary>
+        /// Converts a phrase to a RepairCommand.
+        /// </summary>
+        /// <param name="phrase"></param>
         private static Command GetRepairCommand(string phrase) {
             string module = GetCommandListIdentifier(phrase, StationModules);
             int? repairAmount = GetNumberRegex(phrase);
@@ -802,6 +944,10 @@ namespace PlayGame.Speech {
             return new Command();
         }
         
+        /// <summary>
+        /// Extracts a direction string from a phrase.
+        /// </summary>
+        /// <param name="phrase"></param>
         private static string GetDirection(string phrase) {
             foreach (List<string> commandList in Directions) {
                 foreach (string command in commandList) {
@@ -818,6 +964,10 @@ namespace PlayGame.Speech {
             return null;
         }
 
+        /// <summary>
+        /// Extracts a number from a phrase using regex.
+        /// </summary>
+        /// <param name="phrase"></param>
         private static int? GetNumberRegex(string phrase) {
             Match coordMatch = Regex.Match(phrase, NumberRegex);
             if (!coordMatch.Success) return null;
@@ -826,12 +976,21 @@ namespace PlayGame.Speech {
             return value;
         }
 
+        /// <summary>
+        /// Extracts a single letter from a phrase using regex.
+        /// </summary>
+        /// <param name="phrase"></param>
         private static string GetLetterRegex(string phrase) {
             Match coordMatch = Regex.Match(phrase, LetterRegex);
             if (!coordMatch.Success) return null;
             return coordMatch.Value;
         }
 
+        /// <summary>
+        /// Extracts a letter from a phrase.
+        /// Checks for common mistakes such as 'Bee' instead of 'b'.
+        /// </summary>
+        /// <param name="phrase"></param>
         private static string GetLetter(string phrase) {
             string letter = GetLetterRegex(phrase);
             if (letter != null) return letter;
@@ -845,6 +1004,11 @@ namespace PlayGame.Speech {
             return letter;
         }
 
+        /// <summary>
+        /// Extracts a number from a phrase.
+        /// Checks for common mistakes such as 'won' instead of '1'.
+        /// </summary>
+        /// <param name="phrase"></param>
         private static string GetNumber(string phrase) {
             int? number = GetNumberRegex(phrase);
             if (number != null) return number.ToString();
@@ -860,6 +1024,11 @@ namespace PlayGame.Speech {
             return numberString;
         }
         
+        /// <summary>
+        /// Extracts a grid coordinate from a phrase.
+        /// </summary>
+        /// <param name="phrase"></param>
+        /// <returns></returns>
         public static string GetGridCoord(string phrase) {
             string letter = GetLetter(phrase);
             string number = GetNumber(phrase);
@@ -868,14 +1037,22 @@ namespace PlayGame.Speech {
             return letter + number;
         }
 
-        // Returns the first element of the list which contains the string which was found in the phrase or null
+        /// <summary>
+        /// Returns the first element of the list which contains the string which was found in the phrase or null.
+        /// </summary>
+        /// <param name="phrase"></param>
+        /// <param name="searchList">The list to search.</param>
         public static string GetCommandListIdentifier(string phrase, List<List<string>> searchList) {
             List<string> commandList = GetCommandList(phrase, searchList);
             if (commandList != null) return commandList[0];
             return null;
         }
         
-        // Returns the list which contains the string which was found in the phrase or null
+        /// <summary>
+        /// Returns the list which contains the string which was found in the phrase or null.
+        /// </summary>
+        /// <param name="phrase"></param>
+        /// <param name="searchList">The list to search.</param>
         private static List<string> GetCommandList(string phrase, List<List<string>> searchList) {
             foreach (List<string> commandList in searchList) {
                 foreach (string command in commandList) {
@@ -886,7 +1063,11 @@ namespace PlayGame.Speech {
             return null;
         }
 
-        // Returns the string which was found in the phrase or null
+        /// <summary>
+        /// Returns the string which was found in the phrase or null.
+        /// </summary>
+        /// <param name="phrase"></param>
+        /// <param name="searchList">The list to search.</param>
         private static string GetCommandFromList(string phrase, List<string> searchList) {
             foreach (string command in searchList) {
                 if (phrase.Contains(command)) return command;

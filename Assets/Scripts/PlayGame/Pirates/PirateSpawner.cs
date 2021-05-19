@@ -47,8 +47,7 @@ namespace PlayGame.Pirates {
         /// Calls InvokeRepeating for the PirateRNG method and sets the maximum number of pirates that can be alive.
         /// <remarks>This method can only be called by the host or in debug mode.</remarks>
         /// </summary>
-        private void Start()
-        {
+        private void Start() {
             musicSwitcher = GameObject.Find("BackgroundMusic").GetComponent<InGameMusicSwitcher>();
             if (!DebugSettings.Debug && !PhotonNetwork.IsMasterClient) return; // Only the host spawns pirates
             if (SceneManager.GetActiveScene().name != Scenes.TutorialScene) InvokeRepeating(nameof(PirateRNG), 0, GameConstants.PirateEveryXSeconds);
