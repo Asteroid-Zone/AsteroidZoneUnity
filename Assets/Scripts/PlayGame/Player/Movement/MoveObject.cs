@@ -289,7 +289,6 @@ namespace PlayGame.Player.Movement {
         /// </summary>
         /// <param name="targetDirection">The direction to turn. Should be equal to <c>transform.right</c> or <c>-transform.right</c>.</param>
         public void StartRotating(Vector3 targetDirection) {
-            _autoMove = false;
             rotating = true;
             _turnRight = targetDirection == transform.right;
         }
@@ -309,7 +308,6 @@ namespace PlayGame.Player.Movement {
         /// <param name="newDirection"></param>
         /// <param name="rotate"></param>
         public void SetDirection(Vector3 newDirection, bool rotate) {
-            _autoMove = false;
             StopRotating();
             // Set the direction to be the new direction
             _direction = newDirection;
