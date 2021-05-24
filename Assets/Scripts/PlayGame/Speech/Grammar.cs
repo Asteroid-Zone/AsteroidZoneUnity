@@ -87,8 +87,8 @@ namespace PlayGame.Speech {
         private static readonly List<string> RepairCommands = new List<string>{"repair", "fix", "mend"};
         private static readonly List<string> RepairCommandsWrong = new List<string>{"meant", "men"};
 
-        private static readonly List<string> RespawnCommands = new List<string>{"respawn", "revive", "record", "respond"};
-        // todo move record and respond to RespawnCommandsWrong
+        private static readonly List<string> RespawnCommands = new List<string>{"respawn", "revive"};
+        private static readonly List<string> RespawnCommandsWrong = new List<string>{"record", "respond"};
 
         // Lists containing synonyms for objects
         private static readonly List<string> Pirate = new List<string>{Strings.Pirate, "enemy"};
@@ -151,6 +151,7 @@ namespace PlayGame.Speech {
             LaserGun.AddRange(LaserGunWrong);
             Hull.AddRange(HullWrong);
             SolarPanels.AddRange(SolarPanelsWrong);
+            RespawnCommands.AddRange(RespawnCommandsWrong);
             
             TurnCommandsWrong.AddRange(InstantTurnWrong);
             
