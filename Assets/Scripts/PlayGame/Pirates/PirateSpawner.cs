@@ -92,6 +92,12 @@ namespace PlayGame.Pirates {
             }
         }
 
+        /// <summary>
+        /// Spawns a pirate for tutorial.
+        /// </summary>
+        /// <param name="type">The type of pirate to spawn.</param>
+        /// <param name="gridCoord">Used to dictate spawn position of pirate.</param>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if type is an invalid PirateType.</exception>
         public GameObject SpawnPirate(PirateData.PirateType type, GridCoord gridCoord) {
             GameObject pirate;
             string prefab;
