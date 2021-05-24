@@ -87,10 +87,11 @@ namespace Photon {
 
         /// <summary>
         /// <para>Method overrides MonoBehaviourPunCallbacks.</para>
-        /// //todo add description
+        /// <para>- If the client is connecting it is going from the master server to a room so we want to create a room</para>
+        /// <para>- If the client isn't connecting it has returned to the master server from a room either due to qutting or losing so we want to do nothing</para>
         /// </summary>
         public override void OnConnectedToMaster() {
-            Debug.Log("Asteroid Zone/MainMenuFunction: OnConnectedToMaster() was called by PUN");
+            Debug.Log("Asteroid Zone/PhotonLobby: OnConnectedToMaster() was called by PUN");
             
             // Show the lobby panel and hide the loading screen
             progressLabel.SetActive(false);
@@ -98,11 +99,7 @@ namespace Photon {
             
             PhotonNetwork.AutomaticallySyncScene = true;
             
-            // We don't want to do anything if we are not attempting to join a room.
-            // The case where isConnecting is false is typically when you lost or quit the game, when this level is loaded, OnConnectedToMaster will be called, in that case
-            // we don't want to do anything.
             if (_isConnecting) {
-                // The first we try to do is to join a potential existing room. If there is, good, else, we'll be called back with OnJoinRandomFailed()
                 CreateRoom();
                 _isConnecting = false;
             }
@@ -142,7 +139,7 @@ namespace Photon {
             progressLabel.SetActive(false);
             controlPanel.SetActive(true);
             _isConnecting = false;
-            Debug.LogWarningFormat("Asteroid Zone/MainMenuFunction: OnDisconnected() was called by PUN with reason {0}", cause);
+            Debug.LogWarningFormat("Asteroid Zone/PhotonLobby: OnDisconnected() was called by PUN with reason {0}", cause);
         }
 
         /// <summary>
